@@ -4,8 +4,48 @@ import { searchSimilarChunks, buildRAGContext, calculateConfidence } from '@/lib
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 
-export const runtime = 'nodejs' // Edge'den nodejs'e geçtik
-export const maxDuration = 30 // 30 saniye timeout
+export const runtime = 'nodejs'
+export const maxDuration = 30
+
+/**
+ * Domain kontrolü fonksiyonu
+ */
+function isDomainAllowed(origin: string | null, allowedDomains: string[]): boolean {
+    // Development için localhost'a izin ver
+    if (process.env.NODE_ENV === 'development') {
+        if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+            return true
+        }
+    }
+
+    // Origin yoksa red et
+    if (!origin) return false
+
+    try {
+        const url = new URL(origin)
+        const hostname = url.hostname
+
+        // Allowed domains boşsa, herkese açık demektir
+        if (allowedDomains.length === 0) return true
+
+        // Wildcard ve exact match kontrolü
+        return allowedDomains.some(allowed => {
+            // Exact match
+            if (hostname === allowed) return true
+
+            // Wildcard match (*.example.com)
+            if (allowed.startsWith('*.')) {
+                const domain = allowed.slice(2)
+                return hostname.endsWith(domain)
+            }
+
+            // Subdomain match (example.com -> *.example.com)
+            return hostname.endsWith(`.${allowed}`)
+        })
+    } catch {
+        return false
+    }
+}
 
 export async function POST(req: NextRequest) {
     try {
@@ -17,6 +57,9 @@ export async function POST(req: NextRequest) {
                 { status: 400 }
             )
         }
+
+        // Origin kontrolü
+        const origin = req.headers.get('origin') || req.headers.get('referer')
 
         // Chatbot'u kontrol et
         const chatbot = await prisma.chatbot.findUnique({
@@ -32,6 +75,17 @@ export async function POST(req: NextRequest) {
             return NextResponse.json(
                 { error: 'Chatbot bulunamadı' },
                 { status: 404 }
+            )
+        }
+
+        // 🔒 DOMAIN KONTROLÜ
+        if (!isDomainAllowed(origin, chatbot.allowedDomains)) {
+            console.log(`❌ Domain rejected: ${origin}`)
+            console.log(`✅ Allowed domains: ${chatbot.allowedDomains.join(', ')}`)
+
+            return NextResponse.json(
+                { error: 'Bu domain için yetkilendirilmemiş' },
+                { status: 403 }
             )
         }
 
@@ -63,7 +117,7 @@ export async function POST(req: NextRequest) {
                 include: {
                     messages: {
                         orderBy: { createdAt: 'asc' },
-                        take: 10, // Son 10 mesaj
+                        take: 10,
                     }
                 }
             })
@@ -135,7 +189,7 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
                             chunks: searchResults.chunks.map(c => ({
                                 documentName: c.documentName,
                                 similarity: c.similarity,
-                                content: c.content.slice(0, 200), // İlk 200 karakter
+                                content: c.content.slice(0, 200),
                             }))
                         } : null,
                     }
@@ -162,15 +216,21 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
                     where: { id: chatbot.id },
                     data: {
                         totalConversations: { increment: conversation.messages.length === 0 ? 1 : 0 },
-                        totalMessages: { increment: 2 }, // user + assistant
+                        totalMessages: { increment: 2 },
                     }
                 })
             }
         })
 
-        // Conversation ID'yi header'da gönder
+        // CORS headers ekle
         const response = result.toTextStreamResponse()
         response.headers.set('X-Conversation-Id', conversation.id)
+
+        // Origin'e göre CORS header ekle
+        if (origin) {
+            response.headers.set('Access-Control-Allow-Origin', origin)
+            response.headers.set('Access-Control-Allow-Credentials', 'true')
+        }
 
         return response
 
@@ -181,4 +241,21 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
             { status: 500 }
         )
     }
+}
+
+// OPTIONS handler for CORS preflight
+export async function OPTIONS(req: NextRequest) {
+    const origin = req.headers.get('origin')
+
+    const response = new NextResponse(null, { status: 200 })
+
+    if (origin) {
+        response.headers.set('Access-Control-Allow-Origin', origin)
+        response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.set('Access-Control-Allow-Credentials', 'true')
+        response.headers.set('Access-Control-Max-Age', '86400')
+    }
+
+    return response
 }
