@@ -1,102 +1,21 @@
-import pdf from 'pdf-parse-fork'
-import mammoth from 'mammoth'
-import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
-import { OpenAIEmbeddings } from '@langchain/openai'
+import { openai } from '@/lib/ai/openai'
+
+export type DocumentType = 'pdf' | 'docx' | 'txt' | 'unknown'
 
 /**
- * PDF'ten text çıkar
+ * Dosya tipini belirle
  */
-export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
-    try {
-        const data = await pdf(buffer)
-        return data.text
-    } catch (error) {
-        console.error('PDF parse error:', error)
-        throw new Error('PDF dosyası işlenemedi')
-    }
-}
+export function getDocumentType(filename: string): DocumentType {
+    const ext = filename.split('.').pop()?.toLowerCase()
 
-/**
- * DOCX'ten text çıkar
- */
-export async function extractTextFromDOCX(buffer: Buffer): Promise<string> {
-    try {
-        const result = await mammoth.extractRawText({ buffer })
-        return result.value
-    } catch (error) {
-        console.error('DOCX parse error:', error)
-        throw new Error('DOCX dosyası işlenemedi')
-    }
-}
-
-/**
- * Text'i chunks'lara böl
- */
-export async function splitTextIntoChunks(
-    text: string,
-    chunkSize: number = 1000,
-    chunkOverlap: number = 200
-): Promise<string[]> {
-    const splitter = new RecursiveCharacterTextSplitter({
-        chunkSize,
-        chunkOverlap,
-    })
-
-    const chunks = await splitter.splitText(text)
-    return chunks
-}
-
-/**
- * OpenAI Embeddings oluştur
- */
-export async function createEmbeddings(texts: string[]): Promise<number[][]> {
-    if (!process.env.OPENAI_API_KEY) {
-        throw new Error('OPENAI_API_KEY bulunamadı')
-    }
-
-    const embeddings = new OpenAIEmbeddings({
-        openAIApiKey: process.env.OPENAI_API_KEY,
-        modelName: 'text-embedding-3-small', // Ucuz ve hızlı
-    })
-
-    const vectors = await embeddings.embedDocuments(texts)
-    return vectors
-}
-
-/**
- * Cosine similarity hesapla (vector search için)
- */
-export function cosineSimilarity(vecA: number[], vecB: number[]): number {
-    const dotProduct = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0)
-    const magnitudeA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0))
-    const magnitudeB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0))
-
-    if (magnitudeA === 0 || magnitudeB === 0) return 0
-
-    return dotProduct / (magnitudeA * magnitudeB)
-}
-
-/**
- * Token sayısını tahmin et (yaklaşık)
- */
-export function estimateTokenCount(text: string): number {
-    // Basit tahmin: ~4 karakter = 1 token
-    return Math.ceil(text.length / 4)
-}
-
-/**
- * Doküman tipi kontrolü
- */
-export function getDocumentType(filename: string): 'pdf' | 'docx' | 'txt' | 'unknown' {
-    const extension = filename.split('.').pop()?.toLowerCase()
-
-    switch (extension) {
+    switch (ext) {
         case 'pdf':
             return 'pdf'
-        case 'doc':
         case 'docx':
+        case 'doc':
             return 'docx'
         case 'txt':
+        case 'md':
             return 'txt'
         default:
             return 'unknown'
@@ -104,53 +23,159 @@ export function getDocumentType(filename: string): 'pdf' | 'docx' | 'txt' | 'unk
 }
 
 /**
- * Tam doküman processing pipeline
+ * Dokümanı işle - text çıkar, chunk'la, embedding oluştur
  */
-export async function processDocument(
-    buffer: Buffer,
-    filename: string
-): Promise<{
-    text: string
-    chunks: string[]
-    embeddings: number[][]
-    tokenCount: number
-}> {
-    // 1. Text extraction
+export async function processDocument(buffer: Buffer, filename: string) {
     const docType = getDocumentType(filename)
-    let text: string
+
+    // 1. Text'i çıkar
+    let text = ''
 
     switch (docType) {
         case 'pdf':
-            text = await extractTextFromPDF(buffer)
+            text = await extractPdfText(buffer)
             break
         case 'docx':
-            text = await extractTextFromDOCX(buffer)
+            text = await extractDocxText(buffer)
             break
         case 'txt':
             text = buffer.toString('utf-8')
             break
         default:
-            throw new Error('Desteklenmeyen dosya tipi')
+            throw new Error('Unsupported document type')
     }
 
-    // Boş kontrolü
-    if (!text || text.trim().length < 10) {
+    // 2. Text'i temizle
+    text = cleanText(text)
+
+    if (!text || text.trim().length < 50) {
         throw new Error('Doküman çok kısa veya boş')
     }
 
-    // 2. Chunking
-    const chunks = await splitTextIntoChunks(text)
+    // 3. Chunk'lara ayır
+    const chunks = chunkText(text, 1000, 200) // 1000 char, 200 overlap
 
-    // 3. Embeddings
+    // 4. Her chunk için embedding oluştur
     const embeddings = await createEmbeddings(chunks)
 
-    // 4. Token count
+    // 5. Token sayısını hesapla
     const tokenCount = estimateTokenCount(text)
 
     return {
         text,
         chunks,
         embeddings,
-        tokenCount,
+        tokenCount
     }
+}
+
+/**
+ * PDF'den text çıkar (Dynamic Import)
+ */
+async function extractPdfText(buffer: Buffer): Promise<string> {
+    try {
+        // Dynamic import - sadece kullanılacağı zaman yükle
+        const pdf = await import('pdf-parse')
+        const data = await pdf.default(buffer)
+        return data.text
+    } catch (error) {
+        console.error('PDF extraction error:', error)
+        throw new Error('PDF işlenirken hata oluştu')
+    }
+}
+
+/**
+ * DOCX'den text çıkar (Dynamic Import)
+ */
+async function extractDocxText(buffer: Buffer): Promise<string> {
+    try {
+        // Dynamic import - sadece kullanılacağı zaman yükle
+        const mammoth = await import('mammoth')
+        const result = await mammoth.extractRawText({ buffer })
+        return result.value
+    } catch (error) {
+        console.error('DOCX extraction error:', error)
+        throw new Error('DOCX işlenirken hata oluştu')
+    }
+}
+
+/**
+ * Text'i temizle
+ */
+function cleanText(text: string): string {
+    return text
+        .replace(/\r\n/g, '\n') // Windows line endings
+        .replace(/\n{3,}/g, '\n\n') // Fazla boşlukları temizle
+        .replace(/\t/g, ' ') // Tab'ları space'e çevir
+        .replace(/[ ]{2,}/g, ' ') // Fazla boşlukları temizle
+        .trim()
+}
+
+/**
+ * Text'i chunk'lara ayır
+ */
+function chunkText(text: string, chunkSize: number, overlap: number): string[] {
+    const chunks: string[] = []
+    const sentences = text.split(/(?<=[.!?])\s+/)
+
+    let currentChunk = ''
+
+    for (const sentence of sentences) {
+        if ((currentChunk + sentence).length > chunkSize) {
+            if (currentChunk) {
+                chunks.push(currentChunk.trim())
+
+                // Overlap için son kısmı al
+                const words = currentChunk.split(' ')
+                const overlapWords = words.slice(-Math.floor(overlap / 5))
+                currentChunk = overlapWords.join(' ') + ' ' + sentence
+            } else {
+                // Tek cümle çok uzunsa, olduğu gibi ekle
+                chunks.push(sentence.trim())
+                currentChunk = ''
+            }
+        } else {
+            currentChunk += (currentChunk ? ' ' : '') + sentence
+        }
+    }
+
+    if (currentChunk.trim()) {
+        chunks.push(currentChunk.trim())
+    }
+
+    return chunks
+}
+
+/**
+ * Chunk'lar için embedding oluştur
+ */
+async function createEmbeddings(chunks: string[]): Promise<number[][]> {
+    try {
+        // OpenAI batch embedding
+        const response = await openai.embeddings.create({
+            model: 'text-embedding-ada-002',
+            input: chunks,
+        })
+
+        return response.data.map(item => item.embedding)
+    } catch (error) {
+        console.error('Embedding creation error:', error)
+        throw new Error('Embedding oluşturulurken hata oluştu')
+    }
+}
+
+/**
+ * Token sayısını tahmin et
+ */
+function estimateTokenCount(text: string): number {
+    // Yaklaşık: 4 karakter = 1 token
+    return Math.ceil(text.length / 4)
+}
+
+/**
+ * Chunk preview oluştur
+ */
+export function createChunkPreview(content: string, maxLength: number = 200): string {
+    if (content.length <= maxLength) return content
+    return content.slice(0, maxLength) + '...'
 }

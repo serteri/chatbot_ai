@@ -14,31 +14,31 @@ datasource db {
 // ============================================
 
 model User {
-  id                String         @id @default(cuid())
-  email             String         @unique
-  name              String?
-  emailVerified     DateTime?
-  image             String?
-  password          String?
-  
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  emailVerified DateTime?
+  image         String?
+  password      String?
+
   // Company info
-  companyName       String?
-  website           String?
-  
+  companyName String?
+  website     String?
+
   // Settings
-  language          String         @default("tr")
-  timezone          String         @default("Europe/Istanbul")
-  
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  
+  language String @default("tr")
+  timezone String @default("Europe/Istanbul")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  accounts          Account[]
-  sessions          Session[]
-  chatbots          Chatbot[]
-  subscription      Subscription?
-  teamMembers       TeamMember[]
-  
+  accounts     Account[]
+  sessions     Session[]
+  chatbots     Chatbot[]
+  subscription Subscription?
+  teamMembers  TeamMember[]
+
   @@index([email])
 }
 
@@ -85,35 +85,37 @@ model VerificationToken {
 // ============================================
 
 model Subscription {
-  id                    String    @id @default(cuid())
-  userId                String    @unique
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   // Stripe
-  stripeCustomerId      String?   @unique
-  stripeSubscriptionId  String?   @unique
-  stripePriceId         String?
-  
+  stripeCustomerId     String? @unique
+  stripeSubscriptionId String? @unique
+  stripePriceId        String?
+
   // Plan
-  plan                  String    @default("free") // free, starter, professional, enterprise
-  status                String    @default("active") // active, canceled, past_due
-  
+  plan   String @default("free") // free, starter, professional, enterprise
+  status String @default("active") // active, canceled, past_due
+
   // Limits
-  maxChatbots           Int       @default(1)
-  maxDocuments          Int       @default(10)
-  maxConversations      Int       @default(100) // per month
-  conversationsUsed     Int       @default(0)
-  storageLimit          Int       @default(100) // MB
-  storageUsed           Int       @default(0)   // MB
-  
+  maxChatbots       Int @default(1)
+  maxDocuments      Int @default(10)
+  maxConversations  Int @default(100) // per month
+  conversationsUsed Int @default(0)
+  storageLimit      Int @default(100) // MB
+  storageUsed       Int @default(0) // MB
+
   // Period
-  currentPeriodStart    DateTime  @default(now())
-  currentPeriodEnd      DateTime?
-  cancelAtPeriodEnd     Boolean   @default(false)
-  
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-  
+  currentPeriodStart DateTime  @default(now())
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lastResetDate DateTime?
+
   @@index([userId])
 }
 
@@ -122,61 +124,62 @@ model Subscription {
 // ============================================
 
 model Chatbot {
-  id            String    @id @default(cuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   // Basic Info
-  name          String    // "Support Bot", "Sales Assistant"
-  identifier    String    @unique // "abc123xyz" for embed code
-  
+  name       String // "Support Bot", "Sales Assistant"
+  identifier String @unique // "abc123xyz" for embed code
+
   // Appearance
-  primaryColor      String    @default("#3b82f6")
-  secondaryColor    String    @default("#1e40af")
-  botAvatar         String?
-  botName           String    @default("AI Assistant")
-  position          String    @default("bottom-right") // bottom-right, bottom-left
-  
+  primaryColor   String  @default("#3b82f6")
+  secondaryColor String  @default("#1e40af")
+  botAvatar      String?
+  botName        String  @default("AI Assistant")
+  position       String  @default("bottom-right") // bottom-right, bottom-left
+
   // Messages
-  welcomeMessage    String    @default("Hello! How can I help you today?")
-  placeholderText   String    @default("Type your message...")
-  fallbackMessage   String    @default("I couldn't find an answer. Would you like to speak with a human?")
-  offlineMessage    String?
-  
+  welcomeMessage  String  @default("Hello! How can I help you today?")
+  placeholderText String  @default("Type your message...")
+  fallbackMessage String  @default("I couldn't find an answer. Would you like to speak with a human?")
+  offlineMessage  String?
+
   // Behavior
-  language          String    @default("en")
-  aiModel           String    @default("gpt-3.5-turbo")
-  temperature       Float     @default(0.7)
-  responseStyle     String    @default("professional") // professional, friendly, concise
-  
+  language      String @default("en")
+  aiModel       String @default("gpt-3.5-turbo")
+  temperature   Float  @default(0.7)
+  responseStyle String @default("professional") // professional, friendly, concise
+
   // Features
-  enableLiveChat    Boolean   @default(true)
-  enableEmailCapture Boolean  @default(true)
-  enableRating      Boolean   @default(true)
-  enableSources     Boolean   @default(true) // Show document sources
-  
+  enableLiveChat     Boolean @default(true)
+  enableEmailCapture Boolean @default(true)
+  enableRating       Boolean @default(true)
+  enableSources      Boolean @default(true) // Show document sources
+
   // Integration
-  allowedDomains    String[]  @default([])
-  liveChatWebhook   String?   // Webhook URL for live chat
-  emailNotification String?   // Email for notifications
-  
+  allowedDomains    String[] @default([])
+  liveChatWebhook   String? // Webhook URL for live chat
+  emailNotification String? // Email for notifications
+
   // Status
-  isActive          Boolean   @default(true)
-  isPublished       Boolean   @default(false)
-  
+  isActive    Boolean @default(true)
+  isPublished Boolean @default(false)
+
   // Analytics
-  totalConversations Int      @default(0)
-  totalMessages      Int      @default(0)
+  totalConversations Int    @default(0)
+  totalMessages      Int    @default(0)
   avgRating          Float?
-  
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  documents         Document[]
-  conversations     Conversation[]
-  analytics         ChatbotAnalytics[]
-  
+  documents     Document[]
+  conversations Conversation[]
+  analytics     ChatbotAnalytics[]
+  model         String?
+
   @@index([userId])
   @@index([identifier])
 }
@@ -186,56 +189,56 @@ model Chatbot {
 // ============================================
 
 model Document {
-  id            String    @id @default(cuid())
-  chatbotId     String
-  chatbot       Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-  
+  id        String  @id @default(cuid())
+  chatbotId String
+  chatbot   Chatbot @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+
   // File Info
-  name          String
-  type          String    // "pdf", "docx", "txt", "url", "markdown"
-  url           String?   // Storage URL or web URL
-  size          Int?      // bytes
-  
+  name String
+  type String // "pdf", "docx", "txt", "url", "markdown"
+  url  String? // Storage URL or web URL
+  size Int? // bytes
+
   // Processing
-  status        String    @default("processing") // processing, ready, failed
-  errorMessage  String?
-  
+  status       String  @default("processing") // processing, ready, failed
+  errorMessage String?
+
   // Content
-  rawContent    String?   @db.Text
-  totalChunks   Int       @default(0)
-  totalTokens   Int       @default(0)
-  
+  rawContent  String? @db.Text
+  totalChunks Int     @default(0)
+  totalTokens Int     @default(0)
+  content     String? @db.Text
   // Metadata
-  metadata      Json?     // {author, created_date, etc}
-  
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
+  metadata    Json? // {author, created_date, etc}
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Relations
-  chunks        DocumentChunk[]
-  
+  chunks DocumentChunk[]
+
   @@index([chatbotId])
   @@index([status])
 }
 
 model DocumentChunk {
-  id            String    @id @default(cuid())
-  documentId    String
-  document      Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  
+  id         String   @id @default(cuid())
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
   // Content
-  content       String    @db.Text
-  
+  content String @db.Text
+
   // Embedding (Vector)
-  embedding     Bytes?    // Store as binary for efficiency
-  
+  embedding Bytes? // Store as binary for efficiency
+
   // Metadata
-  chunkIndex    Int
-  tokenCount    Int
-  pageNumber    Int?
-  
-  createdAt     DateTime  @default(now())
-  
+  chunkIndex Int
+  tokenCount Int
+  pageNumber Int?
+
+  createdAt DateTime @default(now())
+
   @@index([documentId])
 }
 
@@ -244,36 +247,36 @@ model DocumentChunk {
 // ============================================
 
 model Conversation {
-  id            String    @id @default(cuid())
-  chatbotId     String
-  chatbot       Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-  
+  id        String  @id @default(cuid())
+  chatbotId String
+  chatbot   Chatbot @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+
   // Visitor Info
-  visitorId     String    // Anonymous ID (cookie/localStorage)
-  visitorEmail  String?
-  visitorName   String?
-  visitorPhone  String?
-  
+  visitorId    String // Anonymous ID (cookie/localStorage)
+  visitorEmail String?
+  visitorName  String?
+  visitorPhone String?
+
   // Status
-  status        String    @default("active") // active, resolved, escalated, spam
-  rating        Int?      // 1-5 stars
-  feedback      String?   @db.Text
-  
+  status   String  @default("active") // active, resolved, escalated, spam
+  rating   Int? // 1-5 stars
+  feedback String? @db.Text
+
   // Session Info
-  userAgent     String?
-  ipAddress     String?
-  country       String?
-  referrer      String?
-  currentPage   String?
-  
+  userAgent   String?
+  ipAddress   String?
+  country     String?
+  referrer    String?
+  currentPage String?
+
   // Timestamps
-  startedAt     DateTime  @default(now())
-  endedAt       DateTime?
-  updatedAt     DateTime  @updatedAt
-  
+  startedAt DateTime              @default(now())
+  endedAt   DateTime?
+  updatedAt DateTime              @updatedAt
+  createdAt DateTime              @default(now())
   // Relations
-  messages      ConversationMessage[]
-  
+  messages  ConversationMessage[]
+
   @@index([chatbotId])
   @@index([visitorId])
   @@index([status])
@@ -281,28 +284,28 @@ model Conversation {
 }
 
 model ConversationMessage {
-  id              String       @id @default(cuid())
-  conversationId  String
-  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
   // Message
-  role            String       // "user", "assistant", "system"
-  content         String       @db.Text
-  
+  role    String // "user", "assistant", "system"
+  content String @db.Text
+
   // AI Response metadata
-  aiModel         String?
-  tokens          Int?
-  confidence      Float?       // 0-1
-  
+  aiModel    String?
+  tokens     Int?
+  confidence Float? // 0-1
+
   // Sources (if from documents)
-  sources         Json?        // [{documentId, documentName, chunkIndex, relevance}]
-  
+  sources Json? // [{documentId, documentName, chunkIndex, relevance}]
+
   // Human takeover
-  isHumanResponse Boolean      @default(false)
+  isHumanResponse Boolean @default(false)
   humanAgentId    String?
-  
-  createdAt       DateTime     @default(now())
-  
+
+  createdAt DateTime @default(now())
+
   @@index([conversationId])
   @@index([createdAt])
 }
@@ -312,28 +315,28 @@ model ConversationMessage {
 // ============================================
 
 model ChatbotAnalytics {
-  id                  String    @id @default(cuid())
-  chatbotId           String
-  chatbot             Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-  
-  date                DateTime  @db.Date
-  
+  id        String  @id @default(cuid())
+  chatbotId String
+  chatbot   Chatbot @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+
+  date DateTime @db.Date
+
   // Metrics
-  totalConversations  Int       @default(0)
-  totalMessages       Int       @default(0)
-  uniqueVisitors      Int       @default(0)
-  
-  resolvedByAI        Int       @default(0)
-  escalatedToHuman    Int       @default(0)
-  
-  avgConfidence       Float?
-  avgRating           Float?
-  avgResponseTime     Int?      // milliseconds
-  avgConversationLength Int?    // messages per conversation
-  
+  totalConversations Int @default(0)
+  totalMessages      Int @default(0)
+  uniqueVisitors     Int @default(0)
+
+  resolvedByAI     Int @default(0)
+  escalatedToHuman Int @default(0)
+
+  avgConfidence         Float?
+  avgRating             Float?
+  avgResponseTime       Int? // milliseconds
+  avgConversationLength Int? // messages per conversation
+
   // Top queries
-  topQueries          Json?     // [{query, count}]
-  
+  topQueries Json? // [{query, count}]
+
   @@unique([chatbotId, date])
   @@index([date])
 }
@@ -343,14 +346,14 @@ model ChatbotAnalytics {
 // ============================================
 
 model TeamMember {
-  id          String    @id @default(cuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  invitedBy   String
-  role        String    @default("member") // owner, admin, member, viewer
-  
-  joinedAt    DateTime  @default(now())
-  
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  invitedBy String
+  role      String @default("member") // owner, admin, member, viewer
+
+  joinedAt DateTime @default(now())
+
   @@index([userId])
 }
