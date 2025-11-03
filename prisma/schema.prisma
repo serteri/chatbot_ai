@@ -26,18 +26,20 @@ model User {
   website     String?
 
   // Settings
-  language String @default("tr")
-  timezone String @default("Europe/Istanbul")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  language         String   @default("tr")
+  timezone         String   @default("Europe/Istanbul")
+  stripeCustomerId String?  @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   // Relations
-  accounts     Account[]
-  sessions     Session[]
-  chatbots     Chatbot[]
-  subscription Subscription?
-  teamMembers  TeamMember[]
+  accounts           Account[]
+  sessions           Session[]
+  chatbots           Chatbot[]
+  subscription       Subscription?
+  teamMembers        TeamMember[]
+  emailNotifications Boolean       @default(true) // ← YENİ
+  notificationEmail  String? // ← İsteğe bağlı farklı email
 
   @@index([email])
 }
@@ -95,8 +97,8 @@ model Subscription {
   stripePriceId        String?
 
   // Plan
-  plan   String @default("free") // free, starter, professional, enterprise
-  status String @default("active") // active, canceled, past_due
+  planType String @default("free") // free, starter, professional, enterprise
+  status   String @default("active") // active, canceled, past_due
 
   // Limits
   maxChatbots       Int @default(1)
@@ -138,7 +140,30 @@ model Chatbot {
   botAvatar      String?
   botName        String  @default("AI Assistant")
   position       String  @default("bottom-right") // bottom-right, bottom-left
+  // Çoklu Dil Desteği
+  botNameTr      String  @default("AI Asistan")
+  botNameEn      String  @default("AI Assistant")
+  botNameDe      String  @default("KI-Assistent")
+  botNameFr      String  @default("Assistant IA")
+  botNameEs      String  @default("Asistente IA")
 
+  welcomeMessageTr String @default("Merhaba! Size nasıl yardımcı olabilirim?")
+  welcomeMessageEn String @default("Hello! How can I help you?")
+  welcomeMessageDe String @default("Hallo! Wie kann ich Ihnen helfen?")
+  welcomeMessageFr String @default("Bonjour! Comment puis-je vous aider?")
+  welcomeMessageEs String @default("¡Hola! ¿Cómo puedo ayudarte?")
+
+  fallbackMessageTr String @default("Üzgünüm, bu konuda yardımcı olamıyorum.")
+  fallbackMessageEn String @default("Sorry, I cannot help with that.")
+  fallbackMessageDe String @default("Entschuldigung, dabei kann ich nicht helfen.")
+  fallbackMessageFr String @default("Désolé, je ne peux pas vous aider avec ça.")
+  fallbackMessageEs String @default("Lo siento, no puedo ayudar con eso.")
+
+  placeholderTr   String  @default("Mesajınızı yazın...")
+  placeholderEn   String  @default("Type your message...")
+  placeholderDe   String  @default("Geben Sie Ihre Nachricht ein...")
+  placeholderFr   String  @default("Écrivez votre message...")
+  placeholderEs   String  @default("Escribe tu mensaje...")
   // Messages
   welcomeMessage  String  @default("Hello! How can I help you today?")
   placeholderText String  @default("Type your message...")
@@ -151,6 +176,14 @@ model Chatbot {
   temperature   Float  @default(0.7)
   responseStyle String @default("professional") // professional, friendly, concise
 
+  // Widget Customization - YENİ ALANLAR
+  widgetPrimaryColor String  @default("#3B82F6") // blue-600
+  widgetButtonColor  String  @default("#2563EB") // blue-700
+  widgetTextColor    String  @default("#FFFFFF") // white
+  widgetPosition     String  @default("bottom-right") // bottom-right, bottom-left
+  widgetSize         String  @default("medium") // small, medium, large
+  widgetLogoUrl      String?
+  widgetBubbleIcon   String  @default("bot") // bot, chat, custom
   // Features
   enableLiveChat     Boolean @default(true)
   enableEmailCapture Boolean @default(true)

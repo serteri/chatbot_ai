@@ -1,167 +1,123 @@
 'use client'
 
-import { useState } from 'react'
-import { signOut } from 'next-auth/react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Bot, LogOut, Settings, User, Menu, X, LayoutDashboard, MessageSquare, FileText, CreditCard } from 'lucide-react'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { LogOut, User, Globe } from 'lucide-react'
 
 interface DashboardNavProps {
-  user: {
-    name?: string | null
-    email?: string | null
-    image?: string | null
-  }
+    user: {
+        name?: string | null
+        email?: string | null
+    }
 }
 
 export function DashboardNav({ user }: DashboardNavProps) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const t = useTranslations()
+    const router = useRouter()
+    const pathname = usePathname()
 
-  const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/' })
-  }
+    const changeLocale = (locale: string) => {
+        const segments = pathname.split('/')
+        segments[1] = locale
+        router.push(segments.join('/'))
+    }
 
-  // İlk harfleri al
-  const initials = user.name
-    ?.split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase() || 'U'
+    return (
+        <nav className="border-b bg-white">
+            <div className="container mx-auto px-4">
+                <div className="flex items-center justify-between h-16">
+                    <div className="flex items-center space-x-8">
+                        <Link href="/dashboard" className="text-xl font-bold text-blue-600">
+                            ChatbotAI
+                        </Link>
 
-  const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Chatbot\'larım', href: '/chatbots', icon: Bot },
-    { name: 'Konuşmalar', href: '/conversations', icon: MessageSquare },
-    { name: 'Dokümanlar', href: '/documents', icon: FileText },
-    { name: 'Abonelik', href: '/billing', icon: CreditCard },
-  ]
+                        <div className="hidden md:flex space-x-6">
+                            <Link
+                                href="/dashboard"
+                                className="text-gray-700 hover:text-blue-600 transition"
+                            >
+                                {t('nav.dashboard')}
+                            </Link>
+                            <Link
+                                href="/chatbots"
+                                className="text-gray-700 hover:text-blue-600 transition"
+                            >
+                                {t('nav.chatbots')}
+                            </Link>
+                            <Link
+                                href="/conversations"
+                                className="text-gray-700 hover:text-blue-600 transition"
+                            >
+                                {t('nav.conversations')}
+                            </Link>
+                            <Link
+                                href="/pricing"
+                                className="text-gray-700 hover:text-blue-600 transition"
+                            >
+                                {t('nav.pricing')}
+                            </Link>
+                        </div>
+                    </div>
 
-  return (
-    <header className="border-b bg-white sticky top-0 z-50">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <Link href="/dashboard" className="flex items-center space-x-2">
-          <Bot className="h-8 w-8 text-blue-600" />
-          <span className="text-xl font-bold">ChatbotAI</span>
-        </Link>
+                    <div className="flex items-center space-x-4">
+                        {/* Dil Seçici */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                    <Globe className="h-4 w-4 mr-2" />
+                                    {pathname.startsWith('/en') ? 'EN' :
+                                        pathname.startsWith('/de') ? 'DE' :
+                                            pathname.startsWith('/fr') ? 'FR' :
+                                                pathname.startsWith('/es') ? 'ES' : 'TR'}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => changeLocale('tr')}>
+                                    🇹🇷 Türkçe
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => changeLocale('en')}>
+                                    🇬🇧 English
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => changeLocale('de')}>
+                                    🇩🇪 Deutsch
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => changeLocale('fr')}>
+                                    🇫🇷 Français
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => changeLocale('es')}>
+                                    🇪🇸 Español
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
-            >
-              {item.name}
-            </Link>
-          ))}
+                        {/* User Menu */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                    <User className="h-4 w-4 mr-2" />
+                                    {user.name || user.email}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem asChild>
+                                    <Link href="/api/auth/signout">
+                                        <LogOut className="h-4 w-4 mr-2" />
+                                        {t('nav.logout')}
+                                    </Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </div>
+            </div>
         </nav>
-
-        {/* Desktop User Menu */}
-        <div className="hidden md:flex items-center space-x-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                <Avatar>
-                  <AvatarImage src={user.image || undefined} alt={user.name || 'User'} />
-                  <AvatarFallback className="bg-blue-600 text-white">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuLabel>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{user.name}</p>
-                  <p className="text-xs text-gray-500">{user.email}</p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                Profil
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Ayarlar
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
-                <LogOut className="mr-2 h-4 w-4" />
-                Çıkış Yap
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <div className="md:hidden">
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-64">
-              <div className="flex flex-col space-y-4 mt-8">
-                {/* User Info */}
-                <div className="flex items-center space-x-3 pb-4 border-b">
-                  <Avatar>
-                    <AvatarImage src={user.image || undefined} />
-                    <AvatarFallback className="bg-blue-600 text-white">
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <p className="text-sm font-medium">{user.name}</p>
-                    <p className="text-xs text-gray-500">{user.email}</p>
-                  </div>
-                </div>
-
-                {/* Navigation */}
-                <nav className="flex flex-col space-y-2">
-                  {navigation.map((item) => {
-                    const Icon = item.icon
-                    return (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center space-x-3 rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
-                      >
-                        <Icon className="h-5 w-5" />
-                        <span>{item.name}</span>
-                      </Link>
-                    )
-                  })}
-                </nav>
-
-                {/* Logout */}
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-                  onClick={handleSignOut}
-                >
-                  <LogOut className="mr-2 h-5 w-5" />
-                  Çıkış Yap
-                </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
-    </header>
-  )
+    )
 }

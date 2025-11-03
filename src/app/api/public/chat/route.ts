@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db/prisma'
 import { searchSimilarChunks, buildRAGContext, calculateConfidence } from '@/lib/document/search'
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import { sendNewMessageNotification } from '@/lib/email/helpers'
 
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -147,7 +148,14 @@ export async function POST(req: NextRequest) {
 
         // RAG: Dokümanlardan benzer içerik bul
         const searchResults = await searchSimilarChunks(chatbot.id, message, 3)
-        const hasRelevantDocs = searchResults.chunks.length > 0 && searchResults.avgSimilarity > 0.3
+        const hasRelevantDocs = searchResults.chunks.length > 0 && searchResults.avgSimilarity > 0.68
+
+        console.log('🔍 Search:', {
+            query: message,
+            chunks: searchResults.chunks.length,
+            similarity: searchResults.avgSimilarity,
+            hasRelevant: hasRelevantDocs
+        })
 
         let systemPrompt = `Sen ${chatbot.botName} adlı bir AI asistanısın. ${chatbot.welcomeMessage}
 
@@ -157,11 +165,50 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
 
         if (hasRelevantDocs) {
             const context = buildRAGContext(searchResults.chunks)
-            const confidence = calculateConfidence(searchResults.avgSimilarity)
+            systemPrompt += `\n\n📚 DOKÜMAN BİLGİLERİ:\n${context}\n\n⚠️ KURALAR:
+1. Eğer soru dokümanlarla DOĞRUDAN İLGİLİyse, doküman bilgisini kullan
+2. Eğer soru dokümanlarla İLGİLİ DEĞİLse veya dokümanlar yetersizse, fallback mesajı ver: "${chatbot.fallbackMessage}"
+3. Genel bilgi VERME, sadece doküman bilgisi ver`
+        }
 
-            systemPrompt += `\n\nAşağıdaki dokümanlardan elde edilen bilgilere göre cevap ver:\n\n${context}\n\nEğer doküman bilgisi yeterli değilse, bunu belirt.`
-        } else {
-            systemPrompt += `\n\nDokümanlarımda bu soruyla ilgili bilgi bulamadım. ${chatbot.fallbackMessage || 'Başka nasıl yardımcı olabilirim?'}`
+
+        // 📌 Dokümanda bilgi yoksa direkt fallback
+        if (!hasRelevantDocs) {
+            const fallbackText = chatbot.fallbackMessage || 'Üzgünüm, bu konuda yardımcı olamıyorum.'
+
+            // Database'e kaydet
+            await prisma.conversationMessage.create({
+                data: {
+                    conversationId: conversation.id,
+                    role: 'assistant',
+                    content: fallbackText,
+                    aiModel: chatbot.aiModel,
+                    confidence: 0,
+                    sources: null,
+                }
+            })
+
+            // Stats güncelle
+            await prisma.conversation.update({
+                where: { id: conversation.id },
+                data: { updatedAt: new Date() }
+            })
+
+            await prisma.chatbot.update({
+                where: { id: chatbot.id },
+                data: {
+                    totalMessages: { increment: 2 },
+                }
+            })
+
+            // Direkt fallback text'i dön
+            const response = new NextResponse(fallbackText)
+            response.headers.set('X-Conversation-Id', conversation.id)
+            if (origin) {
+                response.headers.set('Access-Control-Allow-Origin', origin)
+                response.headers.set('Access-Control-Allow-Credentials', 'true')
+            }
+            return response
         }
 
         // AI'dan cevap al (streaming)
@@ -194,7 +241,29 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
                         } : null,
                     }
                 })
+                const chatbotOwner = await prisma.user.findUnique({
+                    where: { id: chatbot.userId },
+                    select: {
+                        email: true,
+                        name: true,
+                        emailNotifications: true,      // ← YENİ
+                        notificationEmail: true        // ← YENİ
+                    }
+                })
 
+                if (chatbotOwner?.emailNotifications) {  // ← Kontrol ekle
+                    const emailTo = chatbotOwner.notificationEmail || chatbotOwner.email
+
+                    if (emailTo) {
+                        await sendNewMessageNotification({
+                            to: emailTo,
+                            chatbotName: chatbot.name,
+                            visitorId,
+                            message: userPrompt,
+                            conversationId: conversation.id
+                        }).catch(err => console.error('Email failed:', err))
+                    }
+                }
                 // Conversation güncelle
                 await prisma.conversation.update({
                     where: { id: conversation.id },

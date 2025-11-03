@@ -1,15 +1,25 @@
 import { auth } from '@/lib/auth/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import { prisma } from '@/lib/db/prisma'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Bot, FileText, MessageSquare, Plus } from 'lucide-react'
 import { CreateChatbotDialog } from '@/components/chatbot/CreateChatbotDialog'
+import { getLocale } from 'next-intl/server'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+                                                params
+                                            }: {
+    params: Promise<{ locale: string }>
+}) {
+    const { locale } = await params
     const session = await auth()
-
+    const t = await getTranslations({ locale })
+    console.log('🌍 Dashboard locale:', t('dashboard.title'))
+    console.log('🌍 Test translation:', t('dashboard.subtitle'))
     if (!session?.user?.id) {
         redirect('/login')
     }
@@ -61,9 +71,9 @@ export default async function DashboardPage() {
         <div className="container mx-auto px-4 py-8">
             {/* Welcome Section */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold">Dashboard</h1>
+                <h1 className="text-3xl font-bold">{t('dashboard.title')}</h1>
                 <p className="mt-2 text-gray-600">
-                    Chatbot'larınızı yönetin ve performanslarını takip edin.
+                    {t('dashboard.subtitle')}
                 </p>
             </div>
 
@@ -71,39 +81,39 @@ export default async function DashboardPage() {
             <div className="mb-8 grid gap-4 md:grid-cols-3">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Chatbot Sayısı</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('dashboard.chatbotCount')}</CardTitle>
                         <Bot className="h-4 w-4 text-gray-600" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{totalChatbots}</div>
                         <p className="text-xs text-gray-600">
-                            Limit: {user.subscription?.maxChatbots === -1 ? 'Sınırsız' : user.subscription?.maxChatbots}
+                            {t('dashboard.limit')}: {user.subscription?.maxChatbots === -1 ? t('dashboard.unlimited') : user.subscription?.maxChatbots}
                         </p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Toplam Konuşma</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('dashboard.totalConversations')}</CardTitle>
                         <MessageSquare className="h-4 w-4 text-gray-600" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{totalConversations}</div>
                         <p className="text-xs text-gray-600">
-                            Bu ay: {user.subscription?.conversationsUsed || 0} / {user.subscription?.maxConversations === -1 ? '∞' : user.subscription?.maxConversations}
+                            {t('dashboard.thisMonth')}: {user.subscription?.conversationsUsed || 0} / {user.subscription?.maxConversations === -1 ? '∞' : user.subscription?.maxConversations}
                         </p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Yüklenen Doküman</CardTitle>
+                        <CardTitle className="text-sm font-medium">{t('dashboard.uploadedDocuments')}</CardTitle>
                         <FileText className="h-4 w-4 text-gray-600" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{totalDocuments}</div>
                         <p className="text-xs text-gray-600">
-                            Limit: {user.subscription?.maxDocuments === -1 ? 'Sınırsız' : user.subscription?.maxDocuments}
+                            {t('dashboard.limit')}: {user.subscription?.maxDocuments === -1 ? t('dashboard.unlimited') : user.subscription?.maxDocuments}
                         </p>
                     </CardContent>
                 </Card>
@@ -112,20 +122,22 @@ export default async function DashboardPage() {
             {/* Subscription Info */}
             <Card className="mb-8">
                 <CardHeader>
-                    <CardTitle>Abonelik Bilgileri</CardTitle>
-                    <CardDescription>Mevcut planınız ve limitleriniz</CardDescription>
+                    <CardTitle>{t('dashboard.subscriptionInfo')}</CardTitle>
+                    <CardDescription>{t('dashboard.subscriptionDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-lg font-semibold capitalize">
-                                {user.subscription?.plan === 'free' ? 'Ücretsiz' : user.subscription?.plan} Plan
+                                {user.subscription?.planType === 'free' ? t('pricing.free') : user.subscription?.planType} {t('dashboard.plan')}
                             </p>
                             <p className="text-sm text-gray-600">
-                                Durum: <span className="font-medium text-green-600">Aktif</span>
+                                {t('dashboard.status')}: <span className="font-medium text-green-600">{t('dashboard.active')}</span>
                             </p>
                         </div>
-                        <Button>Plan Yükselt</Button>
+                        <Link href="/pricing">
+                            <Button>{t('dashboard.upgradePlan')}</Button>
+                        </Link>
                     </div>
                 </CardContent>
             </Card>
@@ -133,7 +145,7 @@ export default async function DashboardPage() {
             {/* Chatbots Section */}
             <div>
                 <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-2xl font-bold">Chatbot'larım</h2>
+                    <h2 className="text-2xl font-bold">{t('dashboard.myChatbots')}</h2>
                     <CreateChatbotDialog />
                 </div>
 
@@ -141,15 +153,15 @@ export default async function DashboardPage() {
                     <Card>
                         <CardContent className="flex flex-col items-center justify-center py-12">
                             <Bot className="mb-4 h-16 w-16 text-gray-400" />
-                            <h3 className="text-xl font-semibold">Henüz chatbot oluşturmadınız</h3>
+                            <h3 className="text-xl font-semibold">{t('dashboard.noChatbots')}</h3>
                             <p className="mt-2 text-gray-600">
-                                İlk chatbot'unuzu oluşturun ve müşteri desteğinizi otomatikleştirin.
+                                {t('dashboard.noChatbotsDesc')}
                             </p>
                             <CreateChatbotDialog
                                 trigger={
                                     <Button className="mt-4">
                                         <Plus className="mr-2 h-4 w-4" />
-                                        İlk Chatbot'umu Oluştur
+                                        {t('dashboard.createFirstChatbot')}
                                     </Button>
                                 }
                             />
@@ -166,20 +178,20 @@ export default async function DashboardPage() {
                                     </CardTitle>
                                     <CardDescription>
                                         {chatbot.isActive ? (
-                                            <span className="text-green-600">● Aktif</span>
+                                            <span className="text-green-600">● {t('chatbots.active')}</span>
                                         ) : (
-                                            <span className="text-gray-400">● Pasif</span>
+                                            <span className="text-gray-400">● {t('chatbots.inactive')}</span>
                                         )}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-2 text-sm">
                                         <div className="flex justify-between">
-                                            <span className="text-gray-600">Konuşma:</span>
+                                            <span className="text-gray-600">{t('dashboard.conversation')}:</span>
                                             <span className="font-medium">{chatbot._count.conversations}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-gray-600">Doküman:</span>
+                                            <span className="text-gray-600">{t('dashboard.document')}:</span>
                                             <span className="font-medium">{chatbot._count.documents}</span>
                                         </div>
                                     </div>
@@ -189,8 +201,8 @@ export default async function DashboardPage() {
                                         size="sm"
                                         asChild
                                     >
-                                        <Link href={`/chatbots/${chatbot.id}`}>
-                                            Yönet
+                                        <Link href={`/${locale}/chatbots/${chatbot.id}`}>
+                                            {t('dashboard.manage')}
                                         </Link>
                                     </Button>
                                 </CardContent>

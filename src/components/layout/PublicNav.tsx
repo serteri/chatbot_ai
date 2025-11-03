@@ -1,92 +1,75 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter, usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
-import { Bot, Menu, X } from 'lucide-react'
-import { useState } from 'react'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { Globe } from 'lucide-react'
 
 export function PublicNav() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const router = useRouter()
+    const pathname = usePathname()
+    const t = useTranslations()
 
-  const navigation = [
-    { name: 'Özellikler', href: '#features' },
-    { name: 'Fiyatlandırma', href: '/pricing' },
-    { name: 'Hakkında', href: '/about' },
-    { name: 'İletişim', href: '/contact' },
-  ]
+    const changeLocale = (locale: string) => {
+        const segments = pathname.split('/')
+        segments[1] = locale
+        router.push(segments.join('/'))
+    }
 
-  return (
-    <header className="border-b bg-white sticky top-0 z-50">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <Bot className="h-8 w-8 text-blue-600" />
-          <span className="text-xl font-bold">ChatbotAI</span>
-        </Link>
+    const currentLocale = pathname.split('/')[1] || 'tr'
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
-            >
-              {item.name}
-            </Link>
-          ))}
-        </nav>
+    return (
+        <nav className="border-b bg-white">
+            <div className="container mx-auto px-4">
+                <div className="flex items-center justify-between h-16">
+                    <Link href="/" className="text-xl font-bold text-blue-600">
+                        ChatbotAI
+                    </Link>
 
-        {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
-          <Link href="/login">
-            <Button variant="ghost">Giriş Yap</Button>
-          </Link>
-          <Link href="/register">
-            <Button>Ücretsiz Başla</Button>
-          </Link>
-        </div>
+                    <div className="flex items-center space-x-4">
+                        {/* Dil Seçici */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                    <Globe className="h-4 w-4 mr-2" />
+                                    {currentLocale.toUpperCase()}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => changeLocale('tr')}>
+                                    🇹🇷 Türkçe
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => changeLocale('en')}>
+                                    🇬🇧 English
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => changeLocale('de')}>
+                                    🇩🇪 Deutsch
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => changeLocale('fr')}>
+                                    🇫🇷 Français
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => changeLocale('es')}>
+                                    🇪🇸 Español
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-white">
-          <nav className="container mx-auto flex flex-col space-y-4 px-4 py-4">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
-            <div className="flex flex-col space-y-2 pt-4 border-t">
-              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="outline" className="w-full">
-                  Giriş Yap
-                </Button>
-              </Link>
-              <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full">Ücretsiz Başla</Button>
-              </Link>
+                        <Link href="/login">
+                            <Button variant="ghost">{t('nav.login')}</Button>
+                        </Link>
+                        <Link href="/register">
+                            <Button>{t('nav.signup')}</Button>
+                        </Link>
+                    </div>
+                </div>
             </div>
-          </nav>
-        </div>
-      )}
-    </header>
-  )
+        </nav>
+    )
 }
