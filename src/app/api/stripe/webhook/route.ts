@@ -138,12 +138,20 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
  * Subscription güncellendiğinde
  */
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+    const periodStart = typeof subscription.current_period_start === 'number'
+        ? subscription.current_period_start * 1000
+        : Date.parse(subscription.current_period_start as any)
+
+    const periodEnd = typeof subscription.current_period_end === 'number'
+        ? subscription.current_period_end * 1000
+        : Date.parse(subscription.current_period_end as any)
+
     await prisma.subscription.updateMany({
         where: { stripeSubscriptionId: subscription.id },
         data: {
             status: subscription.status,
-            currentPeriodStart: new Date(subscription.current_period_start * 1000),
-            currentPeriodEnd: new Date(subscription.current_period_end * 1000)
+            currentPeriodStart: new Date(periodStart),
+            currentPeriodEnd: new Date(periodEnd)
         }
     })
 

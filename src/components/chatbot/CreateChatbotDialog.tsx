@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,7 +15,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Plus } from 'lucide-react'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
+import { Plus, GraduationCap, ShoppingCart, Heart, Briefcase } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface CreateChatbotDialogProps {
@@ -24,14 +31,25 @@ interface CreateChatbotDialogProps {
 
 export function CreateChatbotDialog({ trigger }: CreateChatbotDialogProps) {
     const router = useRouter()
+    const pathname = usePathname()
     const t = useTranslations()
+    const locale = pathname.split('/')[1] || 'tr'
+
     const [open, setOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [formData, setFormData] = useState({
         name: '',
         welcomeMessage: '',
         fallbackMessage: '',
+        industry: 'general', // 🆕 Industry field
     })
+
+    const industries = [
+        { value: 'general', label: 'Genel', icon: Briefcase },
+        { value: 'education', label: 'Eğitim Danışmanlığı', icon: GraduationCap },
+        { value: 'ecommerce', label: 'E-Ticaret', icon: ShoppingCart },
+        { value: 'healthcare', label: 'Sağlık', icon: Heart },
+    ]
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -57,7 +75,7 @@ export function CreateChatbotDialog({ trigger }: CreateChatbotDialogProps) {
             router.refresh()
 
             // Chatbot detay sayfasına yönlendir
-            router.push(`/chatbots/${data.chatbot.id}`)
+            router.push(`/${locale}/dashboard/chatbots/${data.chatbot.id}`)
         } catch (error) {
             toast.error(t('common.error'))
             setIsLoading(false)
@@ -96,6 +114,40 @@ export function CreateChatbotDialog({ trigger }: CreateChatbotDialogProps) {
                             required
                             disabled={isLoading}
                         />
+                    </div>
+
+                    {/* 🆕 Industry Seçimi */}
+                    <div className="space-y-2">
+                        <Label htmlFor="industry">
+                            Sektör <span className="text-red-500">*</span>
+                        </Label>
+                        <Select
+                            value={formData.industry}
+                            onValueChange={(value) => setFormData({ ...formData, industry: value })}
+                            disabled={isLoading}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Sektör seçin" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {industries.map((ind) => {
+                                    const Icon = ind.icon
+                                    return (
+                                        <SelectItem key={ind.value} value={ind.value}>
+                                            <div className="flex items-center gap-2">
+                                                <Icon className="h-4 w-4" />
+                                                <span>{ind.label}</span>
+                                            </div>
+                                        </SelectItem>
+                                    )
+                                })}
+                            </SelectContent>
+                        </Select>
+                        {formData.industry === 'education' && (
+                            <p className="text-xs text-blue-600">
+                                ✨ Eğitim danışmanlığı seçildi: Üniversite önerileri ve burs bilgileri otomatik aktif!
+                            </p>
+                        )}
                     </div>
 
                     {/* Karşılama Mesajı */}

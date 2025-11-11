@@ -1,13 +1,18 @@
 'use client'
 
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
+import { useParams } from 'next/navigation'
 import { PublicNav } from '@/components/layout/PublicNav'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Bot, FileText, BarChart3, Zap } from 'lucide-react'
 
 export default function HomePage() {
     const t = useTranslations()
+    const { data: session } = useSession()
+    const params = useParams()
+    const locale = params.locale as string || 'tr'
 
     return (
         <div className="flex min-h-screen flex-col">
@@ -24,16 +29,26 @@ export default function HomePage() {
                         {t('home.hero.subtitle')}
                     </p>
                     <div className="mt-10 flex justify-center gap-4">
-                        <Link href="/register">
-                            <Button size="lg" className="text-lg">
-                                {t('home.hero.cta')} <ArrowRight className="ml-2 h-5 w-5" />
-                            </Button>
-                        </Link>
-                        <Link href="/login">
-                            <Button size="lg" variant="outline" className="text-lg">
-                                {t('home.hero.login')}
-                            </Button>
-                        </Link>
+                        {session ? (
+                            <Link href={`/${locale}/dashboard`}>
+                                <Button size="lg" className="text-lg">
+                                    {t('nav.toDashboard')} <ArrowRight className="ml-2 h-5 w-5" />
+                                </Button>
+                            </Link>
+                        ) : (
+                            <>
+                                <Link href={`/${locale}/register`}>
+                                    <Button size="lg" className="text-lg">
+                                        {t('home.hero.cta')} <ArrowRight className="ml-2 h-5 w-5" />
+                                    </Button>
+                                </Link>
+                                <Link href={`/${locale}/login`}>
+                                    <Button size="lg" variant="outline" className="text-lg">
+                                        {t('home.hero.login')}
+                                    </Button>
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </section>
 
@@ -93,11 +108,19 @@ export default function HomePage() {
                             {t('home.cta.subtitle')}
                         </p>
                         <div className="mt-8">
-                            <Link href="/register">
-                                <Button size="lg" className="text-lg">
-                                    {t('home.cta.button')}
-                                </Button>
-                            </Link>
+                            {session ? (
+                                <Link href={`/${locale}/dashboard`}>
+                                    <Button size="lg" className="text-lg">
+                                        {t('nav.toDashboard')}
+                                    </Button>
+                                </Link>
+                            ) : (
+                                <Link href={`/${locale}/register`}>
+                                    <Button size="lg" className="text-lg">
+                                        {t('home.cta.button')}
+                                    </Button>
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </section>

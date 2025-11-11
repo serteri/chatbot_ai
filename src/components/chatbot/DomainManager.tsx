@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,6 +18,7 @@ interface DomainManagerProps {
 }
 
 export function DomainManager({ chatbotId, initialDomains, onUpdate }: DomainManagerProps) {
+    const t = useTranslations()
     const [domains, setDomains] = useState<string[]>(initialDomains)
     const [newDomain, setNewDomain] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -25,26 +27,26 @@ export function DomainManager({ chatbotId, initialDomains, onUpdate }: DomainMan
     const validateDomain = (domain: string): { valid: boolean; error?: string } => {
         // Boş kontrolü
         if (!domain.trim()) {
-            return { valid: false, error: 'Domain boş olamaz' }
+            return { valid: false, error: t('security.domainEmpty') }
         }
 
         // Wildcard kontrolü
         if (domain.startsWith('*.')) {
             const mainDomain = domain.slice(2)
             if (!mainDomain) {
-                return { valid: false, error: 'Wildcard sonrası domain gerekli (örn: *.example.com)' }
+                return { valid: false, error: t('security.wildcardError') }
             }
         }
 
         // Basit domain formatı kontrolü
         const domainRegex = /^(\*\.)?([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?(\.[a-zA-Z]{2,})+|localhost)(:\d+)?$/
         if (!domainRegex.test(domain)) {
-            return { valid: false, error: 'Geçersiz domain formatı' }
+            return { valid: false, error: t('security.invalidFormat') }
         }
 
         // Zaten var mı kontrolü
         if (domains.includes(domain)) {
-            return { valid: false, error: 'Bu domain zaten ekli' }
+            return { valid: false, error: t('security.alreadyExists') }
         }
 
         return { valid: true }
@@ -54,18 +56,18 @@ export function DomainManager({ chatbotId, initialDomains, onUpdate }: DomainMan
         const validation = validateDomain(newDomain)
 
         if (!validation.valid) {
-            toast.error(validation.error || 'Geçersiz domain')
+            toast.error(validation.error || t('security.invalidDomain'))
             return
         }
 
         setDomains([...domains, newDomain.toLowerCase()])
         setNewDomain('')
-        toast.success('Domain eklendi! Kaydetmeyi unutmayın.')
+        toast.success(t('security.domainAdded'))
     }
 
     const handleRemoveDomain = (domain: string) => {
         setDomains(domains.filter(d => d !== domain))
-        toast.success('Domain kaldırıldı! Kaydetmeyi unutmayın.')
+        toast.success(t('security.domainRemoved'))
     }
 
     const handleSave = async () => {
@@ -84,12 +86,12 @@ export function DomainManager({ chatbotId, initialDomains, onUpdate }: DomainMan
                 throw new Error('Kayıt başarısız')
             }
 
-            toast.success('Domain ayarları kaydedildi!')
+            toast.success(t('security.saveSuccess'))
             onUpdate?.(domains)
 
         } catch (error) {
             console.error('Save error:', error)
-            toast.error('Kayıt sırasında hata oluştu')
+            toast.error(t('common.error'))
         } finally {
             setIsSaving(false)
         }
@@ -102,14 +104,14 @@ export function DomainManager({ chatbotId, initialDomains, onUpdate }: DomainMan
                     <div>
                         <CardTitle className="flex items-center gap-2">
                             <Globe className="h-5 w-5" />
-                            İzinli Domain'ler
+                            {t('security.allowedDomains')}
                         </CardTitle>
                         <CardDescription className="mt-2">
-                            Widget'ın sadece belirtilen domainlerde çalışmasını sağlayın
+                            {t('security.domainsDesc')}
                         </CardDescription>
                     </div>
                     <Button onClick={handleSave} disabled={isSaving}>
-                        {isSaving ? 'Kaydediliyor...' : 'Kaydet'}
+                        {isSaving ? t('settings.saving') : t('common.save')}
                     </Button>
                 </div>
             </CardHeader>
@@ -121,12 +123,11 @@ export function DomainManager({ chatbotId, initialDomains, onUpdate }: DomainMan
                     <AlertDescription>
                         {domains.length === 0 ? (
                             <div>
-                                <strong>⚠️ Uyarı:</strong> Domain listesi boş olduğunda widget <strong>tüm domainlerde</strong> çalışır.
-                                Güvenlik için en az bir domain eklemeniz önerilir.
+                                <strong>⚠️ {t('security.warning')}:</strong> {t('security.emptyWarning')}
                             </div>
                         ) : (
                             <div>
-                                <strong>✓ Güvenli:</strong> Widget sadece aşağıdaki domainlerde çalışacak.
+                                <strong>✓ {t('security.secure')}:</strong> {t('security.secureDesc')}
                             </div>
                         )}
                     </AlertDescription>
@@ -135,7 +136,7 @@ export function DomainManager({ chatbotId, initialDomains, onUpdate }: DomainMan
                 {/* Domain List */}
                 {domains.length > 0 && (
                     <div className="space-y-2">
-                        <Label>Kayıtlı Domainler ({domains.length})</Label>
+                        <Label>{t('security.registeredDomains')} ({domains.length})</Label>
                         <div className="space-y-2">
                             {domains.map((domain) => (
                                 <div
@@ -166,11 +167,11 @@ export function DomainManager({ chatbotId, initialDomains, onUpdate }: DomainMan
 
                 {/* Add Domain Form */}
                 <div className="space-y-2">
-                    <Label htmlFor="newDomain">Yeni Domain Ekle</Label>
+                    <Label htmlFor="newDomain">{t('security.addNewDomain')}</Label>
                     <div className="flex gap-2">
                         <Input
                             id="newDomain"
-                            placeholder="example.com veya *.example.com"
+                            placeholder={t('security.domainPlaceholder')}
                             value={newDomain}
                             onChange={(e) => setNewDomain(e.target.value)}
                             onKeyPress={(e) => {
@@ -185,18 +186,18 @@ export function DomainManager({ chatbotId, initialDomains, onUpdate }: DomainMan
                             disabled={!newDomain.trim()}
                         >
                             <Plus className="h-4 w-4 mr-2" />
-                            Ekle
+                            {t('security.add')}
                         </Button>
                     </div>
                 </div>
 
                 {/* Examples */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-sm font-semibold text-blue-900 mb-2">📝 Örnek Kullanımlar:</p>
+                    <p className="text-sm font-semibold text-blue-900 mb-2">📝 {t('security.examples')}:</p>
                     <div className="space-y-1 text-sm text-blue-800">
-                        <div><code className="bg-white px-2 py-0.5 rounded">example.com</code> → Sadece example.com</div>
-                        <div><code className="bg-white px-2 py-0.5 rounded">*.example.com</code> → Tüm subdomain'ler (app.example.com, blog.example.com vb.)</div>
-                        <div><code className="bg-white px-2 py-0.5 rounded">localhost</code> → Yerel test için (Development modda otomatik aktif)</div>
+                        <div><code className="bg-white px-2 py-0.5 rounded">example.com</code> → {t('security.example1')}</div>
+                        <div><code className="bg-white px-2 py-0.5 rounded">*.example.com</code> → {t('security.example2')}</div>
+                        <div><code className="bg-white px-2 py-0.5 rounded">localhost</code> → {t('security.example3')}</div>
                     </div>
                 </div>
 
@@ -204,8 +205,7 @@ export function DomainManager({ chatbotId, initialDomains, onUpdate }: DomainMan
                 <Alert variant="default">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription className="text-xs">
-                        <strong>Güvenlik Notu:</strong> Başkaları widget kodunuzu kopyalasa bile, izin verilen domainler dışında çalışmaz.
-                        Bu sayede API kullanımınız kontrol altında kalır.
+                        <strong>{t('security.securityNote')}:</strong> {t('security.securityNoteDesc')}
                     </AlertDescription>
                 </Alert>
             </CardContent>

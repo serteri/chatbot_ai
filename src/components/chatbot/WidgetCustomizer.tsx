@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -27,6 +28,7 @@ interface WidgetCustomizerProps {
 
 export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomizerProps) {
     const router = useRouter()
+    const t = useTranslations()
     const [saving, setSaving] = useState(false)
     const [settings, setSettings] = useState(initialSettings)
     const [logoFile, setLogoFile] = useState<File | null>(null)
@@ -82,10 +84,10 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
             }
 
             router.refresh()
-            toast.success('Widget ayarları kaydedildi!')
+            toast.success(t('widget.saveSuccess'))
         } catch (error) {
             console.error('Save error:', error)
-            toast.error('Bir hata oluştu')
+            toast.error(t('common.error'))
         } finally {
             setSaving(false)
         }
@@ -100,13 +102,13 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                     <CardHeader>
                         <CardTitle className="flex items-center">
                             <Palette className="mr-2 h-5 w-5" />
-                            Renkler
+                            {t('widget.colors')}
                         </CardTitle>
-                        <CardDescription>Widget renklerini özelleştirin</CardDescription>
+                        <CardDescription>{t('widget.colorsDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
-                            <Label htmlFor="primaryColor">Ana Renk</Label>
+                            <Label htmlFor="primaryColor">{t('widget.primaryColor')}</Label>
                             <div className="flex space-x-2 mt-2">
                                 <Input
                                     id="primaryColor"
@@ -125,7 +127,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                         </div>
 
                         <div>
-                            <Label htmlFor="buttonColor">Buton Rengi</Label>
+                            <Label htmlFor="buttonColor">{t('widget.buttonColor')}</Label>
                             <div className="flex space-x-2 mt-2">
                                 <Input
                                     id="buttonColor"
@@ -144,7 +146,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                         </div>
 
                         <div>
-                            <Label htmlFor="textColor">Yazı Rengi</Label>
+                            <Label htmlFor="textColor">{t('widget.textColor')}</Label>
                             <div className="flex space-x-2 mt-2">
                                 <Input
                                     id="textColor"
@@ -167,12 +169,12 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                 {/* Layout */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Görünüm</CardTitle>
-                        <CardDescription>Widget pozisyonu ve boyutu</CardDescription>
+                        <CardTitle>{t('widget.appearance')}</CardTitle>
+                        <CardDescription>{t('widget.appearanceDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
-                            <Label>Pozisyon</Label>
+                            <Label>{t('widget.position')}</Label>
                             <Select
                                 value={settings.widgetPosition}
                                 onValueChange={(value) => setSettings({ ...settings, widgetPosition: value })}
@@ -181,14 +183,14 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="bottom-right">Sağ Alt</SelectItem>
-                                    <SelectItem value="bottom-left">Sol Alt</SelectItem>
+                                    <SelectItem value="bottom-right">{t('widget.bottomRight')}</SelectItem>
+                                    <SelectItem value="bottom-left">{t('widget.bottomLeft')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <div>
-                            <Label>Boyut</Label>
+                            <Label>{t('widget.size')}</Label>
                             <Select
                                 value={settings.widgetSize}
                                 onValueChange={(value) => setSettings({ ...settings, widgetSize: value })}
@@ -197,9 +199,9 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="small">Küçük</SelectItem>
-                                    <SelectItem value="medium">Orta</SelectItem>
-                                    <SelectItem value="large">Büyük</SelectItem>
+                                    <SelectItem value="small">{t('widget.small')}</SelectItem>
+                                    <SelectItem value="medium">{t('widget.medium')}</SelectItem>
+                                    <SelectItem value="large">{t('widget.large')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -209,28 +211,28 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                 {/* Messages */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Mesajlar</CardTitle>
-                        <CardDescription>Bot adı ve karşılama mesajı</CardDescription>
+                        <CardTitle>{t('settings.messages')}</CardTitle>
+                        <CardDescription>{t('widget.messagesDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
-                            <Label htmlFor="botName">Bot Adı</Label>
+                            <Label htmlFor="botName">{t('settings.botDisplayName')}</Label>
                             <Input
                                 id="botName"
                                 value={settings.botName}
                                 onChange={(e) => setSettings({ ...settings, botName: e.target.value })}
-                                placeholder="AI Asistan"
+                                placeholder={t('widget.botNamePlaceholder')}
                                 className="mt-2"
                             />
                         </div>
 
                         <div>
-                            <Label htmlFor="welcomeMessage">Karşılama Mesajı</Label>
+                            <Label htmlFor="welcomeMessage">{t('settings.welcomeMessage')}</Label>
                             <Textarea
                                 id="welcomeMessage"
                                 value={settings.welcomeMessage}
                                 onChange={(e) => setSettings({ ...settings, welcomeMessage: e.target.value })}
-                                placeholder="Merhaba! Size nasıl yardımcı olabilirim?"
+                                placeholder={t('widget.welcomePlaceholder')}
                                 rows={3}
                                 className="mt-2"
                             />
@@ -243,9 +245,9 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                     <CardHeader>
                         <CardTitle className="flex items-center">
                             <ImageIcon className="mr-2 h-5 w-5" />
-                            Logo
+                            {t('widget.logo')}
                         </CardTitle>
-                        <CardDescription>Widget için özel logo yükleyin</CardDescription>
+                        <CardDescription>{t('widget.logoDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
@@ -264,7 +266,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                                 onChange={handleLogoChange}
                             />
                             <p className="text-xs text-gray-500">
-                                PNG, JPG veya SVG. Maksimum 2MB.
+                                {t('widget.logoInfo')}
                             </p>
                         </div>
                     </CardContent>
@@ -275,10 +277,10 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                     {saving ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Kaydediliyor...
+                            {t('settings.saving')}
                         </>
                     ) : (
-                        'Değişiklikleri Kaydet'
+                        t('settings.save')
                     )}
                 </Button>
             </div>
@@ -287,8 +289,8 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
             <div className="space-y-4">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Canlı Önizleme</CardTitle>
-                        <CardDescription>Widget görünümünü test edin</CardDescription>
+                        <CardTitle>{t('widget.livePreview')}</CardTitle>
+                        <CardDescription>{t('widget.previewDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="relative h-[600px] bg-gray-100 rounded-lg overflow-hidden">

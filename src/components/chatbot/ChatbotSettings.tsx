@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -26,6 +27,7 @@ interface ChatbotSettingsProps {
 
 export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsProps) {
     const router = useRouter()
+    const t = useTranslations()
     const [saving, setSaving] = useState(false)
     const [settings, setSettings] = useState(initialSettings)
 
@@ -44,14 +46,14 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
             }
 
             router.refresh()
-            toast.success('Ayarlar kaydedildi! Sayfa yenileniyor...')
+            toast.success(t('settings.saveSuccessRefresh'))
 
             setTimeout(() => {
                 window.location.href = window.location.href
             }, 1000)
         } catch (error) {
             console.error('Save error:', error)
-            toast.error('Bir hata oluştu')
+            toast.error(t('common.error'))
         } finally {
             setSaving(false)
         }
@@ -62,40 +64,40 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
             {/* Genel Ayarlar */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Genel Ayarlar</CardTitle>
-                    <CardDescription>Chatbot adı ve temel bilgiler</CardDescription>
+                    <CardTitle>{t('settings.general')}</CardTitle>
+                    <CardDescription>{t('settings.generalDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div>
-                        <Label htmlFor="name">Chatbot Adı</Label>
+                        <Label htmlFor="name">{t('settings.chatbotName')}</Label>
                         <Input
                             id="name"
                             value={settings.name}
                             onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-                            placeholder="Müşteri Destek Botum"
+                            placeholder={t('settings.chatbotNamePlaceholder')}
                             className="mt-2"
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Dashboard'da görünen isim
+                            {t('settings.chatbotNameDesc')}
                         </p>
                     </div>
 
                     <div>
-                        <Label htmlFor="botName">Bot Görünen Adı</Label>
+                        <Label htmlFor="botName">{t('settings.botDisplayName')}</Label>
                         <Input
                             id="botName"
                             value={settings.botName}
                             onChange={(e) => setSettings({ ...settings, botName: e.target.value })}
-                            placeholder="AI Asistan"
+                            placeholder={t('settings.botDisplayNamePlaceholder')}
                             className="mt-2"
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Widget'ta kullanıcılara görünen isim
+                            {t('settings.botDisplayNameDesc')}
                         </p>
                     </div>
 
                     <div>
-                        <Label htmlFor="language">Dil</Label>
+                        <Label htmlFor="language">{t('settings.language')}</Label>
                         <Select
                             value={settings.language}
                             onValueChange={(value) => setSettings({ ...settings, language: value })}
@@ -118,38 +120,37 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
             {/* Mesajlar */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Mesajlar</CardTitle>
-                    <CardDescription>Karşılama ve fallback mesajları</CardDescription>
+                    <CardTitle>{t('settings.messages')}</CardTitle>
+                    <CardDescription>{t('settings.messagesDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div>
-                        <Label htmlFor="welcomeMessage">Karşılama Mesajı</Label>
+                        <Label htmlFor="welcomeMessage">{t('settings.welcomeMessage')}</Label>
                         <Textarea
                             id="welcomeMessage"
                             value={settings.welcomeMessage}
                             onChange={(e) => setSettings({ ...settings, welcomeMessage: e.target.value })}
-                            placeholder="Merhaba! Size nasıl yardımcı olabilirim?"
+                            placeholder={t('settings.welcomePlaceholder')}
                             rows={3}
                             className="mt-2"
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Widget açıldığında gösterilen ilk mesaj
+                            {t('settings.welcomeDesc')}
                         </p>
                     </div>
 
                     <div>
-                        <Label htmlFor="fallbackMessage">Fallback Mesajı</Label>
+                        <Label htmlFor="fallbackMessage">{t('settings.fallbackMessage')}</Label>
                         <Textarea
                             id="fallbackMessage"
                             value={settings.fallbackMessage}
                             onChange={(e) => setSettings({ ...settings, fallbackMessage: e.target.value })}
-                            placeholder="Üzgünüm, bu konuda yardımcı olamıyorum."
+                            placeholder={t('settings.fallbackPlaceholder')}
                             rows={4}
                             className="mt-2"
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            ⚠️ <strong>Önemli:</strong> Dokümanlarınızda cevap bulunamadığında gösterilir.
-                            İletişim bilgilerinizi ekleyebilirsiniz: "Müşteri hizmetlerimizle iletişime geçin: support@firma.com veya 0850..."
+                            ⚠️ <strong>{t('settings.important')}:</strong> {t('settings.fallbackDesc')}
                         </p>
                     </div>
                 </CardContent>
@@ -158,12 +159,12 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
             {/* AI Ayarları */}
             <Card>
                 <CardHeader>
-                    <CardTitle>AI Ayarları</CardTitle>
-                    <CardDescription>Model ve davranış parametreleri</CardDescription>
+                    <CardTitle>{t('settings.aiSettings')}</CardTitle>
+                    <CardDescription>{t('settings.aiSettingsDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div>
-                        <Label htmlFor="aiModel">AI Model</Label>
+                        <Label htmlFor="aiModel">{t('settings.model')}</Label>
                         <Select
                             value={settings.aiModel}
                             onValueChange={(value) => setSettings({ ...settings, aiModel: value })}
@@ -172,17 +173,17 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="gpt-4o-mini">GPT-4o Mini (Hızlı & Ekonomik)</SelectItem>
-                                <SelectItem value="gpt-4o">GPT-4o (En Akıllı)</SelectItem>
-                                <SelectItem value="gpt-4-turbo">GPT-4 Turbo (Dengeli)</SelectItem>
-                                <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo (Ekonomik)</SelectItem>
+                                <SelectItem value="gpt-4o-mini">GPT-4o Mini ({t('settings.modelFastEconomic')})</SelectItem>
+                                <SelectItem value="gpt-4o">GPT-4o ({t('settings.modelSmartest')})</SelectItem>
+                                <SelectItem value="gpt-4-turbo">GPT-4 Turbo ({t('settings.modelBalanced')})</SelectItem>
+                                <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo ({t('settings.modelEconomic')})</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
 
                     <div>
                         <Label htmlFor="temperature">
-                            Yaratıcılık Seviyesi: {settings.temperature.toFixed(1)}
+                            {t('settings.temperature')}: {settings.temperature.toFixed(1)}
                         </Label>
                         <input
                             id="temperature"
@@ -195,12 +196,12 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
                             className="w-full mt-2"
                         />
                         <div className="flex justify-between text-xs text-gray-500 mt-1">
-                            <span>Tutarlı (0.0)</span>
-                            <span>Dengeli (0.7)</span>
-                            <span>Yaratıcı (2.0)</span>
+                            <span>{t('settings.consistent')} (0.0)</span>
+                            <span>{t('settings.balanced')} (0.7)</span>
+                            <span>{t('settings.creative')} (2.0)</span>
                         </div>
                         <p className="text-xs text-gray-500 mt-2">
-                            Düşük değerler daha tutarlı, yüksek değerler daha yaratıcı cevaplar verir
+                            {t('settings.temperatureDesc')}
                         </p>
                     </div>
                 </CardContent>
@@ -212,12 +213,12 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
                     {saving ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Kaydediliyor...
+                            {t('settings.saving')}
                         </>
                     ) : (
                         <>
                             <Save className="mr-2 h-4 w-4" />
-                            Değişiklikleri Kaydet
+                            {t('settings.save')}
                         </>
                     )}
                 </Button>

@@ -13,6 +13,7 @@ const createChatbotSchema = z.object({
   welcomeMessage: z.string().default('Hello! How can I help you today?'),
   placeholderText: z.string().default('Type your message...'),
   fallbackMessage: z.string().default('I couldn\'t find an answer. Would you like to speak with a human?'),
+    industry: z.string().default('general')
 })
 
 export async function POST(req: NextRequest) {
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
         fallbackMessage: validatedData.fallbackMessage,
         isActive: false, // Başlangıçta pasif
         isPublished: false,
+          industry: validatedData.industry
       },
       include: {
         _count: {

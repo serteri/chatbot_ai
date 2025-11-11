@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'  // Standart içe aktarım (dil desteği için değil)
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
@@ -14,6 +15,7 @@ export function ToggleActiveButton({ chatbotId, initialIsActive }: ToggleActiveB
     const [isActive, setIsActive] = useState(initialIsActive)
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
+    const t = useTranslations('ToggleActiveButton')  // Çeviriler için namespace
 
     const handleToggle = async () => {
         setIsLoading(true)
@@ -23,20 +25,20 @@ export function ToggleActiveButton({ chatbotId, initialIsActive }: ToggleActiveB
             })
 
             if (!response.ok) {
-                throw new Error('İşlem başarısız')
+                throw new Error(t('operationFailed'))
             }
 
             const data = await response.json()
             setIsActive(data.isActive)
 
             // Başarı mesajı
-            alert(data.isActive ? 'Chatbot aktif edildi!' : 'Chatbot pasif edildi!')
+            alert(data.isActive ? t('chatbotActivated') : t('chatbotDeactivated'))
 
             // Sayfayı yenile
             router.refresh()
         } catch (error) {
             console.error('Toggle error:', error)
-            alert('Bir hata oluştu. Lütfen tekrar deneyin.')
+            alert(t('errorOccurred'))
         } finally {
             setIsLoading(false)
         }
@@ -47,17 +49,17 @@ export function ToggleActiveButton({ chatbotId, initialIsActive }: ToggleActiveB
             {isLoading ? (
                 <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    İşleniyor...
+                    {t('processing')}
                 </>
             ) : isActive ? (
                 <>
                     <EyeOff className="mr-2 h-4 w-4" />
-                    Pasif Yap
+                    {t('makePassive')}
                 </>
             ) : (
                 <>
                     <Eye className="mr-2 h-4 w-4" />
-                    Aktif Yap
+                    {t('makeActive')}
                 </>
             )}
         </Button>

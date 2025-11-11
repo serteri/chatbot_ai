@@ -4,6 +4,17 @@ import { searchSimilarChunks, buildRAGContext, calculateConfidence } from '@/lib
 import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { sendNewMessageNotification } from '@/lib/email/helpers'
+import {
+    detectIntent,
+    buildUniversityPrompt,
+    buildScholarshipPrompt,
+    buildLiveSupportMessage,
+    buildVisaPrompt,
+    buildLanguageSchoolPrompt,    // 🔥 EKLE
+    buildCostOfLivingPrompt,      // 🔥 EKLE
+    buildApplicationGuidePrompt   // 🔥 EKLE
+} from '@/lib/services/intent-detection'
+import { findSimilarUniversities } from '@/lib/services/university-search'
 
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -12,35 +23,26 @@ export const maxDuration = 30
  * Domain kontrolü fonksiyonu
  */
 function isDomainAllowed(origin: string | null, allowedDomains: string[]): boolean {
-    // Development için localhost'a izin ver
     if (process.env.NODE_ENV === 'development') {
         if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
             return true
         }
     }
 
-    // Origin yoksa red et
     if (!origin) return false
 
     try {
         const url = new URL(origin)
         const hostname = url.hostname
 
-        // Allowed domains boşsa, herkese açık demektir
         if (allowedDomains.length === 0) return true
 
-        // Wildcard ve exact match kontrolü
         return allowedDomains.some(allowed => {
-            // Exact match
             if (hostname === allowed) return true
-
-            // Wildcard match (*.example.com)
             if (allowed.startsWith('*.')) {
                 const domain = allowed.slice(2)
                 return hostname.endsWith(domain)
             }
-
-            // Subdomain match (example.com -> *.example.com)
             return hostname.endsWith(`.${allowed}`)
         })
     } catch {
@@ -59,7 +61,6 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        // Origin kontrolü
         const origin = req.headers.get('origin') || req.headers.get('referer')
 
         // Chatbot'u kontrol et
@@ -79,11 +80,9 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        // 🔒 DOMAIN KONTROLÜ
+        // Domain kontrolü
         if (!isDomainAllowed(origin, chatbot.allowedDomains)) {
             console.log(`❌ Domain rejected: ${origin}`)
-            console.log(`✅ Allowed domains: ${chatbot.allowedDomains.join(', ')}`)
-
             return NextResponse.json(
                 { error: 'Bu domain için yetkilendirilmemiş' },
                 { status: 403 }
@@ -110,7 +109,7 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // Conversation var mı kontrol et, yoksa oluştur
+        // Conversation var mı kontrol et
         let conversation
         if (conversationId) {
             conversation = await prisma.conversation.findUnique({
@@ -146,6 +145,211 @@ export async function POST(req: NextRequest) {
             }
         })
 
+        // 🎯 INTENT DETECTION (Sadece education industry için)
+        let intentResult
+        let specializedContext = ''
+
+        if (chatbot.industry === 'education') {
+            intentResult = await detectIntent(message)
+            console.log('🎯 Intent detected:', intentResult)
+
+            // Düşük confidence veya canlı destek talebi
+            if (intentResult.needsLiveSupport || intentResult.intent === 'live_support_request') {
+                const liveSupportMsg = buildLiveSupportMessage(
+                    chatbot.whatsappNumber,
+                    chatbot.supportEmail,
+                    chatbot.liveSupportUrl
+                )
+
+                // Database'e kaydet
+                await prisma.conversationMessage.create({
+                    data: {
+                        conversationId: conversation.id,
+                        role: 'assistant',
+                        content: liveSupportMsg,
+                        aiModel: chatbot.aiModel,
+                        confidence: intentResult.confidence,
+                    }
+                })
+
+                // Canlı destek talebi oluştur
+                await prisma.liveSupportRequest.create({
+                    data: {
+                        chatbotId: chatbot.id,
+                        conversationId: conversation.id,
+                        visitorId,
+                        message: message,
+                        status: 'pending',
+                        priority: 'normal'
+                    }
+                })
+
+                // Stats güncelle
+                await updateStats(chatbot.id, conversation.id, subscription, chatbot.userId)
+
+                const response = new NextResponse(liveSupportMsg)
+                response.headers.set('X-Conversation-Id', conversation.id)
+                if (origin) {
+                    response.headers.set('Access-Control-Allow-Origin', origin)
+                    response.headers.set('Access-Control-Allow-Credentials', 'true')
+                }
+                return response
+            }
+
+            // Üniversite önerisi
+            if (intentResult.intent === 'university_recommendation') {
+                const universities = await findSimilarUniversities(
+                    intentResult.entities.country,
+                    intentResult.entities.field,
+                    5
+                )
+
+                console.log('📋 Universities found:', universities.length)
+
+                if (universities.length > 0) {
+                    const uniContext = universities.map(u =>
+                        `${u.name} (${u.city}, ${u.country}) - Ranking: #${u.ranking}, Tuition: $${u.tuitionMin}-${u.tuitionMax}/year, Programs: ${u.programs.join(', ')}`
+                    ).join('\n')
+
+                    specializedContext = buildUniversityPrompt(intentResult.entities, uniContext)
+                    console.log('🎓 Specialized context created')
+                }
+            }
+
+            // Burs sorusu
+            if (intentResult.intent === 'scholarship_inquiry') {
+                const scholarships = await prisma.scholarship.findMany({
+                    where: {
+                        ...(intentResult.entities.country && {
+                            country: { contains: intentResult.entities.country, mode: 'insensitive' }
+                        }),
+                    },
+                    include: { university: true },
+                    take: 5,
+                    orderBy: { amount: 'desc' }
+                })
+
+                if (scholarships.length > 0) {
+                    const scholarshipContext = scholarships.map(s =>
+                        `${s.name} - ${s.university?.name || s.country}, Amount: ${s.amount ? '$' + s.amount : s.percentage + '%'}, Deadline: ${s.deadline?.toLocaleDateString()}, Type: ${s.type}`
+                    ).join('\n')
+
+                    specializedContext = buildScholarshipPrompt(intentResult.entities, scholarshipContext)
+                }
+            }
+        }
+// Vize bilgisi
+        if (intentResult.intent === 'visa_information') {
+            const visaInfo = await prisma.visaInfo.findMany({
+                where: {
+                    ...(intentResult.entities.country && {
+                        country: { contains: intentResult.entities.country, mode: 'insensitive' }
+                    })
+                },
+                take: 3
+            })
+
+            console.log('🛂 Visa info found:', visaInfo.length)
+
+            if (visaInfo.length > 0) {
+                const visaContext = visaInfo.map(v =>
+                    `${v.country} - ${v.visaType}\nCost: $${v.cost}, Processing: ${v.processingTime}\nDuration: ${v.duration}\nWebsite: ${v.website}`
+                ).join('\n\n')
+
+                specializedContext = buildVisaPrompt(intentResult.entities, visaContext)
+                console.log('🛂 Visa context created')
+            }
+        }
+
+        // Dil okulu önerisi
+        if (intentResult.intent === 'language_school_inquiry') {
+            let cityQuery = intentResult.entities.city
+            if (cityQuery) {
+                const cityMap: Record<string, string> = {
+                    'münich': 'Munich',
+                    'münih': 'Munich',
+                    'munich': 'Munich',
+                    'new york': 'New York',
+                    'toronto': 'Toronto'
+                }
+                cityQuery = cityMap[cityQuery.toLowerCase()] || cityQuery
+            }
+
+            const languageSchools = await prisma.languageSchool.findMany({
+                where: {
+                    ...(intentResult.entities.country && {
+                        country: { contains: intentResult.entities.country, mode: 'insensitive' }
+                    }),
+                    ...(intentResult.entities.city && {
+                        city: { contains: intentResult.entities.city, mode: 'insensitive' }
+                    }),
+                    ...(intentResult.entities.language && {
+                        languages: { has: intentResult.entities.language }
+                    })
+                },
+                take: 5
+            })
+
+            console.log('🗣️ Language schools found:', languageSchools.length)
+
+            if (languageSchools.length > 0) {
+                const schoolContext = languageSchools.map(s =>
+                    `${s.name} (${s.city}, ${s.country})\nLanguages: ${s.languages.join(', ')}\nDuration: ${s.courseDuration}, Price: $${s.pricePerWeek}/week\nCertifications: ${s.certifications.join(', ')}\nWebsite: ${s.website}`
+                ).join('\n\n')
+
+                specializedContext = buildLanguageSchoolPrompt(intentResult.entities, schoolContext)
+                console.log('🗣️ Language school context created')
+            }
+        }
+
+        // Yaşam maliyeti
+        if (intentResult.intent === 'cost_of_living') {
+            const costData = await prisma.costOfLiving.findMany({
+                where: {
+                    ...(intentResult.entities.country && {
+                        country: { contains: intentResult.entities.country, mode: 'insensitive' }
+                    }),
+                    ...(intentResult.entities.city && {
+                        city: { contains: intentResult.entities.city, mode: 'insensitive' }
+                    })
+                },
+                take: 3
+            })
+
+            console.log('💰 Cost of living data found:', costData.length)
+
+            if (costData.length > 0) {
+                const costContext = costData.map(c =>
+                    `${c.city}, ${c.country}\nRent: ${c.currency} ${c.rent}/month, Food: ${c.currency} ${c.food}/month\nTransport: ${c.currency} ${c.transport}/month, Utilities: ${c.currency} ${c.utilities}/month\nInsurance: ${c.currency} ${c.insurance}/month, Misc: ${c.currency} ${c.miscellaneous}/month\nTotal: ${c.currency} ${c.total}/month`
+                ).join('\n\n')
+
+                specializedContext = buildCostOfLivingPrompt(intentResult.entities, costContext)
+                console.log('💰 Cost of living context created')
+            }
+        }
+
+        // Başvuru rehberi
+        if (intentResult.intent === 'application_guide') {
+            const guides = await prisma.applicationGuide.findMany({
+                where: {
+                    ...(intentResult.entities.country && {
+                        country: { contains: intentResult.entities.country, mode: 'insensitive' }
+                    })
+                },
+                take: 2
+            })
+
+            console.log('📝 Application guides found:', guides.length)
+
+            if (guides.length > 0) {
+                const guideContext = guides.map(g =>
+                    `${g.title} (${g.country})\nTimeline: ${g.timeline}\nRequired Documents: ${g.documents.join(', ')}\nTips: ${g.tips.join('; ')}\nSteps: ${JSON.stringify(g.steps)}`
+                ).join('\n\n')
+
+                specializedContext = buildApplicationGuidePrompt(intentResult.entities, guideContext)
+                console.log('📝 Application guide context created')
+            }
+        }
         // RAG: Dokümanlardan benzer içerik bul
         const searchResults = await searchSimilarChunks(chatbot.id, message, 3)
         const hasRelevantDocs = searchResults.chunks.length > 0 && searchResults.avgSimilarity > 0.68
@@ -157,7 +361,8 @@ export async function POST(req: NextRequest) {
             hasRelevant: hasRelevantDocs
         })
 
-        let systemPrompt = `Sen ${chatbot.botName} adlı bir AI asistanısın. ${chatbot.welcomeMessage}
+        // System prompt oluştur
+        let systemPrompt = specializedContext || `Sen ${chatbot.botName} adlı bir AI asistanısın. ${chatbot.welcomeMessage}
 
 Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
 
@@ -171,12 +376,12 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
 3. Genel bilgi VERME, sadece doküman bilgisi ver`
         }
 
+        // Hiçbir kaynak yoksa fallback
+        const hasAnySource = hasRelevantDocs || (specializedContext && specializedContext.length > 0)
 
-        // 📌 Dokümanda bilgi yoksa direkt fallback
-        if (!hasRelevantDocs) {
+        if (!hasAnySource) {
             const fallbackText = chatbot.fallbackMessage || 'Üzgünüm, bu konuda yardımcı olamıyorum.'
 
-            // Database'e kaydet
             await prisma.conversationMessage.create({
                 data: {
                     conversationId: conversation.id,
@@ -184,24 +389,11 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
                     content: fallbackText,
                     aiModel: chatbot.aiModel,
                     confidence: 0,
-                    sources: null,
                 }
             })
 
-            // Stats güncelle
-            await prisma.conversation.update({
-                where: { id: conversation.id },
-                data: { updatedAt: new Date() }
-            })
+            await updateStats(chatbot.id, conversation.id, subscription, chatbot.userId)
 
-            await prisma.chatbot.update({
-                where: { id: chatbot.id },
-                data: {
-                    totalMessages: { increment: 2 },
-                }
-            })
-
-            // Direkt fallback text'i dön
             const response = new NextResponse(fallbackText)
             response.headers.set('X-Conversation-Id', conversation.id)
             if (origin) {
@@ -231,7 +423,7 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
                         role: 'assistant',
                         content: text,
                         aiModel: chatbot.aiModel,
-                        confidence: hasRelevantDocs ? calculateConfidence(searchResults.avgSimilarity) : 0,
+                        confidence: hasRelevantDocs ? calculateConfidence(searchResults.avgSimilarity) : intentResult?.confidence || 0.8,
                         sources: hasRelevantDocs ? {
                             chunks: searchResults.chunks.map(c => ({
                                 documentName: c.documentName,
@@ -241,19 +433,20 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
                         } : null,
                     }
                 })
+
+                // Email notification
                 const chatbotOwner = await prisma.user.findUnique({
                     where: { id: chatbot.userId },
                     select: {
                         email: true,
                         name: true,
-                        emailNotifications: true,      // ← YENİ
-                        notificationEmail: true        // ← YENİ
+                        emailNotifications: true,
+                        notificationEmail: true
                     }
                 })
 
-                if (chatbotOwner?.emailNotifications) {  // ← Kontrol ekle
+                if (chatbotOwner?.emailNotifications) {
                     const emailTo = chatbotOwner.notificationEmail || chatbotOwner.email
-
                     if (emailTo) {
                         await sendNewMessageNotification({
                             to: emailTo,
@@ -264,30 +457,8 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
                         }).catch(err => console.error('Email failed:', err))
                     }
                 }
-                // Conversation güncelle
-                await prisma.conversation.update({
-                    where: { id: conversation.id },
-                    data: { updatedAt: new Date() }
-                })
 
-                // Subscription usage artır
-                if (subscription && subscription.maxConversations !== -1) {
-                    await prisma.subscription.update({
-                        where: { userId: chatbot.userId },
-                        data: {
-                            conversationsUsed: { increment: 1 }
-                        }
-                    })
-                }
-
-                // Chatbot stats güncelle
-                await prisma.chatbot.update({
-                    where: { id: chatbot.id },
-                    data: {
-                        totalConversations: { increment: conversation.messages.length === 0 ? 1 : 0 },
-                        totalMessages: { increment: 2 },
-                    }
-                })
+                await updateStats(chatbot.id, conversation.id, subscription, chatbot.userId)
             }
         })
 
@@ -295,7 +466,6 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
         const response = result.toTextStreamResponse()
         response.headers.set('X-Conversation-Id', conversation.id)
 
-        // Origin'e göre CORS header ekle
         if (origin) {
             response.headers.set('Access-Control-Allow-Origin', origin)
             response.headers.set('Access-Control-Allow-Credentials', 'true')
@@ -312,10 +482,33 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
     }
 }
 
+// Helper: Stats güncelle
+async function updateStats(chatbotId: string, conversationId: string, subscription: any, userId: string) {
+    await prisma.conversation.update({
+        where: { id: conversationId },
+        data: { updatedAt: new Date() }
+    })
+
+    if (subscription && subscription.maxConversations !== -1) {
+        await prisma.subscription.update({
+            where: { userId },
+            data: {
+                conversationsUsed: { increment: 1 }
+            }
+        })
+    }
+
+    await prisma.chatbot.update({
+        where: { id: chatbotId },
+        data: {
+            totalMessages: { increment: 2 },
+        }
+    })
+}
+
 // OPTIONS handler for CORS preflight
 export async function OPTIONS(req: NextRequest) {
     const origin = req.headers.get('origin')
-
     const response = new NextResponse(null, { status: 200 })
 
     if (origin) {

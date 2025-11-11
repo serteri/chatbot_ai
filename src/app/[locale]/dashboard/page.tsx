@@ -135,7 +135,7 @@ export default async function DashboardPage({
                                 {t('dashboard.status')}: <span className="font-medium text-green-600">{t('dashboard.active')}</span>
                             </p>
                         </div>
-                        <Link href="/pricing">
+                        <Link href={`/${locale}/dashboard/pricing`}>
                             <Button>{t('dashboard.upgradePlan')}</Button>
                         </Link>
                     </div>
@@ -201,7 +201,7 @@ export default async function DashboardPage({
                                         size="sm"
                                         asChild
                                     >
-                                        <Link href={`/${locale}/chatbots/${chatbot.id}`}>
+                                        <Link href={`/${locale}/dashboard/chatbots/${chatbot.id}`}>
                                             {t('dashboard.manage')}
                                         </Link>
                                     </Button>
