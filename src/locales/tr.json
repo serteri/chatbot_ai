@@ -561,6 +561,24 @@
     },
     "overdue": "Süre Geçti!",
     "today": "Bugün!",
-    "daysLeft": "gün kaldı"
+    "daysLeft": "gün kaldı",
+    "backToApplications": "Başvurulara Dön",
+    "searchUniversity": "Üniversite Ara",
+    "searchUniversityDesc": "Başvurmak istediğiniz üniversiteyi arayın",
+    "searchPlaceholder": "MIT, Harvard, Oxford gibi...",
+    "applicationDetails": "Başvuru Detayları"
+  },
+  "Universities": {
+    "title": "Üniversiteler",
+    "subtitle": "Dünya çapında en iyi üniversiteleri keşfedin",
+    "searchPlaceholder": "Üniversite, şehir veya ülke ara...",
+    "allCountries": "Tüm Ülkeler",
+    "clearFilters": "Filtreleri Temizle",
+    "noResults": "Sonuç bulunamadı",
+    "visitWebsite": "Web Sitesini Ziyaret Et",
+    "page": "Sayfa",
+    "of": "/",
+    "previous": "Önceki",
+    "next": "Sonraki"
   }
 }

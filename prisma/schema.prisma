@@ -541,6 +541,15 @@ model University {
   requirements      Json?
   website           String?
   description       String?  @db.Text
+  type              String? // Public, Private
+  tuitionFee        String? // Text field for flexible formatting
+
+  // ---- BURAYI EKLEYİN ----
+  logo                  String?
+  founded               Int?
+  studentCount          Int?
+  internationalStudents Int?
+  // -------------------------
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

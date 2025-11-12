@@ -551,6 +551,24 @@
     },
     "overdue": "Overdue!",
     "today": "Today!",
-    "daysLeft": "days left"
+    "daysLeft": "days left",
+    "backToApplications": "Back to Applications",
+    "searchUniversity": "Search University",
+    "searchUniversityDesc": "Search for the university you want to apply to",
+    "searchPlaceholder": "MIT, Harvard, Oxford...",
+    "applicationDetails": "Application Details"
+  },
+  "Universities": {
+    "title": "Universities",
+    "subtitle": "Discover top universities worldwide",
+    "searchPlaceholder": "Search university, city or country...",
+    "allCountries": "All Countries",
+    "clearFilters": "Clear Filters",
+    "noResults": "No results found",
+    "visitWebsite": "Visit Website",
+    "page": "Page",
+    "of": "of",
+    "previous": "Previous",
+    "next": "Next"
   }
 }

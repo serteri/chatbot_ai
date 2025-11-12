@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -35,22 +35,15 @@ interface Application {
 
 export default function ApplicationTrackerPage() {
     const t = useTranslations('ApplicationTracker')
+    const router = useRouter()
+    const params = useParams()
+    const locale = params.locale as string
+
     const [loading, setLoading] = useState(true)
     const [applications, setApplications] = useState<Application[]>([])
-    const [universities, setUniversities] = useState<any[]>([])
-    const [addDialogOpen, setAddDialogOpen] = useState(false)
-    const [newApp, setNewApp] = useState<any>({
-        universityId: '',
-        program: '',
-        degree: "Bachelor's",
-        intake: '',
-        deadline: '',
-        notes: ''
-    })
 
     useEffect(() => {
         fetchApplications()
-        fetchUniversities()
     }, [])
 
     const fetchApplications = async () => {
@@ -64,51 +57,6 @@ export default function ApplicationTrackerPage() {
             console.error('Error fetching applications:', error)
         } finally {
             setLoading(false)
-        }
-    }
-
-    const fetchUniversities = async () => {
-        try {
-            const res = await fetch('/api/universities?limit=100')
-            if (res.ok) {
-                const data = await res.json()
-                setUniversities(data.universities || [])
-            }
-        } catch (error) {
-            console.error('Error fetching universities:', error)
-        }
-    }
-
-    const handleAddApplication = async () => {
-        if (!newApp.universityId || !newApp.program || !newApp.intake) {
-            toast.error(t('fillRequired'))
-            return
-        }
-
-        try {
-            const res = await fetch('/api/student/applications', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newApp)
-            })
-
-            if (res.ok) {
-                toast.success(t('addSuccess'))
-                setAddDialogOpen(false)
-                setNewApp({
-                    universityId: '',
-                    program: '',
-                    degree: "Bachelor's",
-                    intake: '',
-                    deadline: '',
-                    notes: ''
-                })
-                fetchApplications()
-            } else {
-                toast.error(t('addError'))
-            }
-        } catch (error) {
-            toast.error(t('addError'))
         }
     }
 
@@ -183,99 +131,10 @@ export default function ApplicationTrackerPage() {
                         <h1 className="text-3xl font-bold">{t('title')}</h1>
                         <p className="text-gray-600">{t('subtitle')}</p>
                     </div>
-                    <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button>
-                                <Plus className="w-4 h-4 mr-2" />
-                                {t('addApplication')}
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                            <DialogHeader>
-                                <DialogTitle>{t('addNew')}</DialogTitle>
-                                <DialogDescription>{t('addDescription')}</DialogDescription>
-                            </DialogHeader>
-                            <div className="space-y-4 mt-4">
-                                <div>
-                                    <Label>{t('university')} *</Label>
-                                    <Select value={newApp.universityId} onValueChange={(value) => setNewApp({ ...newApp, universityId: value })}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={t('selectUniversity')} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {universities.map((uni) => (
-                                                <SelectItem key={uni.id} value={uni.id}>
-                                                    {uni.name} ({uni.city}, {uni.country})
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <Label>{t('program')} *</Label>
-                                        <Input
-                                            value={newApp.program}
-                                            onChange={(e) => setNewApp({ ...newApp, program: e.target.value })}
-                                            placeholder={t('programPlaceholder')}
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label>{t('degree')} *</Label>
-                                        <Select value={newApp.degree} onValueChange={(value) => setNewApp({ ...newApp, degree: value })}>
-                                            <SelectTrigger>
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="Bachelor's">{t('degrees.bachelors')}</SelectItem>
-                                                <SelectItem value="Master's">{t('degrees.masters')}</SelectItem>
-                                                <SelectItem value="PhD">{t('degrees.phd')}</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <Label>{t('intake')} *</Label>
-                                        <Input
-                                            value={newApp.intake}
-                                            onChange={(e) => setNewApp({ ...newApp, intake: e.target.value })}
-                                            placeholder={t('intakePlaceholder')}
-                                        />
-                                    </div>
-                                    <div>
-                                        <Label>{t('deadline')}</Label>
-                                        <Input
-                                            type="date"
-                                            value={newApp.deadline}
-                                            onChange={(e) => setNewApp({ ...newApp, deadline: e.target.value })}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <Label>{t('notes')}</Label>
-                                    <Textarea
-                                        value={newApp.notes}
-                                        onChange={(e) => setNewApp({ ...newApp, notes: e.target.value })}
-                                        placeholder={t('notesPlaceholder')}
-                                        rows={3}
-                                    />
-                                </div>
-
-                                <div className="flex justify-end gap-2">
-                                    <Button variant="outline" onClick={() => setAddDialogOpen(false)}>
-                                        {t('cancel')}
-                                    </Button>
-                                    <Button onClick={handleAddApplication}>
-                                        {t('add')}
-                                    </Button>
-                                </div>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
+                    <Button onClick={() => router.push(`/${locale}/dashboard/student/applications/new`)}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        {t('addApplication')}
+                    </Button>
                 </div>
 
                 {/* Stats */}
@@ -319,7 +178,7 @@ export default function ApplicationTrackerPage() {
                             <FileText className="w-12 h-12 mx-auto text-gray-400 mb-4" />
                             <h3 className="text-lg font-semibold mb-2">{t('noApplications')}</h3>
                             <p className="text-gray-600 mb-4">{t('noApplicationsDesc')}</p>
-                            <Button onClick={() => setAddDialogOpen(true)}>
+                            <Button onClick={() => router.push(`/${locale}/dashboard/student/applications/new`)}>
                                 <Plus className="w-4 h-4 mr-2" />
                                 {t('addFirst')}
                             </Button>

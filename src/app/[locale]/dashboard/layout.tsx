@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth/auth'
 import { redirect } from 'next/navigation'
-import { DashboardNav } from '@/components/layout/DashboardNav'
+import DashboardNav  from '@/components/layout/DashboardNav'
 import { SessionProvider } from 'next-auth/react'
 
 export default async function DashboardLayout({
