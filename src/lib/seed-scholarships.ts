@@ -1,0 +1,190 @@
+// Scholarship Seed Data - ES Module Version
+// src/lib/seed-scholarships.ts
+
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+
+const scholarships = [
+    {
+        title: "Fulbright Program - Turkey",
+        description: "The Fulbright Program offers grants for graduate study, research, and teaching in the United States for Turkish students and scholars.",
+        provider: "Government",
+        amount: "Full funding",
+        currency: "USD",
+        minGPA: 3.0,
+        maxAge: 35,
+        nationality: ["Turkey"],
+        studyLevel: ["Master", "PhD"],
+        fieldOfStudy: ["Any"],
+        deadline: new Date("2025-10-15"),
+        startDate: new Date("2025-09-01"),
+        country: "USA",
+        universities: ["Harvard University", "MIT", "Stanford University"],
+        requirements: ["TOEFL/IELTS", "Letters of Recommendation", "Personal Statement", "Transcripts"],
+        applicationUrl: "https://fulbright.org.tr",
+        tags: ["prestigious", "full-funding", "usa"]
+    },
+    {
+        title: "DAAD Scholarships for Development",
+        description: "DAAD scholarships for graduates from developing countries to pursue Master's and PhD studies in Germany.",
+        provider: "Government",
+        amount: "€934/month + extras",
+        currency: "EUR",
+        minGPA: 2.5,
+        maxAge: 36,
+        nationality: ["Turkey", "Developing Countries"],
+        studyLevel: ["Master", "PhD"],
+        fieldOfStudy: ["Engineering", "Natural Sciences", "Economics"],
+        deadline: new Date("2025-07-31"),
+        startDate: new Date("2025-10-01"),
+        country: "Germany",
+        universities: ["Technical University of Munich", "RWTH Aachen", "University of Stuttgart"],
+        requirements: ["German/English Proficiency", "Motivation Letter", "CV", "Transcripts"],
+        applicationUrl: "https://www.daad.de",
+        tags: ["germany", "engineering", "monthly-stipend"]
+    },
+    {
+        title: "Chevening Scholarships",
+        description: "UK government's global scholarship programme funded by the Foreign Commonwealth & Development Office.",
+        provider: "Government",
+        amount: "Full tuition + living costs",
+        currency: "GBP",
+        minGPA: 3.2,
+        maxAge: null,
+        nationality: ["Turkey", "Global"],
+        studyLevel: ["Master"],
+        fieldOfStudy: ["Any"],
+        deadline: new Date("2025-11-02"),
+        startDate: new Date("2025-09-01"),
+        country: "UK",
+        universities: ["Oxford University", "Cambridge University", "Imperial College London"],
+        requirements: ["IELTS 6.5+", "Work Experience", "Leadership Examples", "References"],
+        applicationUrl: "https://www.chevening.org",
+        tags: ["uk", "leadership", "prestigious"]
+    },
+    {
+        title: "Erasmus Mundus Joint Master Degrees",
+        description: "Study in at least 2 different EU countries and get a joint/double/multiple degree.",
+        provider: "University",
+        amount: "€1,400/month + travel",
+        currency: "EUR",
+        minGPA: 3.0,
+        maxAge: null,
+        nationality: ["Turkey", "Non-EU"],
+        studyLevel: ["Master"],
+        fieldOfStudy: ["Various Programs"],
+        deadline: new Date("2025-01-15"),
+        startDate: new Date("2025-09-01"),
+        country: "Europe",
+        universities: ["Multiple EU Universities"],
+        requirements: ["English Proficiency", "Motivation Letter", "Academic Transcripts"],
+        applicationUrl: "https://erasmus-plus.ec.europa.eu",
+        tags: ["europe", "multi-country", "monthly-stipend"]
+    },
+    {
+        title: "Australia Awards Scholarships",
+        description: "Long-term development scholarships for study at participating Australian universities.",
+        provider: "Government",
+        amount: "Full funding + living allowance",
+        currency: "AUD",
+        minGPA: 3.0,
+        maxAge: null,
+        nationality: ["Turkey", "Developing Countries"],
+        studyLevel: ["Master", "PhD"],
+        fieldOfStudy: ["Public Policy", "Health", "Engineering"],
+        deadline: new Date("2025-04-30"),
+        startDate: new Date("2026-02-01"),
+        country: "Australia",
+        universities: ["University of Melbourne", "Australian National University", "University of Sydney"],
+        requirements: ["IELTS 6.5+", "Development Impact Statement", "References"],
+        applicationUrl: "https://australiaawardsscholarships.gov.au",
+        tags: ["australia", "development-focused", "full-funding"]
+    },
+    {
+        title: "Gates Cambridge Scholarships",
+        description: "Full-cost scholarships for outstanding applicants from outside the UK to pursue a full-time postgraduate degree.",
+        provider: "Foundation",
+        amount: "Full tuition + stipend",
+        currency: "GBP",
+        minGPA: 3.7,
+        maxAge: null,
+        nationality: ["International (Non-UK)"],
+        studyLevel: ["Master", "PhD"],
+        fieldOfStudy: ["Any"],
+        deadline: new Date("2025-12-05"),
+        startDate: new Date("2025-10-01"),
+        country: "UK",
+        city: "Cambridge",
+        universities: ["University of Cambridge"],
+        requirements: ["Academic Excellence", "Leadership Potential", "Social Commitment"],
+        applicationUrl: "https://www.gatescambridge.org",
+        tags: ["cambridge", "prestigious", "leadership"]
+    },
+    {
+        title: "Turkey Scholarships (Türkiye Bursları)",
+        description: "Government scholarships for international students to study in Turkey's leading universities.",
+        provider: "Government",
+        amount: "Full tuition + monthly stipend",
+        currency: "TRY",
+        minGPA: 2.8,
+        maxAge: 21,
+        nationality: ["International"],
+        studyLevel: ["Bachelor"],
+        fieldOfStudy: ["Any"],
+        deadline: new Date("2025-02-20"),
+        startDate: new Date("2025-09-01"),
+        country: "Turkey",
+        universities: ["Boğaziçi University", "Middle East Technical University", "Istanbul Technical University"],
+        requirements: ["High School Diploma", "Language Certificate", "Health Report"],
+        applicationUrl: "https://turkiyeburslari.gov.tr",
+        tags: ["turkey", "international-students", "government-funding"]
+    },
+    {
+        title: "Swiss Excellence Scholarships",
+        description: "Research scholarships for foreign scholars and artists for doctorate or postdoctorate research in Switzerland.",
+        provider: "Government",
+        amount: "CHF 1,920/month",
+        currency: "CHF",
+        minGPA: 3.5,
+        maxAge: 35,
+        nationality: ["International"],
+        studyLevel: ["PhD"],
+        fieldOfStudy: ["Research-oriented"],
+        deadline: new Date("2025-12-01"),
+        startDate: new Date("2026-09-01"),
+        country: "Switzerland",
+        universities: ["ETH Zurich", "University of Geneva", "University of Zurich"],
+        requirements: ["Research Proposal", "CV", "Publications", "References"],
+        applicationUrl: "https://www.sbfi.admin.ch",
+        tags: ["switzerland", "research", "monthly-stipend"]
+    }
+]
+
+export async function seedScholarships() {
+    console.log('🎓 Seeding scholarships...')
+
+    for (const scholarship of scholarships) {
+        await prisma.scholarship.create({
+            data: scholarship
+        })
+    }
+
+    console.log(`✅ Created ${scholarships.length} scholarships`)
+}
+
+// Eğer direkt çalıştırılırsa (ES modules için)
+if (process.argv[1]?.endsWith('seed-scholarships.ts') || process.argv[1]?.endsWith('seed-scholarships.js')) {
+    seedScholarships()
+        .then(() => {
+            console.log('✅ Scholarship seeding completed')
+            process.exit(0)
+        })
+        .catch((error) => {
+            console.error('❌ Scholarship seeding failed:', error)
+            process.exit(1)
+        })
+        .finally(async () => {
+            await prisma.$disconnect()
+        })
+}

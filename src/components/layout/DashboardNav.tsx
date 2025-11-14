@@ -93,7 +93,7 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/scholarships`} className="cursor-pointer">
+                                        <Link href={`/${currentLocale}/dashboard/student/scholarships`} className="cursor-pointer">
                                             💰 {t('nav.scholarships')}
                                         </Link>
                                     </DropdownMenuItem>

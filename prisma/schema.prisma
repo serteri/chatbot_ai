@@ -36,14 +36,15 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  accounts          Account[]
-  sessions          Session[]
-  chatbots          Chatbot[]
-  subscription      Subscription?
-  teamMembers       TeamMember[]
-  templatePurchases TemplatePurchase[]
-  templateReviews   TemplateReview[]
-  studentProfile    StudentProfile?
+  accounts                Account[]
+  sessions                Session[]
+  chatbots                Chatbot[]
+  subscription            Subscription?
+  teamMembers             TeamMember[]
+  templatePurchases       TemplatePurchase[]
+  templateReviews         TemplateReview[]
+  studentProfile          StudentProfile?
+  scholarshipApplications ScholarshipApplication[]
 
   @@index([email])
 }
@@ -544,45 +545,20 @@ model University {
   type              String? // Public, Private
   tuitionFee        String? // Text field for flexible formatting
 
-  // ---- BURAYI EKLEYİN ----
   logo                  String?
   founded               Int?
   studentCount          Int?
   internationalStudents Int?
-  // -------------------------
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
-  scholarships Scholarship[]
+  // Relations - SCHOLARSHIP İLİŞKİSİNİ KALDIRDIK
   wishlistedBy UniversityWishlist[]
   applications Application[]
 
   @@index([country])
   @@index([ranking])
-}
-
-model Scholarship {
-  id           String      @id @default(cuid())
-  name         String
-  universityId String?
-  university   University? @relation(fields: [universityId], references: [id], onDelete: Cascade)
-
-  country        String
-  amount         Float?
-  percentage     Int?
-  deadline       DateTime?
-  requirements   Json?
-  type           String
-  description    String?   @db.Text
-  applicationUrl String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([country])
-  @@index([deadline])
 }
 
 // ============================================
@@ -797,5 +773,83 @@ model LiveSupportRequest {
   updatedAt DateTime @updatedAt
 
   @@index([chatbotId])
+  @@index([status])
+}
+
+// ============================================
+// 🎓 SCHOLARSHIP SYSTEM (YENİ)
+// ============================================
+
+model Scholarship {
+  id          String @id @default(cuid())
+  title       String
+  description String @db.Text
+  provider    String // "Government", "University", "Private"
+  amount      String // "$5,000", "Full tuition", etc.
+  currency    String @default("USD")
+
+  // Eligibility
+  minGPA       Float?
+  maxAge       Int?
+  nationality  String[] // ["Turkey", "EU", "Any"]
+  studyLevel   String[] // ["Bachelor", "Master", "PhD"]
+  fieldOfStudy String[] // ["Engineering", "Medicine", etc.]
+
+  // Application info
+  deadline       DateTime
+  startDate      DateTime?
+  endDate        DateTime?
+  applicationUrl String?
+  requirements   String[] // ["Transcript", "Letter of recommendation", etc.]
+
+  // Location (STRING olarak, ilişki yok)
+  country      String
+  city         String?
+  universities String[] // University names/IDs as strings
+
+  // Metadata
+  isActive  Boolean  @default(true)
+  tags      String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  externalId   String?                  @unique
+  source       String?
+  lastSynced   DateTime?
+  // Relations
+  applications ScholarshipApplication[]
+
+  @@index([country])
+  @@index([deadline])
+  @@index([provider])
+  @@index([studyLevel])
+  @@index([source]) // 🆕 New index for API sources
+  @@index([externalId]) // 🆕 New index for external IDs
+}
+
+model ScholarshipApplication {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scholarshipId String
+  scholarship   Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
+
+  // Application status
+  status      String    @default("draft") // draft, submitted, under_review, accepted, rejected
+  appliedAt   DateTime?
+  lastUpdated DateTime  @updatedAt
+
+  // Application data
+  personalStatement String? @db.Text
+  documents         Json? // {"transcript": "url", "recommendation": "url"}
+  notes             String? @db.Text
+
+  // Timeline tracking
+  milestones Json? // [{"date": "2025-01-15", "event": "Application submitted"}]
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, scholarshipId])
+  @@index([userId])
   @@index([status])
 }

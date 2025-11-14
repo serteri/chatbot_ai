@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import { Search, Loader2, ArrowLeft, Globe, Users, DollarSign, GraduationCap } from 'lucide-react'
+import { Search, Loader2, ArrowLeft, Globe, Users, DollarSign, GraduationCap, X } from 'lucide-react'
 import { useDebounce } from '@/hooks/useDebounce'
 
 interface University {
@@ -19,14 +19,14 @@ interface University {
     name: string
     country: string
     city: string
-    ranking: number
-    logo?: string
+    ranking?: number | null
+    logo?: string | null
     type: string
-    tuitionFee: string
-    studentCount: number
-    internationalStudents: number
-    programs: string[]
-    website: string
+    tuitionFee?: string | null
+    studentCount?: number | null
+    internationalStudents?: number | null
+    programs?: string[]
+    website?: string | null
 }
 
 export default function NewApplicationPage({ params }: { params: { locale: string } }) {
@@ -38,6 +38,9 @@ export default function NewApplicationPage({ params }: { params: { locale: strin
     const [universities, setUniversities] = useState<University[]>([])
     const [searchResults, setSearchResults] = useState<University[]>([])
     const [showResults, setShowResults] = useState(false)
+    const [isSearching, setIsSearching] = useState(false)
+    const searchContainerRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
     const [formData, setFormData] = useState({
         program: '',
         degree: "Bachelor's",
@@ -48,17 +51,32 @@ export default function NewApplicationPage({ params }: { params: { locale: strin
 
     const debouncedSearch = useDebounce(searchQuery, 300)
 
+    // Click outside handler
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+                setShowResults(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
+
     useEffect(() => {
         fetchUniversities()
     }, [])
 
     useEffect(() => {
-        if (debouncedSearch) {
+        if (debouncedSearch && !selectedUniversity) {
             searchUniversities(debouncedSearch)
-        } else {
+        } else if (!debouncedSearch) {
             setSearchResults([])
+            setShowResults(false)
         }
-    }, [debouncedSearch])
+    }, [debouncedSearch, selectedUniversity])
 
     const fetchUniversities = async () => {
         try {
@@ -75,9 +93,11 @@ export default function NewApplicationPage({ params }: { params: { locale: strin
     const searchUniversities = async (query: string) => {
         if (!query.trim()) {
             setSearchResults([])
+            setShowResults(false)
             return
         }
 
+        setIsSearching(true)
         try {
             const res = await fetch(`/api/universities?search=${encodeURIComponent(query)}&limit=10`)
             if (res.ok) {
@@ -87,13 +107,47 @@ export default function NewApplicationPage({ params }: { params: { locale: strin
             }
         } catch (error) {
             console.error('Error searching universities:', error)
+        } finally {
+            setIsSearching(false)
         }
     }
 
     const selectUniversity = (uni: University) => {
         setSelectedUniversity(uni)
         setSearchQuery(uni.name)
+        setSearchResults([])
         setShowResults(false)
+        // Blur the input
+        if (inputRef.current) {
+            inputRef.current.blur()
+        }
+    }
+
+    const clearSelection = () => {
+        setSelectedUniversity(null)
+        setSearchQuery('')
+        setSearchResults([])
+        setShowResults(false)
+        // Focus back to input
+        if (inputRef.current) {
+            inputRef.current.focus()
+        }
+    }
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        setSearchQuery(value)
+
+        // Clear selection if user is typing and it doesn't match selected university
+        if (selectedUniversity && value !== selectedUniversity.name) {
+            setSelectedUniversity(null)
+        }
+    }
+
+    const handleInputFocus = () => {
+        if (searchQuery && !selectedUniversity) {
+            setShowResults(true)
+        }
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -159,26 +213,49 @@ export default function NewApplicationPage({ params }: { params: { locale: strin
                             <CardDescription>{t('searchUniversityDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="relative">
-                                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                <Input
-                                    type="text"
-                                    placeholder={t('searchPlaceholder')}
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    onFocus={() => searchQuery && setShowResults(true)}
-                                    className="pl-10"
-                                />
+                            <div ref={searchContainerRef} className="relative">
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                    <Input
+                                        ref={inputRef}
+                                        type="text"
+                                        placeholder={t('searchPlaceholder')}
+                                        value={searchQuery}
+                                        onChange={handleInputChange}
+                                        onFocus={handleInputFocus}
+                                        className="pl-10 pr-10"
+                                        disabled={!!selectedUniversity}
+                                    />
+                                    {selectedUniversity && (
+                                        <button
+                                            type="button"
+                                            onClick={clearSelection}
+                                            className="absolute right-3 top-3 h-4 w-4 text-gray-400 hover:text-gray-600"
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </button>
+                                    )}
+                                </div>
+
+                                {/* Loading indicator */}
+                                {isSearching && (
+                                    <div className="absolute z-50 w-full mt-2 bg-white border rounded-lg shadow-lg p-4">
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            <span className="text-sm text-gray-600">Searching...</span>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Search Results Dropdown */}
-                                {showResults && searchResults.length > 0 && (
+                                {showResults && searchResults.length > 0 && !isSearching && (
                                     <div className="absolute z-50 w-full mt-2 bg-white border rounded-lg shadow-lg max-h-96 overflow-y-auto">
                                         {searchResults.map((uni) => (
                                             <button
                                                 key={uni.id}
                                                 type="button"
                                                 onClick={() => selectUniversity(uni)}
-                                                className="w-full p-4 hover:bg-gray-50 border-b last:border-b-0 text-left"
+                                                className="w-full p-4 hover:bg-gray-50 border-b last:border-b-0 text-left transition-colors"
                                             >
                                                 <div className="flex items-start gap-3">
                                                     {uni.logo && (
@@ -194,15 +271,26 @@ export default function NewApplicationPage({ params }: { params: { locale: strin
                                                             {uni.city}, {uni.country}
                                                         </p>
                                                         <div className="flex items-center gap-2 mt-1">
-                                                            <Badge variant="secondary" className="text-xs">
-                                                                #{uni.ranking}
-                                                            </Badge>
+                                                            {uni.ranking && (
+                                                                <Badge variant="secondary" className="text-xs">
+                                                                    #{uni.ranking}
+                                                                </Badge>
+                                                            )}
                                                             <span className="text-xs text-gray-500">{uni.type}</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </button>
                                         ))}
+                                    </div>
+                                )}
+
+                                {/* No results */}
+                                {showResults && searchResults.length === 0 && searchQuery && !isSearching && (
+                                    <div className="absolute z-50 w-full mt-2 bg-white border rounded-lg shadow-lg p-4">
+                                        <div className="text-center text-gray-500 text-sm">
+                                            No universities found for "{searchQuery}"
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -219,40 +307,63 @@ export default function NewApplicationPage({ params }: { params: { locale: strin
                                             />
                                         )}
                                         <div className="flex-1">
-                                            <h3 className="font-bold text-lg">{selectedUniversity.name}</h3>
-                                            <p className="text-sm text-gray-600 mb-2">
-                                                {selectedUniversity.city}, {selectedUniversity.country}
-                                            </p>
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                                                <div className="flex items-center gap-2">
-                                                    <GraduationCap className="w-4 h-4 text-blue-600" />
-                                                    <span>#{selectedUniversity.ranking}</span>
+                                            <div className="flex items-start justify-between">
+                                                <div>
+                                                    <h3 className="font-bold text-lg">{selectedUniversity.name}</h3>
+                                                    <p className="text-sm text-gray-600 mb-2">
+                                                        {selectedUniversity.city}, {selectedUniversity.country}
+                                                    </p>
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Users className="w-4 h-4 text-blue-600" />
-                                                    <span>{selectedUniversity.studentCount.toLocaleString()}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Globe className="w-4 h-4 text-blue-600" />
-                                                    <span>{selectedUniversity.internationalStudents.toLocaleString()}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <DollarSign className="w-4 h-4 text-blue-600" />
-                                                    <span className="text-xs">{selectedUniversity.tuitionFee}</span>
-                                                </div>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={clearSelection}
+                                                    className="h-8 w-8 p-0"
+                                                >
+                                                    <X className="h-4 w-4" />
+                                                </Button>
                                             </div>
-                                            <div className="mt-2 flex flex-wrap gap-1">
-                                                {selectedUniversity.programs.slice(0, 3).map((program) => (
-                                                    <Badge key={program} variant="outline" className="text-xs">
-                                                        {program}
-                                                    </Badge>
-                                                ))}
-                                                {selectedUniversity.programs.length > 3 && (
-                                                    <Badge variant="outline" className="text-xs">
-                                                        +{selectedUniversity.programs.length - 3} more
-                                                    </Badge>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                                {selectedUniversity.ranking && (
+                                                    <div className="flex items-center gap-2">
+                                                        <GraduationCap className="w-4 h-4 text-blue-600" />
+                                                        <span>#{selectedUniversity.ranking}</span>
+                                                    </div>
+                                                )}
+                                                {selectedUniversity.studentCount && (
+                                                    <div className="flex items-center gap-2">
+                                                        <Users className="w-4 h-4 text-blue-600" />
+                                                        <span>{selectedUniversity.studentCount.toLocaleString()}</span>
+                                                    </div>
+                                                )}
+                                                {selectedUniversity.internationalStudents && (
+                                                    <div className="flex items-center gap-2">
+                                                        <Globe className="w-4 h-4 text-blue-600" />
+                                                        <span>{selectedUniversity.internationalStudents.toLocaleString()}</span>
+                                                    </div>
+                                                )}
+                                                {selectedUniversity.tuitionFee && (
+                                                    <div className="flex items-center gap-2">
+                                                        <DollarSign className="w-4 h-4 text-blue-600" />
+                                                        <span className="text-xs">{selectedUniversity.tuitionFee}</span>
+                                                    </div>
                                                 )}
                                             </div>
+                                            {selectedUniversity.programs && selectedUniversity.programs.length > 0 && (
+                                                <div className="mt-2 flex flex-wrap gap-1">
+                                                    {selectedUniversity.programs.slice(0, 3).map((program) => (
+                                                        <Badge key={program} variant="outline" className="text-xs">
+                                                            {program}
+                                                        </Badge>
+                                                    ))}
+                                                    {selectedUniversity.programs.length > 3 && (
+                                                        <Badge variant="outline" className="text-xs">
+                                                            +{selectedUniversity.programs.length - 3} more
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
