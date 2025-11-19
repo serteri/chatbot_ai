@@ -784,47 +784,49 @@ model Scholarship {
   id          String @id @default(cuid())
   title       String
   description String @db.Text
-  provider    String // "Government", "University", "Private"
-  amount      String // "$5,000", "Full tuition", etc.
+  provider    String // "Government", "University", "Private Foundation"
+  amount      String // "$5,000", "Full tuition", "€10,000", etc.
   currency    String @default("USD")
 
-  // Eligibility
+  // Eligibility criteria
   minGPA       Float?
   maxAge       Int?
-  nationality  String[] // ["Turkey", "EU", "Any"]
-  studyLevel   String[] // ["Bachelor", "Master", "PhD"]
-  fieldOfStudy String[] // ["Engineering", "Medicine", etc.]
+  nationality  String[] // ["Turkey", "EU", "International"]
+  studyLevel   String[] // ["Undergraduate", "Masters", "PhD"]
+  fieldOfStudy String[] // ["Engineering", "Medicine", "All Fields"]
 
-  // Application info
+  // Application information
   deadline       DateTime
   startDate      DateTime?
   endDate        DateTime?
   applicationUrl String?
-  requirements   String[] // ["Transcript", "Letter of recommendation", etc.]
+  requirements   String[] // ["Transcript", "Letter of recommendation", "Essay"]
 
-  // Location (STRING olarak, ilişki yok)
+  // Location information
   country      String
   city         String?
-  universities String[] // University names/IDs as strings
+  universities String[] // University names as strings (no relation)
+
+  // External data management
+  externalId String?   @unique // For external API synchronization
+  source     String? // "CollegeScholarships.org", "Government", etc.
+  lastSynced DateTime? // When this was last updated from external source
 
   // Metadata
   isActive  Boolean  @default(true)
-  tags      String[]
+  tags      String[] // ["government", "STEM", "fully-funded"]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  externalId   String?                  @unique
-  source       String?
-  lastSynced   DateTime?
   // Relations
   applications ScholarshipApplication[]
 
   @@index([country])
   @@index([deadline])
   @@index([provider])
-  @@index([studyLevel])
-  @@index([source]) // 🆕 New index for API sources
-  @@index([externalId]) // 🆕 New index for external IDs
+  @@index([currency])
+  @@index([isActive])
+  @@index([externalId])
 }
 
 model ScholarshipApplication {
@@ -835,21 +837,63 @@ model ScholarshipApplication {
   scholarship   Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
 
   // Application status
-  status      String    @default("draft") // draft, submitted, under_review, accepted, rejected
-  appliedAt   DateTime?
-  lastUpdated DateTime  @updatedAt
+  status         String    @default("draft") // draft, submitted, under_review, accepted, rejected, waitlisted
+  appliedAt      DateTime?
+  decisionDate   DateTime?
+  decisionResult String? // "accepted", "rejected", "waitlisted"
 
-  // Application data
+  // Application documents & data
   personalStatement String? @db.Text
-  documents         Json? // {"transcript": "url", "recommendation": "url"}
-  notes             String? @db.Text
+  essayQuestions    Json? // [{"question": "Why do you deserve this?", "answer": "Because..."}]
+  documents         Json? // {"transcript": "url", "recommendation": ["url1", "url2"], "cv": "url"}
 
-  // Timeline tracking
-  milestones Json? // [{"date": "2025-01-15", "event": "Application submitted"}]
+  // Contact information for application
+  contactEmail     String?
+  contactPhone     String?
+  alternativeEmail String?
 
+  // Academic information
+  currentInstitution String?
+  currentProgram     String?
+  graduationDate     DateTime?
+  gpa                Float?
+
+  // Financial information
+  financialNeed Boolean @default(false)
+  familyIncome  String? // "Under $30k", "$30k-60k", etc.
+
+  // Application timeline
+  milestones Json? // [{"date": "2025-01-15", "event": "Application submitted", "status": "completed"}]
+  reminders  Json? // [{"date": "2025-01-10", "message": "Application due in 5 days"}]
+
+  // Internal notes & tracking
+  notes          String? @db.Text
+  internalRating Int? // 1-10 internal assessment
+
+  // Timestamps
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, scholarshipId])
   @@index([userId])
   @@index([status])
+  @@index([appliedAt])
+  @@index([decisionDate])
+}
+
+model ApplicationReminder {
+  id          String @id @default(cuid())
+  userId      String
+  type        String // "scholarship", "university"
+  referenceId String // ID of scholarship or university application
+
+  reminderDate DateTime
+  message      String
+  isCompleted  Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([reminderDate])
+  @@index([isCompleted])
 }

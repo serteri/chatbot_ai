@@ -1,130 +1,131 @@
+// MAIN SCHOLARSHIPS API ROUTE
 // src/app/api/scholarships/route.ts
+
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { PrismaClient } from '@prisma/client'
 
-export async function GET(req: NextRequest) {
+const prisma = new PrismaClient()
+
+// GET /api/scholarships - Basic list without filtering
+export async function GET(request: NextRequest) {
     try {
-        const { searchParams } = new URL(req.url)
-
-        // Pagination
+        const { searchParams } = new URL(request.url)
         const page = parseInt(searchParams.get('page') || '1')
-        const limit = parseInt(searchParams.get('limit') || '20')
-        const skip = (page - 1) * limit
+        const limit = parseInt(searchParams.get('limit') || '10')
 
-        // Filters
-        const country = searchParams.get('country')
-        const studyLevel = searchParams.get('studyLevel')
-        const provider = searchParams.get('provider')
-        const search = searchParams.get('search')
-        const minAmount = searchParams.get('minAmount')
-        const maxAmount = searchParams.get('maxAmount')
+        const offset = (page - 1) * limit
 
-        // Build where clause
-        const where: any = {
-            isActive: true,
-            deadline: {
-                gte: new Date() // Only future deadlines
-            }
-        }
-
-        if (country) where.country = country
-        if (studyLevel) where.studyLevel = { has: studyLevel }
-        if (provider) where.provider = provider
-
-        if (search) {
-            where.OR = [
-                { title: { contains: search, mode: 'insensitive' } },
-                { description: { contains: search, mode: 'insensitive' } },
-                { provider: { contains: search, mode: 'insensitive' } }
-            ]
-        }
-
-        // Get scholarships
+        // Basic query - get all active scholarships
         const [scholarships, total] = await Promise.all([
             prisma.scholarship.findMany({
-                where,
-                skip,
-                take: limit,
-                orderBy: [
-                    { deadline: 'asc' },
-                    { createdAt: 'desc' }
-                ]
+                where: {
+                    isActive: true,
+                    deadline: {
+                        gte: new Date() // Only future deadlines
+                    }
+                },
+                orderBy: { deadline: 'asc' },
+                skip: offset,
+                take: limit
             }),
-            prisma.scholarship.count({ where })
+            prisma.scholarship.count({
+                where: {
+                    isActive: true,
+                    deadline: {
+                        gte: new Date()
+                    }
+                }
+            })
         ])
 
-        // Calculate pagination
-        const totalPages = Math.ceil(total / limit)
-        const hasNext = page < totalPages
-        const hasPrev = page > 1
+        console.log(`📊 Basic list: ${scholarships.length} scholarships (${total} total)`)
 
         return NextResponse.json({
             scholarships,
             pagination: {
+                total,
                 page,
                 limit,
-                total,
-                totalPages,
-                hasNext,
-                hasPrev
+                totalPages: Math.ceil(total / limit),
+                hasNext: page < Math.ceil(total / limit),
+                hasPrev: page > 1
             }
         })
 
     } catch (error) {
-        console.error('Scholarship search error:', error)
-        return NextResponse.json(
-            { error: 'Burs arama hatası' },
-            { status: 500 }
-        )
+        console.error('❌ Basic scholarship list failed:', error)
+        return NextResponse.json({
+            error: 'Failed to fetch scholarships',
+            details: error.message
+        }, { status: 500 })
     }
 }
 
-// Create new scholarship (admin only)
-export async function POST(req: NextRequest) {
+// POST /api/scholarships - Create new scholarship
+export async function POST(request: NextRequest) {
     try {
-        const body = await req.json()
+        const body = await request.json()
 
         // Validate required fields
-        const { title, description, provider, amount, deadline, country } = body
+        const { title, description, provider, amount, currency, deadline, country } = body
+
         if (!title || !description || !provider || !amount || !deadline || !country) {
-            return NextResponse.json(
-                { error: 'Eksik bilgiler' },
-                { status: 400 }
-            )
+            return NextResponse.json({
+                error: 'Missing required fields',
+                required: ['title', 'description', 'provider', 'amount', 'deadline', 'country']
+            }, { status: 400 })
         }
 
-        // Create scholarship
         const scholarship = await prisma.scholarship.create({
             data: {
-                title,
-                description,
-                provider,
-                amount,
-                currency: body.currency || 'USD',
-                minGPA: body.minGPA ? parseFloat(body.minGPA) : null,
-                maxAge: body.maxAge ? parseInt(body.maxAge) : null,
-                nationality: body.nationality || [],
-                studyLevel: body.studyLevel || [],
-                fieldOfStudy: body.fieldOfStudy || [],
+                ...body,
                 deadline: new Date(deadline),
-                startDate: body.startDate ? new Date(body.startDate) : null,
-                endDate: body.endDate ? new Date(body.endDate) : null,
-                applicationUrl: body.applicationUrl,
-                requirements: body.requirements || [],
-                country,
-                city: body.city,
-                universities: body.universities || [],
-                tags: body.tags || []
+                isActive: true,
+                lastSynced: new Date()
             }
         })
 
-        return NextResponse.json({ scholarship })
+        console.log(`✅ Created scholarship: ${scholarship.title}`)
+
+        return NextResponse.json({
+            success: true,
+            scholarship
+        }, { status: 201 })
 
     } catch (error) {
-        console.error('Scholarship creation error:', error)
-        return NextResponse.json(
-            { error: 'Burs oluşturma hatası' },
-            { status: 500 }
-        )
+        console.error('❌ Scholarship creation failed:', error)
+        return NextResponse.json({
+            error: 'Failed to create scholarship',
+            details: error.message
+        }, { status: 500 })
+    }
+}
+
+// GET Statistics endpoint
+export async function HEAD() {
+    try {
+        const stats = await prisma.scholarship.groupBy({
+            by: ['country'],
+            _count: { id: true },
+            orderBy: { _count: { id: 'desc' } },
+            take: 10
+        })
+
+        const total = await prisma.scholarship.count({
+            where: { isActive: true }
+        })
+
+        return NextResponse.json({
+            total,
+            topCountries: stats.map(s => ({
+                country: s.country,
+                count: s._count.id
+            }))
+        })
+
+    } catch (error) {
+        return NextResponse.json({
+            error: 'Failed to get statistics'
+        }, { status: 500 })
     }
 }

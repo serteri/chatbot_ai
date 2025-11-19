@@ -1,0 +1,99 @@
+// VERCEL CRON SYSTEM - Production Auto-Update
+// vercel.json
+
+{
+  "crons": [
+    {
+      "path": "/api/scholarships/auto-update",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/scholarships/balance-countries",
+      "schedule": "0 3 * * 0"
+    }
+  ]
+}
+
+// VEYA manuel trigger için GitHub Actions
+// .github/workflows/scholarship-update.yml
+
+name: Scholarship Auto Update
+
+on:
+schedule:
+# Daily at 2 AM UTC
+- cron: '0 2 * * *'
+workflow_dispatch: # Manual trigger
+
+jobs:
+update-scholarships:
+runs-on: ubuntu-latest
+steps:
+- name: Trigger scholarship update
+run: |
+curl -X POST ${{ secrets.VERCEL_URL }}/api/scholarships/auto-update \
+-H "Content-Type: application/json"
+
+// VEYA en basit çözüm: Manual admin panel
+// src/app/admin/scholarships/page.tsx
+
+'use client'
+import { useState } from 'react'
+
+export default function ScholarshipAdmin() {
+const [loading, setLoading] = useState(false)
+const [result, setResult] = useState(null)
+
+const updateScholarships = async () => {
+setLoading(true)
+try {
+const response = await fetch('/api/scholarships/auto-update', {
+method: 'POST'
+})
+const data = await response.json()
+setResult(data)
+} catch (error) {
+setResult({ success: false, error: error.message })
+}
+setLoading(false)
+}
+
+const getStats = async () => {
+try {
+const response = await fetch('/api/scholarships/auto-update')
+const data = await response.json()
+setResult(data)
+} catch (error) {
+setResult({ success: false, error: error.message })
+}
+}
+
+return (
+<div className="p-8">
+<h1 className="text-2xl font-bold mb-8">Scholarship Auto-Update Admin</h1>
+
+<div className="space-y-4">
+<button
+onClick={updateScholarships}
+disabled={loading}
+className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+>
+{loading ? 'Updating...' : 'Update Expired Deadlines'}
+</button>
+
+<button
+onClick={getStats}
+className="bg-green-500 text-white px-4 py-2 rounded ml-4"
+>
+Get Stats
+</button>
+</div>
+
+{result && (
+<div className="mt-8 p-4 border rounded">
+<pre>{JSON.stringify(result, null, 2)}</pre>
+</div>
+)}
+</div>
+)
+}

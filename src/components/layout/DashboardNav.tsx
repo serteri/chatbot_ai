@@ -8,9 +8,10 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { LogOut, User, Globe } from 'lucide-react'
+import { LogOut, User, Globe, Shield } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
 interface DashboardNavProps {
@@ -156,6 +157,16 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
+                                {/* ✅ ADMIN PANEL LINK EKLENDI */}
+                                <DropdownMenuItem asChild>
+                                    <Link href={`/${currentLocale}/admin/scholarships`} className="cursor-pointer">
+                                        <Shield className="h-4 w-4 mr-2 text-blue-600" />
+                                        🔧 Admin Panel
+                                    </Link>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuSeparator />
+
                                 <DropdownMenuItem onClick={handleLogout}>
                                     <LogOut className="h-4 w-4 mr-2" />
                                     {t('nav.logout')}
