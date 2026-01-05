@@ -7,8 +7,6 @@ import { streamText } from 'ai'
 import { createOpenAI } from '@ai-sdk/openai'
 import { createAnthropic } from '@ai-sdk/anthropic'
 
-export const runtime = 'edge'
-
 // Lazy initialize to avoid build-time env checks
 const getOpenAI = () => createOpenAI({ apiKey: process.env.OPENAI_API_KEY! })
 const getAnthropic = () => createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
