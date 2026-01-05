@@ -31,10 +31,19 @@ interface University {
     requirements?: any
 }
 
-const STUDY_FIELDS = [
-    'Computer Science', 'Engineering', 'Medicine', 'Business Administration',
-    'Economics', 'Law', 'Psychology', 'Biology', 'Physics', 'Mathematics',
-    'Chemistry', 'Architecture', 'Art', 'Literature', 'History'
+// GÜNCELLENDİ: Veritabanı değeri (value) ile Çeviri anahtarı (key) eşleşmesi
+const STUDY_FIELDS_MAPPING = [
+    { value: 'Computer Science', key: 'computerScience' },
+    { value: 'Engineering', key: 'engineering' },
+    { value: 'Medicine', key: 'medicine' },
+    { value: 'Business Administration', key: 'business' },
+    { value: 'Economics', key: 'economics' },
+    { value: 'Law', key: 'law' },
+    { value: 'Psychology', key: 'psychology' },
+    { value: 'Biology', key: 'biology' },
+    { value: 'Architecture', key: 'architecture' },
+    { value: 'Arts', key: 'arts' },
+    { value: 'Social Sciences', key: 'socialSciences' }
 ]
 
 export default function UniversitiesPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -211,14 +220,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                 searchParams.append('search', debouncedSearch)
             }
 
-            // DÜZELTME 1: Burayı 'getEnglishCountryName' fonksiyonunu kullanacak şekilde
-            // orijinal (çevirici mantık) haline geri getirdim.
-            // Artık 'TR' kodunu alıp 'getEnglishCountryName' fonksiyonuna gönderecek.
             if (filters.country !== 'all') {
-                // const dbCountryName = getEnglishCountryName(filters.country) // BU SATIRI SİL
-                // searchParams.append('country', dbCountryName) // BU SATIRI SİL
-
-                // YERİNE BUNU EKLE:
                 searchParams.append('country', filters.country)
             }
 
@@ -274,48 +276,12 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
 
         } catch (error) {
             console.error('❌ Fetch failed:', error)
-            toast.error('Failed to load universities')
+            toast.error(t('results.loadError') || 'Failed to load universities')
             setUniversities([])
             setPagination(prev => ({ ...prev, total: 0, totalPages: 0 }))
         } finally {
             setLoading(false)
         }
-    }
-
-    // Helper function to get English country name for API
-    const getEnglishCountryName = (countryCode: string) => {
-        const mapping: Record<string, string> = {
-            'AF': 'Afghanistan', 'AL': 'Albania', 'DZ': 'Algeria', 'AR': 'Argentina',
-            'AM': 'Armenia', 'AU': 'Australia', 'AT': 'Austria', 'AZ': 'Azerbaijan',
-            'BH': 'Bahrain', 'BD': 'Bangladesh', 'BY': 'Belarus', 'BE': 'Belgium',
-            'BO': 'Bolivia', 'BA': 'Bosnia and Herzegovina', 'BR': 'Brazil', 'BG': 'Bulgaria',
-            'CA': 'Canada', 'CL': 'Chile', 'CN': 'China', 'CO': 'Colombia',
-            'CR': 'Costa Rica', 'HR': 'Croatia', 'CY': 'Cyprus', 'CZ': 'Czech Republic',
-            'DK': 'Denmark', 'EC': 'Ecuador', 'EG': 'Egypt', 'EE': 'Estonia',
-            'FI': 'Finland', 'FR': 'France', 'GE': 'Georgia', 'DE': 'Germany',
-            'GH': 'Ghana', 'GR': 'Greece', 'HU': 'Hungary', 'IS': 'Iceland',
-            'IN': 'India', 'ID': 'Indonesia', 'IR': 'Iran', 'IQ': 'Iraq',
-            'IE': 'Ireland', 'IL': 'Israel', 'IT': 'Italy', 'JP': 'Japan',
-            'JO': 'Jordan', 'KZ': 'Kazakhstan', 'KE': 'Kenya', 'KW': 'Kuwait',
-            'KG': 'Kyrgyzstan', 'LV': 'Latvia', 'LB': 'Lebanon', 'LT': 'Lithuania',
-            'LU': 'Luxembourg', 'MY': 'Malaysia', 'MT': 'Malta', 'MX': 'Mexico',
-            'MD': 'Moldova', 'ME': 'Montenegro', 'MA': 'Morocco', 'NL': 'Netherlands',
-            'NZ': 'New Zealand', 'NG': 'Nigeria', 'MK': 'North Macedonia', 'NO': 'Norway',
-            'OM': 'Oman', 'PK': 'Pakistan', 'PE': 'Peru', 'PH': 'Philippines',
-            'PL': 'Poland', 'PT': 'Portugal', 'QA': 'Qatar', 'RO': 'Romania',
-            'RU': 'Russia', 'SA': 'Saudi Arabia', 'RS': 'Serbia', 'SG': 'Singapore',
-            'SK': 'Slovakia', 'SI': 'Slovenia', 'ZA': 'South Africa', 'KR': 'South Korea',
-            'ES': 'Spain', 'LK': 'Sri Lanka', 'SE': 'Sweden', 'CH': 'Switzerland',
-            'TJ': 'Tajikistan', 'TH': 'Thailand', 'TN': 'Tunisia',
-
-            // DÜZELTME 2: 'Turkey' olan değeri veritabanındaki 'Turkiye' (i ile) olarak değiştirdim.
-            'TR': 'Turkiye',
-
-            'TM': 'Turkmenistan', 'UA': 'Ukraine', 'AE': 'United Arab Emirates',
-            'GB': 'United Kingdom', 'US': 'United States', 'UY': 'Uruguay',
-            'UZ': 'Uzbekistan', 'VE': 'Venezuela', 'VN': 'Vietnam', 'ZW': 'Zimbabwe'
-        }
-        return mapping[countryCode] || countryCode
     }
 
     const handleFilterChange = (key: string, value: any) => {
@@ -432,7 +398,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                                 placeholder={t('searchPlaceholder')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10"
+                                className="pl-10 bg-white"
                             />
                         </div>
 
@@ -444,10 +410,10 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                                     value={filters.country}
                                     onValueChange={(value) => handleFilterChange('country', value)}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="bg-white">
                                         <SelectValue placeholder={t('filters.selectCountry')} />
                                     </SelectTrigger>
-                                    <SelectContent className="max-h-60 overflow-y-auto">
+                                    <SelectContent className="bg-white border border-gray-200 shadow-xl z-[999] max-h-60 overflow-y-auto">
                                         {getCountries().map((country) => (
                                             <SelectItem key={country.code} value={country.code}>
                                                 <div className="flex items-center gap-2">
@@ -466,10 +432,10 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                                     value={filters.type}
                                     onValueChange={(value) => handleFilterChange('type', value)}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="bg-white">
                                         <SelectValue placeholder={t('filters.selectType')} />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="bg-white border border-gray-200 shadow-xl z-[999]">
                                         <SelectItem value="all">{t('filters.allTypes')}</SelectItem>
                                         <SelectItem value="Public">{t('filters.public')}</SelectItem>
                                         <SelectItem value="Private">{t('filters.private')}</SelectItem>
@@ -483,14 +449,15 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                                     value={filters.field}
                                     onValueChange={(value) => handleFilterChange('field', value)}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="bg-white">
                                         <SelectValue placeholder={t('filters.selectField')} />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="bg-white border border-gray-200 shadow-xl z-[999] max-h-60 overflow-y-auto">
                                         <SelectItem value="all">{t('filters.allFields')}</SelectItem>
-                                        {STUDY_FIELDS.map((field) => (
-                                            <SelectItem key={field} value={field}>
-                                                {field}
+                                        {STUDY_FIELDS_MAPPING.map((item) => (
+                                            <SelectItem key={item.value} value={item.value}>
+                                                {/* ÇEVİRİ KISMI DÜZELTİLDİ: fields.key */}
+                                                {t(`fields.${item.key}`)}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -511,6 +478,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                                         placeholder={t('filters.rankingFrom')}
                                         min="1"
                                         max="1000"
+                                        className="bg-white"
                                     />
                                     <Input
                                         type="number"
@@ -519,6 +487,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                                         placeholder={t('filters.rankingTo')}
                                         min="1"
                                         max="1000"
+                                        className="bg-white"
                                     />
                                 </div>
                             </div>
@@ -534,6 +503,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                                         placeholder={t('filters.tuitionMin')}
                                         min="0"
                                         max="100000"
+                                        className="bg-white"
                                     />
                                     <Input
                                         type="number"
@@ -542,23 +512,24 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                                         placeholder={t('filters.tuitionMax')}
                                         min="0"
                                         max="100000"
+                                        className="bg-white"
                                     />
                                 </div>
                             </div>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex justify-between items-center">
-                            <Button onClick={clearFilters} variant="outline">
+                        <div className="flex justify-between items-center pt-2">
+                            <Button onClick={clearFilters} variant="outline" className="bg-white">
                                 {t('filters.clearFilters')}
                             </Button>
 
                             <div className="flex gap-2">
                                 <Select value={sortBy} onValueChange={setSortBy}>
-                                    <SelectTrigger className="w-48">
+                                    <SelectTrigger className="w-48 bg-white">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="bg-white border border-gray-200 shadow-xl z-[999]">
                                         <SelectItem value="ranking">{t('filters.sortBy')}</SelectItem>
                                         <SelectItem value="name">{t('filters.sortByName')}</SelectItem>
                                         <SelectItem value="country">{t('filters.sortByCountry')}</SelectItem>
@@ -570,7 +541,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                                     <Button
                                         variant="outline"
                                         onClick={() => setIsCompareModalOpen(true)}
-                                        className="flex items-center gap-2"
+                                        className="flex items-center gap-2 bg-white"
                                     >
                                         <GitCompare className="w-4 h-4" />
                                         {t('filters.compare')} ({selectedUniversities.length})
@@ -596,7 +567,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                 ) : universities && universities.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                         {universities.map((university) => (
-                            <Card key={university.id} className="hover:shadow-lg transition-all duration-200 group">
+                            <Card key={university.id} className="hover:shadow-lg transition-all duration-200 group bg-white">
                                 <CardHeader className="pb-3">
                                     <div className="flex justify-between items-start gap-2">
                                         <div className="flex-1 min-w-0">
@@ -706,7 +677,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                         <p className="text-gray-600 mb-4">
                             {t('results.noResultsDesc')}
                         </p>
-                        <Button onClick={clearFilters} variant="outline">
+                        <Button onClick={clearFilters} variant="outline" className="bg-white">
                             {t('filters.clearFilters')}
                         </Button>
                     </div>
@@ -719,6 +690,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                             variant="outline"
                             disabled={!pagination.hasPrev}
                             onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                            className="bg-white"
                         >
                             {t('pagination.previous')}
                         </Button>
@@ -729,6 +701,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
                             variant="outline"
                             disabled={!pagination.hasNext}
                             onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                            className="bg-white"
                         >
                             {t('pagination.next')}
                         </Button>
@@ -737,7 +710,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
 
                 {/* University Detail Modal */}
                 <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
-                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white">
                         {selectedUniversity && (
                             <>
                                 <DialogHeader>
@@ -852,7 +825,7 @@ export default function UniversitiesPage({ params }: { params: Promise<{ locale:
 
                 {/* Compare Modal */}
                 <Dialog open={isCompareModalOpen} onOpenChange={setIsCompareModalOpen}>
-                    <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto">
+                    <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto bg-white">
                         <DialogHeader>
                             <DialogTitle className="flex items-center gap-2">
                                 <GitCompare className="w-5 h-5" />

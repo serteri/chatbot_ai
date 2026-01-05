@@ -3,15 +3,14 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { auth } from '@/lib/auth/auth'
 
 const prisma = new PrismaClient()
 
 // GET /api/student/scholarship-applications - List user's scholarship applications
 export async function GET(request: NextRequest) {
     try {
-        const session = await getServerSession(authOptions)
+        const session = await auth()
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }

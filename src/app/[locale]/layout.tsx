@@ -1,47 +1,27 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { ReactNode } from 'react'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
-import { ToastProvider } from '@/components/providers/ToastProvider'
-import { AuthProvider } from '@/components/providers/AuthProvider'
-import '../globals.css'
+import "../globals.css";
 
-const inter = Inter({ subsets: ['latin'] })
-
-export const metadata: Metadata = {
-    title: 'ChatbotAI - AI Destekli Müşteri Destek Chatbot',
-    description: 'Kendi dokümanlarınızdan öğrenen akıllı chatbot oluşturun',
-}
-
-export function generateStaticParams() {
-    return [
-        { locale: 'tr' },
-        { locale: 'en' },
-        { locale: 'de' },
-        { locale: 'fr' },
-        { locale: 'es' }
-    ]
-}
-
-export default async function LocaleLayout({
-                                               children,
-                                               params
-                                           }: {
-    children: React.ReactNode
+interface LocaleLayoutProps {
+    children: ReactNode
     params: Promise<{ locale: string }>
-}) {
+}
+
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
     const { locale } = await params
+
+    // DÜZELTME BURADA: Parantez içine { locale } yazdık.
+    // Bu sayede sistem "Hangi dildeyim?" diye şaşırmaz, URL'deki dili (en/tr) zorla yükler.
     const messages = await getMessages({ locale })
 
     return (
         <html lang={locale}>
-        <body className={inter.className}>
-        <AuthProvider>
-            <NextIntlClientProvider messages={messages}>
-                {children}
-                <ToastProvider />
-            </NextIntlClientProvider>
-        </AuthProvider>
+        <body className="min-h-screen bg-background font-sans antialiased">
+        {/* locale prop'unu buraya da ekledik */}
+        <NextIntlClientProvider messages={messages} locale={locale}>
+            {children}
+        </NextIntlClientProvider>
         </body>
         </html>
     )

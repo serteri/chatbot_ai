@@ -3,23 +3,22 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { auth } from '@/lib/auth/auth'
 
 const prisma = new PrismaClient()
 
 // GET /api/student/scholarship-applications/[id] - Get single application
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const session = await getServerSession(authOptions)
+        const session = await auth()
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const applicationId = params.id
+        const { id: applicationId } = await params
 
         const application = await prisma.scholarshipApplication.findFirst({
             where: {
@@ -78,15 +77,15 @@ export async function GET(
 // PATCH /api/student/scholarship-applications/[id] - Update specific application
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const session = await getServerSession(authOptions)
+        const session = await auth()
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const applicationId = params.id
+        const { id: applicationId } = await params
         const body = await request.json()
 
         // Check if application exists and belongs to user

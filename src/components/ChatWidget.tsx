@@ -1,9 +1,12 @@
+'use client'
+
 import React, { useState, useRef, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Send, Bot, User, FileText, Zap, BookOpen, AlertCircle } from 'lucide-react'
+import { Send, Bot, User, FileText, Zap, BookOpen, AlertCircle, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface Message {
     id: string
@@ -21,23 +24,28 @@ interface Message {
 interface ChatWidgetProps {
     chatbotId: string
     onClose?: () => void
-    mode?: 'document' | 'education'
+    mode?: string
 }
 
 export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: ChatWidgetProps) {
+    const t = useTranslations('ChatWidget')
     const [messages, setMessages] = useState<Message[]>([])
     const [inputValue, setInputValue] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [conversationId, setConversationId] = useState<string | null>(null)
-    const [chatbotName, setChatbotName] = useState('AI Assistant')
-    const [welcomeMessage, setWelcomeMessage] = useState('Hello! How can I help you?')
+
+    // Debug bilgisini gizleyip açmak için state
+    const [showDebug, setShowDebug] = useState(false)
     const [debugInfo, setDebugInfo] = useState<string>('')
+
+    const chatbotName = t('defaultBotName');
+    const welcomeMessage = t('defaultWelcomeMessage');
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
+    // İlk yükleme
     useEffect(() => {
-        // Load initial conversation or show welcome message
-        if (welcomeMessage && messages.length === 0) {
+        if (messages.length === 0) {
             setMessages([{
                 id: 'welcome',
                 content: welcomeMessage,
@@ -48,9 +56,10 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
         }
     }, [welcomeMessage, mode])
 
+    // Otomatik kaydırma
     useEffect(() => {
         scrollToBottom()
-    }, [messages])
+    }, [messages, isLoading])
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -59,12 +68,11 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
     const sendMessage = async () => {
         if (!inputValue.trim() || isLoading) return
 
-        // Validate chatbotId
         if (!chatbotId || chatbotId.trim() === '') {
             setDebugInfo('❌ ChatbotId boş!')
             const errorMessage: Message = {
                 id: Date.now().toString(),
-                content: 'Error: ChatbotId is required. Please set a valid chatbot ID.',
+                content: t('errors.noId'),
                 isBot: true,
                 timestamp: new Date()
             }
@@ -83,7 +91,6 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
         setInputValue('')
         setIsLoading(true)
 
-        // Debug info
         const requestData = {
             message: userMessage.content,
             chatbotId: chatbotId.trim(),
@@ -91,35 +98,20 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
             mode
         }
 
-        setDebugInfo(`🔍 Request: ${JSON.stringify(requestData, null, 2)}`)
-        console.log('🔍 API Request:', requestData)
-
         try {
             const response = await fetch('/api/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestData)
-            })
-
-            console.log('📡 Response:', {
-                status: response.status,
-                ok: response.ok,
-                url: response.url,
-                statusText: response.statusText
             })
 
             if (!response.ok) {
                 const errorText = await response.text()
-                console.error('❌ API Error:', errorText)
-                setDebugInfo(`❌ API Error (${response.status}): ${errorText}`)
                 throw new Error(`HTTP error! status: ${response.status} - ${errorText}`)
             }
 
             const data = await response.json()
-            console.log('✅ API Response Data:', data)
-            setDebugInfo(`✅ Success: ${JSON.stringify(data, null, 2)}`)
+            setDebugInfo(JSON.stringify(data, null, 2)) // Debug güncellendi
 
             if (data.success) {
                 const botMessage: Message = {
@@ -145,12 +137,11 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
             console.error('💥 Chat error:', error)
             const errorMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                content: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                content: t('errors.generic'),
                 isBot: true,
                 timestamp: new Date()
             }
             setMessages(prev => [...prev, errorMessage])
-            setDebugInfo(`💥 Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
         } finally {
             setIsLoading(false)
         }
@@ -161,13 +152,6 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
         sendMessage()
     }
 
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault()
-            sendMessage()
-        }
-    }
-
     const formatTime = (date: Date) => {
         return date.toLocaleTimeString('tr-TR', {
             hour: '2-digit',
@@ -176,187 +160,205 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
     }
 
     const getConfidenceColor = (confidence: number) => {
-        if (confidence >= 80) return 'text-green-600'
-        if (confidence >= 60) return 'text-yellow-600'
-        return 'text-red-600'
-    }
-
-    const getConfidenceText = (confidence: number) => {
-        if (confidence >= 80) return 'Yüksek Güven'
-        if (confidence >= 60) return 'Orta Güven'
-        return 'Düşük Güven'
+        if (confidence >= 0.8) return 'text-emerald-600 bg-emerald-50 border-emerald-200'
+        if (confidence >= 0.6) return 'text-amber-600 bg-amber-50 border-amber-200'
+        return 'text-red-600 bg-red-50 border-red-200'
     }
 
     return (
-        <Card className="h-[600px] w-full max-w-md flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="flex items-center space-x-2">
-                    {mode === 'education' ? (
-                        <BookOpen className="h-5 w-5 text-blue-500" />
-                    ) : (
-                        <Bot className="h-5 w-5 text-blue-500" />
-                    )}
-                    <CardTitle className="text-sm font-medium">
-                        {mode === 'education' ? 'Eğitim Danışmanı' : chatbotName}
-                    </CardTitle>
+        <Card className="h-[650px] w-full max-w-md flex flex-col shadow-2xl border-0 overflow-hidden ring-1 ring-slate-900/5">
+            {/* Header */}
+            <CardHeader className="flex flex-row items-center justify-between py-4 px-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white shrink-0">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white/10 rounded-full backdrop-blur-sm">
+                        {mode === 'education' ? (
+                            <BookOpen className="h-5 w-5 text-white" />
+                        ) : (
+                            <Bot className="h-5 w-5 text-white" />
+                        )}
+                    </div>
+                    <div>
+                        <CardTitle className="text-base font-semibold text-white">
+                            {mode === 'education' ? t('educationAdvisor') : chatbotName}
+                        </CardTitle>
+                        <div className="flex items-center gap-1.5 opacity-90">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
+                            </span>
+                            <span className="text-xs font-medium">Çevrimiçi</span>
+                        </div>
+                    </div>
                 </div>
-                {onClose && (
-                    <Button variant="ghost" size="sm" onClick={onClose}>
-                        ✕
+                <div className="flex items-center gap-1">
+                    {/* Debug Toggle */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowDebug(!showDebug)}
+                        className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8"
+                        title="Debug Info"
+                    >
+                        {showDebug ? <ChevronUp className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
                     </Button>
-                )}
+
+                    {onClose && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={onClose}
+                            className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8 rounded-full"
+                        >
+                            ✕
+                        </Button>
+                    )}
+                </div>
             </CardHeader>
 
-            <CardContent className="flex-1 flex flex-col p-3 space-y-3">
-                {/* Debug Info */}
-                {debugInfo && (
-                    <div className="p-2 bg-gray-100 rounded text-xs max-h-20 overflow-y-auto">
-                        <div className="flex items-center gap-1 mb-1">
-                            <AlertCircle className="w-3 h-3" />
-                            <span className="font-medium">Debug:</span>
-                        </div>
-                        <pre className="whitespace-pre-wrap">{debugInfo}</pre>
-                    </div>
-                )}
-
-                {/* Chatbot Info */}
-                <div className="text-xs text-gray-500 p-2 bg-blue-50 rounded">
-                    <strong>Chatbot ID:</strong> {chatbotId || 'Not set'}<br/>
-                    <strong>Mode:</strong> {mode}<br/>
-                    <strong>Conversation:</strong> {conversationId || 'New'}
+            {/* Debug Panel (Opsiyonel) */}
+            {showDebug && (
+                <div className="bg-slate-100 p-2 text-[10px] font-mono text-slate-600 border-b max-h-32 overflow-y-auto shadow-inner">
+                    <p className="font-bold mb-1">Debug Info:</p>
+                    <pre className="whitespace-pre-wrap">{debugInfo || 'No debug data yet.'}</pre>
+                    <p className="mt-1">ID: {chatbotId} | Mode: {mode}</p>
                 </div>
+            )}
 
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+            {/* Messages Area */}
+            <CardContent className="flex-1 flex flex-col p-0 bg-slate-50 relative overflow-hidden">
+                <div className="flex-1 overflow-y-auto p-4 space-y-6 scroll-smooth">
                     {messages.map((message) => (
-                        <div key={message.id} className="space-y-2">
-                            <div
-                                className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
-                            >
-                                <div
-                                    className={`max-w-[80%] rounded-lg p-3 ${
-                                        message.isBot
-                                            ? message.content.startsWith('Error:')
-                                                ? 'bg-red-100 text-red-800'
-                                                : 'bg-gray-100 text-gray-800'
-                                            : 'bg-blue-500 text-white'
-                                    }`}
-                                >
-                                    <div className="flex items-start space-x-2">
-                                        {message.isBot && (
-                                            <div className="flex-shrink-0 mt-0.5">
-                                                {message.content.startsWith('Error:') ? (
-                                                    <AlertCircle className="h-4 w-4 text-red-500" />
-                                                ) : mode === 'education' ? (
-                                                    <BookOpen className="h-4 w-4 text-blue-500" />
-                                                ) : (
-                                                    <Bot className="h-4 w-4 text-blue-500" />
-                                                )}
-                                            </div>
-                                        )}
-                                        {!message.isBot && (
-                                            <div className="flex-shrink-0 mt-0.5">
-                                                <User className="h-4 w-4 text-white" />
-                                            </div>
-                                        )}
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm whitespace-pre-wrap break-words">
-                                                {message.content}
-                                            </p>
-                                            <p className="text-xs opacity-70 mt-1">
-                                                {formatTime(message.timestamp)}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div key={message.id} className={`flex w-full ${message.isBot ? 'justify-start' : 'justify-end'}`}>
 
-                            {/* RAG Sources & Confidence */}
-                            {message.isBot && message.sources && message.sources.length > 0 && (
-                                <div className="ml-8 space-y-2">
-                                    {/* Confidence Score */}
-                                    {message.confidence !== undefined && message.confidence > 0 && (
-                                        <div className="flex items-center space-x-2">
-                                            <Zap className="h-3 w-3 text-gray-400" />
-                                            <span className="text-xs text-gray-500">
-                        Güven:
-                      </span>
-                                            <span className={`text-xs font-medium ${getConfidenceColor(message.confidence)}`}>
-                        %{message.confidence} ({getConfidenceText(message.confidence)})
-                      </span>
-                                        </div>
-                                    )}
-
-                                    {/* Sources */}
-                                    <div className="space-y-1">
-                                        <div className="flex items-center space-x-1">
-                                            <FileText className="h-3 w-3 text-gray-400" />
-                                            <span className="text-xs text-gray-500">Kaynaklar:</span>
-                                        </div>
-                                        <div className="space-y-1">
-                                            {message.sources.map((source, index) => (
-                                                <div key={index} className="flex items-center space-x-2">
-                                                    <Badge variant="outline" className="text-xs py-0">
-                                                        {source.documentName}
-                                                    </Badge>
-                                                    <span className="text-xs text-gray-400">
-                            %{source.similarity} eşleşme
-                          </span>
-                                                </div>
-                                            ))}
-                                        </div>
+                            {/* Avatar for Bot */}
+                            {message.isBot && (
+                                <div className="flex-shrink-0 mr-2 mt-1">
+                                    <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200">
+                                        {mode === 'education' ? (
+                                            <BookOpen className="h-4 w-4 text-blue-600" />
+                                        ) : (
+                                            <Bot className="h-4 w-4 text-blue-600" />
+                                        )}
                                     </div>
                                 </div>
                             )}
 
-                            {/* Education Mode Indicator */}
-                            {message.isBot && message.mode === 'education' && (
-                                <div className="ml-8">
-                                    <Badge variant="secondary" className="text-xs">
-                                        <BookOpen className="h-3 w-3 mr-1" />
-                                        Eğitim Modu
-                                    </Badge>
+                            {/* Message Bubble */}
+                            <div className={`flex flex-col max-w-[85%] ${message.isBot ? 'items-start' : 'items-end'}`}>
+                                <div
+                                    className={`relative px-4 py-3 shadow-sm text-sm leading-relaxed ${
+                                        message.isBot
+                                            ? 'bg-white text-slate-800 rounded-2xl rounded-tl-sm border border-slate-100'
+                                            : 'bg-blue-600 text-white rounded-2xl rounded-tr-sm'
+                                    }`}
+                                >
+                                    {/* Mesaj İçeriği - Taşmayı önleyen sınıflar */}
+                                    <div className="whitespace-pre-wrap break-words overflow-hidden" style={{ wordBreak: 'break-word' }}>
+                                        {message.content}
+                                    </div>
+                                </div>
+
+                                {/* Metadata Row */}
+                                <div className="flex items-center gap-2 mt-1 px-1">
+                                    <span className="text-[10px] text-slate-400">
+                                        {formatTime(message.timestamp)}
+                                    </span>
+
+                                    {/* Confidence Badge (Bot Only) */}
+                                    {message.isBot && message.confidence !== undefined && message.confidence > 0 && (
+                                        <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[9px] font-medium ${getConfidenceColor(message.confidence)}`}>
+                                            <Zap className="h-2.5 w-2.5" />
+                                            %{Math.round(message.confidence * 100)}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Sources (Bot Only) */}
+                                {message.isBot && message.sources && message.sources.length > 0 && (
+                                    <div className="mt-2 pl-1 w-full">
+                                        <p className="text-[10px] font-medium text-slate-500 mb-1.5 flex items-center gap-1">
+                                            <FileText className="h-3 w-3" />
+                                            Kaynaklar:
+                                        </p>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {message.sources.map((source, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-center gap-1 bg-white border border-slate-200 rounded-md px-2 py-1 shadow-sm transition-colors hover:bg-slate-50"
+                                                >
+                                                    <div className="h-1.5 w-1.5 rounded-full bg-blue-400"></div>
+                                                    <span className="text-[10px] text-slate-600 truncate max-w-[100px]" title={source.documentName}>
+                                                        {source.documentName}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* User Avatar (Optional, keeps layout balanced) */}
+                            {!message.isBot && (
+                                <div className="flex-shrink-0 ml-2 mt-1">
+                                    <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center shadow-md">
+                                        <User className="h-4 w-4 text-white" />
+                                    </div>
                                 </div>
                             )}
                         </div>
                     ))}
 
+                    {/* Loading State */}
                     {isLoading && (
-                        <div className="flex justify-start">
-                            <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
-                                <div className="flex items-center space-x-2">
-                                    <Bot className="h-4 w-4 text-blue-500 animate-pulse" />
-                                    <div className="flex space-x-1">
-                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                                    </div>
+                        <div className="flex w-full justify-start animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div className="flex-shrink-0 mr-2">
+                                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <Bot className="h-4 w-4 text-blue-600" />
+                                </div>
+                            </div>
+                            <div className="bg-white border border-slate-100 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
+                                <div className="flex gap-1.5">
+                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-150"></div>
+                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-300"></div>
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    <div ref={messagesEndRef} />
+                    {/* Görünmez element - Scroll'u aşağı çekmek için */}
+                    <div ref={messagesEndRef} className="h-1" />
                 </div>
 
-                {/* Input */}
-                <form onSubmit={handleSubmit} className="flex space-x-2">
-                    <Input
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder={mode === 'education' ? "Eğitim hakkında soru sorun..." : "Mesajınızı yazın..."}
-                        disabled={isLoading}
-                        className="flex-1"
-                    />
-                    <Button
-                        type="submit"
-                        size="sm"
-                        disabled={isLoading || !inputValue.trim()}
-                    >
-                        <Send className="h-4 w-4" />
-                    </Button>
-                </form>
+                {/* Input Area */}
+                <div className="p-4 bg-white border-t border-slate-100">
+                    <form onSubmit={handleSubmit} className="flex gap-2 items-end relative">
+                        <Input
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            placeholder={mode === 'education' ? t('placeholderEducation') : t('placeholderGeneral')}
+                            disabled={isLoading}
+                            className="flex-1 min-h-[44px] py-3 bg-slate-50 border-slate-200 focus-visible:ring-blue-500 focus-visible:ring-offset-0 rounded-xl pr-12"
+                        />
+                        <Button
+                            type="submit"
+                            size="icon"
+                            disabled={isLoading || !inputValue.trim()}
+                            className="absolute right-1.5 bottom-1.5 h-8 w-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition-all hover:scale-105 active:scale-95"
+                        >
+                            {isLoading ? (
+                                <RefreshCw className="h-4 w-4 animate-spin" />
+                            ) : (
+                                <Send className="h-4 w-4" />
+                            )}
+                        </Button>
+                    </form>
+                    <div className="mt-2 text-center">
+                        <p className="text-[10px] text-slate-400">
+                            AI destekli asistan · Powered by ChatbotAI
+                        </p>
+                    </div>
+                </div>
             </CardContent>
         </Card>
     )

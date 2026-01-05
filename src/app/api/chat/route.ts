@@ -1,654 +1,242 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
-import { openai } from '@/lib/ai/openai'
+import OpenAI from 'openai'
 
-export async function POST(req: NextRequest) {
+// OpenAI İstemcisi
+const apiKey = process.env.OPENAI_API_KEY;
+const openai = apiKey ? new OpenAI({ apiKey }) : null;
+
+// Prisma Client uyumluluğu için Node.js runtime kullanıyoruz
+export const runtime = 'nodejs';
+
+// ---------------------------------------------------------------------------
+// ✅ YEDEK PLAN: KELİME BAZLI ARAMA (Keyword Search)
+// Vektör veritabanı çalışmazsa veya sonuçlar yetersizse devreye girer.
+// ---------------------------------------------------------------------------
+async function performKeywordSearch(query: string, chatbotId: string): Promise<{ context: string, sources: string[] } | null> {
     try {
-        const body = await req.json()
-        const { message, chatbotId, conversationId, mode } = body
+        console.log(`🔄 Fallback: Kelime Bazlı Arama deneniyor: "${query}"`);
 
-        console.log('🔍 Chat API Request:', { message, chatbotId, conversationId, mode })
+        // ✅ GÜNCELLEME: Çok dilli Stop Words listesi (TR, EN, DE, FR, ES)
+        const stopWords = [
+            // Türkçe
+            'nedir', 'nelerdir', 'neler', 'hakkında', 'bilgi', 'ver', 'nasıl', 'kimdir', 'mi', 'mu', 'mı', 'mü', 'için', 've', 'veya',
+            // İngilizce
+            'what', 'where', 'how', 'who', 'when', 'which', 'is', 'are', 'about', 'tell', 'me', 'give', 'info', 'information', 'for', 'and', 'or',
+            // Almanca
+            'was', 'wo', 'wie', 'wer', 'wann', 'welche', 'ist', 'sind', 'über', 'gib', 'mir', 'informationen', 'und', 'oder', 'für',
+            // Fransızca
+            'qu', 'est-ce', 'que', 'qui', 'comment', 'où', 'quand', 'quel', 'est', 'sont', 'sur', 'donne', 'moi', 'infos', 'et', 'ou', 'pour',
+            // İspanyolca
+            'que', 'donde', 'como', 'quien', 'cuando', 'cual', 'es', 'son', 'sobre', 'dame', 'informacion', 'y', 'o', 'para'
+        ];
 
-        if (!message || !chatbotId) {
-            return NextResponse.json({ error: 'Message ve chatbotId gerekli' }, { status: 400 })
+        const rawTerms = query.trim().toLowerCase().split(/\s+/);
+
+        // Terimleri temizle
+        const terms = rawTerms
+            .map(t => t.replace(/[?.,!;:()"]/g, '')) // Noktalama işaretlerini kaldır
+            .filter(t => t.length > 2) // 2 harften uzun kelimeleri al
+            .filter(t => !stopWords.includes(t)); // Stop words listesindekileri at
+
+        console.log(`📝 Keyword Arama Terimleri:`, terms);
+
+        if (terms.length === 0) return null;
+
+        // Veritabanında kelime bazlı arama yap (OR mantığıyla herhangi biri geçiyorsa)
+        const chunks = await prisma.documentChunk.findMany({
+            where: {
+                document: { chatbotId: chatbotId, status: 'ready' },
+                OR: terms.map(term => ({
+                    content: { contains: term, mode: 'insensitive' }
+                }))
+            },
+            take: 5,
+            select: { content: true }
+        });
+
+        if (!chunks || chunks.length === 0) {
+            console.log("❌ Keyword: Eşleşme bulunamadı.");
+            return null;
         }
 
-        // Chatbot'u getir - önce id ile, bulamazsa identifier ile ara
-        let chatbot = await prisma.chatbot.findUnique({
-            where: { id: chatbotId },
-            include: {
-                user: {
-                    include: { subscription: true }
-                }
-            }
-        })
+        console.log(`✅ Keyword: ${chunks.length} parça bulundu.`);
 
-        // ID ile bulunamadıysa identifier ile ara
-        if (!chatbot) {
-            chatbot = await prisma.chatbot.findFirst({
-                where: { identifier: chatbotId },
-                include: {
-                    user: {
-                        include: { subscription: true }
-                    }
-                }
-            })
+        // Basit Puanlama (En çok kelime geçen en üste)
+        const scoredChunks = chunks.map(chunk => {
+            let score = 0;
+            const lowerContent = chunk.content.toLowerCase();
+            terms.forEach(term => {
+                if (lowerContent.includes(term)) score += 1;
+            });
+            return { content: chunk.content, score };
+        });
+
+        scoredChunks.sort((a, b) => b.score - a.score);
+        const topChunks = scoredChunks.filter(c => c.score > 0).slice(0, 3);
+
+        if (topChunks.length === 0) return null;
+
+        const contextText = topChunks.map(c => c.content).join('\n---\n');
+        return { context: contextText, sources: ["Dokümanlar (Kelime Eşleşmesi)"] };
+
+    } catch (error) {
+        console.error("Keyword Search Error:", error);
+        return null;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// ✅ ANA PLAN: VEKTÖR ARAMA (Semantic Search)
+// ---------------------------------------------------------------------------
+async function performVectorSearch(query: string, chatbotId: string): Promise<{ context: string, sources: string[] } | null> {
+    if (!openai) return null;
+
+    try {
+        console.log(`🔍 Vektör Arama Başlatılıyor: "${query}"`);
+
+        const embeddingResponse = await openai.embeddings.create({
+            model: 'text-embedding-3-small',
+            input: query.replace(/\n/g, ' '),
+        });
+
+        const embedding = embeddingResponse.data[0].embedding;
+        const vectorQuery = `[${embedding.join(',')}]`;
+
+        const chunks: any[] = await prisma.$queryRaw`
+            SELECT content, 
+                   1 - (embedding <=> ${vectorQuery}::vector) as similarity
+            FROM "DocumentChunk"
+            WHERE "documentId" IN (
+                SELECT id FROM "Document" 
+                WHERE "chatbotId" = ${chatbotId} 
+                AND status = 'ready'
+            )
+            ORDER BY similarity DESC
+            LIMIT 5;
+        `;
+
+        if (!chunks || chunks.length === 0) {
+            console.log("❌ Vektör: Teknik eşleşme yok. Keyword deneniyor...");
+            return await performKeywordSearch(query, chatbotId);
         }
 
-        console.log('🔍 Chatbot search result:', {
-            searchedId: chatbotId,
-            found: !!chatbot,
-            chatbotName: chatbot?.name
-        })
+        // 🚨 KRİTİK DÜZELTME: Eşik değeri 0.10'a düşürüldü.
+        console.log(`📊 En iyi benzerlik skoru: ${chunks[0].similarity}`);
 
-        if (!chatbot) {
-            return NextResponse.json({ error: 'Chatbot bulunamadı' }, { status: 404 })
+        const relevantChunks = chunks.filter(chunk => chunk.similarity > 0.10);
+
+        if (relevantChunks.length === 0) {
+            console.log(`⚠️ Benzerlik oranı çok düşük (0.10 altı). Keyword aramasına geçiliyor...`);
+            return await performKeywordSearch(query, chatbotId);
         }
 
-        if (!chatbot.isActive) {
-            return NextResponse.json({ error: 'Chatbot aktif değil' }, { status: 400 })
-        }
+        console.log(`✅ Vektör: ${relevantChunks.length} parça bulundu.`);
 
-        // Mode'a göre response oluştur (mode parameter'den ya da chatbot'tan)
-        const activeMode = mode || chatbot.mode || 'education'
-        let botResponse: string
-        let sources: Array<{documentName: string, similarity: number}> = []
-        let confidence: number = 0
+        const contextText = relevantChunks.map(c => c.content).join('\n---\n');
+        return { context: contextText, sources: ["Dokümanlar (Vektör)"] };
 
-        console.log('🔍 Active mode:', activeMode)
+    } catch (error: any) {
+        console.error("Vektör Arama Hatası:", error.message);
+        // Hata durumunda Keyword Search'e düş
+        return await performKeywordSearch(query, chatbotId);
+    }
+}
 
-        if (activeMode === 'education') {
-            // Education mode - scholarship/university questions
-            botResponse = await handleEducationQuery(message, chatbot)
+// ---------------------------------------------------------------------------
+// ✅ API HANDLE
+// ---------------------------------------------------------------------------
+export async function POST(req: NextRequest) {
+    let ragContext: string | null = null;
+    let dataSourcesUsed: string[] = [];
+    let finalMode = 'general';
+
+    try {
+        const body = await req.json();
+
+        let messageContent = "";
+        let conversationHistory = [];
+
+        if (body.messages && Array.isArray(body.messages)) {
+            const lastMsg = body.messages[body.messages.length - 1];
+            messageContent = lastMsg.content;
+            conversationHistory = body.messages.slice(0, -1);
+        } else if (body.message) {
+            messageContent = body.message;
+            conversationHistory = body.conversationHistory || [];
         } else {
-            // Document mode - RAG ile cevap oluştur
-            const ragResult = await handleDocumentQuery(message, chatbot)
-            botResponse = ragResult.response
-            sources = ragResult.sources
-            confidence = ragResult.confidence
+            return NextResponse.json({ error: "Mesaj bulunamadı" }, { status: 400 });
         }
 
-        console.log('🔍 Generated response:', { botResponse, sources, confidence })
+        const chatbotId = body.chatbotId;
+        finalMode = body.mode || 'education';
 
-        // Conversation yönetimi
-        let conversation
-        if (conversationId && conversationId !== 'null') {
-            conversation = await prisma.conversation.findUnique({
-                where: { id: conversationId }
-            })
+        if (!chatbotId || !openai) {
+            return NextResponse.json({ error: "Eksik parametreler" }, { status: 400 });
         }
 
-        if (!conversation) {
-            conversation = await prisma.conversation.create({
-                data: {
-                    chatbotId,
-                    visitorId: generateVisitorId(),
-                    status: 'active'
-                }
-            })
+        const chatbot = await prisma.chatbot.findFirst({
+            where: { OR: [ { id: chatbotId }, { identifier: chatbotId } ] },
+            select: { id: true, name: true, welcomeMessage: true }
+        });
+
+        if (!chatbot) {
+            return NextResponse.json({ error: "Chatbot bulunamadı" }, { status: 404 });
         }
 
-        // Message'ları kaydet (ConversationMessage modeli kullan)
-        await prisma.$transaction([
-            // User message
-            prisma.conversationMessage.create({
-                data: {
-                    conversationId: conversation.id,
-                    role: 'user',
-                    content: message
-                }
-            }),
-            // Bot response
-            prisma.conversationMessage.create({
-                data: {
-                    conversationId: conversation.id,
-                    role: 'assistant',
-                    content: botResponse,
-                    aiModel: 'gpt-3.5-turbo',
-                    confidence: confidence || null,
-                    sources: sources.length > 0 ? sources : null
-                }
-            })
-        ])
+        // --- RAG ARAMASI ---
+        const searchResult = await performVectorSearch(messageContent, chatbot.id);
+        ragContext = searchResult?.context || null;
 
-        console.log('✅ Messages saved to database')
+        if (ragContext) {
+            dataSourcesUsed.push('documents');
+        }
+
+        // --- SYSTEM PROMPT ---
+        const systemPrompt = `Sen "${chatbot.name}" adında profesyonel bir eğitim asistanısın.
+        
+TALİMATLAR:
+1. Kullanıcının sorusunu ÖNCELİKLE aşağıdaki [DOKÜMAN BİLGİSİ] kısmını kullanarak yanıtla.
+2. [DOKÜMAN BİLGİSİ] içinde sorunun cevabı varsa, net ve anlaşılır bir şekilde açıkla.
+3. Cevaplarını kullanıcının sorduğu dilde ver (Soru İngilizce ise İngilizce, Türkçe ise Türkçe cevapla).
+4. Eğer dokümanda bilgi yoksa ve soru genel bir eğitim sorusuysa (örn: "merhaba"), nazikçe cevap ver.
+5. Dokümanda olmayan spesifik bir bilgi sorulursa, "Yüklenen dokümanlarda bu bilgiye rastlayamadım." diye belirt.
+6. Asla uydurma bilgi verme.
+
+[DOKÜMAN BİLGİSİ]
+${ragContext || "Şu an için ilgili bir doküman parçası bulunamadı."}
+[DOKÜMAN BİLGİSİ SONU]
+`;
+
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            stream: false,
+            messages: [
+                { role: 'system', content: systemPrompt },
+                ...conversationHistory.slice(-3),
+                { role: 'user', content: messageContent }
+            ],
+            temperature: 0.3,
+        });
+
+        const aiResponse = response.choices[0].message.content || "Cevap üretilemedi.";
 
         return NextResponse.json({
             success: true,
-            response: botResponse,
-            conversationId: conversation.id,
-            sources,
-            confidence,
-            mode: activeMode
-        })
+            response: aiResponse,
+            context: {
+                mode: finalMode,
+                dataSourcesUsed: Array.from(new Set(dataSourcesUsed)),
+                resultsCount: ragContext ? 1 : 0
+            }
+        });
 
-    } catch (error) {
-        console.error('Chat API error:', error)
+    } catch (error: any) {
+        console.error('Chat API Error:', error);
         return NextResponse.json({
-            error: 'Bir hata oluştu',
-            details: error instanceof Error ? error.message : 'Bilinmeyen hata'
-        }, { status: 500 })
+            success: false,
+            response: "Sistemsel bir hata oluştu.",
+            error: error.message
+        }, { status: 500 });
     }
-}
-
-/**
- * Document-based RAG query handler (Enhanced)
- */
-async function handleDocumentQuery(message: string, chatbot: any) {
-    try {
-        // Check for basic greetings and simple questions
-        const isBasicGreeting = /^(merhaba|hello|hi|hey|selam|hola|bonjour|guten tag)$/i.test(message.trim())
-        const isSimpleQuestion = /^(nasılsın|how are you|ne haber|what's up|iyisin|are you ok)$/i.test(message.trim())
-        const isHelp = /(yardım|help|assistance|destek)/i.test(message)
-
-        // For basic interactions, respond without requiring documents
-        if (isBasicGreeting) {
-            return {
-                response: `Merhaba! Ben ${chatbot.botName || chatbot.name} chatbot'uyum. Size yüklediğiniz dokümanlar hakkında sorular sorabileceğiniz gibi, genel sorularınızı da yanıtlayabilirim. Nasıl yardımcı olabilirim?`,
-                sources: [],
-                confidence: 95
-            }
-        }
-
-        if (isSimpleQuestion) {
-            return {
-                response: `İyiyim, teşekkür ederim! Dokümanlarınız hakkında sorular sormaya hazırım. Henüz doküman yüklemediyseniz, genel sorularınızı da yanıtlayabilirim.`,
-                sources: [],
-                confidence: 90
-            }
-        }
-
-        if (isHelp) {
-            return {
-                response: `Elbette yardımcı olmaktan mutluluk duyarım! Size şu şekillerde yardımcı olabilirim:
-
-📄 **Doküman Analizi**: Yüklediğiniz PDF, Word veya metin dosyalarını analiz ederim
-💬 **Genel Sorular**: Doküman dışında genel sorularınızı da yanıtlarım  
-🔍 **İçerik Arama**: Dokümanlarınızdan spesifik bilgileri bulabilirim
-
-Ne konuda yardıma ihtiyacınız var?`,
-                sources: [],
-                confidence: 95
-            }
-        }
-
-        // Check if there are any documents for this chatbot
-        const documentCount = await prisma.document.count({
-            where: {
-                chatbotId: chatbot.id,
-                status: 'ready'
-            }
-        })
-
-        // If no documents and it's a complex question, suggest document upload
-        const isComplexQuestion = message.length > 20 && !/^(ne|what|how|kim|when|where|why|neden|nasıl|nerede)/.test(message.toLowerCase())
-
-        if (documentCount === 0) {
-            if (isComplexQuestion) {
-                return {
-                    response: `Bu konuda size daha iyi yardımcı olabilmek için ilgili dokümanlarınızı yüklemenizi öneririm. 
-
-Alternatif olarak, genel bir sorunuz varsa onu da yanıtlamaya çalışabilirim. Sorunuzu biraz daha açık şekilde belirtir misiniz?`,
-                    sources: [],
-                    confidence: 60
-                }
-            } else {
-                // For simple questions, try to answer generally
-                return await getGeneralResponse(message, chatbot)
-            }
-        }
-
-        // TODO: Real RAG search will go here
-        // For now, simulate document-based response
-        return await getDocumentBasedResponse(message, chatbot, documentCount)
-
-    } catch (error) {
-        console.error('Document query error:', error)
-        return {
-            response: chatbot.fallbackMessage || 'Teknik bir sorun oluştu. Lütfen tekrar deneyin.',
-            sources: [],
-            confidence: 0
-        }
-    }
-}
-
-/**
- * Generate general response for simple questions
- */
-async function getGeneralResponse(message: string, chatbot: any) {
-    try {
-        const systemMessage = `Sen ${chatbot.botName || chatbot.name} adında yardımcı bir asistansın. 
-        Kullanıcının genel sorularını yanıtlıyorsun. Samimi ve yararlı ol.
-        Türkçe sorulara Türkçe, İngilizce sorulara İngilizce cevap ver.`
-
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
-            messages: [
-                { role: 'system', content: systemMessage },
-                { role: 'user', content: message }
-            ],
-            max_tokens: 300,
-            temperature: 0.7
-        })
-
-        const response = completion.choices[0]?.message?.content ||
-            'Size nasıl yardımcı olabilirim?'
-
-        return {
-            response,
-            sources: [],
-            confidence: 80
-        }
-    } catch (error) {
-        return {
-            response: 'Genel bir sorunuz var mı? Size yardımcı olmaya çalışabilirim.',
-            sources: [],
-            confidence: 70
-        }
-    }
-}
-
-/**
- * Generate document-based response (placeholder for real RAG)
- */
-async function getDocumentBasedResponse(message: string, chatbot: any, documentCount: number) {
-    try {
-        const systemMessage = `Sen ${chatbot.name || 'AI Asistan'} adında yardımcı bir asistansın. 
-        Kullanıcının yüklediği ${documentCount} dokümana göre cevap veriyorsun. 
-        Eğer dokümanlardan kesin bilgi bulamazsan, genel bilginle yardım et.`
-
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
-            messages: [
-                { role: 'system', content: systemMessage },
-                { role: 'user', content: message }
-            ],
-            max_tokens: 500,
-            temperature: 0.7
-        })
-
-        const response = completion.choices[0]?.message?.content ||
-            chatbot.fallbackMessage ||
-            'Dokümanlarınızı inceliyorum...'
-
-        return {
-            response,
-            sources: [{ documentName: `${documentCount} doküman`, similarity: 75 }],
-            confidence: 85
-        }
-
-    } catch (error) {
-        console.error('Document-based response error:', error)
-        return {
-            response: 'Dokümanlarınızı analiz etmeye çalışıyorum. Biraz daha spesifik soru sorabilir misiniz?',
-            sources: [],
-            confidence: 60
-        }
-    }
-}
-
-/**
- * Education mode query handler
- */
-/**
- * Education mode query handler with visa support
- */
-async function handleEducationQuery(message: string, chatbot: any) {
-    try {
-        console.log('🔍 Handling education query:', message)
-
-        // Check query types
-        const isVisaQuery = /vize|visa|vizesi|schengen|student visa|öğrenci vizesi|başvuru|konsolosluk/i.test(message)
-        const isScholarshipQuery = /burs|scholarship|öğrenim|yardım|maddi|finansal/i.test(message)
-        const isUniversityQuery = /üniversite|university|okul|eğitim|study|kampüs|college/i.test(message)
-
-        console.log('🔍 Query type:', { isVisaQuery, isScholarshipQuery, isUniversityQuery })
-
-        // Handle visa queries first (highest priority for detailed information)
-        if (isVisaQuery) {
-            return await handleVisaQuery(message, chatbot)
-        }
-
-        let systemMessage = `Sen ${chatbot.name || 'Eğitim Danışmanı'} adında bir eğitim danışmanısın. 
-        Uluslararası öğrencilere üniversite, burs ve vize konularında yardım ediyorsun.
-        Türkçe sorulara Türkçe, İngilizce sorulara İngilizce cevap veriyorsun.`
-
-        let context = ''
-
-        if (isScholarshipQuery) {
-            try {
-                // Get scholarship data
-                const scholarships = await prisma.scholarship.findMany({
-                    where: {
-                        OR: [
-                            { title: { contains: extractKeywords(message), mode: 'insensitive' } },
-                            { description: { contains: extractKeywords(message), mode: 'insensitive' } },
-                            { country: { contains: extractKeywords(message), mode: 'insensitive' } }
-                        ]
-                    },
-                    take: 3,
-                    select: {
-                        title: true,
-                        country: true,
-                        amount: true,
-                        description: true,
-                        requirements: true,
-                        applicationUrl: true
-                    }
-                })
-
-                console.log('🔍 Found scholarships:', scholarships.length)
-
-                if (scholarships.length > 0) {
-                    context = '\n\nİlgili Burs Fırsatları:\n' +
-                        scholarships.map(s =>
-                            `- ${s.title} (${s.country})\n  Miktar: ${s.amount || 'Belirtilmemiş'}\n  ${s.description?.slice(0, 200)}...`
-                        ).join('\n\n')
-                }
-            } catch (error) {
-                console.error('Scholarship search error:', error)
-            }
-        }
-
-        if (isUniversityQuery) {
-            try {
-                // Get university data
-                const universities = await prisma.university.findMany({
-                    where: {
-                        OR: [
-                            { name: { contains: extractKeywords(message), mode: 'insensitive' } },
-                            { country: { contains: extractKeywords(message), mode: 'insensitive' } },
-                            { city: { contains: extractKeywords(message), mode: 'insensitive' } }
-                        ]
-                    },
-                    take: 3,
-                    select: {
-                        name: true,
-                        country: true,
-                        city: true,
-                        ranking: true,
-                        tuitionMin: true,
-                        tuitionMax: true,
-                        programs: true
-                    }
-                })
-
-                console.log('🔍 Found universities:', universities.length)
-
-                if (universities.length > 0) {
-                    context += '\n\nİlgili Üniversiteler:\n' +
-                        universities.map(u =>
-                            `- ${u.name} (${u.city}, ${u.country})\n  Sıralama: ${u.ranking || 'N/A'}\n  Programlar: ${u.programs?.slice(0, 3)?.join(', ')}`
-                        ).join('\n\n')
-                }
-            } catch (error) {
-                console.error('University search error:', error)
-            }
-        }
-
-        if (context) {
-            systemMessage += context + '\n\nBu bilgileri kullanarak soruyu yanıtla.'
-        } else {
-            systemMessage += '\n\nGenel eğitim danışmanlığı yap ve mümkün olduğunca yardımcı ol.'
-        }
-
-        console.log('🔍 Calling OpenAI with system message length:', systemMessage.length)
-
-        // OpenAI ile response oluştur
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
-            messages: [
-                { role: 'system', content: systemMessage },
-                { role: 'user', content: message }
-            ],
-            max_tokens: 500,
-            temperature: 0.7
-        })
-
-        const response = completion.choices[0]?.message?.content ||
-            chatbot.fallbackMessage ||
-            'Eğitim konusunda size nasıl yardımcı olabilirim?'
-
-        console.log('🔍 OpenAI response received, length:', response.length)
-
-        return response
-
-    } catch (error) {
-        console.error('Education query error:', error)
-
-        // Enhanced fallback responses based on query type
-        if (/vize|visa/i.test(message)) {
-            return `Vize konusunda size yardımcı olmaktan mutluluk duyarım! 
-
-🛂 **Öğrenci Vizesi Genel Bilgileri:**
-📋 Gerekli belgeler: Kabul mektubu, mali durum, pasaport, sağlık sigortası
-⏰ Başvuru süreci: 2-8 hafta (ülkeye göre değişir)
-💰 Ücretler: $160-300 arası (ülkeye göre değişir)
-
-Hangi ülke için vize bilgisine ihtiyacınız var? Size daha detaylı bilgi verebilirim.`
-        }
-
-        if (/burs|scholarship/i.test(message)) {
-            return `Burs konusunda size yardımcı olabilirim!
-
-💰 **Popüler Burs Programları:**
-🇹🇷 Türkiye Bursları - Tam burslu
-🇺🇸 Fulbright - Lisansüstü programlar  
-🇩🇪 DAAD - Almanya'da eğitim
-🏛️ Erasmus+ - Avrupa üniversiteleri
-
-Hangi seviyede (lisans/master/doktora) ve hangi ülkede eğitim almak istiyorsunuz?`
-        }
-
-        if (/üniversite|university/i.test(message)) {
-            return `Üniversite seçiminde size yardımcı olmaktan mutluluk duyarım!
-
-🎓 **Popüler Destinasyonlar:**
-🇺🇸 Amerika - MIT, Harvard, Stanford
-🇬🇧 İngiltere - Oxford, Cambridge, Imperial  
-🇩🇪 Almanya - TU Munich, Heidelberg
-🇨🇦 Kanada - Toronto, UBC, McGill
-
-Hangi alanda ve hangi ülkede okumak istiyorsunuz? Size uygun üniversiteleri önerebilirim.`
-        }
-
-        return chatbot.fallbackMessage || 'Teknik bir sorun oluştu. Lütfen tekrar deneyin.'
-    }
-}
-
-/**
- * Handle visa-related queries
- */
-async function handleVisaQuery(message: string, chatbot: any) {
-    try {
-        console.log('🛂 Handling visa query:', message)
-
-        // Extract country from message
-        const countries = extractCountriesFromMessage(message)
-        const visaType = extractVisaType(message)
-
-        console.log('🔍 Extracted:', { countries, visaType })
-
-        let context = ''
-
-        if (countries.length > 0) {
-            try {
-                // Search for visa information
-                const visaInfos = await prisma.visaInfo.findMany({
-                    where: {
-                        country: {
-                            in: countries,
-                            mode: 'insensitive'
-                        },
-                        ...(visaType && {
-                            visaType: {
-                                contains: visaType,
-                                mode: 'insensitive'
-                            }
-                        })
-                    },
-                    take: 3
-                })
-
-                console.log('🛂 Found visa infos:', visaInfos.length)
-
-                if (visaInfos.length > 0) {
-                    context = '\n\nVize Bilgileri:\n' +
-                        visaInfos.map(visa =>
-                            `🛂 **${visa.country} - ${visa.visaType}**\n` +
-                            `⏰ Süre: ${visa.duration}\n` +
-                            `💰 Ücret: ${visa.cost ? `$${visa.cost}` : 'Değişken'}\n` +
-                            `⚡ İşlem Süresi: ${visa.processingTime}\n` +
-                            `📋 Gereksinimler: ${formatRequirements(visa.requirements)}\n` +
-                            `${visa.website ? `🔗 Website: ${visa.website}\n` : ''}` +
-                            `${visa.description ? `ℹ️ ${visa.description.slice(0, 200)}...\n` : ''}`
-                        ).join('\n')
-                }
-            } catch (error) {
-                console.error('Visa DB search error:', error)
-                // Continue with general response
-            }
-        }
-
-        // Generate AI response with visa context
-        const systemMessage = `Sen ${chatbot.name || 'Eğitim Danışmanı'} adında bir eğitim danışmanısın.
-        Öğrenci vizesi konusunda uzmanısın.
-        Türkçe sorulara Türkçe, İngilizce sorulara İngilizce cevap ver.
-        
-        ${context ? context + '\n\nBu vize bilgilerini kullanarak soruyu yanıtla.' :
-            '\n\nGenel vize danışmanlığı yap ve doğru kaynaklara yönlendir.'}`
-
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
-            messages: [
-                { role: 'system', content: systemMessage },
-                { role: 'user', content: message }
-            ],
-            max_tokens: 600,
-            temperature: 0.7
-        })
-
-        return completion.choices[0]?.message?.content ||
-            'Vize konusunda size yardımcı olmaktan mutluluk duyarım. Hangi ülke için vize bilgisine ihtiyacınız var?'
-
-    } catch (error) {
-        console.error('Visa query error:', error)
-        return generateVisaFallbackResponse(message)
-    }
-}
-
-/**
- * Extract countries from message
- */
-function extractCountriesFromMessage(message: string): string[] {
-    const countryMap: Record<string, string[]> = {
-        'USA': ['amerika', 'usa', 'united states', 'abd'],
-        'Germany': ['almanya', 'germany', 'deutschland'],
-        'UK': ['ingiltere', 'uk', 'united kingdom', 'britain', 'england'],
-        'Canada': ['kanada', 'canada'],
-        'Australia': ['avustralya', 'australia'],
-        'France': ['fransa', 'france'],
-        'Netherlands': ['hollanda', 'netherlands'],
-        'Italy': ['italya', 'italy'],
-        'Spain': ['ispanya', 'spain'],
-        'Sweden': ['isvec', 'sweden'],
-        'Norway': ['norvec', 'norway'],
-        'Denmark': ['danimarka', 'denmark'],
-        'Finland': ['finlandiya', 'finland'],
-        'Switzerland': ['isvicre', 'switzerland'],
-        'Austria': ['avusturya', 'austria'],
-        'Belgium': ['belcika', 'belgium'],
-        'Ireland': ['irlanda', 'ireland'],
-        'New Zealand': ['yeni zelanda', 'new zealand'],
-        'Japan': ['japonya', 'japan'],
-        'South Korea': ['guney kore', 'south korea', 'korea'],
-        'Singapore': ['singapur', 'singapore'],
-        'Poland': ['polonya', 'poland'],
-        'Czech Republic': ['cek cumhuriyeti', 'czech republic', 'czechia'],
-        'Hungary': ['macaristan', 'hungary'],
-        'Portugal': ['portekiz', 'portugal']
-    }
-
-    const foundCountries: string[] = []
-    const messageLower = message.toLowerCase()
-
-    for (const [country, aliases] of Object.entries(countryMap)) {
-        if (aliases.some(alias => messageLower.includes(alias))) {
-            foundCountries.push(country)
-        }
-    }
-
-    return foundCountries
-}
-
-/**
- * Extract visa type from message
- */
-function extractVisaType(message: string): string | null {
-    const messageLower = message.toLowerCase()
-
-    if (/student|öğrenci|study|eğitim/.test(messageLower)) return 'Student'
-    if (/tourist|turist|visit|ziyaret/.test(messageLower)) return 'Tourist'
-    if (/work|çalışma|employment/.test(messageLower)) return 'Work'
-    if (/transit|geçiş/.test(messageLower)) return 'Transit'
-
-    return null
-}
-
-/**
- * Format requirements from JSON
- */
-function formatRequirements(requirements: any): string {
-    if (!requirements) return 'Belirtilmemiş'
-
-    if (typeof requirements === 'string') return requirements
-
-    if (Array.isArray(requirements)) {
-        return requirements.join(', ')
-    }
-
-    if (typeof requirements === 'object') {
-        return Object.entries(requirements)
-            .map(([key, value]) => `${key}: ${value}`)
-            .join(', ')
-    }
-
-    return 'Detaylar için resmi kaynaklara başvurun'
-}
-
-/**
- * Generate fallback response for visa queries
- */
-function generateVisaFallbackResponse(message: string): string {
-    const countries = extractCountriesFromMessage(message)
-
-    if (countries.length > 0) {
-        const country = countries[0]
-        return `${country} öğrenci vizesi hakkında size yardımcı olmak isterim. 
-
-Genel olarak öğrenci vizesi için şunlar gereklidir:
-📋 Kabul mektubu
-💰 Mali durum belgesi  
-📄 Pasaport
-🏥 Sağlık sigortası
-📝 Vize başvuru formu
-
-${country} için güncel ve detaylı bilgi almak için:
-• Resmi konsolosluk web sitesini ziyaret edin
-• Eğitim danışmanınızla konuşun
-• Başvuracağınız üniversitenin international office'ine danışın
-
-Başka hangi konularda yardıma ihtiyacınız var?`
-    }
-
-    return `Vize başvuru süreçleri ülkeye göre değişir. Hangi ülke için vize bilgisine ihtiyacınız var?
-
-🌍 Popüler öğrenci vize destinasyonları:
-• 🇺🇸 Amerika (F-1 Visa)
-• 🇩🇪 Almanya (National Visa)  
-• 🇬🇧 İngiltere (Student Visa)
-• 🇨🇦 Kanada (Study Permit)
-• 🇦🇺 Avustralya (Student Visa)
-
-Hangi ülke sizi ilgilendiriyor?`
 }

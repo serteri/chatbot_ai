@@ -1,7 +1,8 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl' // useLocale eklendi
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,7 +12,20 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { LogOut, User, Globe, Shield } from 'lucide-react'
+import {
+    LogOut,
+    User,
+    Globe,
+    GraduationCap,
+    ShoppingCart,
+    Bot,
+    Settings,
+    ChevronDown,
+    LayoutDashboard,
+    MessageSquare,
+    BarChart3,
+    CreditCard
+} from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
 interface DashboardNavProps {
@@ -23,16 +37,28 @@ interface DashboardNavProps {
 
 export default function DashboardNav({ user }: DashboardNavProps) {
     const t = useTranslations()
+    const locale = useLocale() // Mevcut dili güvenli bir şekilde alıyoruz
     const router = useRouter()
     const pathname = usePathname()
 
-    const changeLocale = (locale: string) => {
-        const segments = pathname.split('/')
-        segments[1] = locale
-        router.push(segments.join('/'))
+    const changeLocale = (newLocale: string) => {
+        // HATA DÜZELTME: URL mantığı yenilendi
+        const supportedLocales = ['tr', 'en', 'de', 'fr', 'es'];
+        const pathSegments = pathname.split('/').filter(Boolean);
+
+        // Eğer URL'in ilk parçası desteklenen bir dil ise (örn: /tr/dashboard), onu değiştir
+        if (supportedLocales.includes(pathSegments[0])) {
+            pathSegments[0] = newLocale;
+        } else {
+            // Eğer URL'de dil yoksa (örn: /dashboard), en başa yeni dili ekle
+            pathSegments.unshift(newLocale);
+        }
+
+        const newPath = `/${pathSegments.join('/')}`;
+        router.push(newPath);
     }
 
-    const currentLocale = pathname.split('/')[1] || 'tr'
+    const currentLocale = locale; // Artık pathname'i parse etmeye gerek yok
 
     const handleLogout = async () => {
         await signOut({
@@ -42,108 +68,143 @@ export default function DashboardNav({ user }: DashboardNavProps) {
     }
 
     return (
-        <nav className="border-b bg-white">
+        <nav className="border-b bg-white sticky top-0 z-40 shadow-sm">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
+                    {/* SOL TARA: Logo ve Menüler */}
                     <div className="flex items-center space-x-8">
-                        <Link href={`/${currentLocale}`} className="text-xl font-bold text-blue-600">
-                            ChatbotAI
+                        <Link href={`/${currentLocale}`} className="text-xl font-bold text-blue-600 flex items-center gap-2">
+                            <Bot className="h-6 w-6" />
+                            <span>PylonChat</span>
                         </Link>
 
-                        <div className="hidden md:flex space-x-6">
+                        <div className="hidden md:flex items-center space-x-1">
+                            {/* Dashboard Linki */}
                             <Link
                                 href={`/${currentLocale}/dashboard`}
-                                className="text-gray-700 hover:text-blue-600 transition"
+                                className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
                             >
+                                <LayoutDashboard className="h-4 w-4" />
                                 {t('nav.dashboard')}
                             </Link>
-                            <Link
-                                href={`/${currentLocale}/dashboard/chatbots`}
-                                className="text-gray-700 hover:text-blue-600 transition"
-                            >
-                                {t('nav.chatbots')}
-                            </Link>
-                            <Link
-                                href={`/${currentLocale}/dashboard/conversations`}
-                                className="text-gray-700 hover:text-blue-600 transition"
-                            >
-                                {t('nav.conversations')}
-                            </Link>
 
-                            {/* Education Dropdown */}
+                            {/* Chatbot Selection Dropdown */}
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className="text-gray-700 hover:text-blue-600 transition font-normal">
-                                        {t('nav.education')}
+                                    <button className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-1 group outline-none">
+                                        <Bot className="h-4 w-4" />
+                                        <span>{t('chatbots.title')}</span>
+                                        <ChevronDown className="h-3 w-3 text-gray-400 group-hover:text-blue-600 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                                     </button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent>
+                                <DropdownMenuContent className="bg-white border border-gray-200 shadow-xl z-[999] min-w-[240px] animate-in fade-in-0 zoom-in-95 mt-2">
                                     <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/student/profile`} className="cursor-pointer">
-                                            👤 {t('nav.myProfile')}
+                                        <Link href={`/${currentLocale}/dashboard/chatbots`} className="cursor-pointer font-medium flex items-center gap-2 py-2.5">
+                                            <span>🤖</span> {t('dashboard.generalChatbots')}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator className="bg-gray-100" />
+                                    <DropdownMenuItem asChild>
+                                        <Link href={`/${currentLocale}/dashboard/education`} className="cursor-pointer flex items-center gap-2 py-2.5 text-gray-600 hover:text-blue-600">
+                                            <div className="p-1 bg-blue-100 rounded text-blue-600">
+                                                <GraduationCap className="h-4 w-4" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">Eğitim Asistanları</span>
+                                                <span className="text-xs text-gray-400 font-normal">Üniversite & Vize</span>
+                                            </div>
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/student/applications`} className="cursor-pointer">
-                                            📋 {t('nav.myApplications')}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/universities`} className="cursor-pointer">
-                                            🎓 {t('nav.universities')}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/student/scholarships`} className="cursor-pointer">
-                                            💰 {t('nav.scholarships')}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/visa-info`} className="cursor-pointer">
-                                            📄 {t('nav.visaInfo')}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/language-schools`} className="cursor-pointer">
-                                            🗣️ {t('nav.languageSchools')}
+                                        <Link href={`/${currentLocale}/dashboard/ecommerce`} className="cursor-pointer flex items-center gap-2 py-2.5 text-gray-600 hover:text-blue-600">
+                                            <div className="p-1 bg-green-100 rounded text-green-600">
+                                                <ShoppingCart className="h-4 w-4" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">E-Ticaret Asistanları</span>
+                                                <span className="text-xs text-gray-400 font-normal">Satış & Destek</span>
+                                            </div>
                                         </Link>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
 
                             <Link
+                                href={`/${currentLocale}/dashboard/conversations`}
+                                className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
+                            >
+                                <MessageSquare className="h-4 w-4" />
+                                {t('nav.conversations')}
+                            </Link>
+
+                            <Link
                                 href={`/${currentLocale}/dashboard/pricing`}
-                                className="text-gray-700 hover:text-blue-600 transition"
+                                className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition"
                             >
                                 {t('nav.pricing')}
                             </Link>
                         </div>
                     </div>
 
-                    <div className="flex items-center space-x-4">
+                    {/* SAĞ TARAF: Dil ve Kullanıcı */}
+                    <div className="flex items-center space-x-3">
                         {/* Dil Seçici */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm">
-                                    <Globe className="h-4 w-4 mr-2" />
-                                    {currentLocale.toUpperCase()}
+                                <Button variant="ghost" size="sm" className="h-9 px-3 border border-gray-200 hover:bg-gray-50 hover:text-blue-600">
+                                    <div className="flex items-center gap-2">
+                                        <Globe className="h-4 w-4" />
+                                        <span className="font-semibold text-xs">{currentLocale.toUpperCase()}</span>
+                                    </div>
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem onClick={() => changeLocale('tr')}>
-                                    🇹🇷 Türkçe
+                            <DropdownMenuContent className="bg-white border border-gray-200 shadow-xl z-[999] min-w-[160px] p-1 mt-2" align="end">
+                                <div className="px-2 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                                    {currentLocale === 'tr' ? 'Dil Seçin' :
+                                        currentLocale === 'de' ? 'Sprache wählen' :
+                                            currentLocale === 'fr' ? 'Choisir la langue' :
+                                                currentLocale === 'es' ? 'Elegir idioma' :
+                                                    'Select Language'}
+                                </div>
+
+                                <DropdownMenuItem onClick={() => changeLocale('tr')} className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-sm ${currentLocale === 'tr' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-lg">🇹🇷</span>
+                                        <span>Türkçe</span>
+                                    </div>
+                                    {currentLocale === 'tr' && <span className="text-blue-600">✓</span>}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => changeLocale('en')}>
-                                    🇬🇧 English
+
+                                <DropdownMenuItem onClick={() => changeLocale('en')} className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-sm ${currentLocale === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-lg">🇬🇧</span>
+                                        <span>English</span>
+                                    </div>
+                                    {currentLocale === 'en' && <span className="text-blue-600">✓</span>}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => changeLocale('de')}>
-                                    🇩🇪 Deutsch
+
+                                <DropdownMenuItem onClick={() => changeLocale('de')} className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-sm ${currentLocale === 'de' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-lg">🇩🇪</span>
+                                        <span>Deutsch</span>
+                                    </div>
+                                    {currentLocale === 'de' && <span className="text-blue-600">✓</span>}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => changeLocale('fr')}>
-                                    🇫🇷 Français
+
+                                <DropdownMenuItem onClick={() => changeLocale('fr')} className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-sm ${currentLocale === 'fr' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-lg">🇫🇷</span>
+                                        <span>Français</span>
+                                    </div>
+                                    {currentLocale === 'fr' && <span className="text-blue-600">✓</span>}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => changeLocale('es')}>
-                                    🇪🇸 Español
+
+                                <DropdownMenuItem onClick={() => changeLocale('es')} className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-sm ${currentLocale === 'es' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-lg">🇪🇸</span>
+                                        <span>Español</span>
+                                    </div>
+                                    {currentLocale === 'es' && <span className="text-blue-600">✓</span>}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -151,23 +212,53 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                         {/* User Menu */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
-                                    <User className="h-4 w-4 mr-2" />
-                                    {user.name || user.email}
+                                <Button variant="ghost" size="sm" className="h-9 px-2 hover:bg-gray-50 group border border-transparent hover:border-gray-200">
+                                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-2 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                        <User className="h-4 w-4" />
+                                    </div>
+                                    <span className="max-w-[100px] truncate mr-1 font-medium text-gray-700 group-hover:text-gray-900">
+                                        {user.name || user.email}
+                                    </span>
+                                    <ChevronDown className="h-3 w-3 text-gray-400 group-hover:text-gray-600 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                {/* ✅ ADMIN PANEL LINK EKLENDI */}
+                            <DropdownMenuContent className="bg-white border border-gray-200 shadow-xl z-[999] min-w-[200px] mt-2 p-1" align="end">
+                                <div className="px-2 py-1.5 mb-1 border-b border-gray-50">
+                                    <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                                </div>
+
                                 <DropdownMenuItem asChild>
-                                    <Link href={`/${currentLocale}/admin/scholarships`} className="cursor-pointer">
-                                        <Shield className="h-4 w-4 mr-2 text-blue-600" />
-                                        🔧 Admin Panel
+                                    <Link href={`/${currentLocale}/dashboard/profile`} className="cursor-pointer py-2.5">
+                                        <User className="h-4 w-4 mr-2 text-gray-500" />
+                                        {t('nav.profile')}
                                     </Link>
                                 </DropdownMenuItem>
 
-                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <Link href={`/${currentLocale}/dashboard/settings`} className="cursor-pointer py-2.5">
+                                        <Settings className="h-4 w-4 mr-2 text-gray-500" />
+                                        {t('nav.settings')}
+                                    </Link>
+                                </DropdownMenuItem>
 
-                                <DropdownMenuItem onClick={handleLogout}>
+                                <DropdownMenuItem asChild>
+                                    <Link href={`/${currentLocale}/dashboard/analytics`} className="cursor-pointer py-2.5">
+                                        <BarChart3 className="h-4 w-4 mr-2 text-gray-500" />
+                                        {t('nav.analytics')}
+                                    </Link>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem asChild>
+                                    <Link href={`/${currentLocale}/dashboard/billing`} className="cursor-pointer py-2.5">
+                                        <CreditCard className="h-4 w-4 mr-2 text-gray-500" />
+                                        {t('nav.billing')}
+                                    </Link>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuSeparator className="bg-gray-100 my-1" />
+
+                                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 py-2.5">
                                     <LogOut className="h-4 w-4 mr-2" />
                                     {t('nav.logout')}
                                 </DropdownMenuItem>

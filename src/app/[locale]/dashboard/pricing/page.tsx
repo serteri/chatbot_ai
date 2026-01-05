@@ -43,9 +43,9 @@ export default async function PricingPage({
                         <thead>
                         <tr className="border-b">
                             <th className="text-left p-4">{t('pricing.feature')}</th>
-                            <th className="text-center p-4">{t('pricing.free')}</th>
-                            <th className="text-center p-4">{t('pricing.pro')}</th>
-                            <th className="text-center p-4">{t('pricing.enterprise')}</th>
+                            <th className="text-center p-4">{t('pricing.plans.free.name')}</th>
+                            <th className="text-center p-4">{t('pricing.plans.pro.name')}</th>
+                            <th className="text-center p-4">{t('pricing.plans.enterprise.name')}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -68,7 +68,7 @@ export default async function PricingPage({
                             <td className="text-center p-4">{t('pricing.unlimited')}</td>
                         </tr>
                         <tr className="border-b">
-                            <td className="p-4">Analytics</td>
+                            <td className="p-4">{t('pricing.analytics')}</td>
                             <td className="text-center p-4">❌</td>
                             <td className="text-center p-4">✅</td>
                             <td className="text-center p-4">✅</td>
@@ -98,30 +98,30 @@ export default async function PricingPage({
 
             {/* FAQ */}
             <div className="mt-16 max-w-3xl mx-auto">
-                <h2 className="text-2xl font-bold text-center mb-8">{t('pricing.faq')}</h2>
+                <h2 className="text-2xl font-bold text-center mb-8">{t('pricing.faq.title')}</h2>
                 <div className="space-y-6">
                     <div>
-                        <h3 className="font-semibold mb-2">{t('pricing.faq1Q')}</h3>
+                        <h3 className="font-semibold mb-2">{t('pricing.faq.q1')}</h3>
                         <p className="text-gray-600">
-                            {t('pricing.faq1A')}
+                            {t('pricing.faq.a1')}
                         </p>
                     </div>
                     <div>
-                        <h3 className="font-semibold mb-2">{t('pricing.faq2Q')}</h3>
+                        <h3 className="font-semibold mb-2">{t('pricing.faq.q2')}</h3>
                         <p className="text-gray-600">
-                            {t('pricing.faq2A')}
+                            {t('pricing.faq.a2')}
                         </p>
                     </div>
                     <div>
-                        <h3 className="font-semibold mb-2">{t('pricing.faq3Q')}</h3>
+                        <h3 className="font-semibold mb-2">{t('pricing.faq.q3')}</h3>
                         <p className="text-gray-600">
-                            {t('pricing.faq3A')}
+                            {t('pricing.faq.a3')}
                         </p>
                     </div>
                     <div>
-                        <h3 className="font-semibold mb-2">{t('pricing.faq4Q')}</h3>
+                        <h3 className="font-semibold mb-2">{t('pricing.faq.q4')}</h3>
                         <p className="text-gray-600">
-                            {t('pricing.faq4A')}
+                            {t('pricing.faq.a4')}
                         </p>
                     </div>
                 </div>

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useTranslations } from 'next-intl'
 import {
     Globe,
     Clock,
@@ -38,6 +39,7 @@ interface VisaInfo {
 }
 
 export default function VisaInfoPage() {
+    const t = useTranslations('visa')
     const [visaData, setVisaData] = useState<VisaInfo[]>([])
     const [filteredData, setFilteredData] = useState<VisaInfo[]>([])
     const [loading, setLoading] = useState(true)
@@ -55,58 +57,6 @@ export default function VisaInfoPage() {
                     const data = await response.json()
                     setVisaData(data.visas || [])
                     setFilteredData(data.visas || [])
-                } else {
-                    // Fallback with sample data if API not ready
-                    const sampleData: VisaInfo[] = [
-                        {
-                            id: 'visa_germany',
-                            country: 'Germany',
-                            visaType: 'Student (National Visa)',
-                            duration: '1-4 years',
-                            cost: 75,
-                            requirements: [
-                                'University acceptance letter',
-                                'Blocked account (€11,208/year)',
-                                'Health insurance',
-                                'Academic transcripts',
-                                'Language proficiency'
-                            ],
-                            processingTime: '4-8 weeks',
-                            website: 'https://www.germany.travel/visa',
-                            description: 'German student visa for long-term academic programs.',
-                            multiLanguage: {
-                                tr: {
-                                    title: 'Almanya Öğrenci Vizesi',
-                                    description: 'Almanya\'da uzun süreli akademik programlar için vize'
-                                }
-                            }
-                        },
-                        {
-                            id: 'visa_usa',
-                            country: 'USA',
-                            visaType: 'Student (F-1)',
-                            duration: 'Program duration + 60 days',
-                            cost: 350,
-                            requirements: [
-                                'SEVIS I-20 form',
-                                'DS-160 application',
-                                'Financial proof ($25,000+/year)',
-                                'University acceptance',
-                                'Visa interview'
-                            ],
-                            processingTime: '2-8 weeks',
-                            website: 'https://travel.state.gov/student-visa',
-                            description: 'F-1 visa for full-time academic study in the United States.',
-                            multiLanguage: {
-                                tr: {
-                                    title: 'Amerika F-1 Öğrenci Vizesi',
-                                    description: 'Amerika\'da tam zamanlı akademik eğitim için vize'
-                                }
-                            }
-                        }
-                    ]
-                    setVisaData(sampleData)
-                    setFilteredData(sampleData)
                 }
             } catch (error) {
                 console.error('Failed to fetch visa data:', error)
@@ -136,9 +86,10 @@ export default function VisaInfoPage() {
             const regions = {
                 'north-america': ['USA', 'Canada', 'Mexico'],
                 'europe': ['Germany', 'UK', 'France', 'Netherlands', 'Italy', 'Spain', 'Switzerland', 'Austria', 'Belgium', 'Portugal', 'Ireland', 'Sweden', 'Norway', 'Denmark', 'Finland', 'Iceland', 'Poland', 'Czech Republic', 'Hungary', 'Slovakia', 'Slovenia', 'Romania', 'Bulgaria', 'Russia', 'Turkey'],
-                'asia': ['Japan', 'South Korea', 'China', 'Singapore', 'Malaysia', 'Thailand', 'India', 'Hong Kong', 'Taiwan'],
+                'asia': ['Japan', 'South Korea', 'China', 'Taiwan', 'Hong Kong', 'Mongolia', 'Singapore', 'Malaysia', 'Thailand', 'Philippines', 'Indonesia', 'Vietnam', 'Cambodia', 'Myanmar', 'India', 'Nepal', 'Sri Lanka', 'Bangladesh', 'Pakistan'],
                 'oceania': ['Australia', 'New Zealand', 'Fiji'],
-                'other': ['Brazil', 'Argentina', 'UAE', 'Egypt', 'South Africa']
+                'middle-east-africa': ['Egypt', 'UAE', 'Qatar', 'Jordan', 'Lebanon', 'Israel', 'South Africa', 'Morocco', 'Tunisia', 'Kenya'],
+                'south-america': ['Brazil', 'Argentina', 'Chile', 'Colombia', 'Peru']
             }
 
             const regionCountries = regions[selectedRegion as keyof typeof regions] || []
@@ -161,22 +112,6 @@ export default function VisaInfoPage() {
         setFilteredData(filtered)
     }, [searchTerm, selectedRegion, costFilter, visaData])
 
-    const regions = [
-        { value: 'all', label: 'Tüm Bölgeler' },
-        { value: 'north-america', label: 'Kuzey Amerika' },
-        { value: 'europe', label: 'Avrupa' },
-        { value: 'asia', label: 'Asya' },
-        { value: 'oceania', label: 'Okyanusya' },
-        { value: 'other', label: 'Diğer' }
-    ]
-
-    const costRanges = [
-        { value: 'all', label: 'Tüm Maliyetler' },
-        { value: 'low', label: 'Düşük (≤$100)' },
-        { value: 'medium', label: 'Orta ($100-300)' },
-        { value: 'high', label: 'Yüksek ($300+)' }
-    ]
-
     const getCostBadgeColor = (cost: number | null) => {
         if (!cost) return 'secondary'
         if (cost <= 100) return 'default'
@@ -196,10 +131,16 @@ export default function VisaInfoPage() {
             <div className="container mx-auto p-6">
                 <div className="flex items-center justify-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    <span className="ml-3 text-gray-600">{t('loading')}</span>
                 </div>
             </div>
         )
     }
+
+    const validCosts = visaData.filter(v => v.cost).map(v => v.cost!)
+    const avgCost = validCosts.length > 0 ? Math.round(validCosts.reduce((a, b) => a + b, 0) / validCosts.length) : 0
+    const minCost = validCosts.length > 0 ? Math.min(...validCosts) : 0
+    const maxCost = validCosts.length > 0 ? Math.max(...validCosts) : 0
 
     return (
         <div className="container mx-auto p-6 space-y-6">
@@ -208,8 +149,8 @@ export default function VisaInfoPage() {
                 <div className="flex items-center space-x-3">
                     <Globe className="h-8 w-8 text-blue-600" />
                     <div>
-                        <h1 className="text-3xl font-bold">Öğrenci Vize Bilgileri</h1>
-                        <p className="text-gray-600">70+ ülke için kapsamlı vize gereksinimleri</p>
+                        <h1 className="text-3xl font-bold">{t('title')}</h1>
+                        <p className="text-gray-600">{t('description')}</p>
                     </div>
                 </div>
 
@@ -217,32 +158,26 @@ export default function VisaInfoPage() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">Toplam Ülke</CardTitle>
+                            <CardTitle className="text-sm font-medium text-gray-600">{t('stats.totalCountries')}</CardTitle>
                             <div className="text-2xl font-bold">{visaData.length}</div>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">Ortalama Maliyet</CardTitle>
-                            <div className="text-2xl font-bold">
-                                ${Math.round(visaData.filter(v => v.cost).reduce((sum, v) => sum + (v.cost || 0), 0) / visaData.filter(v => v.cost).length) || 0}
-                            </div>
+                            <CardTitle className="text-sm font-medium text-gray-600">{t('stats.avgCost')}</CardTitle>
+                            <div className="text-2xl font-bold">${avgCost}</div>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">En Ucuz</CardTitle>
-                            <div className="text-2xl font-bold">
-                                ${visaData.filter(v => v.cost).length > 0 ? Math.min(...visaData.filter(v => v.cost).map(v => v.cost!)) : 0}
-                            </div>
+                            <CardTitle className="text-sm font-medium text-gray-600">{t('stats.cheapest')}</CardTitle>
+                            <div className="text-2xl font-bold">${minCost}</div>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">En Pahalı</CardTitle>
-                            <div className="text-2xl font-bold">
-                                ${visaData.filter(v => v.cost).length > 0 ? Math.max(...visaData.filter(v => v.cost).map(v => v.cost!)) : 0}
-                            </div>
+                            <CardTitle className="text-sm font-medium text-gray-600">{t('stats.mostExpensive')}</CardTitle>
+                            <div className="text-2xl font-bold">${maxCost}</div>
                         </CardHeader>
                     </Card>
                 </div>
@@ -250,16 +185,16 @@ export default function VisaInfoPage() {
                 {/* Filters */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-lg">Filtreler</CardTitle>
+                        <CardTitle className="text-lg">{t('filters.title')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Arama</label>
+                                <label className="text-sm font-medium">{t('filters.search')}</label>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                                     <Input
-                                        placeholder="Ülke, vize türü ara..."
+                                        placeholder={t('filters.searchPlaceholder')}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="pl-10"
@@ -267,37 +202,38 @@ export default function VisaInfoPage() {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Bölge</label>
+                                <label className="text-sm font-medium">{t('filters.region')}</label>
                                 <Select value={selectedRegion} onValueChange={setSelectedRegion}>
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {regions.map(region => (
-                                            <SelectItem key={region.value} value={region.value}>
-                                                {region.label}
-                                            </SelectItem>
-                                        ))}
+                                        <SelectItem value="all">{t('regions.all')}</SelectItem>
+                                        <SelectItem value="north-america">{t('regions.northAmerica')}</SelectItem>
+                                        <SelectItem value="europe">{t('regions.europe')}</SelectItem>
+                                        <SelectItem value="asia">{t('regions.asia')}</SelectItem>
+                                        <SelectItem value="oceania">{t('regions.oceania')}</SelectItem>
+                                        <SelectItem value="middle-east-africa">{t('regions.middleEastAfrica')}</SelectItem>
+                                        <SelectItem value="south-america">{t('regions.southAmerica')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Maliyet Aralığı</label>
+                                <label className="text-sm font-medium">{t('filters.costRange')}</label>
                                 <Select value={costFilter} onValueChange={setCostFilter}>
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {costRanges.map(range => (
-                                            <SelectItem key={range.value} value={range.value}>
-                                                {range.label}
-                                            </SelectItem>
-                                        ))}
+                                        <SelectItem value="all">{t('costRanges.all')}</SelectItem>
+                                        <SelectItem value="low">{t('costRanges.low')}</SelectItem>
+                                        <SelectItem value="medium">{t('costRanges.medium')}</SelectItem>
+                                        <SelectItem value="high">{t('costRanges.high')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">İşlemler</label>
+                                <label className="text-sm font-medium">{t('filters.actions')}</label>
                                 <Button
                                     variant="outline"
                                     onClick={() => {
@@ -308,7 +244,7 @@ export default function VisaInfoPage() {
                                     className="w-full"
                                 >
                                     <Filter className="h-4 w-4 mr-2" />
-                                    Filtreleri Temizle
+                                    {t('filters.clearFilters')}
                                 </Button>
                             </div>
                         </div>
@@ -318,9 +254,9 @@ export default function VisaInfoPage() {
 
             <Tabs defaultValue="grid" className="space-y-4">
                 <TabsList>
-                    <TabsTrigger value="grid">Kart Görünümü</TabsTrigger>
-                    <TabsTrigger value="table">Tablo Görünümü</TabsTrigger>
-                    <TabsTrigger value="compare">Karşılaştır</TabsTrigger>
+                    <TabsTrigger value="grid">{t('viewModes.grid')}</TabsTrigger>
+                    <TabsTrigger value="table">{t('viewModes.table')}</TabsTrigger>
+                    <TabsTrigger value="compare">{t('viewModes.compare')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="grid" className="space-y-4">
@@ -358,7 +294,7 @@ export default function VisaInfoPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <div className="text-sm font-medium">Ana Gereksinimler:</div>
+                                        <div className="text-sm font-medium">{t('card.keyRequirements')}:</div>
                                         <div className="space-y-1">
                                             {visa.requirements.slice(0, 3).map((req, idx) => (
                                                 <div key={idx} className="flex items-start space-x-2 text-sm text-gray-600">
@@ -368,7 +304,7 @@ export default function VisaInfoPage() {
                                             ))}
                                             {visa.requirements.length > 3 && (
                                                 <div className="text-xs text-gray-400">
-                                                    +{visa.requirements.length - 3} gereksinim daha
+                                                    +{visa.requirements.length - 3} {t('card.moreRequirements')}
                                                 </div>
                                             )}
                                         </div>
@@ -378,7 +314,7 @@ export default function VisaInfoPage() {
                                         <Button variant="outline" size="sm" className="w-full" asChild>
                                             <a href={visa.website} target="_blank" rel="noopener noreferrer">
                                                 <ExternalLink className="h-4 w-4 mr-2" />
-                                                Resmi Bilgi
+                                                {t('card.officialInfo')}
                                             </a>
                                         </Button>
                                     )}
@@ -391,10 +327,8 @@ export default function VisaInfoPage() {
                         <Card>
                             <CardContent className="text-center py-12">
                                 <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                                <h3 className="text-lg font-medium mb-2">No visa information found</h3>
-                                <p className="text-gray-600 mb-4">
-                                    Try adjusting your search criteria or filters
-                                </p>
+                                <h3 className="text-lg font-medium mb-2">{t('emptyState.title')}</h3>
+                                <p className="text-gray-600 mb-4">{t('emptyState.description')}</p>
                                 <Button
                                     variant="outline"
                                     onClick={() => {
@@ -403,7 +337,7 @@ export default function VisaInfoPage() {
                                         setCostFilter('all')
                                     }}
                                 >
-                                    Clear Filters
+                                    {t('emptyState.clearButton')}
                                 </Button>
                             </CardContent>
                         </Card>
@@ -417,19 +351,19 @@ export default function VisaInfoPage() {
                                 <table className="w-full">
                                     <thead className="border-b">
                                     <tr className="text-left">
-                                        <th className="p-4 font-medium">Country</th>
-                                        <th className="p-4 font-medium">Visa Type</th>
-                                        <th className="p-4 font-medium">Cost</th>
-                                        <th className="p-4 font-medium">Processing Time</th>
-                                        <th className="p-4 font-medium">Duration</th>
-                                        <th className="p-4 font-medium">Actions</th>
+                                        <th className="p-4 font-medium">{t('table.country')}</th>
+                                        <th className="p-4 font-medium">{t('table.visaType')}</th>
+                                        <th className="p-4 font-medium">{t('table.cost')}</th>
+                                        <th className="p-4 font-medium">{t('table.processingTime')}</th>
+                                        <th className="p-4 font-medium">{t('table.duration')}</th>
+                                        <th className="p-4 font-medium">{t('table.actions')}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {filteredData.map((visa) => (
                                         <tr key={visa.id} className="border-b hover:bg-gray-50">
                                             <td className="p-4 font-medium">{visa.country}</td>
-                                            <td className="p-4">{visa.visaType}</td>
+                                            <td className="p-4">{visa.multiLanguage?.tr?.title || visa.visaType}</td>
                                             <td className="p-4">
                                                 {visa.cost ? (
                                                     <Badge variant={getCostBadgeColor(visa.cost)}>
@@ -452,7 +386,7 @@ export default function VisaInfoPage() {
                                                         size="sm"
                                                         onClick={() => setSelectedVisa(visa)}
                                                     >
-                                                        View Details
+                                                        {t('table.viewDetails')}
                                                     </Button>
                                                     {visa.website && (
                                                         <Button variant="outline" size="sm" asChild>
@@ -475,15 +409,13 @@ export default function VisaInfoPage() {
                 <TabsContent value="compare">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Visa Comparison</CardTitle>
-                            <CardDescription>
-                                Click on countries in the grid view to compare their visa requirements
-                            </CardDescription>
+                            <CardTitle>{t('compare.title')}</CardTitle>
+                            <CardDescription>{t('compare.description')}</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="text-center py-12 text-gray-500">
                                 <Globe className="h-12 w-12 mx-auto mb-4" />
-                                <p>Comparison feature coming soon...</p>
+                                <p>{t('compare.comingSoon')}</p>
                             </div>
                         </CardContent>
                     </Card>
@@ -516,28 +448,28 @@ export default function VisaInfoPage() {
                             {/* Key Info */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <div className="text-sm font-medium text-gray-600">Cost</div>
+                                    <div className="text-sm font-medium text-gray-600">{t('card.cost')}</div>
                                     <div className="text-lg font-bold">
                                         {selectedVisa.cost ? `$${selectedVisa.cost}` : 'Variable'}
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="text-sm font-medium text-gray-600">Processing Time</div>
+                                    <div className="text-sm font-medium text-gray-600">{t('card.processingTime')}</div>
                                     <div className="text-lg font-bold">{selectedVisa.processingTime}</div>
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="text-sm font-medium text-gray-600">Duration</div>
+                                    <div className="text-sm font-medium text-gray-600">{t('card.duration')}</div>
                                     <div className="text-lg font-bold">{selectedVisa.duration}</div>
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="text-sm font-medium text-gray-600">Visa Type</div>
+                                    <div className="text-sm font-medium text-gray-600">{t('card.visaType')}</div>
                                     <div className="text-lg font-bold">{selectedVisa.visaType}</div>
                                 </div>
                             </div>
 
                             {/* Requirements */}
                             <div className="space-y-3">
-                                <div className="text-lg font-semibold">Required Documents</div>
+                                <div className="text-lg font-semibold">{t('modal.requiredDocuments')}</div>
                                 <div className="grid gap-3">
                                     {selectedVisa.requirements.map((req, idx) => (
                                         <div key={idx} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
@@ -554,12 +486,12 @@ export default function VisaInfoPage() {
                                     <Button asChild className="flex-1">
                                         <a href={selectedVisa.website} target="_blank" rel="noopener noreferrer">
                                             <ExternalLink className="h-4 w-4 mr-2" />
-                                            Official Website
+                                            {t('modal.officialWebsite')}
                                         </a>
                                     </Button>
                                 )}
                                 <Button variant="outline" onClick={() => setSelectedVisa(null)}>
-                                    Close
+                                    {t('modal.close')}
                                 </Button>
                             </div>
                         </CardContent>

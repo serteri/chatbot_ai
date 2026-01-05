@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
@@ -16,6 +16,11 @@ import {
 import { FileText, Upload, X } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { Progress } from '@/components/ui/progress'
+import { sleep } from '@/lib/utils' // utils dosyanızdan sleep fonksiyonu
+
+// Polling ayarları
+const POLLING_INTERVAL_MS = 2000;
+const MAX_ATTEMPTS = 90; // Maksimum 3 dakika (90 * 2s) bekleme
 
 interface UploadDocumentDialogProps {
     chatbotId: string
@@ -24,17 +29,26 @@ interface UploadDocumentDialogProps {
 
 export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialogProps) {
     const router = useRouter()
+    const t = useTranslations('UploadDocumentDialog')
+
     const [open, setOpen] = useState(false)
     const [isUploading, setIsUploading] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [uploadProgress, setUploadProgress] = useState(0)
-    const t = useTranslations('UploadDocumentDialog')  // Namespace: UploadDocumentDialog
+
+    // Varsayılan dosya boyutu formatlayıcı (utils'den import edilmediği varsayılır)
+    const formatFileSize = (bytes: number): string => {
+        if (bytes === 0) return '0 Bytes'
+        const k = 1024
+        const sizes = ['Bytes', 'KB', 'MB']
+        const i = Math.floor(Math.log(bytes) / Math.log(k))
+        return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
+    }
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
 
-        // Dosya tipi kontrolü
         const validTypes = ['.pdf', '.doc', '.docx', '.txt']
         const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()
 
@@ -43,7 +57,6 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
             return
         }
 
-        // Boyut kontrolü (10MB)
         const maxSize = 10 * 1024 * 1024
         if (file.size > maxSize) {
             toast.error(t('fileTooLarge'))
@@ -53,6 +66,52 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
         setSelectedFile(file)
     }
 
+    // ✅ YENİ/DÜZELTİLMİŞ: İşlem durumunu kontrol etme (Polling)
+    const startPolling = async (documentId: string) => {
+        setUploadProgress(75); // İşleniyor durumuna sabitleniyor
+
+        for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+            await sleep(POLLING_INTERVAL_MS);
+
+            try {
+                // Dokümanın anlık durumunu sorgula
+                // NOT: Bu endpoint'in (örneğin /api/document/status) 'ready', 'processing' veya 'failed' döndürmesi gerekir.
+                const checkResponse = await fetch(`/api/document/status?documentId=${documentId}`);
+                if (!checkResponse.ok) throw new Error("Status check failed");
+
+                const statusData = await checkResponse.json();
+
+                if (statusData.status === 'ready') {
+                    setUploadProgress(100);
+                    toast.success(t('processingComplete')); // BİTTİ MESAJI
+                    return true; // Başarılı
+                }
+
+                if (statusData.status === 'failed') {
+                    toast.error(t('processingError'));
+                    return false;
+                }
+
+            } catch (error) {
+                console.error("Polling error:", error);
+                // Bir sonraki denemede tekrar dener
+            }
+        }
+        toast.error(t('processingTimeout')); // Zaman aşımı
+        return false;
+    };
+
+    // Yükleme sırasında iptal butonu için
+    const handleCancel = () => {
+        setIsUploading(false);
+        setUploadProgress(0);
+        setSelectedFile(null);
+        setOpen(false);
+        toast.error(t('uploadCancelled'));
+    }
+
+
+    // ✅ DÜZELTİLMİŞ: Yükleme ve Polling Başlatma
     const handleUpload = async () => {
         if (!selectedFile) {
             toast.error(t('pleaseSelectFile'))
@@ -62,6 +121,8 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
         setIsUploading(true)
         setUploadProgress(10)
 
+        let documentId = '';
+
         try {
             const formData = new FormData()
             formData.append('file', selectedFile)
@@ -69,49 +130,44 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
 
             setUploadProgress(30)
 
+            // 1. Dosyayı yükle
             const response = await fetch('/api/document/upload', {
                 method: 'POST',
                 body: formData,
             })
 
-            setUploadProgress(70)
-
             const data = await response.json()
 
             if (!response.ok) {
                 toast.error(data.error || t('uploadFailed'))
-                setIsUploading(false)
-                setUploadProgress(0)
                 return
             }
 
-            setUploadProgress(100)
-            toast.success(t('documentUploaded'))
+            documentId = data.documentId;
+            toast.success(t('documentUploadedStartProcessing'));
 
-            // Modal'ı kapat
-            setOpen(false)
-            setSelectedFile(null)
-            setUploadProgress(0)
+            // 2. Polling'i başlat ve sonucunu bekle
+            const success = await startPolling(documentId);
 
-            // Sayfayı yenile
-            router.refresh()
+            if (success) {
+                setOpen(false)
+                router.refresh(); // ✅ BAŞARIYLA BİTTİ: Sayfayı yenile
+            }
 
         } catch (error) {
             console.error('Upload error:', error)
             toast.error(t('errorOccurred'))
-            setUploadProgress(0)
         } finally {
-            setIsUploading(false)
+            // Hata, zaman aşımı veya başarısız işleme durumunda temizle ve kapat
+            if (uploadProgress < 100) {
+                setIsUploading(false)
+                setUploadProgress(0)
+                setSelectedFile(null)
+                setOpen(false);
+            }
         }
     }
 
-    const formatFileSize = (bytes: number): string => {
-        if (bytes === 0) return '0 Bytes'
-        const k = 1024
-        const sizes = ['Bytes', 'KB', 'MB']
-        const i = Math.floor(Math.log(bytes) / Math.log(k))
-        return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
-    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -123,7 +179,8 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            {/* ✅ Dialog Content, önceki hatadan dolayı beyaz arka planlı */}
+            <DialogContent className="max-w-md bg-white dark:bg-zinc-900">
                 <DialogHeader>
                     <DialogTitle>{t('uploadDocument')}</DialogTitle>
                     <DialogDescription>
@@ -167,7 +224,7 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
                                 </div>
                                 {!isUploading && (
                                     <button
-                                        onClick={() => setSelectedFile(null)}
+                                        onClick={handleCancel}
                                         className="text-gray-400 hover:text-gray-600"
                                     >
                                         <X className="h-5 w-5" />
@@ -180,7 +237,7 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
                                 <div className="mt-4 space-y-2">
                                     <Progress value={uploadProgress} />
                                     <p className="text-xs text-center text-gray-500">
-                                        {uploadProgress < 100 ? t('uploading') : t('processing')}
+                                        {uploadProgress < 75 ? t('uploading') : t('processing')}
                                     </p>
                                 </div>
                             )}
@@ -199,7 +256,7 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
                     <Button
                         type="button"
                         variant="outline"
-                        onClick={() => setOpen(false)}
+                        onClick={handleCancel}
                         disabled={isUploading}
                     >
                         {t('cancel')}

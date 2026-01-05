@@ -5,9 +5,10 @@ import { prisma } from '@/lib/db/prisma'
 // PATCH - Update application status
 export async function PATCH(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const session = await auth()
 
         if (!session?.user?.id) {
@@ -27,7 +28,7 @@ export async function PATCH(
 
         const application = await prisma.application.findFirst({
             where: {
-                id: params.id,
+                id: id,
                 studentId: profile.id
             }
         })
@@ -61,7 +62,7 @@ export async function PATCH(
         }
 
         const updatedApplication = await prisma.application.update({
-            where: { id: params.id },
+            where: { id: id },
             data: updateData,
             include: {
                 university: true
@@ -78,9 +79,10 @@ export async function PATCH(
 // DELETE - Delete application
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const session = await auth()
 
         if (!session?.user?.id) {
@@ -97,7 +99,7 @@ export async function DELETE(
 
         await prisma.application.deleteMany({
             where: {
-                id: params.id,
+                id: id,
                 studentId: profile.id
             }
         })

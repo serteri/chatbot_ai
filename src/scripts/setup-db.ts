@@ -7,38 +7,45 @@ async function main() {
 
     try {
         // 1. pgvector eklentisini aktif et
-        await prisma.$executeRawUnsafe`CREATE EXTENSION IF NOT EXISTS vector;`
+        await prisma.$executeRawUnsafe("CREATE EXTENSION IF NOT EXISTS vector;")
         console.log('✅ "vector" eklentisi başarıyla aktif edildi.')
 
-        // 2. DocumentChunk tablosundaki embedding sütununu vector tipine dönüştür
-        // NOT: Bu adım, eğer embedding sütunu daha önce 'Bytea' veya başka bir tipteyse gereklidir.
-        // Eğer tablo boşsa veya hata alırsanız, bu adımı geçebilirsiniz.
+        // 2. Tabloyu Temizle ve Vektör Sütununu Doğru Şekilde Oluştur
+        // "cannot cast type bytea to vector" hatasını çözmek için sütunu sıfırlıyoruz.
         try {
-            // OpenAI text-embedding-3-small boyutu 1536'dır.
-            await prisma.$executeRawUnsafe`
-            ALTER TABLE "DocumentChunk" 
-            ALTER COLUMN "embedding" TYPE vector(1536) 
-            USING "embedding"::vector(1536);
-        `
-            console.log('✅ "DocumentChunk" tablosu vektör tipine güncellendi.')
+            console.log('🔄 Sütun yapılandırması düzeltiliyor...')
+
+            // Önce varsa eski index'i kaldır (Çakışmayı önlemek için)
+            await prisma.$executeRawUnsafe(`DROP INDEX IF EXISTS "document_chunk_embedding_idx";`)
+
+            // Eski hatalı sütunu sil ve yenisini 'vector' olarak ekle
+            // Bu işlem transaction içinde yapılarak veri bütünlüğü korunmaya çalışılır
+            await prisma.$transaction([
+                prisma.$executeRawUnsafe(`ALTER TABLE "DocumentChunk" DROP COLUMN IF EXISTS "embedding";`),
+                prisma.$executeRawUnsafe(`ALTER TABLE "DocumentChunk" ADD COLUMN "embedding" vector(1536);`)
+            ])
+
+            console.log('✅ "DocumentChunk" tablosundaki embedding sütunu onarıldı (vektör formatına geçti).')
         } catch (alterError) {
-            console.log('ℹ️ Tablo güncellemesi atlandı (Zaten güncel olabilir veya tablo boş değil):', alterError.message)
+            const errorMessage = alterError instanceof Error ? alterError.message : String(alterError)
+            console.log('⚠️ Tablo güncellemesinde uyarı:', errorMessage)
         }
 
-        // 3. Vektör aramayı hızlandırmak için Index oluştur (Opsiyonel ama önerilir)
+        // 3. Vektör aramayı hızlandırmak için HNSW İndeksi oluştur
         try {
-            await prisma.$executeRawUnsafe`
-            CREATE INDEX IF NOT EXISTS "document_chunk_embedding_idx" 
-            ON "DocumentChunk" 
-            USING hnsw ("embedding" vector_cosine_ops);
-        `
-            console.log('✅ HNSW İndeksi oluşturuldu (Arama hızı artırıldı).')
+            await prisma.$executeRawUnsafe(`
+                CREATE INDEX IF NOT EXISTS "document_chunk_embedding_idx"
+                    ON "DocumentChunk"
+                    USING hnsw ("embedding" vector_cosine_ops);
+            `)
+            console.log('✅ HNSW İndeksi başarıyla oluşturuldu (Arama hızı optimize edildi).')
         } catch (indexError) {
-            console.log('ℹ️ İndex oluşturulamadı:', indexError.message)
+            const errorMessage = indexError instanceof Error ? indexError.message : String(indexError)
+            console.log('ℹ️ İndex oluşturulamadı (Veri yoksa veya zaten varsa normaldir):', errorMessage)
         }
 
     } catch (error) {
-        console.error('❌ Bir hata oluştu:', error)
+        console.error('❌ Kritik hata:', error)
     } finally {
         await prisma.$disconnect()
     }

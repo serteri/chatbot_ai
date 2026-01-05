@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Check, Loader2, Zap } from 'lucide-react'
+import { Check, Loader2, Zap, Star, Shield } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface PlanCardProps {
@@ -13,60 +13,68 @@ interface PlanCardProps {
 }
 
 export function PricingCards({ currentPlan }: PlanCardProps) {
-    const t = useTranslations()
+    const t = useTranslations('pricing') // Using the 'pricing' namespace directly
     const [loading, setLoading] = useState<string | null>(null)
     const router = useRouter()
 
     const PLANS = [
         {
             id: 'free',
-            name: t('pricing.free'),
-            price: '$0',
-            description: t('pricing.freeDesc'),
+            name: t('plans.free.name'),
+            price: t('plans.free.price'),
+            description: t('plans.free.description'),
             features: [
-                t('pricing.freeFeat1'),
-                t('pricing.freeFeat2'),
-                t('pricing.freeFeat3'),
-                t('pricing.freeFeat4')
+                t('freeFeat1'),
+                t('freeFeat2'),
+                t('freeFeat3'),
+                t('freeFeat4')
             ],
-            priceId: null
+            priceId: null,
+            icon: Zap,
+            popular: false
         },
         {
             id: 'pro',
-            name: t('pricing.pro'),
-            price: '$29',
-            description: t('pricing.proDesc'),
+            name: t('plans.pro.name'),
+            price: t('plans.pro.price'),
+            description: t('plans.pro.description'),
             features: [
-                t('pricing.proFeat1'),
-                t('pricing.proFeat2'),
-                t('pricing.proFeat3'),
-                t('pricing.proFeat4'),
-                t('pricing.proFeat5'),
-                t('pricing.proFeat6')
+                t('proFeat1'),
+                t('proFeat2'),
+                t('proFeat3'),
+                t('proFeat4'),
+                t('proFeat5'),
+                t('proFeat6')
             ],
             priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
+            icon: Star,
             popular: true
         },
         {
             id: 'enterprise',
-            name: t('pricing.enterprise'),
-            price: '$99',
-            description: t('pricing.enterpriseDesc'),
+            name: t('plans.enterprise.name'),
+            price: t('plans.enterprise.price'),
+            description: t('plans.enterprise.description'),
             features: [
-                t('pricing.entFeat1'),
-                t('pricing.entFeat2'),
-                t('pricing.entFeat3'),
-                t('pricing.entFeat4'),
-                t('pricing.entFeat5'),
-                t('pricing.entFeat6'),
-                t('pricing.entFeat7')
+                t('entFeat1'),
+                t('entFeat2'),
+                t('entFeat3'),
+                t('entFeat4'),
+                t('entFeat5'),
+                t('entFeat6'),
+                t('entFeat7')
             ],
-            priceId: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID
+            priceId: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID,
+            icon: Shield,
+            popular: false
         }
     ]
 
     const handleUpgrade = async (priceId: string | null | undefined, planType: string) => {
-        if (!priceId) return
+        if (!priceId) {
+            console.error("Price ID not found")
+            return
+        }
 
         setLoading(planType)
 
@@ -82,11 +90,11 @@ export function PricingCards({ currentPlan }: PlanCardProps) {
             if (data.url) {
                 window.location.href = data.url
             } else {
-                throw new Error('Checkout URL alınamadı')
+                throw new Error('Checkout URL not found')
             }
         } catch (error) {
             console.error('Upgrade error:', error)
-            alert(t('pricing.upgradeError'))
+            alert(t('upgradeError'))
         } finally {
             setLoading(null)
         }
@@ -108,14 +116,14 @@ export function PricingCards({ currentPlan }: PlanCardProps) {
             }
         } catch (error) {
             console.error('Portal error:', error)
-            alert(t('pricing.upgradeError'))
+            alert(t('upgradeError'))
         } finally {
             setLoading(null)
         }
     }
 
     return (
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-3 items-start">
             {PLANS.map((plan) => {
                 const isCurrent = currentPlan === plan.id
                 const isDowngrade =
@@ -123,73 +131,85 @@ export function PricingCards({ currentPlan }: PlanCardProps) {
                     (currentPlan === 'pro' && plan.id === 'free')
 
                 return (
-                    <Card key={plan.id} className={`relative ${plan.popular ? 'border-blue-500 shadow-lg' : ''}`}>
+                    <Card key={plan.id} className={`relative flex flex-col h-full transition-all duration-200 ${plan.popular ? 'border-2 border-blue-600 shadow-xl scale-105 z-10' : 'border border-slate-200 hover:border-slate-300'}`}>
                         {plan.popular && (
-                            <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600">
-                                {t('pricing.mostPopular')}
+                            <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 text-sm font-semibold uppercase tracking-wide">
+                                {t('mostPopular')}
                             </Badge>
                         )}
 
-                        <CardHeader>
-                            <CardTitle className="flex items-center justify-between">
-                                {plan.name}
+                        <CardHeader className={`pb-8 border-b ${plan.popular ? 'bg-blue-50/50' : 'bg-slate-50/50'} rounded-t-xl`}>
+                            <div className="flex items-center justify-between mb-4">
+                                <div className={`p-2 rounded-lg ${plan.popular ? 'bg-blue-100 text-blue-600' : 'bg-white border text-slate-500'}`}>
+                                    <plan.icon className="w-5 h-5" />
+                                </div>
                                 {isCurrent && (
-                                    <Badge variant="secondary">{t('pricing.currentPlan')}</Badge>
+                                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1">
+                                        <Check className="w-3 h-3" /> {t('currentPlan')}
+                                    </Badge>
                                 )}
-                            </CardTitle>
-                            <CardDescription>{plan.description}</CardDescription>
-                            <div className="mt-4">
-                                <span className="text-4xl font-bold">{plan.price}</span>
-                                <span className="text-gray-600">{t('pricing.perMonth')}</span>
+                            </div>
+                            <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                            <CardDescription className="mt-2 min-h-[40px]">{plan.description}</CardDescription>
+
+                            <div className="mt-4 flex items-baseline">
+                                <span className="text-4xl font-bold text-slate-900">{plan.price}</span>
+                                {/* Fixed Logic: Using plan.id instead of plan.name */}
+                                {plan.id !== 'enterprise' && (
+                                    <span className="text-gray-500 ml-1 text-sm">{t('perMonth')}</span>
+                                )}
                             </div>
                         </CardHeader>
 
-                        <CardContent>
+                        <CardContent className="flex-1 pt-6">
                             <ul className="space-y-3">
                                 {plan.features.map((feature, index) => (
-                                    <li key={index} className="flex items-start">
-                                        <Check className="h-5 w-5 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
-                                        <span className="text-sm">{feature}</span>
+                                    <li key={index} className="flex items-start gap-3 text-sm text-slate-600">
+                                        <div className={`mt-0.5 rounded-full p-0.5 flex-shrink-0 ${plan.popular ? 'text-blue-600 bg-blue-100' : 'text-green-600 bg-green-100'}`}>
+                                            <Check className="w-3 h-3 stroke-[3]" />
+                                        </div>
+                                        <span className="leading-tight">{feature}</span>
                                     </li>
                                 ))}
                             </ul>
                         </CardContent>
 
-                        <CardFooter>
+                        <CardFooter className="pt-2 pb-8">
                             {isCurrent ? (
                                 currentPlan !== 'free' ? (
                                     <Button
                                         variant="outline"
-                                        className="w-full"
+                                        className="w-full border-slate-300 hover:bg-slate-50"
                                         onClick={handleManageSubscription}
                                         disabled={loading === 'manage'}
                                     >
                                         {loading === 'manage' ? (
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         ) : null}
-                                        {t('pricing.manageSub')}
+                                        {t('manageSub')}
                                     </Button>
                                 ) : (
-                                    <Button variant="outline" className="w-full" disabled>
-                                        {t('pricing.currentPlan')}
+                                    <Button variant="outline" className="w-full bg-slate-100 text-slate-500 border-slate-200" disabled>
+                                        {t('currentPlan')}
                                     </Button>
                                 )
                             ) : isDowngrade ? (
-                                <Button variant="ghost" className="w-full" disabled>
-                                    {t('pricing.downgradeUnavailable')}
+                                <Button variant="ghost" className="w-full text-slate-400" disabled>
+                                    {t('downgradeUnavailable')}
                                 </Button>
                             ) : (
                                 <Button
-                                    className="w-full"
+                                    className={`w-full h-11 font-semibold ${plan.popular ? 'bg-blue-600 hover:bg-blue-700 shadow-md' : ''}`}
                                     onClick={() => handleUpgrade(plan.priceId, plan.id)}
                                     disabled={loading === plan.id || !plan.priceId}
+                                    variant={plan.popular ? 'default' : 'outline'}
                                 >
                                     {loading === plan.id ? (
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     ) : (
                                         <Zap className="mr-2 h-4 w-4" />
                                     )}
-                                    {plan.id === 'free' ? t('pricing.startFree') : t('pricing.upgrade')}
+                                    {plan.id === 'free' ? t('startFree') : t('upgrade')}
                                 </Button>
                             )}
                         </CardFooter>

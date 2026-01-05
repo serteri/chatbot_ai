@@ -6,7 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Bot, FileText, MessageSquare, Settings, Code, BarChart3, Shield, Palette } from 'lucide-react'
+// ✅ Düzeltme: TestTube ikonu eklendi
+import { Bot, FileText, MessageSquare, Settings, Code, BarChart3, Shield, Palette, TestTube } from 'lucide-react'
 import Link from 'next/link'
 import { UploadDocumentDialog } from '@/components/document/UploadDocumentDialog'
 import { DeleteDocumentButton } from '@/components/document/DeleteDocumentButton'
@@ -53,6 +54,27 @@ export default async function ChatbotDetailPage({
         redirect('/dashboard')
     }
 
+    // Chatbot türünü (industry) etikete dönüştüren yardımcı fonksiyon
+    const getIndustryBadge = (industry: string | null) => {
+        const typeKey = industry === 'education' ? 'education' :
+            industry === 'ecommerce' ? 'ecommerce' :
+                'general';
+
+        const text = t(`chatbots.type.${typeKey}`);
+        let colorClass = 'bg-gray-500 hover:bg-gray-600';
+
+        if (industry === 'education') {
+            colorClass = 'bg-blue-600 hover:bg-blue-700';
+        } else if (industry === 'ecommerce') {
+            colorClass = 'bg-green-600 hover:bg-green-700';
+        }
+
+        return <Badge className={`text-white ${colorClass}`}>{text}</Badge>;
+    }
+
+    // Botun industry değerini URL'de kullanmak için ayarla
+    const botIndustry = chatbot.industry || 'general';
+
     return (
         <div className="container mx-auto px-4 py-8">
             {/* Header */}
@@ -68,6 +90,7 @@ export default async function ChatbotDetailPage({
                         <div className="flex items-center space-x-3">
                             <Bot className="h-8 w-8 text-blue-600" />
                             <h1 className="text-3xl font-bold">{chatbot.name}</h1>
+                            {getIndustryBadge(chatbot.industry)}
                             {chatbot.isActive ? (
                                 <Badge className="bg-green-500">{t('chatbots.active')}</Badge>
                             ) : (
@@ -78,7 +101,18 @@ export default async function ChatbotDetailPage({
                             {t('chatbots.chatbotId')}: <code className="bg-gray-100 px-2 py-1 rounded">{chatbot.identifier}</code>
                         </p>
                     </div>
+                    {/* ✅ Düzeltme: Sohbeti Başlat/Test Et butonu eklendi */}
                     <div className="flex space-x-2">
+                        <Link
+                            href={`/${locale}/widget-test?chatbotId=${chatbot.identifier}&mode=${botIndustry}`}
+                            target="_blank"
+                        >
+                            <Button variant="default" className="bg-blue-600 hover:bg-blue-700">
+                                <TestTube className="mr-2 h-4 w-4" />
+                                {t('chatbots.startChat')}
+                            </Button>
+                        </Link>
+
                         <Button variant="outline">
                             <Settings className="mr-2 h-4 w-4" />
                             {t('settings.title')}

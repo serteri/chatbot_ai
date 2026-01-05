@@ -32,9 +32,9 @@ model User {
   emailNotifications Boolean @default(true)
   notificationEmail  String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  customSettings          Json?
   // Relations
   accounts                Account[]
   sessions                Session[]
@@ -396,7 +396,7 @@ model DocumentChunk {
   content String @db.Text
 
   // Embedding (Vector)
-  embedding Bytes?
+  embedding Unsupported("vector(1536)")?
 
   // Metadata
   chunkIndex Int

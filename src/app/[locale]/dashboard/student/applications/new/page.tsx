@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -29,7 +29,8 @@ interface University {
     website?: string | null
 }
 
-export default function NewApplicationPage({ params }: { params: { locale: string } }) {
+export default function NewApplicationPage() {
+    const params = useParams<{ locale: string }>()
     const t = useTranslations('ApplicationTracker')
     const router = useRouter()
     const [loading, setLoading] = useState(false)

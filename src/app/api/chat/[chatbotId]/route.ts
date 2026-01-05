@@ -5,17 +5,18 @@ import { prisma } from '@/lib/db/prisma'
 // GET - Chatbot detayını getir
 export async function GET(
   req: NextRequest,
-  { params }: { params: { chatbotId: string } }
+  { params }: { params: Promise<{ chatbotId: string }> }
 ) {
   try {
+    const { chatbotId } = await params;
     const session = await auth()
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const chatbot = await prisma.chatbot.findUnique({
-      where: { id: params.chatbotId },
+      where: { id: chatbotId },
       include: {
         documents: {
           orderBy: { createdAt: 'desc' }
@@ -48,17 +49,18 @@ export async function GET(
 // PATCH - Chatbot güncelle
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { chatbotId: string } }
+  { params }: { params: Promise<{ chatbotId: string }> }
 ) {
   try {
+    const { chatbotId } = await params;
     const session = await auth()
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const chatbot = await prisma.chatbot.findUnique({
-      where: { id: params.chatbotId }
+      where: { id: chatbotId }
     })
 
     if (!chatbot) {
@@ -72,7 +74,7 @@ export async function PATCH(
     const body = await req.json()
 
     const updatedChatbot = await prisma.chatbot.update({
-      where: { id: params.chatbotId },
+      where: { id: chatbotId },
       data: {
         ...(body.name !== undefined && { name: body.name }),
         ...(body.language !== undefined && { language: body.language }),
@@ -104,17 +106,18 @@ export async function PATCH(
 // DELETE - Chatbot sil
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { chatbotId: string } }
+  { params }: { params: Promise<{ chatbotId: string }> }
 ) {
   try {
+    const { chatbotId } = await params;
     const session = await auth()
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const chatbot = await prisma.chatbot.findUnique({
-      where: { id: params.chatbotId }
+      where: { id: chatbotId }
     })
 
     if (!chatbot) {
@@ -126,7 +129,7 @@ export async function DELETE(
     }
 
     await prisma.chatbot.delete({
-      where: { id: params.chatbotId }
+      where: { id: chatbotId }
     })
 
     return NextResponse.json({ success: true })

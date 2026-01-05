@@ -3,23 +3,21 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { auth } from '@/lib/auth/auth'
 
 const prisma = new PrismaClient()
 
 // POST /api/student/scholarship-applications/[id]/submit - Submit application
 export async function POST(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const session = await getServerSession(authOptions)
+        const { id: applicationId } = await params;
+        const session = await auth()
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
-
-        const applicationId = params.id
 
         // Get application with scholarship details
         const application = await prisma.scholarshipApplication.findFirst({

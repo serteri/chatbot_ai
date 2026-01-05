@@ -5,7 +5,7 @@ import { UltimateScholarshipAggregator } from '../lib/scholarship-apis/ultimate-
 
 async function main() {
     console.log('🎯 ULTIMATE FREE SCHOLARSHIP AGGREGATION BAŞLIYOR...')
-    console.log('=' .repeat(60))
+    console.log('='.repeat(60))
 
     const startTime = Date.now()
 
@@ -18,7 +18,7 @@ async function main() {
 
         console.log('🎉 BAŞARILI! ULTIMATE AGGREGATION TAMAMLANDI!')
         console.log(`⏱️  Süre: ${duration} dakika`)
-        console.log(`📊 SONUÇ: Binlerce scholarship ChatbotAI'da!`)
+        console.log(`📊 SONUÇ: Binlerce scholarship PylonChat'da!`)
 
         // Expected results:
         console.log(`✅ BEKLENİLEN SONUÇLAR:`)
