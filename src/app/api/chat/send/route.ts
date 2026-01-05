@@ -1,18 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
-import { streamAICompletion, createSystemPrompt } from '@/lib/ai/service'
+import { createSystemPrompt } from '@/lib/ai/service'
 import { AIModel } from '@/types'
 import { streamText } from 'ai'
-import { openai } from '@ai-sdk/openai'
-import { anthropic } from '@ai-sdk/anthropic'
+import { createOpenAI } from '@ai-sdk/openai'
+import { createAnthropic } from '@ai-sdk/anthropic'
 
 export const runtime = 'edge'
+
+// Lazy initialize to avoid build-time env checks
+const getOpenAI = () => createOpenAI({ apiKey: process.env.OPENAI_API_KEY! })
+const getAnthropic = () => createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
-    
+
     if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -80,12 +84,12 @@ export async function POST(req: NextRequest) {
 
     // AI'dan yanıt al (streaming)
     const selectedModel = (model || chat.model) as AIModel
-    
+
     // Model'e göre provider seç
     const isClaudeModel = selectedModel.startsWith('claude-')
-    const aiModel = isClaudeModel 
-      ? anthropic(selectedModel)
-      : openai(selectedModel)
+    const aiModel = isClaudeModel
+      ? getAnthropic()(selectedModel)
+      : getOpenAI()(selectedModel)
 
     const result = await streamText({
       model: aiModel,
@@ -110,7 +114,7 @@ export async function POST(req: NextRequest) {
         if (chat.messages.length === 0) {
           await prisma.chat.update({
             where: { id: chatId },
-            data: { 
+            data: {
               title: message.slice(0, 50) + (message.length > 50 ? '...' : ''),
               updatedAt: new Date()
             }
