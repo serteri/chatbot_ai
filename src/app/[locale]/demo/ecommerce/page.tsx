@@ -565,21 +565,26 @@ Ask a specific question to get started! 😊
                             <span className="text-lg font-bold text-gray-900">PylonChat</span>
                         </Link>
 
-                        <div className="flex items-center bg-gray-100/80 backdrop-blur border rounded-xl p-1">
-                            {['tr', 'en', 'es', 'de', 'fr'].map((lang) => (
-                                <Button
-                                    key={lang}
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleLanguageSwitch(lang)}
-                                    className={`text-xs px-3 py-1 h-8 mx-0.5 rounded-lg transition-all ${locale === lang
+                        <div className="flex items-center gap-2">
+                            <div className="flex items-center bg-gray-100/80 backdrop-blur border rounded-xl p-1">
+                                {['tr', 'en'].map((lang) => (
+                                    <Button
+                                        key={lang}
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleLanguageSwitch(lang)}
+                                        className={`text-xs px-3 py-1 h-8 mx-0.5 rounded-lg transition-all ${locale === lang
                                             ? 'bg-white shadow-md text-orange-600 font-semibold'
                                             : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
-                                        }`}
-                                >
-                                    {lang.toUpperCase()}
-                                </Button>
-                            ))}
+                                            }`}
+                                    >
+                                        {lang.toUpperCase()}
+                                    </Button>
+                                ))}
+                            </div>
+                            <span className="text-xs text-gray-400 hidden sm:inline" title={locale === 'tr' ? 'Demo sadece TR/EN destekler' : 'Demo supports TR/EN only'}>
+                                ({locale === 'tr' ? 'Demo: TR/EN' : 'Demo: TR/EN'})
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -639,8 +644,8 @@ Ask a specific question to get started! 😊
                                             {message.role === 'user' ? <User className="h-3.5 w-3.5 text-white" /> : <Bot className="h-3.5 w-3.5 text-white" />}
                                         </div>
                                         <div className={`rounded-2xl px-4 py-2.5 ${message.role === 'user'
-                                                ? 'bg-orange-500 text-white rounded-br-sm'
-                                                : 'bg-white border border-gray-200 shadow-sm rounded-bl-sm'
+                                            ? 'bg-orange-500 text-white rounded-br-sm'
+                                            : 'bg-white border border-gray-200 shadow-sm rounded-bl-sm'
                                             }`}>
                                             <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
                                             <div className={`text-xs mt-1.5 flex items-center ${message.role === 'user' ? 'text-orange-200 justify-end' : 'text-gray-400'}`}>

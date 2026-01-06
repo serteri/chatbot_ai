@@ -977,21 +977,26 @@ Ask a specific question to get started! 😊
                             <span className="text-lg font-bold text-gray-900">PylonChat</span>
                         </Link>
 
-                        <div className="flex items-center bg-gray-100/80 backdrop-blur border rounded-xl p-1">
-                            {['tr', 'en', 'es', 'de', 'fr'].map((lang) => (
-                                <Button
-                                    key={lang}
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleLanguageSwitch(lang)}
-                                    className={`text-xs px-3 py-1 h-8 mx-0.5 rounded-lg transition-all ${locale === lang
-                                        ? 'bg-white shadow-md text-blue-600 font-semibold'
-                                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
-                                        }`}
-                                >
-                                    {lang.toUpperCase()}
-                                </Button>
-                            ))}
+                        <div className="flex items-center gap-2">
+                            <div className="flex items-center bg-gray-100/80 backdrop-blur border rounded-xl p-1">
+                                {['tr', 'en'].map((lang) => (
+                                    <Button
+                                        key={lang}
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleLanguageSwitch(lang)}
+                                        className={`text-xs px-3 py-1 h-8 mx-0.5 rounded-lg transition-all ${locale === lang
+                                            ? 'bg-white shadow-md text-blue-600 font-semibold'
+                                            : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                                            }`}
+                                    >
+                                        {lang.toUpperCase()}
+                                    </Button>
+                                ))}
+                            </div>
+                            <span className="text-xs text-gray-400 hidden sm:inline" title={locale === 'tr' ? 'Demo sadece TR/EN destekler' : 'Demo supports TR/EN only'}>
+                                ({locale === 'tr' ? 'Demo: TR/EN' : 'Demo: TR/EN'})
+                            </span>
                         </div>
                     </div>
                 </div>
