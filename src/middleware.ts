@@ -1,12 +1,14 @@
 import createMiddleware from 'next-intl/middleware';
 
 export default createMiddleware({
-  // HATA ÇÖZÜMÜ: Buraya 'de', 'fr' ve 'es' dillerini eklemeyi unutmuştuk.
-  // Bu liste olmazsa, Next.js bu dillerle başlayan sayfaları 404 olarak işaretler.
+  // Desteklenen diller
   locales: ['en', 'tr', 'de', 'fr', 'es'],
 
   // Varsayılan dil (İngilizce)
   defaultLocale: 'en',
+
+  // Tarayıcı dil algılamasını KAPAT - her zaman İngilizce başlasın
+  localeDetection: false,
 
   // Varsayılan dilin URL'de görünmemesini sağlar (/en yerine /)
   localePrefix: 'as-needed'
