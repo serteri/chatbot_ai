@@ -344,6 +344,283 @@ Kişiselleştirilmiş ABD başvuru danışmanlığı için kayıt olun! 🚀`
 Sign up for personalized US application consulting! 🚀`
         }
 
+        // Avustralya / Australia
+        if (input.match(/(avustralya|australia|aussie|sydney|melbourne)/)) {
+            return locale === 'tr'
+                ? `🇦🇺 **Avustralya'da Eğitim - Kapsamlı Rehber**
+
+**✨ Neden Avustralya?**
+• Dünya sıralamasında 7 üniversite ilk 100'de (Melbourne, Sydney, ANU)
+• Mezuniyet sonrası **2-4 yıl çalışma vizesi** (PSWV)
+• Mükemmel yaşam kalitesi ve güvenli ortam
+• 6 aylık tatil dönemlerinde **haftada 48 saat** çalışma hakkı
+• Çok kültürlü ortam, büyük Türk topluluğu
+
+**📋 Başvuru Gereksinimleri:**
+• IELTS 6.0-7.0 veya TOEFL 79-100
+• Lisans için: Lise diploması + transkript
+• Master için: Lisans diploması, GPA 2.5+
+• GTE (Genuine Temporary Entrant) beyanı
+• Mali durum belgesi (~AUD$21,000/yıl)
+
+**💰 Maliyetler (Yıllık):**
+• Eğitim: AUD$20,000-45,000 (programa göre)
+• Yaşam: AUD$21,000-25,000
+• Sağlık Sigortası (OSHC): AUD$500-700
+• Toplam: ~AUD$50,000-70,000/yıl
+
+**🎓 En İyi Üniversiteler:**
+• University of Melbourne (Dünya #14)
+• University of Sydney (#19)
+• Australian National University (#30)
+• UNSW Sydney (#19)
+• University of Queensland (#43)
+
+**🛂 Student Visa (Subclass 500):**
+• Harç: AUD$710
+• Süre: 4-8 hafta
+• Gerekli: CoE, OSHC, mali belgeler, GTE
+• Avantaj: Aile vizesi alabilir
+
+**🏙️ Popüler Şehirler:**
+• **Sydney** - En büyük, pahalı ama iş fırsatı bol
+• **Melbourne** - Kültürel, öğrenci dostu
+• **Brisbane** - Uygun fiyat, tropikal iklim
+• **Perth** - Madencilik sektörü, az nüfuslu
+• **Adelaide** - En ekonomik, göç puanı bonusu
+
+Avustralya başvurunuz için kayıt olun! 🦘`
+                : `🇦🇺 **Studying in Australia - Comprehensive Guide**
+
+**✨ Why Australia?**
+• 7 universities in world top 100 (Melbourne, Sydney, ANU)
+• **2-4 year post-study work visa** (PSWV)
+• Excellent quality of life and safe environment
+• **48 hours/week** work during breaks
+• Multicultural environment
+
+**📋 Application Requirements:**
+• IELTS 6.0-7.0 or TOEFL 79-100
+• Bachelor's: High school diploma + transcript
+• Master's: Bachelor's degree, GPA 2.5+
+• GTE (Genuine Temporary Entrant) statement
+• Financial proof (~AUD$21,000/year)
+
+**💰 Annual Costs:**
+• Tuition: AUD$20,000-45,000 (program dependent)
+• Living: AUD$21,000-25,000
+• Health Insurance (OSHC): AUD$500-700
+• Total: ~AUD$50,000-70,000/year
+
+**🎓 Top Universities:**
+• University of Melbourne (World #14)
+• University of Sydney (#19)
+• Australian National University (#30)
+• UNSW Sydney (#19)
+• University of Queensland (#43)
+
+**🛂 Student Visa (Subclass 500):**
+• Fee: AUD$710
+• Timeline: 4-8 weeks
+• Required: CoE, OSHC, financials, GTE
+• Benefit: Can bring family
+
+**🏙️ Popular Cities:**
+• **Sydney** - Largest, expensive but job opportunities
+• **Melbourne** - Cultural, student-friendly
+• **Brisbane** - Affordable, tropical climate
+• **Perth** - Mining industry, less populated
+• **Adelaide** - Most economical, migration bonus
+
+Sign up for Australia application support! 🦘`
+        }
+
+        // Kanada / Canada
+        if (input.match(/(kanada|canada|canadian|toronto|vancouver)/)) {
+            return locale === 'tr'
+                ? `🇨🇦 **Kanada'da Eğitim - Kapsamlı Rehber**
+
+**✨ Neden Kanada?**
+• Dünya'nın en güvenli ülkelerinden biri
+• Mezuniyet sonrası **3 yıla kadar çalışma izni** (PGWP)
+• Kalıcı oturma (PR) için kolay yol
+• ABD'ye yakın, daha uygun fiyatlı
+• Çift dilli ortam (İngilizce + Fransızca)
+
+**📋 Başvuru Gereksinimleri:**
+• IELTS 6.0-6.5 veya TOEFL 80-90
+• Lisans diploması (master için)
+• GPA 3.0/4.0 önerilen
+• Motivasyon mektubu
+• 2 Referans mektubu
+• GIC (Guaranteed Investment Certificate) ~CAD$10,000
+
+**💰 Maliyetler (Yıllık):**
+• Eğitim: CAD$15,000-35,000
+• Yaşam: CAD$12,000-18,000
+• Sağlık Sigortası: Eyalete göre ücretsiz/ücretli
+• Toplam: ~CAD$30,000-55,000/yıl
+
+**🎓 En İyi Üniversiteler:**
+• University of Toronto (Dünya #21)
+• University of British Columbia (#34)
+• McGill University (#31)
+• University of Montreal
+• University of Alberta
+
+**🛂 Study Permit:**
+• Harç: CAD$150
+• Süre: 8-16 hafta
+• SDS programı ile hızlandırılmış süreç (4 hafta)
+• Kampüste çalışma: 20 saat/hafta
+
+**🏙️ Popüler Şehirler:**
+• **Toronto** - En büyük şehir, iş merkezi
+• **Vancouver** - Doğayla iç içe, Asya yakın
+• **Montreal** - Fransızca, kültürel, uygun
+• **Calgary** - Petrol sektörü, düşük vergi
+• **Ottawa** - Başkent, hükümet işleri
+
+Kanada eğitim planınız için kayıt olun! 🍁`
+                : `🇨🇦 **Studying in Canada - Comprehensive Guide**
+
+**✨ Why Canada?**
+• One of the safest countries in the world
+• **Up to 3-year post-graduation work permit** (PGWP)
+• Easy pathway to permanent residence (PR)
+• Close to USA, more affordable
+• Bilingual environment (English + French)
+
+**📋 Application Requirements:**
+• IELTS 6.0-6.5 or TOEFL 80-90
+• Bachelor's degree (for master's)
+• GPA 3.0/4.0 recommended
+• Statement of Purpose
+• 2 Reference Letters
+• GIC (Guaranteed Investment Certificate) ~CAD$10,000
+
+**💰 Annual Costs:**
+• Tuition: CAD$15,000-35,000
+• Living: CAD$12,000-18,000
+• Health Insurance: Free/paid by province
+• Total: ~CAD$30,000-55,000/year
+
+**🎓 Top Universities:**
+• University of Toronto (World #21)
+• University of British Columbia (#34)
+• McGill University (#31)
+• University of Montreal
+• University of Alberta
+
+**🛂 Study Permit:**
+• Fee: CAD$150
+• Timeline: 8-16 weeks
+• SDS program for faster processing (4 weeks)
+• On-campus work: 20 hours/week
+
+**🏙️ Popular Cities:**
+• **Toronto** - Largest city, business hub
+• **Vancouver** - Nature, close to Asia
+• **Montreal** - French, cultural, affordable
+• **Calgary** - Oil industry, low taxes
+• **Ottawa** - Capital, government jobs
+
+Sign up for Canada education planning! 🍁`
+        }
+
+        // İngiltere / UK
+        if (input.match(/(ingiltere|uk|united kingdom|british|london|oxford|cambridge|england)/)) {
+            return locale === 'tr'
+                ? `🇬🇧 **İngiltere'de Eğitim - Kapsamlı Rehber**
+
+**✨ Neden İngiltere?**
+• Dünya'nın en prestijli üniversiteleri (Oxford, Cambridge)
+• Master programları **sadece 1 yıl** - hızlı mezuniyet
+• İngilizce'nin ana vatanı, mükemmel dil gelişimi
+• Mezuniyet sonrası **2 yıl çalışma vizesi** (Graduate Route)
+• Avrupa'ya kolay ulaşım
+
+**📋 Başvuru Gereksinimleri:**
+• IELTS 6.5-7.0 (program bazında değişir)
+• UCAS üzerinden başvuru (lisans için)
+• Personal Statement
+• Referans mektubu
+• Portfolyo (sanat/tasarım için)
+
+**💰 Maliyetler (Yıllık):**
+• Eğitim: £15,000-38,000 (programa göre)
+• Yaşam (Londra): £15,000-18,000
+• Yaşam (Londra dışı): £12,000-15,000
+• Sağlık Sigortası: £470/yıl (IHS)
+• Toplam: ~£28,000-55,000/yıl
+
+**🎓 En İyi Üniversiteler:**
+• University of Oxford (Dünya #1)
+• University of Cambridge (#2)
+• Imperial College London (#6)
+• UCL (#9)
+• LSE (#45)
+
+**🛂 Student Visa:**
+• Harç: £348 + £470/yıl IHS
+• Süre: 3-8 hafta
+• CAS numarası gerekli
+• 28 gün banka bakiyesi (Londra: £1,334/ay)
+
+**🏙️ Popüler Şehirler:**
+• **Londra** - Global finans merkezi, pahalı
+• **Manchester** - Öğrenci dostu, uygun fiyat
+• **Edinburgh** - İskoçya, güzel mimari
+• **Bristol** - Teknoloji hub'ı
+• **Birmingham** - 2. büyük şehir, çeşitlilik
+
+İngiltere başvurunuz için kayıt olun! 🎓`
+                : `🇬🇧 **Studying in the UK - Comprehensive Guide**
+
+**✨ Why UK?**
+• World's most prestigious universities (Oxford, Cambridge)
+• Master's programs **only 1 year** - fast graduation
+• Birthplace of English, excellent language development
+• **2-year post-study work visa** (Graduate Route)
+• Easy access to Europe
+
+**📋 Application Requirements:**
+• IELTS 6.5-7.0 (varies by program)
+• UCAS application (for undergraduate)
+• Personal Statement
+• Reference letter
+• Portfolio (for art/design)
+
+**💰 Annual Costs:**
+• Tuition: £15,000-38,000 (program dependent)
+• Living (London): £15,000-18,000
+• Living (outside London): £12,000-15,000
+• Health Surcharge: £470/year (IHS)
+• Total: ~£28,000-55,000/year
+
+**🎓 Top Universities:**
+• University of Oxford (World #1)
+• University of Cambridge (#2)
+• Imperial College London (#6)
+• UCL (#9)
+• LSE (#45)
+
+**🛂 Student Visa:**
+• Fee: £348 + £470/year IHS
+• Timeline: 3-8 weeks
+• CAS number required
+• 28-day bank balance (London: £1,334/month)
+
+**🏙️ Popular Cities:**
+• **London** - Global finance hub, expensive
+• **Manchester** - Student-friendly, affordable
+• **Edinburgh** - Scotland, beautiful architecture
+• **Bristol** - Tech hub
+• **Birmingham** - 2nd largest, diverse
+
+Sign up for UK application support! 🎓`
+        }
+
         // Burs
         if (input.match(/(burs|scholarship|mali destek|financial|funding|tam burs|full)/)) {
             return locale === 'tr'
@@ -491,7 +768,7 @@ Sign up to manage your visa process step by step! ✈️`
         }
 
         // Dil okulu
-        if (input.match(/(dil okulu|language school|ingilizce|english course|almanca|german course)/)) {
+        if (input.match(/(dil okulu|dil eğitimi|language school|ingilizce|english course|almanca|german course|dil kursu)/)) {
             return locale === 'tr'
                 ? `🗣️ **Dil Okulları Rehberi**
 
@@ -500,6 +777,13 @@ Sign up to manage your visa process step by step! ✈️`
 • Haftalık maliyet: £250-450
 • Avantaj: Native ortam, aksan kalitesi
 • Popüler okullar: British Council, EF, Kaplan
+
+**🇦🇺 Avustralya**
+• Haftalık maliyet: AUD$300-450
+• Avantaj: Çalışma izni (haftada 48 saat), güneşli iklim
+• Şehirler: Sydney, Melbourne, Brisbane, Gold Coast
+• Süre: 4 hafta - 12 ay
+• Bonus: IELTS hazırlık kursları mükemmel
 
 **🇲🇹 Malta**
 • Haftalık maliyet: €200-350
@@ -535,6 +819,13 @@ Dil okulu karşılaştırması için kayıt olun! 📚`
 • Weekly cost: £250-450
 • Advantage: Native environment, accent quality
 • Popular schools: British Council, EF, Kaplan
+
+**🇦🇺 Australia**
+• Weekly cost: AUD$300-450
+• Advantage: Work permit (48 hours/week), sunny climate
+• Cities: Sydney, Melbourne, Brisbane, Gold Coast
+• Duration: 4 weeks - 12 months
+• Bonus: Excellent IELTS preparation courses
 
 **🇲🇹 Malta**
 • Weekly cost: €200-350
@@ -694,8 +985,8 @@ Ask a specific question to get started! 😊
                                     size="sm"
                                     onClick={() => handleLanguageSwitch(lang)}
                                     className={`text-xs px-3 py-1 h-8 mx-0.5 rounded-lg transition-all ${locale === lang
-                                            ? 'bg-white shadow-md text-blue-600 font-semibold'
-                                            : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                                        ? 'bg-white shadow-md text-blue-600 font-semibold'
+                                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
                                         }`}
                                 >
                                     {lang.toUpperCase()}
@@ -760,8 +1051,8 @@ Ask a specific question to get started! 😊
                                             {message.role === 'user' ? <User className="h-3.5 w-3.5 text-white" /> : <Bot className="h-3.5 w-3.5 text-white" />}
                                         </div>
                                         <div className={`rounded-2xl px-4 py-2.5 ${message.role === 'user'
-                                                ? 'bg-blue-600 text-white rounded-br-sm'
-                                                : 'bg-white border border-gray-200 shadow-sm rounded-bl-sm'
+                                            ? 'bg-blue-600 text-white rounded-br-sm'
+                                            : 'bg-white border border-gray-200 shadow-sm rounded-bl-sm'
                                             }`}>
                                             <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
                                             <div className={`text-xs mt-1.5 flex items-center ${message.role === 'user' ? 'text-blue-200 justify-end' : 'text-gray-400'}`}>
