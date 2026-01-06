@@ -206,7 +206,68 @@ I'm available 24/7 for e-commerce support:
 What can I help you with?`
         }
 
-        // Sipariş takibi
+        // ============================================
+        // SİPARİŞ İPTAL - ÖNCE KONTROL (spesifik > genel)
+        // ============================================
+        if (input.match(/(iptal|cancel|vazgeç|istemiyorum|almak istemiyorum)/)) {
+            return locale === 'tr'
+                ? `🚫 **Sipariş İptal İşlemi**
+
+**📋 Siparişinizin Durumuna Göre:**
+
+**1️⃣ Henüz Hazırlanmadıysa:**
+✅ **Anında iptal edilebilir!**
+• Hesabınızda "Siparişlerim" → "İptal Et" tıklayın
+• Veya sipariş numaranızı söyleyin, hemen iptal edeyim
+
+**2️⃣ Hazırlanıyorsa:**
+⏳ İptal talebi oluşturulur (15-30 dk onay)
+• Onaylanmazsa teslimatta reddedebilirsiniz
+
+**3️⃣ Kargoya Verildiyse:**
+📦 Teslimatta "Almıyorum" deyin
+• Ürün bize döner, ödemeniz iade edilir
+
+**💰 Para İadesi Süreleri:**
+• Kredi kartı: 1-7 iş günü
+• Banka kartı: 1-3 iş günü
+• Kapıda ödeme: Zaten ödeme yapmadınız ✌️
+
+**🆔 Sipariş numaranızı paylaşın!**
+Durumunu kontrol edip en hızlı çözümü sunayım.
+
+---
+📌 Demo (${messageCount}/${MAX_MESSAGES}) | Gerçek işlem için kayıt olun!`
+                : `🚫 **Order Cancellation**
+
+**📋 Based on Your Order Status:**
+
+**1️⃣ Not Yet Prepared:**
+✅ **Can be cancelled instantly!**
+• Go to "My Orders" → Click "Cancel Order"
+• Or share your order number, I'll cancel it right away
+
+**2️⃣ Being Prepared:**
+⏳ Cancellation request created (15-30 min approval)
+• If not approved, you can reject at delivery
+
+**3️⃣ Already Shipped:**
+📦 Say "I'm not accepting" to the courier
+• Product returns to us, payment refunded
+
+**💰 Refund Timeline:**
+• Credit card: 1-7 business days
+• Debit card: 1-3 business days
+• Cash on delivery: You didn't pay yet ✌️
+
+**🆔 Share your order number!**
+I'll check the status and provide the fastest solution.
+
+---
+📌 Demo (${messageCount}/${MAX_MESSAGES}) | Sign up for actual cancellations!`
+        }
+
+        // Sipariş takibi/nerede
         if (input.match(/(sipariş|order|takip|track|nerede|where|durumu|status|kargom|gönderi)/)) {
             return locale === 'tr'
                 ? `📦 **Sipariş Takip Sistemi**
@@ -497,42 +558,42 @@ Spesifik bir ürün veya kategori arıyorsanız söyleyin! 🛍️`
 Let me know if you're looking for a specific product! 🛍️`
         }
 
-        // Default
+        // Default - anlaşılmadığında daha yardımcı
         return locale === 'tr'
-            ? `E-ticaret desteği konusunda size yardımcı olmaya hazırım! 🛒
+            ? `Sorunuzu anlamaya çalışıyorum... 🤔
 
-**Detaylı bilgi alabileceğiniz konular:**
+**Daha iyi yardımcı olabilmem için şu konularda soru sorabilirsiniz:**
 
-📦 **Sipariş:** "Siparişimi takip etmek istiyorum" veya "Siparişimi iptal et"
-🔄 **İade:** "Ürünü iade etmek istiyorum" veya "Değişim nasıl yaparım"
+📦 **Sipariş:** "Siparişim nerede?" veya "Siparişimi iptal et"
+🔄 **İade:** "Ürünü iade etmek istiyorum" veya "Beden değişimi"
 💳 **Ödeme:** "Kartım reddedildi" veya "Taksit seçenekleri"
-🚚 **Kargo:** "Kargom nerede" veya "Teslimat süresi"
-🏷️ **Ürünler:** "Stok durumu" veya "Kampanyalar"
+🚚 **Kargo:** "Kargo ne zaman gelir?"
+🏷️ **Ürünler:** "Bu ürün stokta var mı?"
 
-Örnek: **"Siparişimi iptal etmek istiyorum, nasıl yaparım?"**
-
-Daha spesifik bir soru sorarak başlayabilirsiniz! 😊
+**💡 Örnek sorular:**
+• "Siparişimi iptal etmek istiyorum"
+• "Ürün bana uymadı, nasıl iade ederim?"
+• "Ödeme yaparken hata alıyorum"
 
 ---
-⚡ **Not:** Demo sürümündesiniz (${messageCount}/${MAX_MESSAGES} kullanıldı).
-Sınırsız destek için **ücretsiz kayıt olun!**`
-            : `I'm ready to help you with e-commerce support! 🛒
+📊 Demo (${messageCount}/${MAX_MESSAGES}) | Sınırsız destek için **kayıt olun!**`
+            : `I'm trying to understand your question... 🤔
 
-**Topics you can ask about:**
+**For better assistance, you can ask about:**
 
-📦 **Orders:** "I want to track my order" or "Cancel my order"
-🔄 **Returns:** "I want to return a product" or "How to exchange"
+📦 **Orders:** "Where is my order?" or "Cancel my order"
+🔄 **Returns:** "I want to return a product" or "Size exchange"
 💳 **Payment:** "My card was declined" or "Installment options"
-🚚 **Shipping:** "Where is my package" or "Delivery time"
-🏷️ **Products:** "Stock availability" or "Current deals"
+🚚 **Shipping:** "When will my order arrive?"
+🏷️ **Products:** "Is this item in stock?"
 
-Example: **"I want to cancel my order, how do I do it?"**
-
-Ask a specific question to get started! 😊
+**💡 Example questions:**
+• "I want to cancel my order"
+• "The product doesn't fit, how do I return it?"
+• "I'm getting an error during payment"
 
 ---
-⚡ **Note:** You're in demo mode (${messageCount}/${MAX_MESSAGES} used).
-**Sign up free** for unlimited support!`
+📊 Demo (${messageCount}/${MAX_MESSAGES}) | **Sign up** for unlimited support!`
     }
 
     const handleLanguageSwitch = (newLocale: string) => {
