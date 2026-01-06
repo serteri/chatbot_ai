@@ -107,7 +107,7 @@ export default async function HomePage({ params }: HomePageProps) {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="p-6">
-                                <div className="space-y-4 mb-6">
+                                <div className="space-y-4 mb-4">
                                     <div className="flex items-center space-x-3">
                                         <CheckCircle className="h-5 w-5 text-green-500" />
                                         <span>{t('education.feature1')}</span>
@@ -124,6 +124,12 @@ export default async function HomePage({ params }: HomePageProps) {
                                         <CheckCircle className="h-5 w-5 text-green-500" />
                                         <span>{t('education.feature4')}</span>
                                     </div>
+                                </div>
+
+                                <div className="mb-4 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <span className="text-sm text-blue-700 font-medium">
+                                        {t('education.demoLangNote')}
+                                    </span>
                                 </div>
 
                                 <Link href={`/${locale}/demo/education`}>
@@ -154,7 +160,7 @@ export default async function HomePage({ params }: HomePageProps) {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="p-6">
-                                <div className="space-y-4 mb-6">
+                                <div className="space-y-4 mb-4">
                                     <div className="flex items-center space-x-3">
                                         <CheckCircle className="h-5 w-5 text-green-500" />
                                         <span>{t('ecommerce.feature1')}</span>
@@ -171,6 +177,12 @@ export default async function HomePage({ params }: HomePageProps) {
                                         <CheckCircle className="h-5 w-5 text-green-500" />
                                         <span>{t('ecommerce.feature4')}</span>
                                     </div>
+                                </div>
+
+                                <div className="mb-4 px-3 py-2 bg-green-50 border border-green-200 rounded-lg">
+                                    <span className="text-sm text-green-700 font-medium">
+                                        {t('ecommerce.demoLangNote')}
+                                    </span>
                                 </div>
 
                                 <Link href={`/${locale}/demo/ecommerce`}>

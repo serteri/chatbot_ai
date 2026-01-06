@@ -72,7 +72,8 @@
       "feature2": "150+ dil okulu veritabanı",
       "feature3": "Burs fırsatları rehberi",
       "feature4": "Üniversite başvuru desteği",
-      "tryFree": "Ücretsiz Dene (5 mesaj)"
+      "tryFree": "Ücretsiz Dene (5 mesaj)",
+      "demoLangNote": "🌐 Demo: Türkçe & İngilizce"
     },
     "ecommerce": {
       "title": "E-ticaret Chatbot",
@@ -81,7 +82,8 @@
       "feature2": "Sipariş takibi",
       "feature3": "7/24 müşteri desteği",
       "feature4": "Akıllı satış asistanı",
-      "tryFree": "Ücretsiz Dene (5 mesaj)"
+      "tryFree": "Ücretsiz Dene (5 mesaj)",
+      "demoLangNote": "🌐 Demo: Türkçe & İngilizce"
     },
     "cta": {
       "title": "Hemen Başlayın",
@@ -767,7 +769,6 @@
     "subtitle": "Hesap tercihlerinizi ve yapılandırmalarınızı yönetin.",
     "general": "Genel Ayarlar",
     "saveSuccess": "Başarıyla kaydedildi!",
-
     "tabs": {
       "profile": "Profil",
       "security": "Güvenlik",
@@ -896,7 +897,6 @@
     "title": "Chat Asistanı",
     "welcome": "Merhaba! Size nasıl yardımcı olabilirim?",
     "placeholder": "Mesajınızı yazın...",
-
     "send": "Gönder",
     "typing": "Yazıyor...",
     "minimize": "Küçült",
@@ -976,7 +976,6 @@
     "uploadFailed": "Yükleme başarısız",
     "errorOccurred": "Bir hata oluştu",
     "uploadCancelled": "Yükleme işlemi iptal edildi.",
-
     "documentUploadedStartProcessing": "Doküman yüklendi, işlenmeye başlandı...",
     "processingComplete": "İşleme tamamlandı! Sayfa yenileniyor."
   },
@@ -1810,27 +1809,27 @@
     }
   },
   "profile": {
-  "planPro": "Pro Plan",
-  "statusActive": "Aktif Hesap",
-  "personalInfo": "Kişisel Bilgiler",
-  "personalInfoDesc": "Adınız ve iletişim bilgileriniz.",
-  "fullName": "Ad Soyad",
-  "fullNamePlaceholder": "Adınız Soyadınız",
-  "email": "E-posta Adresi",
-  "emailReadOnly": "Güvenlik nedeniyle e-posta adresi değiştirilemez.",
-  "phone": "Telefon Numarası",
-  "securityTitle": "Şifre ve Güvenlik",
-  "securityDesc": "Şifrenizi düzenli olarak değiştirmek güvenliğinizi artırır.",
-  "cancel": "Vazgeç",
-  "changePassword": "Şifre Değiştir",
-  "currentPassword": "Mevcut Şifre",
-  "newPassword": "Yeni Şifre",
-  "confirmPassword": "Yeni Şifre (Tekrar)",
-  "updatePassword": "Şifreyi Güncelle",
-  "successMessage": "Değişiklikler kaydedildi!",
-  "saving": "Kaydediliyor...",
-  "saveChanges": "Değişiklikleri Kaydet"
-},
+    "planPro": "Pro Plan",
+    "statusActive": "Aktif Hesap",
+    "personalInfo": "Kişisel Bilgiler",
+    "personalInfoDesc": "Adınız ve iletişim bilgileriniz.",
+    "fullName": "Ad Soyad",
+    "fullNamePlaceholder": "Adınız Soyadınız",
+    "email": "E-posta Adresi",
+    "emailReadOnly": "Güvenlik nedeniyle e-posta adresi değiştirilemez.",
+    "phone": "Telefon Numarası",
+    "securityTitle": "Şifre ve Güvenlik",
+    "securityDesc": "Şifrenizi düzenli olarak değiştirmek güvenliğinizi artırır.",
+    "cancel": "Vazgeç",
+    "changePassword": "Şifre Değiştir",
+    "currentPassword": "Mevcut Şifre",
+    "newPassword": "Yeni Şifre",
+    "confirmPassword": "Yeni Şifre (Tekrar)",
+    "updatePassword": "Şifreyi Güncelle",
+    "successMessage": "Değişiklikler kaydedildi!",
+    "saving": "Kaydediliyor...",
+    "saveChanges": "Değişiklikleri Kaydet"
+  },
   "billing": {
     "paymentMethod": "Ödeme Yöntemi",
     "updateCard": "Kartı Güncelle",

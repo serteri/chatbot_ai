@@ -70,7 +70,8 @@
       "feature2": "150+ language school database",
       "feature3": "Scholarship opportunities guide",
       "feature4": "University application support",
-      "tryFree": "Try for Free (5 messages)"
+      "tryFree": "Try for Free (5 messages)",
+      "demoLangNote": "🌐 Demo: Turkish & English"
     },
     "ecommerce": {
       "title": "E-commerce Chatbot",
@@ -79,7 +80,8 @@
       "feature2": "Order tracking",
       "feature3": "24/7 customer support",
       "feature4": "Smart sales assistant",
-      "tryFree": "Try for Free (5 messages)"
+      "tryFree": "Try for Free (5 messages)",
+      "demoLangNote": "🌐 Demo: Turkish & English"
     },
     "cta": {
       "title": "Get Started Now",
@@ -1791,27 +1793,27 @@
     }
   },
   "profile": {
-  "planPro": "Pro Plan",
-  "statusActive": "Active Account",
-  "personalInfo": "Personal Information",
-  "personalInfoDesc": "Your name and contact details.",
-  "fullName": "Full Name",
-  "fullNamePlaceholder": "Your Full Name",
-  "email": "Email Address",
-  "emailReadOnly": "Email address cannot be changed for security reasons.",
-  "phone": "Phone Number",
-  "securityTitle": "Security & Password",
-  "securityDesc": "Regularly changing your password improves security.",
-  "cancel": "Cancel",
-  "changePassword": "Change Password",
-  "currentPassword": "Current Password",
-  "newPassword": "New Password",
-  "confirmPassword": "Confirm New Password",
-  "updatePassword": "Update Password",
-  "successMessage": "Changes saved!",
-  "saving": "Saving...",
-  "saveChanges": "Save Changes"
-},
+    "planPro": "Pro Plan",
+    "statusActive": "Active Account",
+    "personalInfo": "Personal Information",
+    "personalInfoDesc": "Your name and contact details.",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Your Full Name",
+    "email": "Email Address",
+    "emailReadOnly": "Email address cannot be changed for security reasons.",
+    "phone": "Phone Number",
+    "securityTitle": "Security & Password",
+    "securityDesc": "Regularly changing your password improves security.",
+    "cancel": "Cancel",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "updatePassword": "Update Password",
+    "successMessage": "Changes saved!",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes"
+  },
   "billing": {
     "paymentMethod": "Payment Method",
     "updateCard": "Update Card",
