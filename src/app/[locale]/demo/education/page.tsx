@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -18,7 +17,6 @@ import {
     CheckCircle,
     Lightbulb,
     Zap,
-    Home,
     Bot,
     User
 } from 'lucide-react'
@@ -30,10 +28,14 @@ interface ChatMessage {
     timestamp: Date
 }
 
+const STORAGE_KEY = 'pylonchat_education_demo'
+const MAX_MESSAGES = 5
+const EXPIRY_HOURS = 24
+
 export default function EducationDemoPage() {
     const params = useParams()
     const router = useRouter()
-    const locale = (params?.locale as string) || 'tr'
+    const locale = (params?.locale as string) || 'en'
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
 
@@ -41,9 +43,43 @@ export default function EducationDemoPage() {
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [messageCount, setMessageCount] = useState(0)
-    const maxMessages = 5
+    const [isInitialized, setIsInitialized] = useState(false)
 
-    // Auto-scroll to bottom when messages change
+    // Load message count from localStorage on mount
+    useEffect(() => {
+        const stored = localStorage.getItem(STORAGE_KEY)
+        if (stored) {
+            try {
+                const data = JSON.parse(stored)
+                const now = Date.now()
+                // Check if expired (24 hours)
+                if (data.expiry && now < data.expiry) {
+                    setMessageCount(data.count || 0)
+                } else {
+                    // Expired, reset
+                    localStorage.removeItem(STORAGE_KEY)
+                }
+            } catch {
+                localStorage.removeItem(STORAGE_KEY)
+            }
+        }
+        setIsInitialized(true)
+    }, [])
+
+    // Save message count to localStorage whenever it changes
+    useEffect(() => {
+        if (isInitialized && messageCount > 0) {
+            const data = {
+                count: messageCount,
+                expiry: Date.now() + (EXPIRY_HOURS * 60 * 60 * 1000)
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+        }
+    }, [messageCount, isInitialized])
+
+    const remainingMessages = MAX_MESSAGES - messageCount
+
+    // Auto-scroll
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
@@ -52,52 +88,61 @@ export default function EducationDemoPage() {
         scrollToBottom()
     }, [messages, isLoading])
 
-    // Keep focus on input after sending message
+    // Focus input after response
     useEffect(() => {
         if (!isLoading && remainingMessages > 0) {
-            setTimeout(() => {
-                inputRef.current?.focus()
-            }, 50)
+            setTimeout(() => inputRef.current?.focus(), 50)
         }
-    }, [isLoading])
+    }, [isLoading, remainingMessages])
 
-    // Initialize with welcome message
+    // Welcome message
     useEffect(() => {
+        if (!isInitialized) return
+
         const welcomeContent = locale === 'tr'
-            ? `Merhaba! 👋 Ben eğitim danışmanı AI'ınızım.
+            ? `Merhaba! 👋 Ben PylonChat Eğitim Danışmanı AI'ınızım.
 
-Size yardımcı olabileceğim konular:
-• Yurtdışı eğitim fırsatları 🎓
-• Öğrenci vize işlemleri 🛂  
-• Dil okulları ve kurslar 🗣️
-• Burs imkanları 💰
-• Üniversite başvuru süreçleri 📚
+🎓 **Uzmanlık Alanlarım:**
+• Yurtdışı üniversite başvuruları
+• Öğrenci vize süreçleri (ABD, İngiltere, Almanya, Kanada)
+• Burs programları ve mali destek
+• Dil okulları ve hazırlık programları
+• TOEFL, IELTS, GRE, GMAT sınavları
 
-Bu demo sürümünde ${maxMessages} mesaj gönderebilirsiniz. Hangi konuda yardım istiyorsunuz?`
-            : locale === 'en'
-                ? `Hello! 👋 I'm your education consultant AI.
+Bu demo sürümünde **${MAX_MESSAGES} soru** sorabilirsiniz. Ardından ücretsiz kayıt olarak sınırsız erişim sağlayabilirsiniz!
 
-I can help you with:
-• Study abroad opportunities 🎓
-• Student visa processes 🛂  
-• Language schools and courses 🗣️
-• Scholarship opportunities 💰
-• University application processes 📚
+💡 **Örnek sorular:**
+"Almanya'da mühendislik okumak istiyorum, ne yapmalıyım?"
+"ABD'de tam burslu master programları var mı?"
 
-In this demo version, you can send ${maxMessages} messages. What would you like help with?`
-                : `Hello! 👋 I'm your education consultant AI. You can send ${maxMessages} messages in this demo.`
+Nasıl yardımcı olabilirim?`
+            : `Hello! 👋 I'm your PylonChat Education Advisor AI.
 
-        const welcomeMessage: ChatMessage = {
+🎓 **My Expertise:**
+• University applications abroad
+• Student visa processes (USA, UK, Germany, Canada)
+• Scholarships and financial aid
+• Language schools and preparation programs
+• TOEFL, IELTS, GRE, GMAT exams
+
+In this demo, you can ask **${MAX_MESSAGES} questions**. Sign up free for unlimited access!
+
+💡 **Example questions:**
+"I want to study engineering in Germany, what should I do?"
+"Are there fully-funded master's programs in the USA?"
+
+How can I help you today?`
+
+        setMessages([{
             id: 'welcome',
             role: 'assistant',
             content: welcomeContent,
             timestamp: new Date()
-        }
-        setMessages([welcomeMessage])
-    }, [locale, maxMessages])
+        }])
+    }, [locale, isInitialized])
 
     const handleSendMessage = async () => {
-        if (!input.trim() || messageCount >= maxMessages || isLoading) return
+        if (!input.trim() || messageCount >= MAX_MESSAGES || isLoading) return
 
         const userMessage: ChatMessage = {
             id: Date.now().toString(),
@@ -109,7 +154,6 @@ In this demo version, you can send ${maxMessages} messages. What would you like 
         setMessages(prev => [...prev, userMessage])
         const userInput = input.trim()
         setInput('')
-        inputRef.current?.focus()
         setIsLoading(true)
         setMessageCount(prev => prev + 1)
 
@@ -117,17 +161,15 @@ In this demo version, you can send ${maxMessages} messages. What would you like 
             const response = generateEducationResponse(userInput)
 
             setTimeout(() => {
-                const assistantMessage: ChatMessage = {
+                setMessages(prev => [...prev, {
                     id: (Date.now() + 1).toString(),
                     role: 'assistant',
                     content: response,
                     timestamp: new Date()
-                }
-                setMessages(prev => [...prev, assistantMessage])
+                }])
                 setIsLoading(false)
                 inputRef.current?.focus()
-            }, 800 + Math.random() * 700)
-
+            }, 1000 + Math.random() * 500)
         } catch (error) {
             console.error('Demo chat error:', error)
             setIsLoading(false)
@@ -138,257 +180,502 @@ In this demo version, you can send ${maxMessages} messages. What would you like 
         const input = userInput.toLowerCase().trim()
 
         // Selamlaşma
-        if (input.match(/^(merhaba|selam|hey|hi|hello|naber|nasılsın|nasıl gidiyor|günaydın|iyi akşamlar|iyi günler)/)) {
+        if (input.match(/^(merhaba|selam|hey|hi|hello|naber|nasılsın)/)) {
             return locale === 'tr'
-                ? `Merhaba! 😊 Ben buradayım, size yardımcı olmaya hazırım!
+                ? `Merhaba! 😊 Size yardımcı olmak için buradayım!
 
-Size nasıl yardımcı olabilirim? Örneğin:
-• "Almanya'da okumak istiyorum"
-• "Burs imkanları neler?"
-• "Vize için ne gerekiyor?"
+Eğitim danışmanlığı konusunda uzmanım. Şu konularda detaylı bilgi verebilirim:
 
-Sormak istediğiniz bir konu var mı?`
-                : `Hello! 😊 I'm here and ready to help you!
+🎓 **Üniversite Başvuruları** - Hangi ülke, hangi program, gereksinimler
+🛂 **Vize Süreçleri** - Adım adım başvuru rehberi
+💰 **Burslar** - 500+ aktif burs, uygunluk kriterleri
+📚 **Dil Okulları** - Ülkelere göre en iyi seçenekler
 
-How can I assist you? For example:
-• "I want to study in Germany"
-• "What scholarship opportunities are there?"
-• "What do I need for a visa?"
+Hangi konuda yardımcı olabilirim?`
+                : `Hello! 😊 I'm here to help you!
 
-Is there something specific you'd like to know?`
+I specialize in education consulting. I can provide detailed information on:
+
+🎓 **University Applications** - Countries, programs, requirements
+🛂 **Visa Processes** - Step-by-step application guide
+💰 **Scholarships** - 500+ active scholarships, eligibility criteria
+📚 **Language Schools** - Best options by country
+
+What would you like to know?`
         }
 
-        // Teşekkür
-        if (input.match(/(teşekkür|sağol|thanks|thank you|eyvallah|tşk)/)) {
+        // Almanya
+        if (input.match(/(almanya|germany|deutschland|alman)/)) {
             return locale === 'tr'
-                ? `Rica ederim! 🙏 Başka bir sorunuz varsa yardımcı olmaktan memnuniyet duyarım. 
+                ? `🇩🇪 **Almanya'da Eğitim - Kapsamlı Rehber**
 
-Tam sürüm için ücretsiz kayıt olabilir ve sınırsız sohbet edebilirsiniz! 🎓`
-                : `You're welcome! 🙏 I'm happy to help if you have any other questions.
+**✨ Neden Almanya?**
+• Devlet üniversitelerinde **ÜCRETSİZ** eğitim (sadece ~€300/dönem harç)
+• Avrupa'nın en güçlü ekonomisi, mükemmel kariyer fırsatları
+• Mezuniyet sonrası **18 aylık çalışma izni**
+• 400+ üniversite, dünya çapında tanınırlık
 
-Sign up for free to get unlimited chat access! 🎓`
+**📋 Başvuru Gereksinimleri:**
+• Almanca programlar: B2/C1 sertifikası (TestDaF, DSH)
+• İngilizce programlar: IELTS 6.5+ veya TOEFL 90+
+• Bloke hesap: **€11,208/yıl** (aylık €934)
+• APS sertifikası (Türk öğrenciler için zorunlu)
+• Motivasyon mektubu ve CV
+
+**🎓 Popüler Programlar:**
+• Mühendislik (TU Munich, TU Berlin, RWTH Aachen)
+• İşletme (Mannheim, WHU, ESMT Berlin)
+• Bilgisayar Bilimleri (TU Munich, KIT, TU Darmstadt)
+
+**💰 Yaşam Maliyetleri:**
+• Kira: €300-600/ay (öğrenci yurdu)
+• Yemek: €200-300/ay
+• Ulaşım: €50/ay (öğrenci bileti)
+• Toplam: €700-1000/ay
+
+**⏰ Başvuru Takvimleri:**
+• Kış dönemi: Mayıs-Temmuz
+• Yaz dönemi: Kasım-Ocak
+
+Daha detaylı bilgi ve kişiselleştirilmiş danışmanlık için ücretsiz kayıt olun! 🚀`
+                : `🇩🇪 **Studying in Germany - Comprehensive Guide**
+
+**✨ Why Germany?**
+• **FREE tuition** at public universities (only ~€300/semester admin fee)
+• Europe's strongest economy, excellent career prospects
+• **18-month post-study work permit**
+• 400+ universities, globally recognized degrees
+
+**📋 Application Requirements:**
+• German programs: B2/C1 certificate (TestDaF, DSH)
+• English programs: IELTS 6.5+ or TOEFL 90+
+• Blocked account: **€11,208/year** (€934/month)
+• Motivation letter and CV
+• Academic transcripts
+
+**🎓 Popular Programs:**
+• Engineering (TU Munich, TU Berlin, RWTH Aachen)
+• Business (Mannheim, WHU, ESMT Berlin)
+• Computer Science (TU Munich, KIT, TU Darmstadt)
+
+**💰 Living Costs:**
+• Rent: €300-600/month (student dorm)
+• Food: €200-300/month
+• Transport: €50/month (student ticket)
+• Total: €700-1000/month
+
+**⏰ Application Deadlines:**
+• Winter semester: May-July
+• Summer semester: November-January
+
+Sign up free for personalized advice and application support! 🚀`
         }
 
-        // Nasılsın
-        if (input.match(/(nasılsın|how are you|iyi misin|naber|ne var ne yok)/)) {
+        // ABD / USA
+        if (input.match(/(abd|amerika|usa|united states|amerikan)/)) {
             return locale === 'tr'
-                ? `İyiyim, teşekkür ederim! 😊 Siz nasılsınız? 
+                ? `🇺🇸 **ABD'de Eğitim - Kapsamlı Rehber**
 
-Bugün eğitim konusunda size nasıl yardımcı olabilirim? Yurtdışı eğitim, vize, burs veya dil okulları hakkında sorularınızı yanıtlayabilirim.`
-                : `I'm doing great, thank you! 😊 How are you?
+**✨ Neden ABD?**
+• Dünyanın en prestijli üniversiteleri (Harvard, MIT, Stanford)
+• Geniş program seçeneği ve araştırma fırsatları
+• Kampüs yaşamı ve networking imkanları
+• OPT ile mezuniyet sonrası **3 yıla kadar çalışma izni** (STEM)
 
-How can I help you with education today? I can answer questions about studying abroad, visas, scholarships, or language schools.`
+**📋 Başvuru Gereksinimleri:**
+• TOEFL 100+ veya IELTS 7.0+
+• GRE/GMAT (program bazında)
+• Statement of Purpose
+• 3 Referans Mektubu
+• Finansal Garanti Belgesi
+
+**💰 Maliyetler (Yıllık):**
+• Eğitim: $30,000-80,000 (devlet vs özel)
+• Yaşam: $15,000-25,000
+• Sağlık Sigortası: $2,000-3,000
+
+**🎓 Önemli Burs Programları:**
+• **Fulbright** - Tam burs + yaşam gideri
+• **Hubert H. Humphrey** - Profesyoneller için
+• Üniversite bazlı merit bursları
+• Araştırma Asistanlığı (RA) - Ücretsiz + maaş
+
+**🛂 F-1 Vize Süreci:**
+1. Üniversiteden kabul al (I-20 formu)
+2. SEVIS ücreti öde ($350)
+3. DS-160 formu doldur
+4. Vize mülakatı ($185)
+• Süre: 2-8 hafta
+
+Kişiselleştirilmiş ABD başvuru danışmanlığı için kayıt olun! 🚀`
+                : `🇺🇸 **Studying in the USA - Comprehensive Guide**
+
+**✨ Why USA?**
+• World's most prestigious universities (Harvard, MIT, Stanford)
+• Wide range of programs and research opportunities
+• Campus life and networking
+• OPT allows **up to 3 years work** after graduation (STEM)
+
+**📋 Application Requirements:**
+• TOEFL 100+ or IELTS 7.0+
+• GRE/GMAT (program dependent)
+• Statement of Purpose
+• 3 Recommendation Letters
+• Financial Documents
+
+**💰 Annual Costs:**
+• Tuition: $30,000-80,000 (public vs private)
+• Living: $15,000-25,000
+• Health Insurance: $2,000-3,000
+
+**🎓 Major Scholarship Programs:**
+• **Fulbright** - Full funding + living expenses
+• **Hubert H. Humphrey** - For professionals
+• Merit-based university scholarships
+• Research Assistantships (RA) - Free tuition + stipend
+
+**🛂 F-1 Visa Process:**
+1. Get university acceptance (I-20 form)
+2. Pay SEVIS fee ($350)
+3. Complete DS-160 form
+4. Visa interview ($185)
+• Timeline: 2-8 weeks
+
+Sign up for personalized US application consulting! 🚀`
         }
 
-        // Vize soruları
+        // Burs
+        if (input.match(/(burs|scholarship|mali destek|financial|funding|tam burs|full)/)) {
+            return locale === 'tr'
+                ? `💰 **Burs Fırsatları - Detaylı Rehber**
+
+**🌟 En Prestijli Tam Burs Programları:**
+
+**1. Fulbright (ABD)** 🇺🇸
+• Kapsamı: Eğitim + yaşam + seyahat + sağlık sigortası
+• Kimler başvurabilir: Türk vatandaşları, lisans mezunu
+• Son başvuru: Genellikle Mayıs
+• Seçim oranı: ~%10
+
+**2. DAAD (Almanya)** 🇩🇪
+• Kapsamı: €934/ay + seyahat + sağlık sigortası
+• Programlar: Yüksek lisans, doktora, araştırma
+• Son başvuru: Ekim-Kasım
+• Seçim oranı: ~%20
+
+**3. Chevening (İngiltere)** 🇬🇧
+• Kapsamı: Tam eğitim + £1,300/ay yaşam + seyahat
+• Süre: 1 yıllık master programları
+• Son başvuru: Kasım
+• Seçim oranı: ~%5
+
+**4. Erasmus+ (AB)** 🇪🇺
+• Kapsamı: €700-1400/ay (ülkeye göre)
+• Programlar: Değişim, ortak yüksek lisans
+• Süre: 3-24 ay
+
+**📊 Başvuru İpuçları:**
+• En az 6 ay önceden hazırlık başlayın
+• Motivasyon mektubuna özen gösterin
+• Referanslarınızı erken bilgilendirin
+• Birden fazla bursa başvurun
+
+Sistemimizde **500+ aktif burs** var. Kayıt olarak size uygun bursları filtreleyin! 🎯`
+                : `💰 **Scholarship Opportunities - Detailed Guide**
+
+**🌟 Most Prestigious Full Scholarships:**
+
+**1. Fulbright (USA)** 🇺🇸
+• Coverage: Tuition + living + travel + health insurance
+• Who: Bachelor's degree holders
+• Deadline: Usually May
+• Selection rate: ~10%
+
+**2. DAAD (Germany)** 🇩🇪
+• Coverage: €934/month + travel + health insurance
+• Programs: Master's, PhD, research
+• Deadline: October-November
+• Selection rate: ~20%
+
+**3. Chevening (UK)** 🇬🇧
+• Coverage: Full tuition + £1,300/month + travel
+• Duration: 1-year master's programs
+• Deadline: November
+• Selection rate: ~5%
+
+**4. Erasmus+ (EU)** 🇪🇺
+• Coverage: €700-1400/month (varies by country)
+• Programs: Exchange, joint master's
+• Duration: 3-24 months
+
+**📊 Application Tips:**
+• Start preparation at least 6 months early
+• Perfect your motivation letter
+• Inform referees early
+• Apply to multiple scholarships
+
+We have **500+ active scholarships** in our database. Sign up to filter matching opportunities! 🎯`
+        }
+
+        // Vize
         if (input.match(/(vize|visa|student visa|öğrenci vizesi)/)) {
             return locale === 'tr'
-                ? `🛂 **Öğrenci Vize Danışmanlığı**
+                ? `🛂 **Öğrenci Vize Rehberi**
 
-Hangi ülke için vize bilgisi istiyorsunuz? Popüler destinasyonlar:
+**🇺🇸 ABD (F-1 Vizesi)**
+• Harç: $350 (SEVIS) + $185 (vize)
+• Süre: 2-8 hafta
+• Gerekli: I-20 formu, mali belgeler, mülakat
+• İpucu: Mülakatta açık ve özgüvenli olun
 
-• **ABD (F-1 Vizesi)** - $350 harç, 2-8 hafta süre
-• **İngiltere (Student Visa)** - £348 harç, 3-8 hafta süre  
-• **Almanya (National Visa)** - €75 harç, 4-8 hafta süre
-• **Kanada (Study Permit)** - CAD $150 harç, 4-12 hafta süre
+**🇬🇧 İngiltere (Student Visa)**
+• Harç: £348 + £470/yıl sağlık
+• Süre: 3-8 hafta
+• Gerekli: CAS numarası, £9,207+ banka hesabı (Londra)
+• Online başvuru + biyometri randevusu
 
-💡 **Genel gereksinimler:** Kabul mektubu, mali durum belgesi, dil yeterlilik sertifikası, sağlık sigortası
+**🇩🇪 Almanya (National Visa)**
+• Harç: €75
+• Süre: 4-8 hafta
+• Gerekli: Bloke hesap (€11,208), APS sertifikası
+• İpucu: Randevu almak için erken başvurun
 
-Daha detaylı bilgi için kayıt olarak vize rehberimize tam erişim sağlayabilirsiniz!`
-                : `🛂 **Student Visa Consulting**
+**🇨🇦 Kanada (Study Permit)**
+• Harç: CAD $150
+• Süre: 4-12 hafta
+• Gerekli: Kabul mektubu, mali belgeler
+• Avantaj: PGWP ile mezuniyet sonrası çalışma
 
-Which country's visa information do you need? Popular destinations:
+**📋 Genel Gereksinimler:**
+• Pasaport (en az 6 ay geçerli)
+• Kabul mektubu
+• Mali durum belgesi
+• Dil sertifikası
+• Sağlık sigortası
 
-• **USA (F-1 Visa)** - $350 fee, 2-8 weeks processing
-• **UK (Student Visa)** - £348 fee, 3-8 weeks processing  
-• **Germany (National Visa)** - €75 fee, 4-8 weeks processing
-• **Canada (Study Permit)** - CAD $150 fee, 4-12 weeks processing
+Vize sürecinizi adım adım yönetmek için kayıt olun! ✈️`
+                : `🛂 **Student Visa Guide**
 
-💡 **Requirements:** Acceptance letter, proof of funds, language certificate, health insurance`
-        }
+**🇺🇸 USA (F-1 Visa)**
+• Fees: $350 (SEVIS) + $185 (visa)
+• Timeline: 2-8 weeks
+• Required: I-20 form, financial docs, interview
+• Tip: Be clear and confident in interview
 
-        // Burs soruları
-        if (input.match(/(burs|scholarship|mali destek|financial aid|funding)/)) {
-            return locale === 'tr'
-                ? `💰 **Burs Fırsatları**
+**🇬🇧 UK (Student Visa)**
+• Fees: £348 + £470/year health surcharge
+• Timeline: 3-8 weeks
+• Required: CAS number, £9,207+ bank balance (London)
+• Online application + biometrics appointment
 
-En popüler burs programları:
+**🇩🇪 Germany (National Visa)**
+• Fees: €75
+• Timeline: 4-8 weeks
+• Required: Blocked account (€11,208)
+• Tip: Book appointment early
 
-• **Fulbright (ABD)** - Tam burs + yaşam gideri
-• **DAAD (Almanya)** - €934/ay + seyahat
-• **Chevening (İngiltere)** - Tam burs
-• **Erasmus+ (AB)** - €700-1000/ay
-• **Türkiye Bursları** - Uluslararası öğrenciler için
+**🇨🇦 Canada (Study Permit)**
+• Fees: CAD $150
+• Timeline: 4-12 weeks
+• Required: Acceptance letter, financial docs
+• Benefit: PGWP for post-graduation work
 
-📅 **Başvuru Takvimleri:**
-- Sonbahar: Eylül-Kasım
-- İlkbahar: Ocak-Mart
+**📋 Common Requirements:**
+• Valid passport (6+ months)
+• Acceptance letter
+• Proof of funds
+• Language certificate
+• Health insurance
 
-Sistemimizde 500+ aktif burs var. Kayıt olarak size uygun bursları filtreleyebilirsiniz!`
-                : `💰 **Scholarship Opportunities**
-
-Most popular scholarship programs:
-
-• **Fulbright (USA)** - Full tuition + living expenses
-• **DAAD (Germany)** - €934/month + travel
-• **Chevening (UK)** - Full scholarship
-• **Erasmus+ (EU)** - €700-1000/month
-
-📅 **Application Timeline:**
-- Fall: September-November
-- Spring: January-March
-
-We have 500+ active scholarships. Sign up to filter scholarships that match your profile!`
-        }
-
-        // Üniversite soruları
-        if (input.match(/(üniversite|university|okul|school|eğitim|education|okumak|study|master|lisans|bachelor|phd|doktora)/)) {
-            return locale === 'tr'
-                ? `🎓 **Yurtdışı Eğitim Danışmanlığı**
-
-Size yardımcı olabileceğim konular:
-
-📚 **Program Seçimi**
-- Lisans, Yüksek Lisans, Doktora
-- TOEFL/IELTS gereksinimleri
-- GPA kriterleri
-
-🌍 **Popüler Destinasyonlar**
-- ABD: 4,000+ üniversite
-- İngiltere: Russell Group okulları
-- Kanada: Co-op programları
-- Almanya: Ücretsiz eğitim
-
-💡 Hangi ülke veya program hakkında bilgi almak istersiniz?`
-                : `🎓 **Study Abroad Consulting**
-
-I can help you with:
-
-📚 **Program Selection**
-- Bachelor's, Master's, PhD
-- TOEFL/IELTS requirements
-- GPA criteria
-
-🌍 **Popular Destinations**
-- USA: 4,000+ universities
-- UK: Russell Group schools
-- Canada: Co-op programs
-- Germany: Free tuition
-
-💡 Which country or program would you like to learn about?`
+Sign up to manage your visa process step by step! ✈️`
         }
 
         // Dil okulu
-        if (input.match(/(dil okulu|language school|ingilizce|english|almanca|german|fransızca|french|dil kursu|language course)/)) {
+        if (input.match(/(dil okulu|language school|ingilizce|english course|almanca|german course)/)) {
             return locale === 'tr'
-                ? `🗣️ **Dil Okulları & Kurslar**
+                ? `🗣️ **Dil Okulları Rehberi**
 
-Popüler dil eğitim programları:
+**🇬🇧 İngiltere**
+• En iyi şehirler: Cambridge, Oxford, Londra, Brighton
+• Haftalık maliyet: £250-450
+• Avantaj: Native ortam, aksan kalitesi
+• Popüler okullar: British Council, EF, Kaplan
 
-• **İngiltere** - Cambridge, Oxford şehirlerinde
-• **Malta** - Uygun fiyatlı, tatil + eğitim
-• **İrlanda** - Çalışma izni imkanı
-• **Almanya** - Goethe Institut sertifikalı
+**🇲🇹 Malta**
+• Haftalık maliyet: €200-350
+• Avantaj: Uygun fiyat, güneşli iklim, AB vizesi
+• Süre: 2 hafta - 12 ay
+• İpucu: Yaz ayları çok kalabalık
 
-⏱️ **Süre Seçenekleri:**
-- Kısa dönem: 2-8 hafta
-- Uzun dönem: 3-12 ay
-- Akademik hazırlık: 6-12 ay
+**🇮🇪 İrlanda**
+• Haftalık maliyet: €200-350
+• Avantaj: Çalışma izni (haftada 20 saat)
+• Şehirler: Dublin, Cork, Galway
 
-Bütçenize ve hedefinize göre öneriler için kayıt olun!`
-                : `🗣️ **Language Schools & Courses**
+**🇩🇪 Almanya (Almanca)**
+• Goethe Institut: ~€1,200/ay (yoğun)
+• VHS (Halk Eğitim): €300-500/kurs
+• Üniversite hazırlık: Studienkolleg
 
-Popular language programs:
+**⏱️ Önerilen Süre:**
+• Turistik: 2-4 hafta
+• Orta seviye gelişim: 2-3 ay
+• Akademik hazırlık: 6-12 ay
 
-• **UK** - Cambridge, Oxford cities
-• **Malta** - Affordable, vacation + education
-• **Ireland** - Work permit opportunity
-• **Germany** - Goethe Institut certified
+**💡 İpuçları:**
+• Akredite okul seçin
+• Konaklama seçeneklerini karşılaştırın
+• Grubun milliyetine dikkat edin
 
-⏱️ **Duration Options:**
-- Short-term: 2-8 weeks
-- Long-term: 3-12 months
-- Academic preparation: 6-12 months`
+Dil okulu karşılaştırması için kayıt olun! 📚`
+                : `🗣️ **Language School Guide**
+
+**🇬🇧 United Kingdom**
+• Best cities: Cambridge, Oxford, London, Brighton
+• Weekly cost: £250-450
+• Advantage: Native environment, accent quality
+• Popular schools: British Council, EF, Kaplan
+
+**🇲🇹 Malta**
+• Weekly cost: €200-350
+• Advantage: Affordable, sunny weather, EU visa
+• Duration: 2 weeks - 12 months
+• Tip: Summer months are crowded
+
+**🇮🇪 Ireland**
+• Weekly cost: €200-350
+• Advantage: Work permit (20 hours/week)
+• Cities: Dublin, Cork, Galway
+
+**🇩🇪 Germany (German)**
+• Goethe Institut: ~€1,200/month (intensive)
+• VHS (Community): €300-500/course
+• University prep: Studienkolleg
+
+**⏱️ Recommended Duration:**
+• Tourist: 2-4 weeks
+• Intermediate improvement: 2-3 months
+• Academic preparation: 6-12 months
+
+**💡 Tips:**
+• Choose accredited schools
+• Compare accommodation options
+• Check group nationality mix
+
+Sign up for language school comparisons! 📚`
         }
 
-        // Ülke spesifik
-        if (input.match(/(almanya|germany|deutschland)/)) {
+        // Üniversite / okumak
+        if (input.match(/(üniversite|university|okul|okumak|study|master|lisans|bachelor|phd|doktora|yüksek lisans)/)) {
             return locale === 'tr'
-                ? `🇩🇪 **Almanya'da Eğitim**
+                ? `🎓 **Yurtdışı Eğitim Danışmanlığı**
 
-✨ **Avantajlar:**
-- Devlet üniversitelerinde ÜCRETSİZ eğitim
-- Yaşam gideri: €850-1000/ay
-- Mezuniyet sonrası 18 ay çalışma izni
-- Avrupa'nın merkezinde konum
+**Popüler Destinasyonlar ve Avantajları:**
 
-📋 **Gereksinimler:**
-- Almanca B2/C1 veya İngilizce programlar
-- Bloke hesapta €11,208/yıl
-- APS sertifikası (Türk öğrenciler için)
+🇩🇪 **Almanya** - Ücretsiz eğitim, güçlü ekonomi
+🇺🇸 **ABD** - En prestijli üniversiteler
+🇬🇧 **İngiltere** - 1 yıllık master, hızlı mezuniyet
+🇨🇦 **Kanada** - Kolay göç politikası
+🇳🇱 **Hollanda** - İngilizce programlar, uygun maliyetler
+🇦🇺 **Avustralya** - Çalışma izni, yaşam kalitesi
 
-🎯 Almanya hakkında daha detaylı bilgi için tam sürüme geçin!`
-                : `🇩🇪 **Studying in Germany**
+**📋 Genel Gereksinimler:**
+• Lisans için: Lise diploması, dil sertifikası
+• Master için: Lisans diploması, GPA 2.5+, dil sertifikası
+• PhD için: Yüksek lisans, araştırma proposal
 
-✨ **Advantages:**
-- FREE tuition at public universities
-- Living costs: €850-1000/month
-- 18-month post-study work permit
-- Central European location
+**⏰ Planlama Takvimi:**
+• 12-18 ay önce: Ülke/program araştırması
+• 10-12 ay önce: Dil sınavı (IELTS/TOEFL)
+• 8-10 ay önce: Başvuru belgeleri hazırlık
+• 6-8 ay önce: Başvuru gönderimi
+• 3-4 ay önce: Vize başvurusu
 
-📋 **Requirements:**
-- German B2/C1 or English programs
-- €11,208/year blocked account
-- Uni-assist application
+Hangi ülke veya program hakkında detaylı bilgi istersiniz? 🌍`
+                : `🎓 **Study Abroad Consulting**
 
-🎯 Get detailed info by signing up!`
+**Popular Destinations and Benefits:**
+
+🇩🇪 **Germany** - Free tuition, strong economy
+🇺🇸 **USA** - Most prestigious universities
+🇬🇧 **UK** - 1-year master's, fast graduation
+🇨🇦 **Canada** - Easy immigration policy
+🇳🇱 **Netherlands** - English programs, affordable
+🇦🇺 **Australia** - Work permit, quality of life
+
+**📋 General Requirements:**
+• Bachelor's: High school diploma, language certificate
+• Master's: Bachelor's degree, GPA 2.5+, language cert
+• PhD: Master's degree, research proposal
+
+**⏰ Planning Timeline:**
+• 12-18 months before: Country/program research
+• 10-12 months before: Language test (IELTS/TOEFL)
+• 8-10 months before: Document preparation
+• 6-8 months before: Submit applications
+• 3-4 months before: Visa application
+
+Which country or program would you like to know more about? 🌍`
         }
 
-        // Default - akıllı fallback
+        // Default response - daha detaylı
         return locale === 'tr'
-            ? `Eğitim konusunda size yardımcı olmaya hazırım! 📚
+            ? `Eğitim danışmanlığı konusunda size yardımcı olmaya hazırım! 📚
 
-Sorularınızı şu konularda sorabilirsiniz:
-• **"Almanya'da okumak istiyorum"** - Ülke bilgisi
-• **"Burs var mı?"** - 500+ burs fırsatı
-• **"Vize nasıl alınır?"** - Adım adım rehber
-• **"Dil okulu öner"** - 150+ okul veritabanı
+**Detaylı bilgi alabileceğiniz konular:**
 
-Veya direkt sormak istediğiniz konuyu yazın, size yardımcı olayım! 😊
+🌍 **Ülkeler:** "Almanya'da okumak istiyorum" veya "ABD eğitim masrafları"
+💰 **Burslar:** "Fulbright burs" veya "Tam burslu programlar"
+🛂 **Vizeler:** "ABD öğrenci vizesi nasıl alınır"
+📚 **Dil Okulları:** "İngiltere'de dil okulu"
+🎓 **Programlar:** "Bilgisayar mühendisliği master"
 
-💫 **Not:** Bu demo versiyonudur. Tam özellikler için kayıt olmanız gerekmektedir.`
-            : `I'm ready to help you with education matters! 📚
+Örnek soru: **"Almanya'da ücretsiz mühendislik eğitimi için ne gerekiyor?"**
 
-You can ask about:
-• **"I want to study in Germany"** - Country info
-• **"Are there scholarships?"** - 500+ opportunities
-• **"How do I get a visa?"** - Step-by-step guide
-• **"Recommend a language school"** - 150+ schools
+Daha spesifik bir soru sorarak başlayabilirsiniz! 😊
 
-Or just type what you'd like to know! 😊
+---
+⚡ **Not:** Demo sürümündesiniz (${messageCount}/${MAX_MESSAGES} hak kullanıldı). 
+Sınırsız erişim için **ücretsiz kayıt olun!**`
+            : `I'm ready to help you with education consulting! 📚
 
-💫 **Note:** This is a demo version. Sign up for full features.`
+**Topics you can ask about:**
+
+🌍 **Countries:** "I want to study in Germany" or "USA education costs"
+💰 **Scholarships:** "Fulbright scholarship" or "Fully funded programs"
+🛂 **Visas:** "How to get US student visa"
+📚 **Language Schools:** "Language school in UK"
+🎓 **Programs:** "Computer engineering master's"
+
+Example: **"What do I need for free engineering education in Germany?"**
+
+Ask a specific question to get started! 😊
+
+---
+⚡ **Note:** You're in demo mode (${messageCount}/${MAX_MESSAGES} used). 
+**Sign up free** for unlimited access!`
     }
 
     const handleLanguageSwitch = (newLocale: string) => {
-        const currentPath = window.location.pathname
         const supportedLocales = ['tr', 'en', 'de', 'es', 'fr']
-        const segments = currentPath.split('/').filter(Boolean)
-
+        const segments = window.location.pathname.split('/').filter(Boolean)
         if (segments.length > 0 && supportedLocales.includes(segments[0])) {
             segments[0] = newLocale
         } else {
             segments.unshift(newLocale)
         }
-
         router.push(`/${segments.join('/')}`)
     }
 
-    const remainingMessages = maxMessages - messageCount
+    if (!isInitialized) {
+        return <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+            <div className="animate-pulse text-blue-600">Loading...</div>
+        </div>
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-            {/* Navigation Bar */}
+            {/* Navigation */}
             <div className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm sticky top-0 z-50">
                 <div className="container mx-auto px-4 py-3">
                     <div className="flex items-center justify-between">
@@ -407,8 +694,8 @@ Or just type what you'd like to know! 😊
                                     size="sm"
                                     onClick={() => handleLanguageSwitch(lang)}
                                     className={`text-xs px-3 py-1 h-8 mx-0.5 rounded-lg transition-all ${locale === lang
-                                        ? 'bg-white shadow-md text-blue-600 font-semibold'
-                                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                                            ? 'bg-white shadow-md text-blue-600 font-semibold'
+                                            : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
                                         }`}
                                 >
                                     {lang.toUpperCase()}
@@ -420,113 +707,79 @@ Or just type what you'd like to know! 😊
             </div>
 
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white">
-                <div className="container mx-auto px-4 py-12">
-                    <div className="text-center max-w-3xl mx-auto">
-                        <div className="flex items-center justify-center space-x-3 mb-4">
-                            <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
-                                <GraduationCap className="h-8 w-8 text-white" />
-                            </div>
-                            <div className="text-left">
-                                <h1 className="text-3xl md:text-4xl font-bold">
-                                    {locale === 'tr' ? 'Eğitim AI Asistanı' : 'Education AI Assistant'}
-                                </h1>
-                                <Badge variant="secondary" className="bg-white/20 text-white border-white/30 mt-1">
-                                    DEMO
-                                </Badge>
-                            </div>
+            <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white py-10">
+                <div className="container mx-auto px-4 text-center">
+                    <div className="flex items-center justify-center space-x-3 mb-3">
+                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <GraduationCap className="h-7 w-7" />
                         </div>
-                        <p className="text-blue-100 text-lg">
-                            {locale === 'tr'
-                                ? 'Yurtdışı eğitim, vize ve burs konularında AI destekli danışmanlık'
-                                : 'AI-powered consulting on study abroad, visas and scholarships'}
-                        </p>
+                        <h1 className="text-2xl md:text-3xl font-bold">
+                            {locale === 'tr' ? 'Eğitim AI Danışmanı' : 'Education AI Advisor'}
+                        </h1>
+                        <Badge className="bg-white/20 text-white border-0">DEMO</Badge>
                     </div>
+                    <p className="text-blue-100">
+                        {locale === 'tr'
+                            ? 'Yurtdışı eğitim, burs ve vize konularında uzman AI danışmanınız'
+                            : 'Your expert AI advisor for studying abroad, scholarships and visas'}
+                    </p>
                 </div>
             </div>
 
-            {/* Chat Section */}
-            <div className="container mx-auto px-4 py-8">
+            {/* Chat */}
+            <div className="container mx-auto px-4 py-6">
                 <div className="max-w-3xl mx-auto">
                     <Card className="shadow-2xl border-0 overflow-hidden">
-                        {/* Chat Header */}
-                        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4">
+                        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-3">
-                                    <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                                        <Bot className="h-5 w-5" />
+                                <div className="flex items-center space-x-2">
+                                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                                        <Bot className="h-4 w-4" />
                                     </div>
                                     <div>
-                                        <CardTitle className="text-lg">
-                                            {locale === 'tr' ? 'Eğitim Danışmanı' : 'Education Advisor'}
-                                        </CardTitle>
-                                        <div className="flex items-center space-x-1 text-blue-100 text-sm">
-                                            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                            <span>{locale === 'tr' ? 'Çevrimiçi' : 'Online'}</span>
+                                        <CardTitle className="text-base">{locale === 'tr' ? 'Eğitim Danışmanı' : 'Education Advisor'}</CardTitle>
+                                        <div className="flex items-center text-blue-100 text-xs">
+                                            <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse mr-1"></span>
+                                            {locale === 'tr' ? 'Çevrimiçi' : 'Online'}
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <Badge
-                                        className={`${remainingMessages > 2 ? 'bg-white/20' : remainingMessages > 0 ? 'bg-orange-500' : 'bg-red-500'} text-white border-0`}
-                                    >
-                                        <Zap className="w-3 h-3 mr-1" />
-                                        {remainingMessages}/{maxMessages}
-                                    </Badge>
-                                </div>
+                                <Badge className={`${remainingMessages > 2 ? 'bg-white/20' : remainingMessages > 0 ? 'bg-orange-500' : 'bg-red-500'} text-white border-0`}>
+                                    <Zap className="w-3 h-3 mr-1" />
+                                    {remainingMessages}/{MAX_MESSAGES}
+                                </Badge>
                             </div>
                         </CardHeader>
 
-                        {/* Messages */}
-                        <CardContent className="h-[450px] overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
+                        <CardContent className="h-[400px] overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-gray-50 to-white">
                             {messages.map((message) => (
-                                <div
-                                    key={message.id}
-                                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                                >
-                                    <div className={`flex items-end space-x-2 max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                                        {/* Avatar */}
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === 'user'
-                                            ? 'bg-blue-600'
-                                            : 'bg-gradient-to-br from-blue-500 to-indigo-600'
+                                <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`flex items-end space-x-2 max-w-[90%] ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === 'user' ? 'bg-blue-600' : 'bg-gradient-to-br from-blue-500 to-indigo-600'
                                             }`}>
-                                            {message.role === 'user'
-                                                ? <User className="h-4 w-4 text-white" />
-                                                : <Bot className="h-4 w-4 text-white" />
-                                            }
+                                            {message.role === 'user' ? <User className="h-3.5 w-3.5 text-white" /> : <Bot className="h-3.5 w-3.5 text-white" />}
                                         </div>
-
-                                        {/* Message Bubble */}
-                                        <div
-                                            className={`rounded-2xl px-4 py-3 ${message.role === 'user'
-                                                ? 'bg-blue-600 text-white rounded-br-md'
-                                                : 'bg-white border border-gray-200 shadow-sm rounded-bl-md'
-                                                }`}
-                                        >
-                                            <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                                                {message.content}
-                                            </div>
-                                            <div className={`text-xs mt-2 flex items-center ${message.role === 'user' ? 'text-blue-200 justify-end' : 'text-gray-400'
-                                                }`}>
+                                        <div className={`rounded-2xl px-4 py-2.5 ${message.role === 'user'
+                                                ? 'bg-blue-600 text-white rounded-br-sm'
+                                                : 'bg-white border border-gray-200 shadow-sm rounded-bl-sm'
+                                            }`}>
+                                            <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
+                                            <div className={`text-xs mt-1.5 flex items-center ${message.role === 'user' ? 'text-blue-200 justify-end' : 'text-gray-400'}`}>
                                                 <CheckCircle className="w-3 h-3 mr-1" />
-                                                {message.timestamp.toLocaleTimeString(locale === 'tr' ? 'tr-TR' : 'en-US', {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })}
+                                                {message.timestamp.toLocaleTimeString(locale === 'tr' ? 'tr-TR' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             ))}
 
-                            {/* Typing Indicator */}
                             {isLoading && (
                                 <div className="flex justify-start">
                                     <div className="flex items-end space-x-2">
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                                            <Bot className="h-4 w-4 text-white" />
+                                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                                            <Bot className="h-3.5 w-3.5 text-white" />
                                         </div>
-                                        <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                                        <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
                                             <div className="flex items-center space-x-1">
                                                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                                                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -536,49 +789,41 @@ Or just type what you'd like to know! 😊
                                     </div>
                                 </div>
                             )}
-
                             <div ref={messagesEndRef} />
                         </CardContent>
 
-                        {/* Input Area */}
                         <div className="border-t bg-white p-4">
                             {remainingMessages > 0 ? (
-                                <div className="space-y-3">
+                                <div className="space-y-2">
                                     <div className="flex space-x-2">
                                         <Input
                                             ref={inputRef}
                                             autoFocus
-                                            placeholder={locale === 'tr' ? "Mesajınızı yazın..." : "Type your message..."}
+                                            placeholder={locale === 'tr' ? "Sorunuzu yazın..." : "Type your question..."}
                                             value={input}
                                             onChange={(e) => setInput(e.target.value)}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                                             disabled={isLoading}
-                                            className="flex-1 h-12 rounded-xl border-gray-200 focus:border-blue-400 focus:ring-blue-400"
+                                            className="flex-1 h-11 rounded-xl"
                                         />
-                                        <Button
-                                            onClick={handleSendMessage}
-                                            disabled={!input.trim() || isLoading}
-                                            className="h-12 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 transition-all"
-                                        >
-                                            <Send className="h-5 w-5" />
+                                        <Button onClick={handleSendMessage} disabled={!input.trim() || isLoading} className="h-11 px-5 rounded-xl bg-blue-600 hover:bg-blue-700">
+                                            <Send className="h-4 w-4" />
                                         </Button>
                                     </div>
                                     <div className="flex items-center justify-between text-xs text-gray-500">
                                         <div className="flex items-center">
                                             <Lightbulb className="w-3 h-3 mr-1" />
-                                            {locale === 'tr' ? 'Örnek: "Almanya\'da okumak istiyorum"' : 'Example: "I want to study in Germany"'}
+                                            {locale === 'tr' ? `${remainingMessages} soru hakkınız kaldı` : `${remainingMessages} questions remaining`}
                                         </div>
-                                        <Progress value={(messageCount / maxMessages) * 100} className="w-24 h-2" />
+                                        <Progress value={(messageCount / MAX_MESSAGES) * 100} className="w-20 h-1.5" />
                                     </div>
                                 </div>
                             ) : (
                                 <div className="text-center py-4">
-                                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                        <Lock className="h-6 w-6 text-gray-400" />
+                                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <Lock className="h-5 w-5 text-gray-400" />
                                     </div>
-                                    <p className="text-gray-600 mb-4">
-                                        {locale === 'tr' ? 'Demo süresi bitti' : 'Demo ended'}
-                                    </p>
+                                    <p className="text-gray-600 text-sm mb-3">{locale === 'tr' ? 'Demo süresi bitti' : 'Demo ended'}</p>
                                     <Link href={`/${locale}/auth/register`}>
                                         <Button className="bg-green-600 hover:bg-green-700">
                                             <Users className="mr-2 h-4 w-4" />

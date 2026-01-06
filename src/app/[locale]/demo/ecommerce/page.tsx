@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -17,12 +17,8 @@ import {
     CheckCircle,
     Lightbulb,
     Zap,
-    Home,
     Bot,
-    User,
-    Package,
-    CreditCard,
-    Truck
+    User
 } from 'lucide-react'
 
 interface ChatMessage {
@@ -32,10 +28,14 @@ interface ChatMessage {
     timestamp: Date
 }
 
+const STORAGE_KEY = 'pylonchat_ecommerce_demo'
+const MAX_MESSAGES = 5
+const EXPIRY_HOURS = 24
+
 export default function EcommerceDemoPage() {
     const params = useParams()
     const router = useRouter()
-    const locale = (params?.locale as string) || 'tr'
+    const locale = (params?.locale as string) || 'en'
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
 
@@ -43,9 +43,41 @@ export default function EcommerceDemoPage() {
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [messageCount, setMessageCount] = useState(0)
-    const maxMessages = 5
+    const [isInitialized, setIsInitialized] = useState(false)
 
-    // Auto-scroll to bottom when messages change
+    // Load message count from localStorage
+    useEffect(() => {
+        const stored = localStorage.getItem(STORAGE_KEY)
+        if (stored) {
+            try {
+                const data = JSON.parse(stored)
+                const now = Date.now()
+                if (data.expiry && now < data.expiry) {
+                    setMessageCount(data.count || 0)
+                } else {
+                    localStorage.removeItem(STORAGE_KEY)
+                }
+            } catch {
+                localStorage.removeItem(STORAGE_KEY)
+            }
+        }
+        setIsInitialized(true)
+    }, [])
+
+    // Save message count to localStorage
+    useEffect(() => {
+        if (isInitialized && messageCount > 0) {
+            const data = {
+                count: messageCount,
+                expiry: Date.now() + (EXPIRY_HOURS * 60 * 60 * 1000)
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+        }
+    }, [messageCount, isInitialized])
+
+    const remainingMessages = MAX_MESSAGES - messageCount
+
+    // Auto-scroll
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
@@ -54,53 +86,63 @@ export default function EcommerceDemoPage() {
         scrollToBottom()
     }, [messages, isLoading])
 
-    // Keep focus on input after sending message
-    const remainingMessages = maxMessages - messageCount
+    // Focus input
     useEffect(() => {
         if (!isLoading && remainingMessages > 0) {
-            setTimeout(() => {
-                inputRef.current?.focus()
-            }, 50)
+            setTimeout(() => inputRef.current?.focus(), 50)
         }
-    }, [isLoading])
+    }, [isLoading, remainingMessages])
 
-    // Initialize with welcome message
+    // Welcome message
     useEffect(() => {
+        if (!isInitialized) return
+
         const welcomeContent = locale === 'tr'
-            ? `Merhaba! 👋 Ben e-ticaret destek AI'ınızım.
+            ? `Merhaba! 👋 Ben PylonChat E-Ticaret Destek AI'ınızım.
 
-Size yardımcı olabileceğim konular:
-• Ürün önerileri ve bilgileri 🛍️
-• Sipariş takibi ve durumu 📦
-• İade ve değişim işlemleri 🔄
-• Ödeme sorunları çözümü 💳
-• Kargo ve teslimat bilgileri 🚚
+🛒 **Uzman Olduğum Konular:**
+• Ürün önerileri ve detaylı bilgiler
+• Sipariş takibi ve durum sorgulama
+• İade, değişim ve garanti işlemleri
+• Ödeme sorunları ve fatura sorgulama
+• Kargo, teslimat ve lojistik bilgileri
+• Kampanya ve indirim bilgileri
 
-Bu demo sürümünde ${maxMessages} mesaj gönderebilirsiniz. Nasıl yardımcı olabilirim?`
-            : locale === 'en'
-                ? `Hello! 👋 I'm your e-commerce support AI.
+Bu demo sürümünde **${MAX_MESSAGES} soru** sorabilirsiniz. Sınırsız erişim için ücretsiz kayıt olun!
 
-I can help you with:
-• Product recommendations and information 🛍️
-• Order tracking and status 📦
-• Returns and exchanges 🔄
-• Payment issue resolution 💳
-• Shipping and delivery information 🚚
+💡 **Örnek sorular:**
+"Siparişimi iptal etmek istiyorum"
+"Ürün bana uymadı, nasıl iade ederim?"
 
-In this demo version, you can send ${maxMessages} messages. How can I help you?`
-                : `Hello! 👋 I'm your e-commerce support AI. You can send ${maxMessages} messages in this demo.`
+Size nasıl yardımcı olabilirim?`
+            : `Hello! 👋 I'm your PylonChat E-Commerce Support AI.
 
-        const welcomeMessage: ChatMessage = {
+🛒 **My Expertise:**
+• Product recommendations and detailed info
+• Order tracking and status inquiries
+• Returns, exchanges, and warranty
+• Payment issues and invoice inquiries
+• Shipping, delivery, and logistics
+• Campaigns and discount information
+
+In this demo, you can ask **${MAX_MESSAGES} questions**. Sign up free for unlimited access!
+
+💡 **Example questions:**
+"I want to cancel my order"
+"The product doesn't fit, how do I return it?"
+
+How can I help you today?`
+
+        setMessages([{
             id: 'welcome',
             role: 'assistant',
             content: welcomeContent,
             timestamp: new Date()
-        }
-        setMessages([welcomeMessage])
-    }, [locale, maxMessages])
+        }])
+    }, [locale, isInitialized])
 
     const handleSendMessage = async () => {
-        if (!input.trim() || messageCount >= maxMessages || isLoading) return
+        if (!input.trim() || messageCount >= MAX_MESSAGES || isLoading) return
 
         const userMessage: ChatMessage = {
             id: Date.now().toString(),
@@ -112,7 +154,6 @@ In this demo version, you can send ${maxMessages} messages. How can I help you?`
         setMessages(prev => [...prev, userMessage])
         const userInput = input.trim()
         setInput('')
-        inputRef.current?.focus()
         setIsLoading(true)
         setMessageCount(prev => prev + 1)
 
@@ -120,17 +161,15 @@ In this demo version, you can send ${maxMessages} messages. How can I help you?`
             const response = generateEcommerceResponse(userInput)
 
             setTimeout(() => {
-                const assistantMessage: ChatMessage = {
+                setMessages(prev => [...prev, {
                     id: (Date.now() + 1).toString(),
                     role: 'assistant',
                     content: response,
                     timestamp: new Date()
-                }
-                setMessages(prev => [...prev, assistantMessage])
+                }])
                 setIsLoading(false)
                 inputRef.current?.focus()
-            }, 800 + Math.random() * 700)
-
+            }, 1000 + Math.random() * 500)
         } catch (error) {
             console.error('Demo chat error:', error)
             setIsLoading(false)
@@ -141,290 +180,381 @@ In this demo version, you can send ${maxMessages} messages. How can I help you?`
         const input = userInput.toLowerCase().trim()
 
         // Selamlaşma
-        if (input.match(/^(merhaba|selam|hey|hi|hello|naber|nasılsın|nasıl gidiyor|günaydın|iyi akşamlar|iyi günler)/)) {
+        if (input.match(/^(merhaba|selam|hey|hi|hello|naber|nasılsın)/)) {
             return locale === 'tr'
-                ? `Merhaba! 😊 Hoş geldiniz! Size nasıl yardımcı olabilirim?
+                ? `Merhaba! 😊 Size yardımcı olmak için buradayım!
 
-Örnek sorular:
-• "Siparişim nerede?"
-• "İade yapmak istiyorum"
-• "Ödeme sorunum var"
+E-ticaret desteği konusunda 7/24 hizmetinizdeyim:
 
-Ne hakkında yardıma ihtiyacınız var?`
-                : `Hello! 😊 Welcome! How can I help you today?
-
-Example questions:
-• "Where is my order?"
-• "I want to return an item"
-• "I have a payment issue"
-
-What do you need help with?`
-        }
-
-        // Teşekkür
-        if (input.match(/(teşekkür|sağol|thanks|thank you|eyvallah|tşk)/)) {
-            return locale === 'tr'
-                ? `Rica ederim! 🙏 Yardımcı olabildiysem ne mutlu bana!
-
-Başka bir sorunuz olursa yazmanız yeterli. İyi alışverişler! 🛍️`
-                : `You're welcome! 🙏 I'm glad I could help!
-
-If you have any other questions, just ask. Happy shopping! 🛍️`
-        }
-
-        // Nasılsın
-        if (input.match(/(nasılsın|how are you|iyi misin|naber|ne var ne yok)/)) {
-            return locale === 'tr'
-                ? `Harikayım, teşekkür ederim! 😊 Siz nasılsınız?
-
-Bugün size nasıl yardımcı olabilirim? Sipariş takibi, ürün önerisi veya iade işlemleri konusunda sorularınızı yanıtlayabilirim.`
-                : `I'm doing great, thank you! 😊 How are you?
-
-How can I help you today? I can answer questions about order tracking, product recommendations, or returns.`
-        }
-
-        // Sipariş takibi
-        if (input.match(/(sipariş|order|kargo|cargo|nerede|where|takip|track|tracking)/)) {
-            return locale === 'tr'
-                ? `📦 **Sipariş Takip Sistemi**
-
-Sipariş durumunuzu kontrol etmek için:
-
-1️⃣ **Sipariş numaranızı** girin (10 haneli kod)
-2️⃣ Veya **e-posta adresinizi** söyleyin
-
-🚚 **Kargo Süreleri:**
-- İstanbul içi: 1-2 iş günü
-- Diğer iller: 2-4 iş günü
-- Express: Aynı gün teslimat
-
-💡 Sipariş numaranız yoksa kayıtlı e-postanızı kontrol edin!
-
-Sipariş numaranızı paylaşır mısınız?`
-                : `📦 **Order Tracking System**
-
-To check your order status:
-
-1️⃣ Enter your **order number** (10-digit code)
-2️⃣ Or provide your **email address**
-
-🚚 **Delivery Times:**
-- Local: 1-2 business days
-- Standard: 2-4 business days
-- Express: Same day delivery
-
-💡 If you don't have your order number, check your registered email!
-
-Can you share your order number?`
-        }
-
-        // Ürün önerisi
-        if (input.match(/(ürün|product|öneri|recommend|ne alayım|suggestion|indirim|discount|kampanya)/)) {
-            return locale === 'tr'
-                ? `🛍️ **Günün Önerileri**
-
-🔥 **Çok Satanlar:**
-• iPhone 15 Pro - ₺64,999 (%10 indirim)
-• Samsung Galaxy S24 - ₺44,999
-• MacBook Air M3 - ₺54,999
-
-🎁 **Özel Kampanyalar:**
-- Elektronik: %15 ekstra indirim
-- Moda: Al 2 Öde 1
-- Kozmetik: Ücretsiz kargo
-
-💳 **Ödeme Avantajları:**
-- 12 aya varan taksit
-- 150₺ üzeri ücretsiz kargo
-
-Hangi kategori ilginizi çekiyor?`
-                : `🛍️ **Today's Recommendations**
-
-🔥 **Best Sellers:**
-• iPhone 15 Pro - $999 (10% off)
-• Samsung Galaxy S24 - $899
-• MacBook Air M3 - $1,099
-
-🎁 **Special Offers:**
-- Electronics: Extra 15% off
-- Fashion: Buy 2 Get 1 Free
-- Beauty: Free shipping
-
-💳 **Payment Benefits:**
-- Up to 12 month installments
-- Free shipping over $50
-
-Which category interests you?`
-        }
-
-        // İade
-        if (input.match(/(iade|return|değişim|exchange|geri|refund|para iade)/)) {
-            return locale === 'tr'
-                ? `🔄 **İade & Değişim İşlemleri**
-
-✅ **30 Gün İade Garantisi**
-
-📋 **İade Koşulları:**
-- Ürün kullanılmamış olmalı
-- Orijinal ambalajında olmalı
-- Etiketler çıkarılmamış olmalı
-
-🚚 **İade Kargo:**
-- Premium üyeler: Ücretsiz
-- Standart: Alıcı öder
-
-💰 **Para İadesi:**
-- Kredi kartı: 3-5 iş günü
-- Banka havalesi: 5-7 iş günü
-
-İade başlatmak için sipariş numaranızı paylaşır mısınız?`
-                : `🔄 **Returns & Exchanges**
-
-✅ **30-Day Return Policy**
-
-📋 **Return Conditions:**
-- Product must be unused
-- Original packaging required
-- Tags must be attached
-
-🚚 **Return Shipping:**
-- Premium members: Free
-- Standard: Buyer pays
-
-💰 **Refund Timeline:**
-- Credit card: 3-5 business days
-- Bank transfer: 5-7 business days
-
-Would you like to start a return? Please share your order number.`
-        }
-
-        // Ödeme
-        if (input.match(/(ödeme|payment|kart|card|taksit|installment|fatura|invoice|sorun|problem|hata|error)/)) {
-            return locale === 'tr'
-                ? `💳 **Ödeme Destek Merkezi**
-
-**Kabul Edilen Yöntemler:**
-- Kredi/Banka Kartı (Visa, MC, Troy)
-- Apple Pay / Google Pay
-- Havale/EFT
-- Kapıda Ödeme
-
-📊 **Taksit Seçenekleri:**
-- 3 taksit: Komisyonsuz
-- 6 taksit: +%2
-- 12 taksit: +%5
-
-⚠️ **Ödeme Sorunu mu Yaşıyorsunuz?**
-1. Kart limitinizi kontrol edin
-2. 3D Secure'u onaylayın
-3. Farklı bir kart deneyin
+📦 **Sipariş İşlemleri** - Takip, iptal, değişiklik
+🔄 **İade & Değişim** - Kolay iade süreci
+💳 **Ödeme** - Fatura, taksit, hata çözümü
+🚚 **Kargo** - Teslimat süresi, takip
+🏷️ **Ürünler** - Öneri, stok, fiyat
 
 Hangi konuda yardımcı olabilirim?`
-                : `💳 **Payment Support Center**
+                : `Hello! 😊 I'm here to help you!
 
-**Accepted Methods:**
-- Credit/Debit Cards (Visa, MC, Amex)
-- Apple Pay / Google Pay
-- Bank Transfer
-- Cash on Delivery
+I'm available 24/7 for e-commerce support:
 
-📊 **Installment Options:**
-- 3 months: Commission-free
-- 6 months: +2%
-- 12 months: +5%
-
-⚠️ **Having Payment Issues?**
-1. Check your card limit
-2. Confirm 3D Secure
-3. Try a different card
+📦 **Order Management** - Tracking, cancellation, changes
+🔄 **Returns & Exchanges** - Easy return process
+💳 **Payment** - Invoice, installments, error resolution
+🚚 **Shipping** - Delivery time, tracking
+🏷️ **Products** - Recommendations, stock, pricing
 
 What can I help you with?`
         }
 
+        // Sipariş takibi
+        if (input.match(/(sipariş|order|takip|track|nerede|where|durumu|status|kargom|gönderi)/)) {
+            return locale === 'tr'
+                ? `📦 **Sipariş Takip Sistemi**
+
+Siparişinizi takip etmenin birkaç yolu var:
+
+**1. Sipariş Numarası ile Takip:**
+• Sipariş onay e-postanızda "SPR-XXXXX" formatında numara var
+• Bu numarayı bana söyleyin, durumu kontrol edeyim
+
+**2. Kargo Firması Takip:**
+• Kargo kodu size SMS ile gönderilir
+• Popüler kargo firmaları: Yurtiçi, Aras, MNG, PTT, UPS
+
+**3. Hesabınızdan Takip:**
+• "Siparişlerim" sayfasından canlı takip
+• Push bildirim ile anlık durum güncellemesi
+
+**⏱️ Tahmini Teslimat Süreleri:**
+• Aynı şehir içi: 1-2 iş günü
+• Şehirlerarası: 2-4 iş günü
+• Büyük/ağır ürünler: 3-7 iş günü
+
+**📞 Destek:**
+Sipariş numaranızı paylaşırsanız hemen kontrol edebilirim!
+
+Tam sürümde otomatik sipariş takibi için kayıt olun! 🚀`
+                : `📦 **Order Tracking System**
+
+There are several ways to track your order:
+
+**1. Track by Order Number:**
+• Your confirmation email contains "ORD-XXXXX" format number
+• Share it with me to check the status
+
+**2. Carrier Tracking:**
+• Tracking code is sent via SMS
+• Popular carriers: FedEx, UPS, DHL, USPS
+
+**3. Account Tracking:**
+• Live tracking from "My Orders" page
+• Push notifications for status updates
+
+**⏱️ Estimated Delivery Times:**
+• Same city: 1-2 business days
+• Interstate: 2-4 business days
+• Large/heavy items: 3-7 business days
+
+**📞 Support:**
+Share your order number and I'll check right away!
+
+Sign up for automated order tracking! 🚀`
+        }
+
+        // İade
+        if (input.match(/(iade|return|geri|back|değişim|exchange|uymadı|fit|beğenmedim|memnun değil)/)) {
+            return locale === 'tr'
+                ? `🔄 **İade & Değişim Rehberi**
+
+**📋 İade Koşulları:**
+• Teslimattan itibaren **14 gün** içinde iade hakkı
+• Ürün orijinal ambalajında, kullanılmamış olmalı
+• Fatura ve iade formu gerekli
+• İç giyim, kozmetik, kişisel bakım ürünleri iade dışı
+
+**🔄 İade Adımları:**
+1. **Talep Oluşturun** - Hesabınızdan veya müşteri hizmetleri
+2. **Onay Alın** - 1-2 iş günü içinde yanıt
+3. **Paketi Hazırlayın** - Orijinal kutu + fatura + form
+4. **Kargo Gönderin** - Anlaşmalı kargo (ücretsiz) veya kendiniz
+5. **Para İadesi** - 3-7 iş günü (aynı ödeme yöntemine)
+
+**💳 Para İadesi Süreleri:**
+• Kredi Kartı: 3-7 iş günü
+• Banka Kartı: 1-3 iş günü
+• Kapıda Ödeme: 7-10 iş günü (IBAN'a)
+
+**📞 Hızlı Yardım:**
+Sipariş numaranızı paylaşın, iade talebinizi hemen başlatayım!
+
+Kolay iade yönetimi için ücretsiz kayıt olun! 🎯`
+                : `🔄 **Returns & Exchange Guide**
+
+**📋 Return Conditions:**
+• **14 days** from delivery to return
+• Product must be unused in original packaging
+• Receipt and return form required
+• Underwear, cosmetics, personal care items excluded
+
+**🔄 Return Steps:**
+1. **Create Request** - From your account or customer service
+2. **Get Approval** - Response within 1-2 business days
+3. **Prepare Package** - Original box + receipt + form
+4. **Ship It** - Partner carrier (free) or your own
+5. **Refund** - 3-7 business days (same payment method)
+
+**💳 Refund Timelines:**
+• Credit Card: 3-7 business days
+• Debit Card: 1-3 business days
+• Cash on Delivery: 7-10 business days (to IBAN)
+
+**📞 Quick Help:**
+Share your order number, I'll start your return right away!
+
+Sign up for easy return management! 🎯`
+        }
+
+        // Ödeme
+        if (input.match(/(ödeme|payment|fatura|invoice|taksit|installment|kredi kartı|credit card|hata|error|reddedildi|declined)/)) {
+            return locale === 'tr'
+                ? `💳 **Ödeme & Fatura Yardımı**
+
+**💳 Kabul Edilen Ödeme Yöntemleri:**
+• Kredi/Banka Kartı (Visa, Mastercard, Troy)
+• Havale/EFT
+• Kapıda Ödeme (+₺20 hizmet bedeli)
+• Dijital Cüzdanlar (Apple Pay, Google Pay)
+
+**📊 Taksit Seçenekleri:**
+• 500₺ üzeri: 3 taksit
+• 1000₺ üzeri: 6 taksit
+• 2000₺ üzeri: 9-12 taksit
+• Bazı bankalarla özel kampanyalar
+
+**❌ Ödeme Hatası Çözümleri:**
+• **"Kart reddedildi"** → Limit kontrolü, 3D Secure aktifliği
+• **"İşlem tamamlanamadı"** → Tarayıcı önbelleği temizle, farklı kart dene
+• **"CVV hatası"** → Kartın arkasındaki 3 haneyi kontrol et
+• **"Banka hatası"** → Bankanızla iletişime geçin
+
+**🧾 Fatura İşlemleri:**
+• E-fatura otomatik gönderilir
+• Kurumsal fatura için kayıt sırasında seçin
+• Geçmiş faturalar "Siparişlerim"de
+
+**🔧 Sorun Çözülmezse:**
+Ekran görüntüsü paylaşın, teknik ekibimiz inceleyecek!
+
+Güvenli ödeme için kayıt olun! 🔒`
+                : `💳 **Payment & Invoice Help**
+
+**💳 Accepted Payment Methods:**
+• Credit/Debit Card (Visa, Mastercard, Amex)
+• Bank Transfer
+• Cash on Delivery (+$5 service fee)
+• Digital Wallets (Apple Pay, Google Pay, PayPal)
+
+**📊 Installment Options:**
+• $100+: 3 installments
+• $250+: 6 installments
+• $500+: 9-12 installments
+• Special bank promotions available
+
+**❌ Payment Error Solutions:**
+• **"Card declined"** → Check limit, 3D Secure enabled
+• **"Transaction failed"** → Clear browser cache, try different card
+• **"CVV error"** → Verify 3-digit code on back
+• **"Bank error"** → Contact your bank
+
+**🧾 Invoice Operations:**
+• E-invoice sent automatically
+• Business invoice: select during registration
+• Past invoices in "My Orders"
+
+**🔧 If Issue Persists:**
+Share a screenshot and our tech team will investigate!
+
+Sign up for secure payments! 🔒`
+        }
+
         // Kargo
-        if (input.match(/(kargo|shipping|teslimat|delivery|ne zaman|when|geliyor)/)) {
+        if (input.match(/(kargo|shipping|teslimat|delivery|ne zaman|when|gecikmeli|delay|gelmedi|gelmiyor)/)) {
             return locale === 'tr'
                 ? `🚚 **Kargo & Teslimat Bilgileri**
 
-**Teslimat Süreleri:**
-- Aynı gün teslimat: 17:00'ye kadar
-- Standart: 2-4 iş günü
-- Express: 1 iş günü
+**⏱️ Standart Teslimat Süreleri:**
+• Büyükşehirler: 1-2 iş günü
+• Diğer iller: 2-4 iş günü
+• Köy/kasaba: 3-5 iş günü
+• Büyük ürünler: 5-7 iş günü
 
-📍 **Teslimat Noktaları:**
-- Ev/İş adresi
-- MNG Kargo noktası
-- Posta makinesi
+**🚀 Hızlı Teslimat Seçenekleri:**
+• **Aynı Gün** - Büyükşehirlerde, 14:00'e kadar sipariş (+₺50)
+• **Ertesi Gün** - Türkiye geneli, 16:00'ya kadar sipariş (+₺30)
 
-💰 **Kargo Ücreti:**
-- 150₺ üzeri: Ücretsiz
-- Standart: 29.90₺
-- Express: 49.90₺
+**📦 Kargo Firmaları:**
+• Yurtiçi Kargo: Geniş ağ, güvenilir
+• Aras Kargo: Hızlı dağıtım
+• MNG Kargo: Ekonomik seçenek
+• PTT: Uzak bölgelerde avantajlı
 
-Siparişinizle ilgili bir sorunuz mu var?`
+**⚠️ Gecikme Durumunda:**
+1. Kargo takip kodunu kontrol edin
+2. Dağıtım şubesini arayın
+3. Müşteri hizmetlerine bildirin
+4. Kayıp/hasarlı için tazminat talep edin
+
+**🆓 Ücretsiz Kargo:**
+• 200₺ üzeri siparişlerde geçerli
+• Bazı ürünlerde her siparişte ücretsiz
+
+Kargonuz hakkında soru sormak için sipariş numaranızı paylaşın! 📬`
                 : `🚚 **Shipping & Delivery Info**
 
-**Delivery Times:**
-- Same day: Order before 5 PM
-- Standard: 2-4 business days
-- Express: 1 business day
+**⏱️ Standard Delivery Times:**
+• Major cities: 1-2 business days
+• Other areas: 2-4 business days
+• Rural areas: 3-5 business days
+• Large items: 5-7 business days
 
-📍 **Delivery Options:**
-- Home/Office address
-- Pickup point
-- Locker
+**🚀 Express Delivery Options:**
+• **Same Day** - Major cities, order by 2 PM (+$10)
+• **Next Day** - Nationwide, order by 4 PM (+$6)
 
-💰 **Shipping Cost:**
-- Over $50: Free
-- Standard: $4.99
-- Express: $9.99
+**📦 Carriers:**
+• FedEx: Fast & reliable
+• UPS: Wide network
+• USPS: Economical option
+• DHL: International specialist
 
-Do you have a question about your shipment?`
+**⚠️ In Case of Delay:**
+1. Check tracking code
+2. Contact distribution center
+3. Report to customer service
+4. Request compensation for lost/damaged
+
+**🆓 Free Shipping:**
+• On orders over $50
+• Some products always free shipping
+
+Share your order number to ask about your shipment! 📬`
         }
 
-        // Default - akıllı fallback
+        // Ürün
+        if (input.match(/(ürün|product|stok|stock|fiyat|price|öneri|recommend|kampanya|sale|indirim|discount)/)) {
+            return locale === 'tr'
+                ? `🏷️ **Ürün & Kampanya Bilgileri**
+
+**🔍 Ürün Arama İpuçları:**
+• Arama çubuğuna ürün adı veya model kodu yazın
+• Filtreleri kullanın: fiyat, marka, puan, renk, beden
+• "Sıralama" ile en uygun sonuçları görün
+
+**📊 Stok Durumu:**
+• ✅ Stokta - Hemen kargoya verilir
+• ⏳ Son X ürün - Acele edin!
+• 📅 Ön sipariş - Belirtilen tarihte kargoda
+• ❌ Stokta yok - Bildirim kurabilirsiniz
+
+**💰 Kampanyalar (Bu Ay):**
+• 🔥 **%20 indirim** - Elektronik kategorisinde
+• 🎁 **Al 2 Öde 1** - Kozmetik ürünlerinde
+• 💳 **9 taksit** - Seçili bankalarda
+• 🚚 **Ücretsiz kargo** - 200₺ üzeri
+
+**🏆 Önerilen Kategoriler:**
+• Çok Satanlar - En popüler ürünler
+• Fırsat Ürünleri - İndirimdekiler
+• Yeni Gelenler - Son eklenen ürünler
+• Haftanın Fırsatı - Özel seçim
+
+Spesifik bir ürün veya kategori arıyorsanız söyleyin! 🛍️`
+                : `🏷️ **Product & Campaign Info**
+
+**🔍 Product Search Tips:**
+• Type product name or model code in search
+• Use filters: price, brand, rating, color, size
+• "Sort" to find the best matches
+
+**📊 Stock Status:**
+• ✅ In Stock - Ships immediately
+• ⏳ Only X left - Hurry!
+• 📅 Pre-order - Ships on specified date
+• ❌ Out of Stock - Set up notification
+
+**💰 Current Campaigns:**
+• 🔥 **20% off** - Electronics category
+• 🎁 **Buy 2 Get 1** - Cosmetics products
+• 💳 **9 installments** - Selected banks
+• 🚚 **Free shipping** - Orders over $50
+
+**🏆 Recommended Categories:**
+• Best Sellers - Most popular items
+• Deals - Discounted products
+• New Arrivals - Recently added
+• Weekly Special - Curated selection
+
+Let me know if you're looking for a specific product! 🛍️`
+        }
+
+        // Default
         return locale === 'tr'
-            ? `Size yardımcı olmak için buradayım! 🛒
+            ? `E-ticaret desteği konusunda size yardımcı olmaya hazırım! 🛒
 
-Şu konularda sorabilirsiniz:
-• **"Siparişim nerede?"** - Anlık takip
-• **"İade yapmak istiyorum"** - 30 gün garanti
-• **"Ürün öner"** - Kişisel öneriler
-• **"Taksit seçenekleri"** - 12 aya kadar
+**Detaylı bilgi alabileceğiniz konular:**
 
-Veya direkt sorunuzu yazın! 😊
+📦 **Sipariş:** "Siparişimi takip etmek istiyorum" veya "Siparişimi iptal et"
+🔄 **İade:** "Ürünü iade etmek istiyorum" veya "Değişim nasıl yaparım"
+💳 **Ödeme:** "Kartım reddedildi" veya "Taksit seçenekleri"
+🚚 **Kargo:** "Kargom nerede" veya "Teslimat süresi"
+🏷️ **Ürünler:** "Stok durumu" veya "Kampanyalar"
 
-💫 **Not:** Bu demo versiyonudur. Tam özellikler için kayıt olun.`
-            : `I'm here to help you! 🛒
+Örnek: **"Siparişimi iptal etmek istiyorum, nasıl yaparım?"**
 
-You can ask about:
-• **"Where is my order?"** - Real-time tracking
-• **"I want to return"** - 30-day guarantee
-• **"Recommend products"** - Personalized suggestions
-• **"Installment options"** - Up to 12 months
+Daha spesifik bir soru sorarak başlayabilirsiniz! 😊
 
-Or just type your question! 😊
+---
+⚡ **Not:** Demo sürümündesiniz (${messageCount}/${MAX_MESSAGES} kullanıldı).
+Sınırsız destek için **ücretsiz kayıt olun!**`
+            : `I'm ready to help you with e-commerce support! 🛒
 
-💫 **Note:** This is a demo version. Sign up for full features.`
+**Topics you can ask about:**
+
+📦 **Orders:** "I want to track my order" or "Cancel my order"
+🔄 **Returns:** "I want to return a product" or "How to exchange"
+💳 **Payment:** "My card was declined" or "Installment options"
+🚚 **Shipping:** "Where is my package" or "Delivery time"
+🏷️ **Products:** "Stock availability" or "Current deals"
+
+Example: **"I want to cancel my order, how do I do it?"**
+
+Ask a specific question to get started! 😊
+
+---
+⚡ **Note:** You're in demo mode (${messageCount}/${MAX_MESSAGES} used).
+**Sign up free** for unlimited support!`
     }
 
     const handleLanguageSwitch = (newLocale: string) => {
-        const currentPath = window.location.pathname
         const supportedLocales = ['tr', 'en', 'de', 'es', 'fr']
-        const segments = currentPath.split('/').filter(Boolean)
-
+        const segments = window.location.pathname.split('/').filter(Boolean)
         if (segments.length > 0 && supportedLocales.includes(segments[0])) {
             segments[0] = newLocale
         } else {
             segments.unshift(newLocale)
         }
-
         router.push(`/${segments.join('/')}`)
+    }
+
+    if (!isInitialized) {
+        return <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex items-center justify-center">
+            <div className="animate-pulse text-orange-600">Loading...</div>
+        </div>
     }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
-            {/* Navigation Bar */}
+            {/* Navigation */}
             <div className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm sticky top-0 z-50">
                 <div className="container mx-auto px-4 py-3">
                     <div className="flex items-center justify-between">
@@ -443,8 +573,8 @@ Or just type your question! 😊
                                     size="sm"
                                     onClick={() => handleLanguageSwitch(lang)}
                                     className={`text-xs px-3 py-1 h-8 mx-0.5 rounded-lg transition-all ${locale === lang
-                                        ? 'bg-white shadow-md text-orange-600 font-semibold'
-                                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                                            ? 'bg-white shadow-md text-orange-600 font-semibold'
+                                            : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
                                         }`}
                                 >
                                     {lang.toUpperCase()}
@@ -456,126 +586,79 @@ Or just type your question! 😊
             </div>
 
             {/* Header */}
-            <div className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white">
-                <div className="container mx-auto px-4 py-12">
-                    <div className="text-center max-w-3xl mx-auto">
-                        <div className="flex items-center justify-center space-x-3 mb-4">
-                            <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
-                                <ShoppingCart className="h-8 w-8 text-white" />
-                            </div>
-                            <div className="text-left">
-                                <h1 className="text-3xl md:text-4xl font-bold">
-                                    {locale === 'tr' ? 'E-Ticaret AI Asistanı' : 'E-Commerce AI Assistant'}
-                                </h1>
-                                <Badge variant="secondary" className="bg-white/20 text-white border-white/30 mt-1">
-                                    DEMO
-                                </Badge>
-                            </div>
+            <div className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white py-10">
+                <div className="container mx-auto px-4 text-center">
+                    <div className="flex items-center justify-center space-x-3 mb-3">
+                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                            <ShoppingCart className="h-7 w-7" />
                         </div>
-                        <p className="text-orange-100 text-lg">
-                            {locale === 'tr'
-                                ? 'Sipariş takibi, ürün önerileri ve müşteri desteği'
-                                : 'Order tracking, product recommendations and customer support'}
-                        </p>
-
-                        {/* Feature Pills */}
-                        <div className="flex flex-wrap justify-center gap-2 mt-6">
-                            <span className="bg-white/20 px-3 py-1 rounded-full text-sm flex items-center">
-                                <Package className="w-4 h-4 mr-1" /> {locale === 'tr' ? 'Sipariş Takibi' : 'Order Tracking'}
-                            </span>
-                            <span className="bg-white/20 px-3 py-1 rounded-full text-sm flex items-center">
-                                <CreditCard className="w-4 h-4 mr-1" /> {locale === 'tr' ? 'Ödeme Desteği' : 'Payment Support'}
-                            </span>
-                            <span className="bg-white/20 px-3 py-1 rounded-full text-sm flex items-center">
-                                <Truck className="w-4 h-4 mr-1" /> {locale === 'tr' ? 'Kargo Bilgisi' : 'Shipping Info'}
-                            </span>
-                        </div>
+                        <h1 className="text-2xl md:text-3xl font-bold">
+                            {locale === 'tr' ? 'E-Ticaret Destek AI' : 'E-Commerce Support AI'}
+                        </h1>
+                        <Badge className="bg-white/20 text-white border-0">DEMO</Badge>
                     </div>
+                    <p className="text-orange-100">
+                        {locale === 'tr'
+                            ? 'Sipariş takibi, iade, ödeme ve kargo konularında 7/24 destek'
+                            : '24/7 support for orders, returns, payments, and shipping'}
+                    </p>
                 </div>
             </div>
 
-            {/* Chat Section */}
-            <div className="container mx-auto px-4 py-8">
+            {/* Chat */}
+            <div className="container mx-auto px-4 py-6">
                 <div className="max-w-3xl mx-auto">
                     <Card className="shadow-2xl border-0 overflow-hidden">
-                        {/* Chat Header */}
-                        <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-4">
+                        <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-3">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-3">
-                                    <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                                        <Bot className="h-5 w-5" />
+                                <div className="flex items-center space-x-2">
+                                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                                        <Bot className="h-4 w-4" />
                                     </div>
                                     <div>
-                                        <CardTitle className="text-lg">
-                                            {locale === 'tr' ? 'Müşteri Desteği' : 'Customer Support'}
-                                        </CardTitle>
-                                        <div className="flex items-center space-x-1 text-orange-100 text-sm">
-                                            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                            <span>{locale === 'tr' ? 'Çevrimiçi' : 'Online'}</span>
+                                        <CardTitle className="text-base">{locale === 'tr' ? 'Destek Asistanı' : 'Support Assistant'}</CardTitle>
+                                        <div className="flex items-center text-orange-100 text-xs">
+                                            <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse mr-1"></span>
+                                            {locale === 'tr' ? 'Çevrimiçi' : 'Online'}
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <Badge
-                                        className={`${remainingMessages > 2 ? 'bg-white/20' : remainingMessages > 0 ? 'bg-yellow-500' : 'bg-red-600'} text-white border-0`}
-                                    >
-                                        <Zap className="w-3 h-3 mr-1" />
-                                        {remainingMessages}/{maxMessages}
-                                    </Badge>
-                                </div>
+                                <Badge className={`${remainingMessages > 2 ? 'bg-white/20' : remainingMessages > 0 ? 'bg-yellow-500' : 'bg-red-500'} text-white border-0`}>
+                                    <Zap className="w-3 h-3 mr-1" />
+                                    {remainingMessages}/{MAX_MESSAGES}
+                                </Badge>
                             </div>
                         </CardHeader>
 
-                        {/* Messages */}
-                        <CardContent className="h-[450px] overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
+                        <CardContent className="h-[400px] overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-gray-50 to-white">
                             {messages.map((message) => (
-                                <div
-                                    key={message.id}
-                                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                                >
-                                    <div className={`flex items-end space-x-2 max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                                        {/* Avatar */}
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === 'user'
-                                            ? 'bg-orange-500'
-                                            : 'bg-gradient-to-br from-orange-400 to-red-500'
+                                <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`flex items-end space-x-2 max-w-[90%] ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === 'user' ? 'bg-orange-500' : 'bg-gradient-to-br from-orange-500 to-red-500'
                                             }`}>
-                                            {message.role === 'user'
-                                                ? <User className="h-4 w-4 text-white" />
-                                                : <Bot className="h-4 w-4 text-white" />
-                                            }
+                                            {message.role === 'user' ? <User className="h-3.5 w-3.5 text-white" /> : <Bot className="h-3.5 w-3.5 text-white" />}
                                         </div>
-
-                                        {/* Message Bubble */}
-                                        <div
-                                            className={`rounded-2xl px-4 py-3 ${message.role === 'user'
-                                                ? 'bg-orange-500 text-white rounded-br-md'
-                                                : 'bg-white border border-gray-200 shadow-sm rounded-bl-md'
-                                                }`}
-                                        >
-                                            <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                                                {message.content}
-                                            </div>
-                                            <div className={`text-xs mt-2 flex items-center ${message.role === 'user' ? 'text-orange-200 justify-end' : 'text-gray-400'
-                                                }`}>
+                                        <div className={`rounded-2xl px-4 py-2.5 ${message.role === 'user'
+                                                ? 'bg-orange-500 text-white rounded-br-sm'
+                                                : 'bg-white border border-gray-200 shadow-sm rounded-bl-sm'
+                                            }`}>
+                                            <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
+                                            <div className={`text-xs mt-1.5 flex items-center ${message.role === 'user' ? 'text-orange-200 justify-end' : 'text-gray-400'}`}>
                                                 <CheckCircle className="w-3 h-3 mr-1" />
-                                                {message.timestamp.toLocaleTimeString(locale === 'tr' ? 'tr-TR' : 'en-US', {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })}
+                                                {message.timestamp.toLocaleTimeString(locale === 'tr' ? 'tr-TR' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             ))}
 
-                            {/* Typing Indicator */}
                             {isLoading && (
                                 <div className="flex justify-start">
                                     <div className="flex items-end space-x-2">
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
-                                            <Bot className="h-4 w-4 text-white" />
+                                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                                            <Bot className="h-3.5 w-3.5 text-white" />
                                         </div>
-                                        <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                                        <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
                                             <div className="flex items-center space-x-1">
                                                 <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                                                 <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -585,49 +668,41 @@ Or just type your question! 😊
                                     </div>
                                 </div>
                             )}
-
                             <div ref={messagesEndRef} />
                         </CardContent>
 
-                        {/* Input Area */}
                         <div className="border-t bg-white p-4">
                             {remainingMessages > 0 ? (
-                                <div className="space-y-3">
+                                <div className="space-y-2">
                                     <div className="flex space-x-2">
                                         <Input
                                             ref={inputRef}
                                             autoFocus
-                                            placeholder={locale === 'tr' ? "Mesajınızı yazın..." : "Type your message..."}
+                                            placeholder={locale === 'tr' ? "Sorunuzu yazın..." : "Type your question..."}
                                             value={input}
                                             onChange={(e) => setInput(e.target.value)}
                                             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                                             disabled={isLoading}
-                                            className="flex-1 h-12 rounded-xl border-gray-200 focus:border-orange-400 focus:ring-orange-400"
+                                            className="flex-1 h-11 rounded-xl"
                                         />
-                                        <Button
-                                            onClick={handleSendMessage}
-                                            disabled={!input.trim() || isLoading}
-                                            className="h-12 px-6 rounded-xl bg-orange-500 hover:bg-orange-600 transition-all"
-                                        >
-                                            <Send className="h-5 w-5" />
+                                        <Button onClick={handleSendMessage} disabled={!input.trim() || isLoading} className="h-11 px-5 rounded-xl bg-orange-500 hover:bg-orange-600">
+                                            <Send className="h-4 w-4" />
                                         </Button>
                                     </div>
                                     <div className="flex items-center justify-between text-xs text-gray-500">
                                         <div className="flex items-center">
                                             <Lightbulb className="w-3 h-3 mr-1" />
-                                            {locale === 'tr' ? 'Örnek: "Siparişim nerede?"' : 'Example: "Where is my order?"'}
+                                            {locale === 'tr' ? `${remainingMessages} soru hakkınız kaldı` : `${remainingMessages} questions remaining`}
                                         </div>
-                                        <Progress value={(messageCount / maxMessages) * 100} className="w-24 h-2" />
+                                        <Progress value={(messageCount / MAX_MESSAGES) * 100} className="w-20 h-1.5" />
                                     </div>
                                 </div>
                             ) : (
                                 <div className="text-center py-4">
-                                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                        <Lock className="h-6 w-6 text-gray-400" />
+                                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <Lock className="h-5 w-5 text-gray-400" />
                                     </div>
-                                    <p className="text-gray-600 mb-4">
-                                        {locale === 'tr' ? 'Demo süresi bitti' : 'Demo ended'}
-                                    </p>
+                                    <p className="text-gray-600 text-sm mb-3">{locale === 'tr' ? 'Demo süresi bitti' : 'Demo ended'}</p>
                                     <Link href={`/${locale}/auth/register`}>
                                         <Button className="bg-green-600 hover:bg-green-700">
                                             <Users className="mr-2 h-4 w-4" />
