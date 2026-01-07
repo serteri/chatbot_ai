@@ -154,8 +154,8 @@ export function PricingCards({ currentPlan }: PlanCardProps) {
 
                             <div className="mt-4 flex items-baseline">
                                 <span className="text-4xl font-bold text-slate-900">{plan.price}</span>
-                                {/* Fixed Logic: Using plan.id instead of plan.name */}
-                                {plan.id !== 'enterprise' && (
+                                {/* Show /month for all paid plans */}
+                                {plan.id !== 'free' && (
                                     <span className="text-gray-500 ml-1 text-sm">{t('perMonth')}</span>
                                 )}
                             </div>
