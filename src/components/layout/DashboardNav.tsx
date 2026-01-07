@@ -73,7 +73,7 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                 <div className="flex items-center justify-between h-16">
                     {/* SOL TARA: Logo ve Menüler */}
                     <div className="flex items-center space-x-8">
-                        <Link href={`/${currentLocale}`} className="text-xl font-bold text-blue-600 flex items-center gap-2">
+                        <Link href={`/${currentLocale}/dashboard`} className="text-xl font-bold text-blue-600 flex items-center gap-2">
                             <Bot className="h-6 w-6" />
                             <span>PylonChat</span>
                         </Link>
