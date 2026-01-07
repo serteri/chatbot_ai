@@ -1054,6 +1054,7 @@
     "upgrade": "Upgrade",
     "startFree": "Start Free",
     "upgradeError": "Upgrade failed. Please try again.",
+    "portalError": "Unable to open subscription portal. Please try again.",
     "plans": {
       "free": {
         "name": "Free",

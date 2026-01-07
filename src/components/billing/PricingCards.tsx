@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Check, Loader2, Zap, Star, Shield } from 'lucide-react'
+import { Check, Loader2, Zap, Star, Shield, AlertCircle, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface PlanCardProps {
@@ -15,6 +15,7 @@ interface PlanCardProps {
 export function PricingCards({ currentPlan }: PlanCardProps) {
     const t = useTranslations('pricing') // Using the 'pricing' namespace directly
     const [loading, setLoading] = useState<string | null>(null)
+    const [error, setError] = useState<string | null>(null)
     const router = useRouter()
 
     const PLANS = [
@@ -94,7 +95,7 @@ export function PricingCards({ currentPlan }: PlanCardProps) {
             }
         } catch (error) {
             console.error('Upgrade error:', error)
-            alert(t('upgradeError'))
+            setError(t('upgradeError'))
         } finally {
             setLoading(null)
         }
@@ -113,109 +114,126 @@ export function PricingCards({ currentPlan }: PlanCardProps) {
 
             if (data.url) {
                 window.location.href = data.url
+            } else if (data.error) {
+                setError(data.error)
             }
         } catch (error) {
             console.error('Portal error:', error)
-            alert(t('upgradeError'))
+            setError(t('portalError'))
         } finally {
             setLoading(null)
         }
     }
 
     return (
-        <div className="grid gap-6 md:grid-cols-3 items-start">
-            {PLANS.map((plan) => {
-                const isCurrent = currentPlan === plan.id
-                const isDowngrade =
-                    (currentPlan === 'enterprise' && ['pro', 'free'].includes(plan.id)) ||
-                    (currentPlan === 'pro' && plan.id === 'free')
+        <div className="space-y-6">
+            {/* Error Banner */}
+            {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <AlertCircle className="h-5 w-5 text-red-500" />
+                        <span className="text-red-700">{error}</span>
+                    </div>
+                    <button onClick={() => setError(null)} className="text-red-500 hover:text-red-700">
+                        <X className="h-5 w-5" />
+                    </button>
+                </div>
+            )}
 
-                return (
-                    <Card key={plan.id} className={`relative flex flex-col h-full transition-all duration-200 ${plan.popular ? 'border-2 border-blue-600 shadow-xl scale-105 z-10' : 'border border-slate-200 hover:border-slate-300'}`}>
-                        {plan.popular && (
-                            <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 text-sm font-semibold uppercase tracking-wide">
-                                {t('mostPopular')}
-                            </Badge>
-                        )}
+            <div className="grid gap-6 md:grid-cols-3 items-start">
+                {PLANS.map((plan) => {
+                    const isCurrent = currentPlan === plan.id
+                    const isDowngrade =
+                        (currentPlan === 'enterprise' && ['pro', 'free'].includes(plan.id)) ||
+                        (currentPlan === 'pro' && plan.id === 'free')
 
-                        <CardHeader className={`pb-8 border-b ${plan.popular ? 'bg-blue-50/50' : 'bg-slate-50/50'} rounded-t-xl`}>
-                            <div className="flex items-center justify-between mb-4">
-                                <div className={`p-2 rounded-lg ${plan.popular ? 'bg-blue-100 text-blue-600' : 'bg-white border text-slate-500'}`}>
-                                    <plan.icon className="w-5 h-5" />
+                    return (
+                        <Card key={plan.id} className={`relative flex flex-col h-full transition-all duration-200 ${plan.popular ? 'border-2 border-blue-600 shadow-xl scale-105 z-10' : 'border border-slate-200 hover:border-slate-300'}`}>
+                            {plan.popular && (
+                                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 text-sm font-semibold uppercase tracking-wide">
+                                    {t('mostPopular')}
+                                </Badge>
+                            )}
+
+                            <CardHeader className={`pb-8 border-b ${plan.popular ? 'bg-blue-50/50' : 'bg-slate-50/50'} rounded-t-xl`}>
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className={`p-2 rounded-lg ${plan.popular ? 'bg-blue-100 text-blue-600' : 'bg-white border text-slate-500'}`}>
+                                        <plan.icon className="w-5 h-5" />
+                                    </div>
+                                    {isCurrent && (
+                                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1">
+                                            <Check className="w-3 h-3" /> {t('currentPlan')}
+                                        </Badge>
+                                    )}
                                 </div>
-                                {isCurrent && (
-                                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1">
-                                        <Check className="w-3 h-3" /> {t('currentPlan')}
-                                    </Badge>
-                                )}
-                            </div>
-                            <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                            <CardDescription className="mt-2 min-h-[40px]">{plan.description}</CardDescription>
+                                <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                                <CardDescription className="mt-2 min-h-[40px]">{plan.description}</CardDescription>
 
-                            <div className="mt-4 flex items-baseline">
-                                <span className="text-4xl font-bold text-slate-900">{plan.price}</span>
-                                {/* Show /month for all paid plans */}
-                                {plan.id !== 'free' && (
-                                    <span className="text-gray-500 ml-1 text-sm">{t('perMonth')}</span>
-                                )}
-                            </div>
-                        </CardHeader>
+                                <div className="mt-4 flex items-baseline">
+                                    <span className="text-4xl font-bold text-slate-900">{plan.price}</span>
+                                    {/* Show /month for all paid plans */}
+                                    {plan.id !== 'free' && (
+                                        <span className="text-gray-500 ml-1 text-sm">{t('perMonth')}</span>
+                                    )}
+                                </div>
+                            </CardHeader>
 
-                        <CardContent className="flex-1 pt-6">
-                            <ul className="space-y-3">
-                                {plan.features.map((feature, index) => (
-                                    <li key={index} className="flex items-start gap-3 text-sm text-slate-600">
-                                        <div className={`mt-0.5 rounded-full p-0.5 flex-shrink-0 ${plan.popular ? 'text-blue-600 bg-blue-100' : 'text-green-600 bg-green-100'}`}>
-                                            <Check className="w-3 h-3 stroke-[3]" />
-                                        </div>
-                                        <span className="leading-tight">{feature}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardContent>
+                            <CardContent className="flex-1 pt-6">
+                                <ul className="space-y-3">
+                                    {plan.features.map((feature, index) => (
+                                        <li key={index} className="flex items-start gap-3 text-sm text-slate-600">
+                                            <div className={`mt-0.5 rounded-full p-0.5 flex-shrink-0 ${plan.popular ? 'text-blue-600 bg-blue-100' : 'text-green-600 bg-green-100'}`}>
+                                                <Check className="w-3 h-3 stroke-[3]" />
+                                            </div>
+                                            <span className="leading-tight">{feature}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </CardContent>
 
-                        <CardFooter className="pt-2 pb-8">
-                            {isCurrent ? (
-                                currentPlan !== 'free' ? (
-                                    <Button
-                                        variant="outline"
-                                        className="w-full border-slate-300 hover:bg-slate-50"
-                                        onClick={handleManageSubscription}
-                                        disabled={loading === 'manage'}
-                                    >
-                                        {loading === 'manage' ? (
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        ) : null}
-                                        {t('manageSub')}
+                            <CardFooter className="pt-2 pb-8">
+                                {isCurrent ? (
+                                    currentPlan !== 'free' ? (
+                                        <Button
+                                            variant="outline"
+                                            className="w-full border-slate-300 hover:bg-slate-50"
+                                            onClick={handleManageSubscription}
+                                            disabled={loading === 'manage'}
+                                        >
+                                            {loading === 'manage' ? (
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            ) : null}
+                                            {t('manageSub')}
+                                        </Button>
+                                    ) : (
+                                        <Button variant="outline" className="w-full bg-slate-100 text-slate-500 border-slate-200" disabled>
+                                            {t('currentPlan')}
+                                        </Button>
+                                    )
+                                ) : isDowngrade ? (
+                                    <Button variant="ghost" className="w-full text-slate-400" disabled>
+                                        {t('downgradeUnavailable')}
                                     </Button>
                                 ) : (
-                                    <Button variant="outline" className="w-full bg-slate-100 text-slate-500 border-slate-200" disabled>
-                                        {t('currentPlan')}
+                                    <Button
+                                        className={`w-full h-11 font-semibold ${plan.popular ? 'bg-blue-600 hover:bg-blue-700 shadow-md' : ''}`}
+                                        onClick={() => handleUpgrade(plan.priceId, plan.id)}
+                                        disabled={loading === plan.id || !plan.priceId}
+                                        variant={plan.popular ? 'default' : 'outline'}
+                                    >
+                                        {loading === plan.id ? (
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <Zap className="mr-2 h-4 w-4" />
+                                        )}
+                                        {plan.id === 'free' ? t('startFree') : t('upgrade')}
                                     </Button>
-                                )
-                            ) : isDowngrade ? (
-                                <Button variant="ghost" className="w-full text-slate-400" disabled>
-                                    {t('downgradeUnavailable')}
-                                </Button>
-                            ) : (
-                                <Button
-                                    className={`w-full h-11 font-semibold ${plan.popular ? 'bg-blue-600 hover:bg-blue-700 shadow-md' : ''}`}
-                                    onClick={() => handleUpgrade(plan.priceId, plan.id)}
-                                    disabled={loading === plan.id || !plan.priceId}
-                                    variant={plan.popular ? 'default' : 'outline'}
-                                >
-                                    {loading === plan.id ? (
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    ) : (
-                                        <Zap className="mr-2 h-4 w-4" />
-                                    )}
-                                    {plan.id === 'free' ? t('startFree') : t('upgrade')}
-                                </Button>
-                            )}
-                        </CardFooter>
-                    </Card>
-                )
-            })}
+                                )}
+                            </CardFooter>
+                        </Card>
+                    )
+                })}
+            </div>
         </div>
     )
 }
