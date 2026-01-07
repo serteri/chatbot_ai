@@ -8,9 +8,9 @@ interface AuthLayoutProps {
 }
 
 export default async function AuthLayout({
-                                             children,
-                                             params
-                                         }: AuthLayoutProps) {
+    children,
+    params
+}: AuthLayoutProps) {
     const { locale } = await params
 
     return (
@@ -23,7 +23,7 @@ export default async function AuthLayout({
                             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                                 <MessageSquare className="h-5 w-5 text-white" />
                             </div>
-                            <span className="text-xl font-bold text-gray-900">ChatbotAI</span>
+                            <span className="text-xl font-bold text-gray-900">PylonChat</span>
                         </Link>
 
                         <Link href={`/${locale}`}>

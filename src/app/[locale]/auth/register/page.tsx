@@ -31,7 +31,7 @@ export default function RegisterPage() {
                 <CardHeader>
                     <CardTitle className="text-center text-2xl">Kayıt Ol</CardTitle>
                     <CardDescription className="text-center">
-                        ChatbotAI hesabı oluşturun
+                        PylonChat hesabı oluşturun
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

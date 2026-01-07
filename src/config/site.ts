@@ -1,19 +1,19 @@
 export const siteConfig = {
-  name: "ChatbotAI",
+  name: "PylonChat",
   description: "Professional multi-language AI chatbot platform",
   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  
+
   links: {
-    twitter: "https://twitter.com/chatbotai",
-    github: "https://github.com/yourusername/chatbotai",
-    docs: "https://docs.chatbotai.com",
+    twitter: "https://twitter.com/pylonchat",
+    github: "https://github.com/serteri/chatbot_ai",
+    docs: "https://pylonchat.com/docs",
   },
-  
+
   creator: {
-    name: "Your Name",
-    url: "https://yourwebsite.com",
+    name: "PylonChat Team",
+    url: "https://pylonchat.com",
   },
-  
+
   defaultLanguage: "tr",
   supportedLanguages: [
     { code: "tr", name: "Türkçe", flag: "🇹🇷" },
@@ -26,7 +26,7 @@ export const siteConfig = {
     { code: "zh", name: "中文", flag: "🇨🇳" },
     { code: "ja", name: "日本語", flag: "🇯🇵" },
   ],
-  
+
   features: [
     {
       title: "Çok Dilli Destek",
@@ -59,16 +59,16 @@ export const siteConfig = {
       icon: "📊",
     },
   ],
-  
+
   maxFileSize: 10 * 1024 * 1024, // 10MB
   maxFilesPerMessage: 5,
-  
+
   supportedFileTypes: {
     documents: [".pdf", ".doc", ".docx", ".txt"],
     images: [".jpg", ".jpeg", ".png", ".gif", ".webp"],
     code: [".js", ".ts", ".py", ".java", ".cpp", ".c", ".html", ".css"],
   },
-  
+
   chatDefaults: {
     model: "gpt-3.5-turbo" as const,
     temperature: 0.7,
