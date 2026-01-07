@@ -89,8 +89,8 @@ export const PRICING_PLANS: Record<SubscriptionPlan, PlanConfig> = {
     id: 'enterprise',
     name: 'Enterprise',
     price: {
-      monthly: -1, // Custom pricing
-      yearly: -1,
+      monthly: 99,
+      yearly: 990, // ~%17 indirim
     },
     limits: {
       maxChatbots: -1, // Unlimited
@@ -242,10 +242,10 @@ export function getPlanInfo(planId: SubscriptionPlan): PlanConfig {
 export function calculateYearlySavings(planId: SubscriptionPlan): number {
   const plan = PRICING_PLANS[planId]
   if (plan.price.monthly <= 0 || plan.price.yearly <= 0) return 0
-  
+
   const monthlyTotal = plan.price.monthly * 12
   const yearlySavings = monthlyTotal - plan.price.yearly
-  
+
   return Math.round(yearlySavings * 100) / 100
 }
 
@@ -256,7 +256,7 @@ export function checkLimit(
   subscription: { plan: string; maxChatbots: number; conversationsUsed: number; maxConversations: number },
   type: 'chatbots' | 'conversations' | 'documents'
 ): { canCreate: boolean; reason?: string } {
-  
+
   if (type === 'chatbots') {
     const currentCount = 0 // This should come from actual count
     if (subscription.maxChatbots !== -1 && currentCount >= subscription.maxChatbots) {
@@ -266,7 +266,7 @@ export function checkLimit(
       }
     }
   }
-  
+
   if (type === 'conversations') {
     if (subscription.maxConversations !== -1 && subscription.conversationsUsed >= subscription.maxConversations) {
       return {
@@ -275,6 +275,6 @@ export function checkLimit(
       }
     }
   }
-  
+
   return { canCreate: true }
 }
