@@ -1049,7 +1049,15 @@
     "entFeat5": "Custom Domain",
     "entFeat6": "API Access",
     "entFeat7": "Advanced Analytics",
+    "bizFeat1": "10 Chatbots",
+    "bizFeat2": "100 Documents",
+    "bizFeat3": "5,000 Conversations/month",
+    "bizFeat4": "Priority Support",
+    "bizFeat5": "Custom Branding",
+    "bizFeat6": "Analytics Dashboard",
+    "bizFeat7": "Team Collaboration",
     "downgradeUnavailable": "Downgrade Unavailable",
+    "includedInCurrentPlan": "Included in your plan",
     "manageSub": "Manage Subscription",
     "upgrade": "Upgrade",
     "startFree": "Start Free",
@@ -1078,6 +1086,20 @@
           "Priority Support",
           "Custom Branding",
           "Analytics Dashboard"
+        ]
+      },
+      "business": {
+        "name": "Business",
+        "price": "$69",
+        "description": "For growing teams",
+        "features": [
+          "10 Chatbots",
+          "100 Documents",
+          "5,000 Conversations/month",
+          "Priority Support",
+          "Custom Branding",
+          "Analytics Dashboard",
+          "Team Collaboration"
         ]
       },
       "enterprise": {

@@ -53,6 +53,24 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
             popular: true
         },
         {
+            id: 'business',
+            name: t('plans.business.name'),
+            price: t('plans.business.price'),
+            description: t('plans.business.description'),
+            features: [
+                t('bizFeat1'),
+                t('bizFeat2'),
+                t('bizFeat3'),
+                t('bizFeat4'),
+                t('bizFeat5'),
+                t('bizFeat6'),
+                t('bizFeat7')
+            ],
+            priceId: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_PRICE_ID,
+            icon: Shield,
+            popular: false
+        },
+        {
             id: 'enterprise',
             name: t('plans.enterprise.name'),
             price: t('plans.enterprise.price'),
@@ -141,12 +159,13 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                 </div>
             )}
 
-            <div className="grid gap-6 md:grid-cols-3 items-start">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 items-start">
                 {PLANS.map((plan) => {
                     const isCurrent = currentPlan === plan.id
-                    const isDowngrade =
-                        (currentPlan === 'enterprise' && ['pro', 'free'].includes(plan.id)) ||
-                        (currentPlan === 'pro' && plan.id === 'free')
+                    const planOrder = ['free', 'pro', 'business', 'enterprise']
+                    const currentIndex = planOrder.indexOf(currentPlan)
+                    const planIndex = planOrder.indexOf(plan.id)
+                    const isDowngrade = planIndex < currentIndex
 
                     return (
                         <Card key={plan.id} className={`relative flex flex-col h-full transition-all duration-200 ${plan.popular ? 'border-2 border-blue-600 shadow-xl scale-105 z-10' : 'border border-slate-200 hover:border-slate-300'}`}>
@@ -212,13 +231,9 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                                         </Button>
                                     )
                                 ) : isDowngrade ? (
-                                    <Button
-                                        variant="outline"
-                                        className="w-full bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60"
-                                        disabled
-                                    >
-                                        {t('downgradeUnavailable')}
-                                    </Button>
+                                    <div className="w-full text-center py-3 text-sm text-gray-400">
+                                        {t('includedInCurrentPlan')}
+                                    </div>
                                 ) : (
                                     <Button
                                         className={`w-full h-11 font-semibold ${plan.popular ? 'bg-blue-600 hover:bg-blue-700 shadow-md' : ''}`}

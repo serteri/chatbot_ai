@@ -1064,11 +1064,20 @@
     "entFeat5": "Özel Domain",
     "entFeat6": "API Erişimi",
     "entFeat7": "Gelişmiş Analytics",
+    "bizFeat1": "10 Chatbot",
+    "bizFeat2": "100 Doküman",
+    "bizFeat3": "5,000 Konuşma/ay",
+    "bizFeat4": "Öncelikli Destek",
+    "bizFeat5": "Özel Branding",
+    "bizFeat6": "Analytics Dashboard",
+    "bizFeat7": "Takım İşbirliği",
     "downgradeUnavailable": "Düşürme Mevcut Değil",
+    "includedInCurrentPlan": "Planınıza dahil",
     "manageSub": "Aboneliği Yönet",
     "upgrade": "Yükselt",
     "startFree": "Ücretsiz Başla",
     "upgradeError": "Yükseltme başarısız. Lütfen tekrar deneyin.",
+    "portalError": "Abonelik portalı açılamadı. Lütfen tekrar deneyin.",
     "plans": {
       "free": {
         "name": "Ücretsiz",
@@ -1094,9 +1103,23 @@
           "Analytics Dashboard"
         ]
       },
+      "business": {
+        "name": "Business",
+        "price": "1,699₺",
+        "description": "Büyüyen takımlar için",
+        "features": [
+          "10 Chatbot",
+          "100 Doküman",
+          "5,000 Konuşma/ay",
+          "Öncelikli Destek",
+          "Özel Branding",
+          "Analytics Dashboard",
+          "Takım İşbirliği"
+        ]
+      },
       "enterprise": {
         "name": "Enterprise",
-        "price": "Özel",
+        "price": "2,499₺",
         "description": "Büyük organizasyonlar için",
         "features": [
           "Sınırsız Chatbot",

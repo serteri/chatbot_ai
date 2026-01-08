@@ -51,6 +51,23 @@ export default function PricingPage() {
             cta: t('pricing.choosePlan')
         },
         {
+            id: 'business',
+            name: t('pricing.plans.business.name'),
+            price: t('pricing.plans.business.price'),
+            description: t('pricing.plans.business.description'),
+            features: [
+                t('pricing.plans.business.features.0'),
+                t('pricing.plans.business.features.1'),
+                t('pricing.plans.business.features.2'),
+                t('pricing.plans.business.features.3'),
+                t('pricing.plans.business.features.4'),
+                t('pricing.plans.business.features.5'),
+                t('pricing.plans.business.features.6')
+            ],
+            popular: false,
+            cta: t('pricing.choosePlan')
+        },
+        {
             id: 'enterprise',
             name: t('pricing.plans.enterprise.name'),
             price: t('pricing.plans.enterprise.price'),
@@ -138,7 +155,7 @@ export default function PricingPage() {
                 {/* Pricing Plans */}
                 <div className="py-20">
                     <div className="container mx-auto px-4">
-                        <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
                             {plans.map((plan) => (
                                 <div
                                     key={plan.id}
@@ -179,8 +196,8 @@ export default function PricingPage() {
                                     <Link
                                         href={`/${locale}/auth/register`}
                                         className={`w-full block text-center py-3 px-6 rounded-lg font-semibold transition-colors ${plan.popular
-                                                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                                                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                                            ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                            : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                                             }`}
                                     >
                                         {plan.cta}
