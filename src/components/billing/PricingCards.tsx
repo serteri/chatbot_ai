@@ -212,7 +212,11 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                                         </Button>
                                     )
                                 ) : isDowngrade ? (
-                                    <Button variant="ghost" className="w-full text-slate-400" disabled>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60"
+                                        disabled
+                                    >
                                         {t('downgradeUnavailable')}
                                     </Button>
                                 ) : (
