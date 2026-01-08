@@ -38,7 +38,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
         { name: t('links.helpCenter'), href: `/${locale}/help` },
         { name: t('links.docs'), href: `/${locale}/docs` },
         { name: t('links.faq'), href: `/${locale}/faq` },
-        { name: t('links.status'), href: 'https://status.pylonchat.com' },
+        { name: t('links.status'), href: `/${locale}/status` },
     ]
 
     if (variant === 'dashboard') {

@@ -10,7 +10,13 @@ import {
     GraduationCap,
     ShoppingCart,
     ArrowRight,
-    CheckCircle
+    CheckCircle,
+    Zap,
+    Globe,
+    FileText,
+    BarChart,
+    Code,
+    Settings
 } from 'lucide-react'
 
 interface HomePageProps {
@@ -193,6 +199,98 @@ export default async function HomePage({ params }: HomePageProps) {
                                     </Button>
                                 </Link>
                             </CardContent>
+                        </Card>
+                    </div>
+                </div>
+
+                {/* Features Section */}
+                <div id="features" className="container mx-auto px-4 py-20 bg-gray-50">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                            {t('features.title')}
+                        </h2>
+                        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                            {t('features.subtitle')}
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <Card className="border-none shadow-md hover:shadow-xl transition-all duration-300">
+                            <CardHeader>
+                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                    <Zap className="h-6 w-6 text-blue-600" />
+                                </div>
+                                <CardTitle>{t('features.easySetup.title')}</CardTitle>
+                                <CardDescription>{t('features.easySetup.description')}</CardDescription>
+                            </CardHeader>
+                        </Card>
+
+                        <Card className="border-none shadow-md hover:shadow-xl transition-all duration-300">
+                            <CardHeader>
+                                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                                    <Globe className="h-6 w-6 text-purple-600" />
+                                </div>
+                                <CardTitle>{t('features.multilingual.title')}</CardTitle>
+                                <CardDescription>{t('features.multilingual.description')}</CardDescription>
+                            </CardHeader>
+                        </Card>
+
+                        <Card className="border-none shadow-md hover:shadow-xl transition-all duration-300">
+                            <CardHeader>
+                                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                                    <FileText className="h-6 w-6 text-green-600" />
+                                </div>
+                                <CardTitle>{t('features.smartLearning.title')}</CardTitle>
+                                <CardDescription>{t('features.smartLearning.description')}</CardDescription>
+                            </CardHeader>
+                        </Card>
+
+                        <Card className="border-none shadow-md hover:shadow-xl transition-all duration-300">
+                            <CardHeader>
+                                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                                    <BarChart className="h-6 w-6 text-orange-600" />
+                                </div>
+                                <CardTitle>{t('features.analytics.title')}</CardTitle>
+                                <CardDescription>{t('features.analytics.description')}</CardDescription>
+                            </CardHeader>
+                        </Card>
+
+                        <Card className="border-none shadow-md hover:shadow-xl transition-all duration-300">
+                            <CardHeader>
+                                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                                    <Code className="h-6 w-6 text-indigo-600" />
+                                </div>
+                                <CardTitle>{t('features.integration.title')}</CardTitle>
+                                <CardDescription>{t('features.integration.description')}</CardDescription>
+                            </CardHeader>
+                        </Card>
+                        <Card className="border-none shadow-md hover:shadow-xl transition-all duration-300">
+                            <CardHeader>
+                                <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
+                                    <Settings className="h-6 w-6 text-teal-600" />
+                                </div>
+                                <CardTitle>{t('features.customization.title')}</CardTitle>
+                                <CardDescription>{t('features.customization.description')}</CardDescription>
+                            </CardHeader>
+                        </Card>
+                        <Card className="border-none shadow-md hover:shadow-xl transition-all duration-300">
+                            <CardHeader>
+                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                    <GraduationCap className="h-6 w-6 text-blue-600" />
+                                </div>
+                                <CardTitle>{t('features.education.title')}</CardTitle>
+                                <CardDescription>{t('features.education.description')}</CardDescription>
+                            </CardHeader>
+                        </Card>
+
+                        <Card className="border-none shadow-md hover:shadow-xl transition-all duration-300">
+                            <CardHeader>
+                                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                                    <ShoppingCart className="h-6 w-6 text-green-600" />
+                                </div>
+                                <CardTitle>{t('features.ecommerce.title')}</CardTitle>
+                                <CardDescription>{t('features.ecommerce.description')}</CardDescription>
+                            </CardHeader>
                         </Card>
                     </div>
                 </div>
