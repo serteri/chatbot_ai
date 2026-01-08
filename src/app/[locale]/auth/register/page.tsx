@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { MessageSquare, Check, Eye, EyeOff, Loader2, AlertCircle, User, Mail, Lock } from 'lucide-react'
+import { MessageSquare, Check, Eye, EyeOff, Loader2, AlertCircle, User, Mail, Lock, X } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 
 export default function RegisterPage() {
@@ -16,12 +16,26 @@ export default function RegisterPage() {
 
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
+    const [showPasswordReqs, setShowPasswordReqs] = useState(false)
     const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string; general?: string }>({})
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
     })
+
+    // Password requirements check
+    const passwordReqs = useMemo(() => {
+        const password = formData.password
+        return {
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            number: /[0-9]/.test(password),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+        }
+    }, [formData.password])
+
+    const allReqsMet = Object.values(passwordReqs).every(Boolean)
 
     const validateForm = () => {
         const newErrors: typeof errors = {}
@@ -40,8 +54,8 @@ export default function RegisterPage() {
 
         if (!formData.password) {
             newErrors.password = 'Şifre gerekli'
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Şifre en az 6 karakter olmalı'
+        } else if (!allReqsMet) {
+            newErrors.password = 'Şifre tüm gereksinimleri karşılamalı'
         }
 
         setErrors(newErrors)
@@ -206,9 +220,17 @@ export default function RegisterPage() {
 
                         {/* General Error */}
                         {errors.general && (
-                            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
-                                <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
-                                <p className="text-red-600 text-sm">{errors.general}</p>
+                            <div className="mb-4 p-4 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl flex items-start gap-3 animate-in slide-in-from-top-2 duration-300">
+                                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                                    <AlertCircle className="h-4 w-4 text-red-600" />
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-red-700 font-medium text-sm">Hata</p>
+                                    <p className="text-red-600 text-sm">{errors.general}</p>
+                                </div>
+                                <button onClick={() => setErrors({})} className="text-red-400 hover:text-red-600">
+                                    <X className="h-4 w-4" />
+                                </button>
                             </div>
                         )}
 
@@ -222,15 +244,15 @@ export default function RegisterPage() {
                                         placeholder="John Doe"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className={`pl-10 h-12 rounded-xl border-2 ${errors.name ? 'border-red-300 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'}`}
+                                        className={`pl-10 h-12 rounded-xl border-2 transition-all ${errors.name ? 'border-red-300 focus:border-red-500 bg-red-50/50' : 'border-gray-200 focus:border-blue-500'}`}
                                         disabled={isLoading}
                                     />
                                 </div>
                                 {errors.name && (
-                                    <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                                    <div className="mt-2 flex items-center gap-2 text-red-500 text-sm animate-in slide-in-from-top-1 duration-200">
                                         <AlertCircle className="h-4 w-4" />
-                                        {errors.name}
-                                    </p>
+                                        <span>{errors.name}</span>
+                                    </div>
                                 )}
                             </div>
 
@@ -244,15 +266,15 @@ export default function RegisterPage() {
                                         placeholder="ornek@email.com"
                                         value={formData.email}
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        className={`pl-10 h-12 rounded-xl border-2 ${errors.email ? 'border-red-300 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'}`}
+                                        className={`pl-10 h-12 rounded-xl border-2 transition-all ${errors.email ? 'border-red-300 focus:border-red-500 bg-red-50/50' : 'border-gray-200 focus:border-blue-500'}`}
                                         disabled={isLoading}
                                     />
                                 </div>
                                 {errors.email && (
-                                    <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                                    <div className="mt-2 flex items-center gap-2 text-red-500 text-sm animate-in slide-in-from-top-1 duration-200">
                                         <AlertCircle className="h-4 w-4" />
-                                        {errors.email}
-                                    </p>
+                                        <span>{errors.email}</span>
+                                    </div>
                                 )}
                             </div>
 
@@ -266,39 +288,54 @@ export default function RegisterPage() {
                                         placeholder="••••••••"
                                         value={formData.password}
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                        className={`pl-10 pr-10 h-12 rounded-xl border-2 ${errors.password ? 'border-red-300 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'}`}
+                                        onFocus={() => setShowPasswordReqs(true)}
+                                        className={`pl-10 pr-10 h-12 rounded-xl border-2 transition-all ${errors.password ? 'border-red-300 focus:border-red-500 bg-red-50/50' : 'border-gray-200 focus:border-blue-500'}`}
                                         disabled={isLoading}
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                                     >
                                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                                     </button>
                                 </div>
-                                {errors.password && (
-                                    <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+
+                                {/* Password Requirements */}
+                                {showPasswordReqs && (
+                                    <div className="mt-3 p-4 bg-gradient-to-br from-gray-50 to-blue-50/50 border border-gray-200 rounded-xl animate-in slide-in-from-top-2 duration-300">
+                                        <p className="text-sm font-medium text-gray-700 mb-3">Şifre gereksinimleri:</p>
+                                        <div className="space-y-2">
+                                            <PasswordReq met={passwordReqs.length} text="En az 8 karakter" />
+                                            <PasswordReq met={passwordReqs.uppercase} text="En az 1 büyük harf (A-Z)" />
+                                            <PasswordReq met={passwordReqs.number} text="En az 1 rakam (0-9)" />
+                                            <PasswordReq met={passwordReqs.special} text="En az 1 özel karakter (!@#$%...)" />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {errors.password && !showPasswordReqs && (
+                                    <div className="mt-2 flex items-center gap-2 text-red-500 text-sm animate-in slide-in-from-top-1 duration-200">
                                         <AlertCircle className="h-4 w-4" />
-                                        {errors.password}
-                                    </p>
+                                        <span>{errors.password}</span>
+                                    </div>
                                 )}
                             </div>
 
-                            <Button
+                            <button
                                 type="submit"
-                                className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg shadow-blue-200 transition-all"
                                 disabled={isLoading}
+                                className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
                             >
                                 {isLoading ? (
                                     <>
-                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                        <Loader2 className="h-5 w-5 animate-spin" />
                                         Hesap oluşturuluyor...
                                     </>
                                 ) : (
                                     'Hesap Oluştur'
                                 )}
-                            </Button>
+                            </button>
                         </form>
 
                         <p className="mt-6 text-center text-gray-500">
@@ -318,6 +355,24 @@ export default function RegisterPage() {
                     </p>
                 </div>
             </div>
+        </div>
+    )
+}
+
+// Password requirement component
+function PasswordReq({ met, text }: { met: boolean; text: string }) {
+    return (
+        <div className={`flex items-center gap-2 transition-all duration-300 ${met ? 'text-green-600' : 'text-gray-500'}`}>
+            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${met ? 'bg-green-100' : 'bg-gray-100'}`}>
+                {met ? (
+                    <Check className="h-3 w-3 text-green-600" />
+                ) : (
+                    <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                )}
+            </div>
+            <span className={`text-sm transition-all duration-300 ${met ? 'line-through opacity-60' : ''}`}>
+                {text}
+            </span>
         </div>
     )
 }
