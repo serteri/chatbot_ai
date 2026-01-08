@@ -6,84 +6,318 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { MessageSquare, Check, Eye, EyeOff, Loader2, AlertCircle, User, Mail, Lock } from 'lucide-react'
+import { signIn } from 'next-auth/react'
 
 export default function RegisterPage() {
     const router = useRouter()
     const params = useParams()
     const locale = (params?.locale as string) || 'tr'
 
+    const [isLoading, setIsLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string; general?: string }>({})
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
     })
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        // Simple demo redirect
-        router.push(`/${locale}/dashboard`)
+    const validateForm = () => {
+        const newErrors: typeof errors = {}
+
+        if (!formData.name.trim()) {
+            newErrors.name = 'Ad Soyad gerekli'
+        } else if (formData.name.trim().length < 2) {
+            newErrors.name = 'Ad Soyad en az 2 karakter olmalı'
+        }
+
+        if (!formData.email.trim()) {
+            newErrors.email = 'E-posta gerekli'
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Geçerli bir e-posta adresi girin'
+        }
+
+        if (!formData.password) {
+            newErrors.password = 'Şifre gerekli'
+        } else if (formData.password.length < 6) {
+            newErrors.password = 'Şifre en az 6 karakter olmalı'
+        }
+
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
     }
 
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        if (!validateForm()) return
+
+        setIsLoading(true)
+        setErrors({})
+
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                setErrors({ general: data.error || 'Kayıt sırasında bir hata oluştu' })
+                return
+            }
+
+            // Auto login after registration
+            const result = await signIn('credentials', {
+                email: formData.email,
+                password: formData.password,
+                redirect: false,
+            })
+
+            if (result?.ok) {
+                router.push(`/${locale}/dashboard`)
+            } else {
+                router.push(`/${locale}/auth/login`)
+            }
+        } catch (error) {
+            setErrors({ general: 'Bir hata oluştu. Lütfen tekrar deneyin.' })
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleOAuthLogin = async (provider: 'google' | 'github' | 'azure-ad') => {
+        setIsLoading(true)
+        try {
+            await signIn(provider, {
+                callbackUrl: `/${locale}/dashboard`,
+            })
+        } catch (error) {
+            setErrors({ general: `${provider} ile giriş yapılırken hata oluştu` })
+            setIsLoading(false)
+        }
+    }
+
+    const features = [
+        'Sınırsız AI sohbet deneyimi',
+        'Özel chatbot oluşturma',
+        'Gerçek zamanlı analytics',
+        '7/24 destek'
+    ]
+
     return (
-        <div className="flex min-h-screen items-center justify-center p-4">
-            <Card className="w-full max-w-md">
-                <CardHeader>
-                    <CardTitle className="text-center text-2xl">Kayıt Ol</CardTitle>
-                    <CardDescription className="text-center">
-                        PylonChat hesabı oluşturun
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <Label htmlFor="name">Ad Soyad</Label>
-                            <Input
-                                id="name"
-                                placeholder="Adınız Soyadınız"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                            />
+        <div className="min-h-screen flex">
+            {/* Sol Panel - Özellikler */}
+            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 p-12 flex-col justify-between relative overflow-hidden">
+                {/* Decorative circles */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+
+                <div className="relative z-10">
+                    <Link href={`/${locale}`} className="flex items-center gap-3 text-white mb-16">
+                        <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
+                            <MessageSquare className="h-7 w-7" />
+                        </div>
+                        <span className="text-2xl font-bold">PylonChat</span>
+                    </Link>
+
+                    <h1 className="text-4xl font-bold text-white mb-6">
+                        AI destekli chatbot'lar ile müşteri deneyimini dönüştürün
+                    </h1>
+                    <p className="text-blue-100 text-lg mb-12">
+                        Ücretsiz hesap oluşturun ve hemen başlayın.
+                    </p>
+
+                    <div className="space-y-4">
+                        {features.map((feature, index) => (
+                            <div key={index} className="flex items-center gap-3 text-white">
+                                <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center">
+                                    <Check className="h-4 w-4 text-white" />
+                                </div>
+                                <span className="text-lg">{feature}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <p className="text-blue-200 text-sm relative z-10">
+                    © 2024 PylonChat. Tüm hakları saklıdır.
+                </p>
+            </div>
+
+            {/* Sağ Panel - Form */}
+            <div className="flex-1 flex items-center justify-center p-8 bg-gray-50">
+                <div className="w-full max-w-md">
+                    {/* Mobile Logo */}
+                    <div className="lg:hidden flex items-center justify-center gap-2 mb-8">
+                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                            <MessageSquare className="h-6 w-6 text-white" />
+                        </div>
+                        <span className="text-xl font-bold text-gray-900">PylonChat</span>
+                    </div>
+
+                    <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                        <div className="text-center mb-8">
+                            <h2 className="text-2xl font-bold text-gray-900">Hesap Oluştur</h2>
+                            <p className="text-gray-500 mt-2">Ücretsiz hesabınızı hemen oluşturun</p>
                         </div>
 
-                        <div>
-                            <Label htmlFor="email">E-posta</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="ornek@email.com"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                required
-                            />
+                        {/* OAuth Buttons */}
+                        <div className="space-y-3 mb-6">
+                            <button
+                                type="button"
+                                onClick={() => handleOAuthLogin('google')}
+                                disabled={isLoading}
+                                className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-50"
+                            >
+                                <svg className="h-5 w-5" viewBox="0 0 24 24">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                </svg>
+                                Google ile Kayıt Ol
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => handleOAuthLogin('github')}
+                                disabled={isLoading}
+                                className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-gray-900 rounded-xl text-white font-medium hover:bg-gray-800 transition-all disabled:opacity-50"
+                            >
+                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                </svg>
+                                GitHub ile Kayıt Ol
+                            </button>
                         </div>
 
-                        <div>
-                            <Label htmlFor="password">Şifre</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="Minimum 6 karakter"
-                                value={formData.password}
-                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                required
-                                minLength={6}
-                            />
+                        <div className="relative my-6">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-200" />
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-4 bg-white text-gray-400">veya e-posta ile</span>
+                            </div>
                         </div>
 
-                        <Button type="submit" className="w-full">
-                            Hesap Oluştur
-                        </Button>
+                        {/* General Error */}
+                        {errors.general && (
+                            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+                                <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
+                                <p className="text-red-600 text-sm">{errors.general}</p>
+                            </div>
+                        )}
 
-                        <div className="text-center">
-                            <Link href={`/${locale}/auth/login`} className="text-blue-600 hover:underline">
-                                Zaten hesabınız var mı? Giriş yapın
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            <div>
+                                <Label htmlFor="name" className="text-gray-700 font-medium">Ad Soyad</Label>
+                                <div className="relative mt-1">
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    <Input
+                                        id="name"
+                                        placeholder="John Doe"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        className={`pl-10 h-12 rounded-xl border-2 ${errors.name ? 'border-red-300 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'}`}
+                                        disabled={isLoading}
+                                    />
+                                </div>
+                                {errors.name && (
+                                    <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                                        <AlertCircle className="h-4 w-4" />
+                                        {errors.name}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="email" className="text-gray-700 font-medium">E-posta</Label>
+                                <div className="relative mt-1">
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="ornek@email.com"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        className={`pl-10 h-12 rounded-xl border-2 ${errors.email ? 'border-red-300 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'}`}
+                                        disabled={isLoading}
+                                    />
+                                </div>
+                                {errors.email && (
+                                    <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                                        <AlertCircle className="h-4 w-4" />
+                                        {errors.email}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="password" className="text-gray-700 font-medium">Şifre</Label>
+                                <div className="relative mt-1">
+                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    <Input
+                                        id="password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        placeholder="••••••••"
+                                        value={formData.password}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                        className={`pl-10 pr-10 h-12 rounded-xl border-2 ${errors.password ? 'border-red-300 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'}`}
+                                        disabled={isLoading}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                    >
+                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                    </button>
+                                </div>
+                                {errors.password && (
+                                    <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
+                                        <AlertCircle className="h-4 w-4" />
+                                        {errors.password}
+                                    </p>
+                                )}
+                            </div>
+
+                            <Button
+                                type="submit"
+                                className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg shadow-blue-200 transition-all"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                        Hesap oluşturuluyor...
+                                    </>
+                                ) : (
+                                    'Hesap Oluştur'
+                                )}
+                            </Button>
+                        </form>
+
+                        <p className="mt-6 text-center text-gray-500">
+                            Zaten hesabınız var mı?{' '}
+                            <Link href={`/${locale}/auth/login`} className="text-blue-600 hover:text-blue-700 font-medium">
+                                Giriş yapın
                             </Link>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+                        </p>
+                    </div>
+
+                    <p className="mt-6 text-center text-xs text-gray-400">
+                        Kayıt olarak{' '}
+                        <Link href={`/${locale}/terms`} className="underline hover:text-gray-600">Kullanım Şartları</Link>
+                        {' '}ve{' '}
+                        <Link href={`/${locale}/privacy`} className="underline hover:text-gray-600">Gizlilik Politikası</Link>
+                        'nı kabul etmiş olursunuz.
+                    </p>
+                </div>
+            </div>
         </div>
     )
 }

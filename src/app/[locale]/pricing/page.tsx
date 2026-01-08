@@ -32,7 +32,9 @@ export default function PricingPage() {
                 t('pricing.plans.free.features.3')
             ],
             popular: false,
-            color: 'gray',
+            gradient: 'from-gray-500 to-gray-600',
+            borderColor: 'border-gray-200',
+            priceColor: 'text-gray-700',
             cta: t('pricing.getStarted')
         },
         {
@@ -49,7 +51,9 @@ export default function PricingPage() {
                 t('pricing.plans.pro.features.5')
             ],
             popular: true,
-            color: 'blue',
+            gradient: 'from-blue-500 to-indigo-600',
+            borderColor: 'border-blue-400 ring-2 ring-blue-100',
+            priceColor: 'text-blue-600',
             cta: t('pricing.choosePlan')
         },
         {
@@ -67,7 +71,9 @@ export default function PricingPage() {
                 t('pricing.plans.business.features.6')
             ],
             popular: false,
-            color: 'purple',
+            gradient: 'from-purple-500 to-pink-600',
+            borderColor: 'border-purple-200 hover:border-purple-300',
+            priceColor: 'text-purple-600',
             cta: t('pricing.choosePlan')
         },
         {
@@ -84,7 +90,9 @@ export default function PricingPage() {
                 t('pricing.plans.enterprise.features.5')
             ],
             popular: false,
-            color: 'emerald',
+            gradient: 'from-emerald-500 to-teal-600',
+            borderColor: 'border-emerald-200 hover:border-emerald-300',
+            priceColor: 'text-emerald-600',
             cta: t('pricing.choosePlan')
         }
     ]
@@ -163,18 +171,11 @@ export default function PricingPage() {
                             {plans.map((plan) => (
                                 <div
                                     key={plan.id}
-                                    className={`relative bg-white border-2 rounded-2xl shadow-lg p-6 transition-all duration-200 hover:shadow-xl ${plan.color === 'blue'
-                                            ? 'border-blue-400 ring-2 ring-blue-100'
-                                            : plan.color === 'purple'
-                                                ? 'border-purple-300 hover:border-purple-400'
-                                                : plan.color === 'emerald'
-                                                    ? 'border-emerald-300 hover:border-emerald-400'
-                                                    : 'border-gray-200 hover:border-gray-300'
-                                        }`}
+                                    className={`relative bg-white border-2 rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${plan.borderColor}`}
                                 >
                                     {plan.popular && (
                                         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                                            <div className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold flex items-center space-x-1">
+                                            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-full text-sm font-semibold flex items-center space-x-1 shadow-lg">
                                                 <Star className="h-4 w-4" />
                                                 <span>{t('pricing.mostPopular')}</span>
                                             </div>
@@ -185,33 +186,31 @@ export default function PricingPage() {
                                         <h3 className="text-2xl font-bold text-gray-900 mb-2">
                                             {plan.name}
                                         </h3>
-                                        <div className="text-4xl font-bold text-blue-600 mb-2">
+                                        <div className={`text-4xl font-bold ${plan.priceColor} mb-2`}>
                                             {plan.price}
                                             {plan.id !== 'free' && (
-                                                <span className="text-lg text-gray-500">/ay</span>
+                                                <span className="text-lg text-gray-400 font-normal">/ay</span>
                                             )}
                                         </div>
-                                        <p className="text-gray-600">{plan.description}</p>
+                                        <p className="text-gray-500">{plan.description}</p>
                                     </div>
 
-                                    <ul className="space-y-4 mb-8">
+                                    <ul className="space-y-3 mb-8">
                                         {plan.features.map((feature, index) => (
                                             <li key={index} className="flex items-center space-x-3">
-                                                <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                                                <span className="text-gray-700">{feature}</span>
+                                                <div className="h-5 w-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                                                    <Check className="h-3 w-3 text-green-600" />
+                                                </div>
+                                                <span className="text-gray-600 text-sm">{feature}</span>
                                             </li>
                                         ))}
                                     </ul>
 
                                     <Link
                                         href={`/${locale}/auth/register`}
-                                        className={`w-full block text-center py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${plan.color === 'blue'
-                                            ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200'
-                                            : plan.color === 'purple'
-                                                ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-lg shadow-purple-200'
-                                                : plan.color === 'emerald'
-                                                    ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-200'
-                                                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-300'
+                                        className={`w-full block text-center py-3 px-6 rounded-xl font-semibold transition-all duration-200 ${plan.id === 'free'
+                                                ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
+                                                : `bg-gradient-to-r ${plan.gradient} text-white shadow-lg hover:shadow-xl hover:scale-[1.02]`
                                             }`}
                                     >
                                         {plan.cta}
