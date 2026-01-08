@@ -1,10 +1,10 @@
 import { PublicNav } from '@/components/layout/PublicNav'
 import { Footer } from '@/components/Footer'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import PlaceholderPage from "@/components/PlaceholderPage"
-import { Calendar, User, ArrowRight } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Calendar, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
+import { Button } from '@/components/ui/button'
 
 interface PageProps {
     params: Promise<{ locale: string }>
@@ -12,82 +12,84 @@ interface PageProps {
 
 export default async function BlogPage({ params }: PageProps) {
     const { locale } = await params
+    const t = await getTranslations({ locale, namespace: 'blog' })
 
     const posts = [
         {
-            title: "The Future of AI Customer Support",
-            excerpt: "How generative AI is transforming the way businesses interact with customers 24/7 without losing the human touch.",
-            date: "Jan 5, 2024",
-            author: "Sarah Johnson",
-            category: "Trends"
+            id: 1,
+            title: t('posts.post1.title'),
+            excerpt: t('posts.post1.excerpt'),
+            date: "Oct 12, 2025",
+            author: "Sarah Chembo",
+            category: t('categories.trends'),
+            image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80"
         },
         {
-            title: "Optimizing Chatbot Responses for E-commerce",
-            excerpt: "Best practices for training your AI to handle product queries, returns, and order status checks effectively.",
-            date: "Dec 28, 2023",
+            id: 2,
+            title: t('posts.post2.title'),
+            excerpt: t('posts.post2.excerpt'),
+            date: "Oct 08, 2025",
             author: "Michael Chen",
-            category: "Tips & Tricks"
+            category: t('categories.tips'),
+            image: "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?w=800&q=80"
         },
         {
-            title: "PylonChat v2.0 Release Notes",
-            excerpt: "Introducing advanced analytics, multi-language support improvements, and a brand new dashboard experience.",
-            date: "Dec 15, 2023",
-            author: "PylonChat Team",
-            category: "Product Updates"
+            id: 3,
+            title: t('posts.post3.title'),
+            excerpt: t('posts.post3.excerpt'),
+            date: "Oct 01, 2025",
+            author: "Emma Wilson",
+            category: t('categories.updates'),
+            image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
         }
     ]
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
             <PublicNav />
+            <main className="flex-1 py-16">
+                <div className="container mx-auto px-4">
+                    <div className="text-center max-w-3xl mx-auto mb-16">
+                        <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('title')}</h1>
+                        <p className="text-xl text-gray-600">{t('subtitle')}</p>
+                    </div>
 
-            {/* Hero */}
-            <div className="bg-gray-900 py-20 text-center text-white px-4">
-                <h1 className="text-4xl font-bold mb-4">PylonChat Blog</h1>
-                <p className="text-xl text-gray-400 max-w-2xl mx-auto">Latest news, updates, and insights from the world of AI chatbots.</p>
-            </div>
-
-            <main className="flex-1 container mx-auto px-4 py-16 -mt-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {posts.map((post, index) => (
-                        <Card key={index} className="flex flex-col h-full hover:shadow-xl transition-shadow bg-white overflow-hidden group cursor-pointer">
-                            <div className="h-48 bg-gray-200 relative overflow-hidden">
-                                {/* Placeholder image */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 opacity-20 group-hover:opacity-30 transition-opacity" />
-                            </div>
-                            <CardHeader>
-                                <div className="flex items-center justify-between mb-2">
-                                    <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                        {posts.map((post) => (
+                            <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow border-gray-200 flex flex-col h-full">
+                                <div className="h-48 overflow-hidden relative">
+                                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-blue-600 z-10">
                                         {post.category}
-                                    </Badge>
-                                    <span className="text-sm text-gray-500 flex items-center">
-                                        <Calendar className="w-3 h-3 mr-1" />
-                                        {post.date}
-                                    </span>
-                                </div>
-                                <CardTitle className="leading-tight group-hover:text-blue-600 transition-colors">
-                                    {post.title}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="flex-1 flex flex-col justify-between">
-                                <p className="text-gray-600 mb-6 flex-1">
-                                    {post.excerpt}
-                                </p>
-                                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                    <div className="flex items-center text-sm text-gray-900 font-medium">
-                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 mr-2">
-                                            {post.author.charAt(0)}
-                                        </div>
-                                        {post.author}
                                     </div>
-                                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                                    <img
+                                        src={post.image}
+                                        alt={post.title}
+                                        className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+                                    />
                                 </div>
-                            </CardContent>
-                        </Card>
-                    ))}
+                                <CardHeader>
+                                    <div className="text-sm text-gray-500 mb-2 flex items-center space-x-2">
+                                        <span>{post.date}</span>
+                                        <span>•</span>
+                                        <span>{post.author}</span>
+                                    </div>
+                                    <CardTitle className="text-xl leading-tight line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
+                                        {post.title}
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="flex-1">
+                                    <p className="text-gray-600 line-clamp-3 mb-4">
+                                        {post.excerpt}
+                                    </p>
+                                    <Button variant="link" className="p-0 h-auto font-semibold text-blue-600 group">
+                                        {t('readMore')} <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
                 </div>
             </main>
-
             <Footer locale={locale} />
         </div>
     )

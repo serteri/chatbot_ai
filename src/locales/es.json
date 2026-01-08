@@ -1883,5 +1883,162 @@
       "gdpr": "RGPD",
       "help": "Ayuda"
     }
+  },
+  "status": {
+    "title": "Estado del Sistema",
+    "allSystemsOperational": "Todos los Sistemas Operativos",
+    "currentStatus": "Estado Actual",
+    "operational": "Operativo",
+    "degraded": "Rendimiento Degradado",
+    "outage": "Interrupción Parcial",
+    "systems": {
+      "api": "API",
+      "dashboard": "Panel de Control",
+      "widget": "Widget de Chat",
+      "webhooks": "Webhooks",
+      "database": "Base de Datos",
+      "integrations": "Integraciones de Terceros"
+    }
+  },
+  "help": {
+    "title": "¿Cómo podemos ayudarle?",
+    "subtitle": "Busque en nuestra base de conocimientos o explore las categorías a continuación",
+    "searchPlaceholder": "Buscar respuestas...",
+    "stillNeedHelp": "¿Aún necesita ayuda?",
+    "contactSupport": "Contactar Soporte",
+    "contactDesc": "Nuestro equipo de soporte está disponible 24/7 para ayudarle.",
+    "categories": {
+      "gettingStarted": "Empezando",
+      "gettingStartedDesc": "Aprenda los conceptos básicos de PylonChat",
+      "billing": "Facturación y Planes",
+      "billingDesc": "Administre su suscripción y pagos",
+      "account": "Configuración de Cuenta",
+      "accountDesc": "Actualice su perfil y preferencias",
+      "chatbot": "Configuración del Chatbot",
+      "chatbotDesc": "Personalice su asistente de IA",
+      "security": "Seguridad y Privacidad",
+      "securityDesc": "Aprenda cómo protegemos sus datos"
+    }
+  },
+  "blog": {
+    "title": "Blog de PylonChat",
+    "subtitle": "Últimas noticias, actualizaciones y conocimientos del mundo de los chatbots de IA.",
+    "readMore": "Leer más",
+    "categories": {
+      "trends": "Tendencias",
+      "tips": "Consejos y Trucos",
+      "updates": "Actualizaciones de Producto"
+    },
+    "posts": {
+      "post1": {
+        "title": "El Futuro del Soporte al Cliente con IA",
+        "excerpt": "Cómo la IA generativa está transformando la forma en que las empresas interactúan con los clientes 24/7 sin perder el toque humano."
+      },
+      "post2": {
+        "title": "Optimizando Respuestas de Chatbot para E-commerce",
+        "excerpt": "Mejores prácticas para entrenar a su IA para manejar consultas de productos, devoluciones y verificaciones de estado de pedidos de manera efectiva."
+      },
+      "post3": {
+        "title": "Notas de la Versión PylonChat v2.0",
+        "excerpt": "Presentando análisis avanzados, mejoras en soporte multilingüe y una experiencia de panel completamente nueva."
+      }
+    }
+  },
+  "careers": {
+    "title": "Únase a Nuestra Misión",
+    "subtitle": "Estamos construyendo el futuro de la comunicación con el cliente con IA. Ven y ayúdanos a darle forma.",
+    "remoteFriendly": "Trabajo Remoto Amigable",
+    "glassdoorRating": "Calificación Glassdoor",
+    "openPositions": "Posiciones Abiertas",
+    "applyNow": "Aplicar Ahora",
+    "noRole": "¿No ve un rol que encaje?",
+    "sendResume": "Envíenos su currículum de todos modos",
+    "positions": {
+      "pos1": {
+        "title": "Ingeniero Full Stack Senior",
+        "dept": "Ingeniería",
+        "type": "Tiempo Completo"
+      },
+      "pos2": {
+        "title": "Científico de Investigación de IA",
+        "dept": "IA y ML",
+        "type": "Tiempo Completo"
+      },
+      "pos3": {
+        "title": "Gerente de Marketing de Producto",
+        "dept": "Marketing",
+        "type": "Tiempo Completo"
+      },
+      "pos4": {
+        "title": "Especialista en Éxito del Cliente",
+        "dept": "Soporte",
+        "type": "Medio Tiempo"
+      }
+    }
+  },
+  "docs": {
+    "title": "Documentación",
+    "subtitle": "Todo lo que necesita para construir con PylonChat",
+    "sidebar": {
+      "gettingStarted": "Empezando",
+      "coreConcepts": "Conceptos Básicos",
+      "apiReference": "Referencia de API"
+    },
+    "intro": {
+      "title": "Introducción",
+      "text": "PylonChat es una plataforma de compromiso con el cliente impulsada por IA que ayuda a las empresas a automatizar el soporte, aumentar las ventas y proporcionar asistencia 24/7.",
+      "howItWorks": "Cómo funciona",
+      "howItWorksText": "A diferencia de los chatbots tradicionales que dependen de árboles de decisión rígidos, PylonChat utiliza modelos de lenguaje grande (LLM) avanzados para comprender la intención y el contexto. Esto le permite manejar consultas complejas, cambiar de tema de forma natural y proporcionar respuestas personalizadas.",
+      "nextSteps": "Próximos Pasos",
+      "step1": "Cree su cuenta gratuita",
+      "step2": "Configure su primer chatbot",
+      "step3": "Inserte el widget en su sitio"
+    },
+    "api": {
+      "title": "Referencia de API",
+      "subtitle": "Administre chatbots programáticamente, recupere el historial de conversaciones y analice métricas de rendimiento.",
+      "auth": "Autenticación",
+      "authDesc": "La API de PylonChat utiliza claves API para autenticar solicitudes.",
+      "chatbots": "Chatbots",
+      "chatbotsDesc": "Devuelve una lista de chatbots asociados con su cuenta.",
+      "conversations": "Conversaciones",
+      "messages": "Mensajes"
+    }
+  },
+  "legal": {
+    "lastUpdated": "Última actualización",
+    "privacy": {
+      "title": "Política de Privacidad",
+      "intro": "Bienvenido a PylonChat. Estamos comprometidos a proteger su información personal y su derecho a la privacidad.",
+      "collectTitle": "Información que Recopilamos",
+      "collectText": "Recopilamos información personal que usted nos proporciona voluntariamente al registrarse en los Servicios.",
+      "useTitle": "Cómo Usamos su Información",
+      "useText": "Utilizamos la información personal recopilada a través de nuestros Servicios para fines comerciales.",
+      "shareTitle": "Compartir su Información",
+      "shareText": "Solo compartimos información con su consentimiento, para cumplir con las leyes o proporcionar servicios."
+    },
+    "terms": {
+      "title": "Términos de Servicio",
+      "agreementTitle": "Acuerdo de Términos",
+      "agreementText": "Estos Términos de Servicio constituyen un acuerdo legalmente vinculante entre usted y PylonChat.",
+      "userTitle": "Representaciones del Usuario",
+      "userText": "Al usar el Sitio, usted declara y garantiza que toda la información de registro que envíe será verdadera, precisa, actual y completa.",
+      "prohibitedTitle": "Actividades Prohibidas",
+      "prohibitedText": "No puede acceder ni utilizar el Sitio para ningún otro propósito que no sea para el que ponemos a disposición el Sitio."
+    },
+    "cookies": {
+      "title": "Política de Cookies",
+      "whatTitle": "Qué son las Cookies",
+      "whatText": "Como es práctica común en casi todos los sitios web profesionales, este sitio utiliza cookies para mejorar su experiencia.",
+      "howTitle": "Cómo Usamos las Cookies",
+      "howText": "Utilizamos cookies por una variedad de razones detalladas a continuación. Desafortunadamente, en la mayoría de los casos no existen opciones estándar de la industria para deshabilitar las cookies."
+    },
+    "gdpr": {
+      "title": "Cumplimiento de GDPR",
+      "rightsTitle": "Sus Derechos de Protección de Datos",
+      "rightsText": "PylonChat se compromete a garantizar que su privacidad esté protegida y que cumplamos con el Reglamento General de Protección de Datos (GDPR).",
+      "processingTitle": "Procesamiento de Datos",
+      "processingText": "Procesamos sus datos solo según sea necesario para proporcionar nuestros servicios, mejorar nuestra plataforma y cumplir con las obligaciones legales."
+    }
   }
 }

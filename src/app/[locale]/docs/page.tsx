@@ -1,8 +1,9 @@
 import { PublicNav } from '@/components/layout/PublicNav'
 import { Footer } from '@/components/Footer'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import Link from 'next/link'
-import { Book, Code, Terminal, Zap } from 'lucide-react'
+import { Book, FileText, Code, Sparkles } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 
 interface PageProps {
     params: Promise<{ locale: string }>
@@ -10,94 +11,78 @@ interface PageProps {
 
 export default async function DocsPage({ params }: PageProps) {
     const { locale } = await params
+    const t = await getTranslations({ locale, namespace: 'docs' })
 
-    const sidebar = [
-        { title: "Getting Started", icon: Zap, items: ["Introduction", "Installation", "Configuration"] },
-        { title: "Core Concepts", icon: Book, items: ["Chatbots", "Flows", "Integrations"] },
-        { title: "API Reference", icon: Code, items: ["Authentication", "Endpoints", "Webhooks"] },
+    const menuItems = [
+        { title: t('sidebar.gettingStarted'), href: `/${locale}/docs`, active: true, icon: Book },
+        { title: t('sidebar.coreConcepts'), href: `/${locale}/docs/concepts`, active: false, icon: FileText },
+        { title: t('sidebar.apiReference'), href: `/${locale}/docs/api`, active: false, icon: Code }
     ]
 
     return (
-        <div className="min-h-screen flex flex-col bg-gray-50">
+        <div className="min-h-screen flex flex-col bg-white">
             <PublicNav />
-
-            <div className="border-b border-gray-200 bg-white">
-                <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Documentation</h1>
-                    <p className="text-gray-600 mt-2">Everything you need to build with PylonChat</p>
-                </div>
-            </div>
-
-            <main className="flex-1 container mx-auto px-4 py-8">
-                <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Sidebar */}
-                    <div className="lg:w-64 flex-shrink-0">
-                        <div className="sticky top-24 space-y-8">
-                            {sidebar.map((section) => (
-                                <div key={section.title}>
-                                    <h3 className="flex items-center text-sm font-semibold text-gray-900 mb-3">
-                                        <section.icon className="w-4 h-4 mr-2" />
-                                        {section.title}
-                                    </h3>
-                                    <ul className="space-y-2">
-                                        {section.items.map((item) => (
-                                            <li key={item}>
-                                                <a href="#" className="text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 block px-2 py-1.5 rounded-md transition-colors">
-                                                    {item}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+            <div className="flex-1 flex border-t border-gray-200">
+                {/* Sidebar */}
+                <aside className="w-64 border-r border-gray-200 bg-gray-50 hidden md:block">
+                    <div className="p-6 sticky top-0">
+                        <h2 className="font-bold text-gray-900 mb-6 px-3">{t('title')}</h2>
+                        <nav className="space-y-1">
+                            {menuItems.map((item) => (
+                                <Link
+                                    key={item.title}
+                                    href={item.href}
+                                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${item.active
+                                            ? 'bg-blue-50 text-blue-700'
+                                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                                        }`}
+                                >
+                                    <item.icon className={`mr-3 h-4 w-4 ${item.active ? 'text-blue-500' : 'text-gray-400'}`} />
+                                    {item.title}
+                                </Link>
                             ))}
-                        </div>
+                        </nav>
                     </div>
+                </aside>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
+                {/* Main Content */}
+                <main className="flex-1 min-w-0 bg-white">
+                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                         <div className="prose prose-blue max-w-none">
-                            <h2>Introduction</h2>
-                            <p className="lead">
-                                PylonChat is an AI-powered customer engagement platform that helps businesses automate support, increase sales, and provide 24/7 assistance.
+                            <h1>{t('intro.title')}</h1>
+                            <p className="lead text-xl text-gray-600">
+                                {t('intro.text')}
                             </p>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 not-prose my-8">
-                                <Link href={`/${locale}/docs/api`}>
-                                    <Card className="hover:border-blue-500 transition-colors cursor-pointer h-full">
-                                        <CardContent className="p-6">
-                                            <Terminal className="w-8 h-8 text-blue-600 mb-4" />
-                                            <h3 className="font-semibold text-lg mb-2">API Reference</h3>
-                                            <p className="text-gray-600 text-sm">Explore our REST API endpoints and integrate PylonChat into your technical stack.</p>
-                                        </CardContent>
-                                    </Card>
-                                </Link>
-                                <div className="cursor-pointer">
-                                    <Card className="hover:border-blue-500 transition-colors h-full">
-                                        <CardContent className="p-6">
-                                            <Zap className="w-8 h-8 text-yellow-500 mb-4" />
-                                            <h3 className="font-semibold text-lg mb-2">Quick Start Guide</h3>
-                                            <p className="text-gray-600 text-sm">Get your first chatbot up and running in less than 5 minutes.</p>
-                                        </CardContent>
-                                    </Card>
-                                </div>
+                            <div className="my-8 p-6 bg-blue-50 rounded-xl border border-blue-100">
+                                <h3 className="text-blue-900 mt-0 flex items-center">
+                                    <Sparkles className="h-5 w-5 mr-2 text-blue-600" />
+                                    {t('intro.howItWorks')}
+                                </h3>
+                                <p className="text-blue-800 mb-0">
+                                    {t('intro.howItWorksText')}
+                                </p>
                             </div>
 
-                            <h3>How it works</h3>
-                            <p>
-                                Unlike traditional chatbots that rely on rigid decision trees, PylonChat uses advanced Large Language Models (LLMs) to understand intent and context. This allows it to handle complex queries, switch topics naturally, and provide personalized responses.
-                            </p>
-
-                            <h3>Next Steps</h3>
-                            <ul>
-                                <li>Create your free account</li>
-                                <li>Configure your first chatbot</li>
-                                <li>Embed the widget on your site</li>
-                            </ul>
+                            <h2>{t('intro.nextSteps')}</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 not-prose my-8">
+                                <Card className="p-6 border-l-4 border-l-blue-500 hover:shadow-md transition-shadow">
+                                    <div className="text-3xl font-bold text-blue-100 mb-2">01</div>
+                                    <h3 className="font-bold text-gray-900 mb-2">{t('intro.step1')}</h3>
+                                </Card>
+                                <Card className="p-6 border-l-4 border-l-blue-500 hover:shadow-md transition-shadow">
+                                    <div className="text-3xl font-bold text-blue-100 mb-2">02</div>
+                                    <h3 className="font-bold text-gray-900 mb-2">{t('intro.step2')}</h3>
+                                </Card>
+                                <Card className="p-6 border-l-4 border-l-blue-500 hover:shadow-md transition-shadow">
+                                    <div className="text-3xl font-bold text-blue-100 mb-2">03</div>
+                                    <h3 className="font-bold text-gray-900 mb-2">{t('intro.step3')}</h3>
+                                </Card>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </main>
-
+                </main>
+            </div>
             <Footer locale={locale} />
         </div>
     )

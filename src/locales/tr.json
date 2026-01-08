@@ -1908,5 +1908,162 @@
       "gdpr": "KVKK",
       "help": "Yardım"
     }
+  },
+  "status": {
+    "title": "Sistem Durumu",
+    "allSystemsOperational": "Tüm Sistemler Çalışıyor",
+    "currentStatus": "Mevcut Durum",
+    "operational": "Çalışıyor",
+    "degraded": "Performans Düşüklüğü",
+    "outage": "Kısmi Kesinti",
+    "systems": {
+      "api": "API",
+      "dashboard": "Dashboard",
+      "widget": "Sohbet Widget'ı",
+      "webhooks": "Webhooklar",
+      "database": "Veritabanı",
+      "integrations": "Üçüncü Parti Entegrasyonlar"
+    }
+  },
+  "help": {
+    "title": "Size nasıl yardımcı olabiliriz?",
+    "subtitle": "Bilgi bankamızda arama yapın veya kategorilere göz atın",
+    "searchPlaceholder": "Cevap ara...",
+    "stillNeedHelp": "Hala yardıma mı ihtiyacınız var?",
+    "contactSupport": "Destekle İletişime Geç",
+    "contactDesc": "Destek ekibimiz size yardımcı olmak için 7/24 hizmetinizde.",
+    "categories": {
+      "gettingStarted": "Başlarken",
+      "gettingStartedDesc": "PylonChat temellerini öğrenin",
+      "billing": "Faturalandırma ve Planlar",
+      "billingDesc": "Aboneliğinizi ve ödemelerinizi yönetin",
+      "account": "Hesap Ayarları",
+      "accountDesc": "Profilinizi ve tercihlerinizi güncelleyin",
+      "chatbot": "Chatbot Yapılandırması",
+      "chatbotDesc": "Yapay zeka asistanınızı özelleştirin",
+      "security": "Güvenlik ve Gizlilik",
+      "securityDesc": "Verilerinizi nasıl koruduğumuzu öğrenin"
+    }
+  },
+  "blog": {
+    "title": "PylonChat Blog",
+    "subtitle": "AI chatbot dünyasından en son haberler, güncellemeler ve içgörüler.",
+    "readMore": "Devamını oku",
+    "categories": {
+      "trends": "Trendler",
+      "tips": "İpuçları",
+      "updates": "Ürün Güncellemeleri"
+    },
+    "posts": {
+      "post1": {
+        "title": "AI Müşteri Desteğinin Geleceği",
+        "excerpt": "Üretken yapay zekanın, işletmelerin müşterilerle 7/24 etkileşim kurma biçimini nasıl dönüştürdüğünü keşfedin."
+      },
+      "post2": {
+        "title": "E-ticaret için Chatbot Yanıtlarını Optimize Etme",
+        "excerpt": "Yapay zekanızı ürün sorguları, iadeler ve sipariş durumu kontrolleri için eğitme konusundaki en iyi uygulamalar."
+      },
+      "post3": {
+        "title": "PylonChat v2.0 Sürüm Notları",
+        "excerpt": "Gelişmiş analitikler, çoklu dil desteği iyileştirmeleri ve yepyeni bir dashboard deneyimi ile tanışın."
+      }
+    }
+  },
+  "careers": {
+    "title": "Ekibimize Katılın",
+    "subtitle": "Müşteri iletişiminin geleceğini AI ile inşa ediyoruz. Bize katılın ve şekillendirmemize yardımcı olun.",
+    "remoteFriendly": "Uzaktan Çalışma Dostu",
+    "glassdoorRating": "Glassdoor Puanı",
+    "openPositions": "Açık Pozisyonlar",
+    "applyNow": "Başvur",
+    "noRole": "Size uygun bir rol yok mu?",
+    "sendResume": "Yine de CV'nizi gönderin",
+    "positions": {
+      "pos1": {
+        "title": "Kıdemli Full Stack Mühendisi",
+        "dept": "Mühendislik",
+        "type": "Tam Zamanlı"
+      },
+      "pos2": {
+        "title": "AI Araştırma Bilimcisi",
+        "dept": "AI & ML",
+        "type": "Tam Zamanlı"
+      },
+      "pos3": {
+        "title": "Ürün Pazarlama Müdürü",
+        "dept": "Pazarlama",
+        "type": "Tam Zamanlı"
+      },
+      "pos4": {
+        "title": "Müşteri Başarı Uzmanı",
+        "dept": "Destek",
+        "type": "Yarı Zamanlı"
+      }
+    }
+  },
+  "docs": {
+    "title": "Dokümantasyon",
+    "subtitle": "PylonChat ile geliştirme yapmak için ihtiyacınız olan her şey",
+    "sidebar": {
+      "gettingStarted": "Başlarken",
+      "coreConcepts": "Temel Kavramlar",
+      "apiReference": "API Referansı"
+    },
+    "intro": {
+      "title": "Giriş",
+      "text": "PylonChat, işletmelerin desteği otomatikleştirmesine, satışları artırmasına ve 7/24 yardım sağlamasına yardımcı olan yapay zeka destekli bir müşteri etkileşim platformudur.",
+      "howItWorks": "Nasıl çalışır",
+      "howItWorksText": "Katı karar ağaçlarına dayanan geleneksel chatbotların aksine, PylonChat niyeti ve bağlamı anlamak için gelişmiş Büyük Dil Modelleri (LLM) kullanır. Bu, karmaşık sorguları yönetmesine, konuları doğal bir şekilde değiştirmesine ve kişiselleştirilmiş yanıtlar sunmasına olanak tanır.",
+      "nextSteps": "Sonraki Adımlar",
+      "step1": "Ücretsiz hesabınızı oluşturun",
+      "step2": "İlk chatbotunuzu yapılandırın",
+      "step3": "Widget'ı sitenize gömün"
+    },
+    "api": {
+      "title": "API Referansı",
+      "subtitle": "Chatbotları programatik olarak yönetin, konuşma geçmişini alın ve performans ölçümlerini analiz edin.",
+      "auth": "Kimlik Doğrulama",
+      "authDesc": "PylonChat API, istekleri doğrulamak için API anahtarları kullanır.",
+      "chatbots": "Chatbotlar",
+      "chatbotsDesc": "Hesabınızla ilişkili chatbotların bir listesini döndürür.",
+      "conversations": "Konuşmalar",
+      "messages": "Mesajlar"
+    }
+  },
+  "legal": {
+    "lastUpdated": "Son güncelleme",
+    "privacy": {
+      "title": "Gizlilik Politikası",
+      "intro": "PylonChat'e hoş geldiniz. Kişisel bilgilerinizi ve gizlilik hakkınızı korumaya kararlıyız.",
+      "collectTitle": "Topladığımız Bilgiler",
+      "collectText": "Hizmetlere kaydolurken gönüllü olarak sağladığınız kişisel bilgileri topluyoruz.",
+      "useTitle": "Bilgilerinizi Nasıl Kullanıyoruz",
+      "useText": "Hizmetlerimiz aracılığıyla toplanan kişisel bilgileri ticari amaçlarla kullanıyoruz.",
+      "shareTitle": "Bilgilerinizi Paylaşma",
+      "shareText": "Bilgilerinizi yalnızca onayınızla, yasalara uymak veya hizmet sağlamak için paylaşıyoruz."
+    },
+    "terms": {
+      "title": "Hizmet Şartları",
+      "agreementTitle": "Şartların Kabulü",
+      "agreementText": "Bu Hizmet Şartları, siz ve PylonChat arasında yasal olarak bağlayıcı bir anlaşma teşkil eder.",
+      "userTitle": "Kullanıcı Beyanları",
+      "userText": "Siteyi kullanarak, gönderdiğiniz tüm kayıt bilgilerinin doğru, kesin, güncel ve eksiksiz olacağını beyan ve taahhüt edersiniz.",
+      "prohibitedTitle": "Yasaklanmış Faaliyetler",
+      "prohibitedText": "Siteye, siteyi kullanıma sunduğumuz amaç dışında herhangi bir amaçla erişemez ve kullanamazsınız."
+    },
+    "cookies": {
+      "title": "Çerez Politikası",
+      "whatTitle": "Çerezler Nedir",
+      "whatText": "Hemen hemen tüm profesyonel web sitelerinde olduğu gibi, bu site deneyiminizi geliştirmek için bilgisayarınıza indirilen küçük dosyalar olan çerezleri kullanır.",
+      "howTitle": "Çerezleri Nasıl Kullanıyoruz",
+      "howText": "Çerezleri aşağıda ayrıntıları verilen çeşitli nedenlerle kullanıyoruz. Maalesef çoğu durumda, bu siteye ekledikleri işlevselliği ve özellikleri tamamen devre dışı bırakmadan çerezleri devre dışı bırakmak için endüstri standardı seçenekler yoktur."
+    },
+    "gdpr": {
+      "title": "GDPR Uyumluluğu",
+      "rightsTitle": "Veri Koruma Haklarınız",
+      "rightsText": "PylonChat, gizliliğinizin korunmasını ve Genel Veri Koruma Yönetmeliği'ne (GDPR) uygunluğumuzu sağlamaya kararlıdır.",
+      "processingTitle": "Veri İşleme",
+      "processingText": "Verilerinizi yalnızca hizmetlerimizi sağlamak, platformumuzu geliştirmek ve yasal yükümlülüklere uymak için gerekli olduğu şekilde işliyoruz."
+    }
   }
 }
