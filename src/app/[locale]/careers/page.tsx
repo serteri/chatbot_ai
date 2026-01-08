@@ -14,14 +14,6 @@ export default async function CareersPage({ params }: PageProps) {
 
     const positions = [
         {
-            title: "Senior Full Stack Engineer",
-            dept: "Engineering",
-            location: "Remote / Brisbane",
-            type: "Full-time"
-        },
-        {
-            title: "AI Research Scientist",
-            dept: "AI & ML",
             id: 1,
             title: t('positions.pos1.title'),
             department: t('positions.pos1.dept'),

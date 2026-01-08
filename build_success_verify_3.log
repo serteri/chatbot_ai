@@ -1,0 +1,34 @@
+
+> pylonchat@0.1.0 build
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+⚠ `eslint` configuration in next.config.js is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+⚠ Invalid next.config.js options detected: 
+⚠     Unrecognized key(s) in object: 'eslint'
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+▲ Next.js 16.1.1 (Turbopack)
+- Environments: .env
+- Experiments (use with caution):
+  · serverActions
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./src/app/[locale]/about/page.tsx:267:11
+Parsing ecmascript source code failed
+[0m [90m 265 |[39m                 [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 266 |[39m             [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+[31m[1m>[22m[39m[90m 267 |[39m         [33m<[39m[33m/[39m[33mdiv[39m [33m>[39m
+ [90m     |[39m           [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 268 |[39m             [33m<[39m[33mFooter[39m locale[33m=[39m{locale} [33m/[39m[33m>[39m
+ [90m 269 |[39m         [33m<[39m[33m/[39m[33m>[39m
+ [90m 270 |[39m     )[0m
+
+Expected '>', got 'div'
+
+
+    at <unknown> (./src/app/[locale]/about/page.tsx:267:11)

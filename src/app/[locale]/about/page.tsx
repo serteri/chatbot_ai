@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { PublicNav } from '@/components/layout/PublicNav'
+import { Footer } from '@/components/Footer'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import {
@@ -263,6 +264,7 @@ export default function AboutPage() {
                     </div>
                 </div>
             </div>
+            <Footer locale={locale} />
         </>
     )
 }

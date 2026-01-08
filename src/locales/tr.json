@@ -2065,5 +2065,84 @@
       "processingTitle": "Veri İşleme",
       "processingText": "Verilerinizi yalnızca hizmetlerimizi sağlamak, platformumuzu geliştirmek ve yasal yükümlülüklere uymak için gerekli olduğu şekilde işliyoruz."
     }
+  },
+  "contact": {
+    "title": "İletişim",
+    "subtitle": "Ekibimizle iletişime geçin",
+    "description": "Sorularınız mı var? Sizden haber almayı çok isteriz.",
+    "form": {
+      "title": "Bize mesaj gönderin",
+      "name": "İsim",
+      "namePlaceholder": "Adınız",
+      "email": "E-posta",
+      "emailPlaceholder": "ornek@eposta.com",
+      "subject": "Konu",
+      "subjectPlaceholder": "Konu nedir?",
+      "message": "Mesaj",
+      "messagePlaceholder": "Size nasıl yardımcı olabiliriz?",
+      "send": "Mesaj Gönder",
+      "sending": "Gönderiliyor...",
+      "success": "Mesaj başarıyla gönderildi!",
+      "nameRequired": "İsim gereklidir",
+      "emailRequired": "E-posta gereklidir",
+      "emailInvalid": "Geçerli bir e-posta adresi giriniz",
+      "subjectRequired": "Konu gereklidir",
+      "messageRequired": "Mesaj gereklidir"
+    },
+    "info": {
+      "title": "İletişim Bilgileri",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "address": "Adres",
+      "hours": "Çalışma Saatleri",
+      "hoursValue": "Pzt-Cum 09:00-17:00"
+    },
+    "support": {
+      "title": "Destek Birimleri",
+      "technical": "Teknik Destek",
+      "sales": "Satış",
+      "general": "Genel Bilgi"
+    },
+    "faq": {
+      "title": "Sıkça Sorulan Sorular",
+      "q1": "Şifremi nasıl sıfırlarım?",
+      "a1": "Giriş sayfasındaki 'Şifremi Unuttum' bağlantısına tıklayarak şifrenizi sıfırlayabilirsiniz.",
+      "q2": "Hangi ödeme yöntemlerini kabul ediyorsunuz?",
+      "a2": "Başlıca kredi kartlarını ve PayPal'ı kabul ediyoruz.",
+      "q3": "Aboneliğimi iptal edebilir miyim?",
+      "a3": "Evet, hesap ayarlarınızdan istediğiniz zaman iptal edebilirsiniz.",
+      "q4": "Ücretsiz deneme sunuyor musunuz?",
+      "a4": "Evet, tüm planlarda 14 günlük ücretsiz deneme sunuyoruz."
+    }
+  },
+  "footer": {
+    "description": "Yapay zeka destekli müşteri etkileşim platformu.",
+    "location": "Brisbane, Avustralya",
+    "copyright": "Tüm hakları saklıdır.",
+    "sections": {
+      "product": "Ürün",
+      "company": "Şirket",
+      "support": "Destek",
+      "legal": "Yasal"
+    },
+    "links": {
+      "features": "Özellikler",
+      "pricing": "Fiyatlandırma",
+      "demo": "Demo",
+      "api": "API",
+      "about": "Hakkımızda",
+      "blog": "Blog",
+      "careers": "Kariyer",
+      "contact": "İletişim",
+      "privacy": "Gizlilik Politikası",
+      "terms": "Kullanım Şartları",
+      "cookies": "Çerez Politikası",
+      "gdpr": "GDPR",
+      "helpCenter": "Yardım Merkezi",
+      "docs": "Dokümantasyon",
+      "faq": "SSS",
+      "status": "Sistem Durumu",
+      "help": "Yardım"
+    }
   }
 }

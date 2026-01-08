@@ -1,21 +1,5 @@
-'use client'
-
-import { useTranslations } from 'next-intl'
-import { PublicNav } from '@/components/layout/PublicNav'
-import { useParams } from 'next/navigation'
-import { useState } from 'react'
-import {
-    Mail,
-    Phone,
-    MapPin,
-    Clock,
-    Send,
-    MessageCircle,
-    HeadphonesIcon,
-    Building,
-    HelpCircle,
-    CheckCircle
-} from 'lucide-react'
+import { Footer } from '@/components/Footer'
+// ... imports ...
 
 export default function ContactPage() {
     const t = useTranslations()
@@ -28,11 +12,29 @@ export default function ContactPage() {
         subject: '',
         message: ''
     })
+    const [errors, setErrors] = useState<Record<string, string>>({})
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSubmitted, setIsSubmitted] = useState(false)
 
+    const validate = () => {
+        const newErrors: Record<string, string> = {}
+        if (!formData.name.trim()) newErrors.name = t('contact.form.nameRequired')
+        if (!formData.email.trim()) {
+            newErrors.email = t('contact.form.emailRequired')
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = t('contact.form.emailInvalid')
+        }
+        if (!formData.subject.trim()) newErrors.subject = t('contact.form.subjectRequired')
+        if (!formData.message.trim()) newErrors.message = t('contact.form.messageRequired')
+
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        if (!validate()) return
+
         setIsSubmitting(true)
 
         // Simulate form submission
@@ -40,34 +42,18 @@ export default function ContactPage() {
             setIsSubmitting(false)
             setIsSubmitted(true)
             setFormData({ name: '', email: '', subject: '', message: '' })
+            setErrors({})
         }, 2000)
     }
 
-    const faqs = [
-        {
-            question: t('contact.faq.q1'),
-            answer: t('contact.faq.a1')
-        },
-        {
-            question: t('contact.faq.q2'),
-            answer: t('contact.faq.a2')
-        },
-        {
-            question: t('contact.faq.q3'),
-            answer: t('contact.faq.a3')
-        },
-        {
-            question: t('contact.faq.q4'),
-            answer: t('contact.faq.a4')
-        }
-    ]
+    // ... faqs ...
 
     return (
         <>
             <PublicNav />
 
             <div className="min-h-screen bg-white">
-                {/* Hero Section */}
+                {/* ... Hero Section ... */}
                 <div className="bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20">
                     <div className="container mx-auto px-4 text-center">
                         <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -107,7 +93,7 @@ export default function ContactPage() {
                                             </button>
                                         </div>
                                     ) : (
-                                        <form onSubmit={handleSubmit} className="space-y-6">
+                                        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                                             <div className="grid md:grid-cols-2 gap-6">
                                                 <div>
                                                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -115,12 +101,15 @@ export default function ContactPage() {
                                                     </label>
                                                     <input
                                                         type="text"
-                                                        required
-                                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
                                                         placeholder={t('contact.form.namePlaceholder')}
                                                         value={formData.name}
-                                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                        onChange={(e) => {
+                                                            setFormData({ ...formData, name: e.target.value })
+                                                            if (errors.name) setErrors({ ...errors, name: '' })
+                                                        }}
                                                     />
+                                                    {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
                                                 </div>
                                                 <div>
                                                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -128,12 +117,15 @@ export default function ContactPage() {
                                                     </label>
                                                     <input
                                                         type="email"
-                                                        required
-                                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                                                         placeholder={t('contact.form.emailPlaceholder')}
                                                         value={formData.email}
-                                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                        onChange={(e) => {
+                                                            setFormData({ ...formData, email: e.target.value })
+                                                            if (errors.email) setErrors({ ...errors, email: '' })
+                                                        }}
                                                     />
+                                                    {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
                                                 </div>
                                             </div>
 
@@ -143,12 +135,15 @@ export default function ContactPage() {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    required
-                                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.subject ? 'border-red-500' : 'border-gray-300'}`}
                                                     placeholder={t('contact.form.subjectPlaceholder')}
                                                     value={formData.subject}
-                                                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                                                    onChange={(e) => {
+                                                        setFormData({ ...formData, subject: e.target.value })
+                                                        if (errors.subject) setErrors({ ...errors, subject: '' })
+                                                    }}
                                                 />
+                                                {errors.subject && <p className="mt-1 text-sm text-red-500">{errors.subject}</p>}
                                             </div>
 
                                             <div>
@@ -157,12 +152,15 @@ export default function ContactPage() {
                                                 </label>
                                                 <textarea
                                                     rows={6}
-                                                    required
-                                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.message ? 'border-red-500' : 'border-gray-300'}`}
                                                     placeholder={t('contact.form.messagePlaceholder')}
                                                     value={formData.message}
-                                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                                    onChange={(e) => {
+                                                        setFormData({ ...formData, message: e.target.value })
+                                                        if (errors.message) setErrors({ ...errors, message: '' })
+                                                    }}
                                                 />
+                                                {errors.message && <p className="mt-1 text-sm text-red-500">{errors.message}</p>}
                                             </div>
 
                                             <button
@@ -182,7 +180,8 @@ export default function ContactPage() {
 
                             {/* Contact Info Sidebar */}
                             <div className="space-y-8">
-                                {/* Contact Information */}
+                                {/* ... Contact Info ... */}
+                                {/* ... Support Categories ... */}
                                 <div className="bg-gray-50 p-6 rounded-2xl">
                                     <h3 className="text-xl font-bold text-gray-900 mb-6">
                                         {t('contact.info.title')}
@@ -290,6 +289,7 @@ export default function ContactPage() {
                     </div>
                 </div>
             </div>
+            <Footer locale={locale} />
         </>
     )
 }

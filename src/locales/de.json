@@ -2008,5 +2008,84 @@
       "processingTitle": "Datenverarbeitung",
       "processingText": "Wir verarbeiten Ihre Daten nur so weit, wie es notwendig ist, um unsere Dienste bereitzustellen, unsere Plattform zu verbessern und gesetzlichen Verpflichtungen nachzukommen."
     }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with our team",
+    "description": "Have questions? We'd love to hear from you.",
+    "form": {
+      "title": "Send us a message",
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "subject": "Subject",
+      "subjectPlaceholder": "What is this regarding?",
+      "message": "Message",
+      "messagePlaceholder": "How can we help you?",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent successfully!",
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "subjectRequired": "Subject is required",
+      "messageRequired": "Message is required"
+    },
+    "info": {
+      "title": "Contact Information",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "hours": "Hours",
+      "hoursValue": "Mon-Fri 9am-5pm"
+    },
+    "support": {
+      "title": "Support Departments",
+      "technical": "Technical Support",
+      "sales": "Sales Inquiry",
+      "general": "General Inquiry"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "How do I reset my password?",
+      "a1": "You can reset your password by clicking 'Forgot Password' on the login page.",
+      "q2": "What payment methods do you accept?",
+      "a2": "We accept major credit cards and PayPal.",
+      "q3": "Can I cancel my subscription?",
+      "a3": "Yes, you can cancel anytime from your account settings.",
+      "q4": "Do you offer a free trial?",
+      "a4": "Yes, we offer a 14-day free trial on all plans."
+    }
+  },
+  "footer": {
+    "description": "AI-powered customer engagement platform.",
+    "location": "Brisbane, Australia",
+    "copyright": "All rights reserved.",
+    "sections": {
+      "product": "Product",
+      "company": "Company",
+      "support": "Support",
+      "legal": "Legal"
+    },
+    "links": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "demo": "Demo",
+      "api": "API",
+      "about": "About",
+      "blog": "Blog",
+      "careers": "Careers",
+      "contact": "Contact",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy",
+      "gdpr": "GDPR",
+      "helpCenter": "Help Center",
+      "docs": "Documentation",
+      "faq": "FAQ",
+      "status": "System Status",
+      "help": "Help"
+    }
   }
 }
