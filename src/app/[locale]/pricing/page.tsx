@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 import { PublicNav } from '@/components/layout/PublicNav'
+import { Footer } from '@/components/Footer'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import {
@@ -209,8 +210,8 @@ export default function PricingPage() {
                                     <Link
                                         href={`/${locale}/auth/register`}
                                         className={`w-full block text-center py-3 px-6 rounded-xl font-semibold transition-all duration-200 ${plan.id === 'free'
-                                                ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
-                                                : `bg-gradient-to-r ${plan.gradient} text-white shadow-lg hover:shadow-xl hover:scale-[1.02]`
+                                            ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
+                                            : `bg-gradient-to-r ${plan.gradient} text-white shadow-lg hover:shadow-xl hover:scale-[1.02]`
                                             }`}
                                     >
                                         {plan.cta}
@@ -284,6 +285,9 @@ export default function PricingPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Footer */}
+            <Footer locale={locale} />
         </>
     )
 }

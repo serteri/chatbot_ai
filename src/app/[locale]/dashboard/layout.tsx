@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth/auth'
 import { redirect } from 'next/navigation'
-import DashboardNav  from '@/components/layout/DashboardNav'
+import DashboardNav from '@/components/layout/DashboardNav'
+import { Footer } from '@/components/Footer'
 import { SessionProvider } from 'next-auth/react'
 
 interface DashboardLayoutProps {
@@ -9,9 +10,9 @@ interface DashboardLayoutProps {
 }
 
 export default async function DashboardLayout({
-                                                  children,
-                                                  params
-                                              }: DashboardLayoutProps) {
+    children,
+    params
+}: DashboardLayoutProps) {
     const session = await auth()
     const { locale } = await params
 
@@ -21,9 +22,10 @@ export default async function DashboardLayout({
 
     return (
         <SessionProvider session={session}>
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-gray-50 flex flex-col">
                 <DashboardNav user={session.user} />
-                <main>{children}</main>
+                <main className="flex-1">{children}</main>
+                <Footer locale={locale} variant="dashboard" />
             </div>
         </SessionProvider>
     )
