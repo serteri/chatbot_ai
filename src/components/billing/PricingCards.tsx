@@ -10,9 +10,10 @@ import { useRouter } from 'next/navigation'
 
 interface PlanCardProps {
     currentPlan: string
+    hasStripeSubscription?: boolean
 }
 
-export function PricingCards({ currentPlan }: PlanCardProps) {
+export function PricingCards({ currentPlan, hasStripeSubscription = false }: PlanCardProps) {
     const t = useTranslations('pricing') // Using the 'pricing' namespace directly
     const [loading, setLoading] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
@@ -193,7 +194,7 @@ export function PricingCards({ currentPlan }: PlanCardProps) {
 
                             <CardFooter className="pt-2 pb-8">
                                 {isCurrent ? (
-                                    currentPlan !== 'free' ? (
+                                    currentPlan !== 'free' && hasStripeSubscription ? (
                                         <Button
                                             variant="outline"
                                             className="w-full border-slate-300 hover:bg-slate-50"

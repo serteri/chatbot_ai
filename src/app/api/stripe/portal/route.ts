@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
         if (!user?.stripeCustomerId) {
             return NextResponse.json(
-                { error: 'Stripe müşteri ID bulunamadı' },
+                { error: 'Henüz aktif bir aboneliğiniz yok. Önce bir plan satın alın.' },
                 { status: 404 }
             )
         }
