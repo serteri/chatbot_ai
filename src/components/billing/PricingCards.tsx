@@ -33,7 +33,8 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
             ],
             priceId: null,
             icon: Zap,
-            popular: false
+            popular: false,
+            color: 'gray'
         },
         {
             id: 'pro',
@@ -50,7 +51,8 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
             ],
             priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
             icon: Star,
-            popular: true
+            popular: true,
+            color: 'blue'
         },
         {
             id: 'business',
@@ -68,7 +70,8 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
             ],
             priceId: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_PRICE_ID,
             icon: Shield,
-            popular: false
+            popular: false,
+            color: 'purple'
         },
         {
             id: 'enterprise',
@@ -86,7 +89,8 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
             ],
             priceId: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID,
             icon: Shield,
-            popular: false
+            popular: false,
+            color: 'emerald'
         }
     ]
 
@@ -168,16 +172,31 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                     const isDowngrade = planIndex < currentIndex
 
                     return (
-                        <Card key={plan.id} className={`relative flex flex-col h-full transition-all duration-200 ${plan.popular ? 'border-2 border-blue-600 shadow-xl scale-105 z-10' : 'border border-slate-200 hover:border-slate-300'}`}>
+                        <Card key={plan.id} className={`relative flex flex-col h-full transition-all duration-200 ${plan.color === 'blue'
+                            ? 'border-2 border-blue-400 shadow-xl ring-2 ring-blue-100'
+                            : plan.color === 'purple'
+                                ? 'border-2 border-purple-300 hover:border-purple-400'
+                                : plan.color === 'emerald'
+                                    ? 'border-2 border-emerald-300 hover:border-emerald-400'
+                                    : 'border border-slate-200 hover:border-slate-300'
+                            }`}>
                             {plan.popular && (
                                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 text-sm font-semibold uppercase tracking-wide">
                                     {t('mostPopular')}
                                 </Badge>
                             )}
 
-                            <CardHeader className={`pb-8 border-b ${plan.popular ? 'bg-blue-50/50' : 'bg-slate-50/50'} rounded-t-xl`}>
+                            <CardHeader className={`pb-8 border-b rounded-t-xl ${plan.color === 'blue' ? 'bg-blue-50/50'
+                                : plan.color === 'purple' ? 'bg-purple-50/50'
+                                    : plan.color === 'emerald' ? 'bg-emerald-50/50'
+                                        : 'bg-slate-50/50'
+                                }`}>
                                 <div className="flex items-center justify-between mb-4">
-                                    <div className={`p-2 rounded-lg ${plan.popular ? 'bg-blue-100 text-blue-600' : 'bg-white border text-slate-500'}`}>
+                                    <div className={`p-2 rounded-lg ${plan.color === 'blue' ? 'bg-blue-100 text-blue-600'
+                                        : plan.color === 'purple' ? 'bg-purple-100 text-purple-600'
+                                            : plan.color === 'emerald' ? 'bg-emerald-100 text-emerald-600'
+                                                : 'bg-white border text-slate-500'
+                                        }`}>
                                         <plan.icon className="w-5 h-5" />
                                     </div>
                                     {isCurrent && (
@@ -236,10 +255,17 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                                     </div>
                                 ) : (
                                     <Button
-                                        className={`w-full h-11 font-semibold ${plan.popular ? 'bg-blue-600 hover:bg-blue-700 shadow-md' : ''}`}
+                                        className={`w-full h-11 font-semibold ${plan.color === 'blue'
+                                            ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md'
+                                            : plan.color === 'purple'
+                                                ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-md'
+                                                : plan.color === 'emerald'
+                                                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md'
+                                                    : ''
+                                            }`}
                                         onClick={() => handleUpgrade(plan.priceId, plan.id)}
                                         disabled={loading === plan.id || !plan.priceId}
-                                        variant={plan.popular ? 'default' : 'outline'}
+                                        variant={plan.color === 'gray' ? 'outline' : 'default'}
                                     >
                                         {loading === plan.id ? (
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -254,6 +280,6 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                     )
                 })}
             </div>
-        </div>
+        </div >
     )
 }

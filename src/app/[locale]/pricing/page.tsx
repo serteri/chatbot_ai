@@ -32,6 +32,7 @@ export default function PricingPage() {
                 t('pricing.plans.free.features.3')
             ],
             popular: false,
+            color: 'gray',
             cta: t('pricing.getStarted')
         },
         {
@@ -48,6 +49,7 @@ export default function PricingPage() {
                 t('pricing.plans.pro.features.5')
             ],
             popular: true,
+            color: 'blue',
             cta: t('pricing.choosePlan')
         },
         {
@@ -65,6 +67,7 @@ export default function PricingPage() {
                 t('pricing.plans.business.features.6')
             ],
             popular: false,
+            color: 'purple',
             cta: t('pricing.choosePlan')
         },
         {
@@ -81,7 +84,8 @@ export default function PricingPage() {
                 t('pricing.plans.enterprise.features.5')
             ],
             popular: false,
-            cta: t('pricing.getStarted')
+            color: 'emerald',
+            cta: t('pricing.choosePlan')
         }
     ]
 
@@ -159,7 +163,13 @@ export default function PricingPage() {
                             {plans.map((plan) => (
                                 <div
                                     key={plan.id}
-                                    className={`relative bg-white border rounded-2xl shadow-lg p-8 ${plan.popular ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-200'
+                                    className={`relative bg-white border-2 rounded-2xl shadow-lg p-6 transition-all duration-200 hover:shadow-xl ${plan.color === 'blue'
+                                            ? 'border-blue-400 ring-2 ring-blue-100'
+                                            : plan.color === 'purple'
+                                                ? 'border-purple-300 hover:border-purple-400'
+                                                : plan.color === 'emerald'
+                                                    ? 'border-emerald-300 hover:border-emerald-400'
+                                                    : 'border-gray-200 hover:border-gray-300'
                                         }`}
                                 >
                                     {plan.popular && (
@@ -195,9 +205,13 @@ export default function PricingPage() {
 
                                     <Link
                                         href={`/${locale}/auth/register`}
-                                        className={`w-full block text-center py-3 px-6 rounded-lg font-semibold transition-colors ${plan.popular
-                                            ? 'bg-blue-600 text-white hover:bg-blue-700'
-                                            : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                                        className={`w-full block text-center py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${plan.color === 'blue'
+                                            ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200'
+                                            : plan.color === 'purple'
+                                                ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-lg shadow-purple-200'
+                                                : plan.color === 'emerald'
+                                                    ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-200'
+                                                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-300'
                                             }`}
                                     >
                                         {plan.cta}
