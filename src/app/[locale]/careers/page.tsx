@@ -3,7 +3,8 @@ import { Footer } from '@/components/Footer'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { MapPin, Clock, Briefcase } from 'lucide-react'
+import { MapPin, Clock, Briefcase, Globe, Users, ArrowRight } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 
 interface PageProps {
     params: Promise<{ locale: string }>
@@ -11,6 +12,7 @@ interface PageProps {
 
 export default async function CareersPage({ params }: PageProps) {
     const { locale } = await params
+    const t = await getTranslations({ locale, namespace: 'careers' })
 
     const positions = [
         {

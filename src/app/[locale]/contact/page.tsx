@@ -1,5 +1,22 @@
+'use client'
+
+import { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { useParams } from 'next/navigation'
+import { PublicNav } from '@/components/layout/PublicNav'
 import { Footer } from '@/components/Footer'
-// ... imports ...
+import {
+    CheckCircle,
+    Send,
+    Mail,
+    Phone,
+    MapPin,
+    Clock,
+    HeadphonesIcon,
+    Building,
+    MessageCircle,
+    HelpCircle
+} from 'lucide-react'
 
 export default function ContactPage() {
     const t = useTranslations()
@@ -46,14 +63,31 @@ export default function ContactPage() {
         }, 2000)
     }
 
-    // ... faqs ...
+    const faqs = [
+        {
+            question: t('contact.faq.q1'),
+            answer: t('contact.faq.a1')
+        },
+        {
+            question: t('contact.faq.q2'),
+            answer: t('contact.faq.a2')
+        },
+        {
+            question: t('contact.faq.q3'),
+            answer: t('contact.faq.a3')
+        },
+        {
+            question: t('contact.faq.q4'),
+            answer: t('contact.faq.a4')
+        }
+    ]
 
     return (
         <>
             <PublicNav />
 
             <div className="min-h-screen bg-white">
-                {/* ... Hero Section ... */}
+                {/* Hero Section */}
                 <div className="bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20">
                     <div className="container mx-auto px-4 text-center">
                         <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -180,8 +214,6 @@ export default function ContactPage() {
 
                             {/* Contact Info Sidebar */}
                             <div className="space-y-8">
-                                {/* ... Contact Info ... */}
-                                {/* ... Support Categories ... */}
                                 <div className="bg-gray-50 p-6 rounded-2xl">
                                     <h3 className="text-xl font-bold text-gray-900 mb-6">
                                         {t('contact.info.title')}
