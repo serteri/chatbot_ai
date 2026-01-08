@@ -89,7 +89,11 @@
       "title": "Hemen Başlayın",
       "subtitle": "Ücretsiz hesap oluşturun ve AI chatbot'unuzu 5 dakikada kurun",
       "button": "Ücretsiz Hesap Aç",
-      "login": "Giriş Yap"
+      "login": "Giriş Yap",
+      "badge": "Şu an 500+ işletme kullanıyor",
+      "trust1": "Ücretsiz başla",
+      "trust2": "Kredi kartı gerekmez",
+      "trust3": "İstediğiniz zaman iptal"
     },
     "features": {
       "title": "Neden PylonChat?",
@@ -1874,5 +1878,35 @@
     "portalDesc": "Fatura geçmişiniz ve indirilebilir belgeleriniz Stripe Müşteri Portalı üzerinde güvenle saklanmaktadır.",
     "goToPortal": "Ödeme Portalına Git",
     "expires": "Son kullanma tarihi"
+  },
+  "footer": {
+    "description": "AI destekli chatbot'lar ile müşteri deneyimini dönüştürün. Dakikalar içinde kurulum, 7/24 destek.",
+    "copyright": "Tüm hakları saklıdır.",
+    "location": "İstanbul, Türkiye",
+    "sections": {
+      "product": "Ürün",
+      "company": "Şirket",
+      "support": "Destek",
+      "legal": "Yasal"
+    },
+    "links": {
+      "features": "Özellikler",
+      "pricing": "Fiyatlandırma",
+      "demo": "Demo",
+      "api": "API",
+      "about": "Hakkımızda",
+      "blog": "Blog",
+      "careers": "Kariyer",
+      "contact": "İletişim",
+      "helpCenter": "Yardım Merkezi",
+      "docs": "Dokümantasyon",
+      "faq": "SSS",
+      "status": "Durum",
+      "privacy": "Gizlilik Politikası",
+      "terms": "Kullanım Şartları",
+      "cookies": "Çerez Politikası",
+      "gdpr": "KVKK",
+      "help": "Yardım"
+    }
   }
 }

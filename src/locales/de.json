@@ -87,7 +87,11 @@
       "title": "Jetzt starten",
       "subtitle": "Erstellen Sie ein kostenloses Konto und richten Sie Ihren KI-Chatbot in 5 Minuten ein",
       "button": "Kostenloses Konto erstellen",
-      "login": "Anmelden"
+      "login": "Anmelden",
+      "badge": "500+ Unternehmen nutzen es bereits",
+      "trust1": "Kostenlos starten",
+      "trust2": "Keine Kreditkarte erforderlich",
+      "trust3": "Jederzeit kündbar"
     },
     "features": {
       "title": "Warum PylonChat?",
@@ -1817,5 +1821,35 @@
     "portalDesc": "Ihr Rechnungsverlauf und herunterladbare Dokumente werden sicher im Stripe-Kundenportal gespeichert.",
     "goToPortal": "Zum Zahlungsportal",
     "expires": "Ablaufdatum"
+  },
+  "footer": {
+    "description": "Verwandeln Sie das Kundenerlebnis mit KI-gestützten Chatbots. Einrichtung in wenigen Minuten, 24/7-Support.",
+    "copyright": "Alle Rechte vorbehalten.",
+    "location": "Istanbul, Türkei",
+    "sections": {
+      "product": "Produkt",
+      "company": "Unternehmen",
+      "support": "Support",
+      "legal": "Rechtliches"
+    },
+    "links": {
+      "features": "Funktionen",
+      "pricing": "Preise",
+      "demo": "Demo",
+      "api": "API",
+      "about": "Über uns",
+      "blog": "Blog",
+      "careers": "Karriere",
+      "contact": "Kontakt",
+      "helpCenter": "Hilfezentrum",
+      "docs": "Dokumentation",
+      "faq": "FAQ",
+      "status": "Status",
+      "privacy": "Datenschutzrichtlinie",
+      "terms": "Nutzungsbedingungen",
+      "cookies": "Cookie-Richtlinie",
+      "gdpr": "DSGVO",
+      "help": "Hilfe"
+    }
   }
 }

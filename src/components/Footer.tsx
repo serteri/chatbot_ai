@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { MessageSquare, Mail, MapPin, Phone, Twitter, Linkedin, Github, Youtube } from 'lucide-react'
 
 interface FooterProps {
@@ -9,34 +10,35 @@ interface FooterProps {
 }
 
 export function Footer({ locale, variant = 'default' }: FooterProps) {
+    const t = useTranslations('footer')
     const currentYear = new Date().getFullYear()
 
     const productLinks = [
-        { name: 'Özellikler', href: `/${locale}/#features` },
-        { name: 'Fiyatlandırma', href: `/${locale}/pricing` },
-        { name: 'Demo', href: `/${locale}/demo` },
-        { name: 'API', href: `/${locale}/docs/api` },
+        { name: t('links.features'), href: `/${locale}/#features` },
+        { name: t('links.pricing'), href: `/${locale}/pricing` },
+        { name: t('links.demo'), href: `/${locale}/demo` },
+        { name: t('links.api'), href: `/${locale}/docs/api` },
     ]
 
     const companyLinks = [
-        { name: 'Hakkımızda', href: `/${locale}/about` },
-        { name: 'Blog', href: `/${locale}/blog` },
-        { name: 'Kariyer', href: `/${locale}/careers` },
-        { name: 'İletişim', href: `/${locale}/contact` },
+        { name: t('links.about'), href: `/${locale}/about` },
+        { name: t('links.blog'), href: `/${locale}/blog` },
+        { name: t('links.careers'), href: `/${locale}/careers` },
+        { name: t('links.contact'), href: `/${locale}/contact` },
     ]
 
     const legalLinks = [
-        { name: 'Gizlilik Politikası', href: `/${locale}/privacy` },
-        { name: 'Kullanım Şartları', href: `/${locale}/terms` },
-        { name: 'Çerez Politikası', href: `/${locale}/cookies` },
-        { name: 'KVKK', href: `/${locale}/kvkk` },
+        { name: t('links.privacy'), href: `/${locale}/privacy` },
+        { name: t('links.terms'), href: `/${locale}/terms` },
+        { name: t('links.cookies'), href: `/${locale}/cookies` },
+        { name: t('links.gdpr'), href: `/${locale}/gdpr` },
     ]
 
     const supportLinks = [
-        { name: 'Yardım Merkezi', href: `/${locale}/help` },
-        { name: 'Dokümantasyon', href: `/${locale}/docs` },
-        { name: 'SSS', href: `/${locale}/faq` },
-        { name: 'Durum', href: 'https://status.pylonchat.com' },
+        { name: t('links.helpCenter'), href: `/${locale}/help` },
+        { name: t('links.docs'), href: `/${locale}/docs` },
+        { name: t('links.faq'), href: `/${locale}/faq` },
+        { name: t('links.status'), href: 'https://status.pylonchat.com' },
     ]
 
     if (variant === 'dashboard') {
@@ -49,21 +51,21 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                                 <MessageSquare className="h-3.5 w-3.5 text-white" />
                             </div>
                             <span className="text-sm text-gray-600">
-                                © {currentYear} PylonChat. Tüm hakları saklıdır.
+                                © {currentYear} PylonChat. {t('copyright')}
                             </span>
                         </div>
                         <div className="flex items-center gap-6 text-sm text-gray-500">
                             <Link href={`/${locale}/privacy`} className="hover:text-gray-900 transition-colors">
-                                Gizlilik
+                                {t('links.privacy')}
                             </Link>
                             <Link href={`/${locale}/terms`} className="hover:text-gray-900 transition-colors">
-                                Şartlar
+                                {t('links.terms')}
                             </Link>
                             <Link href={`/${locale}/help`} className="hover:text-gray-900 transition-colors">
-                                Yardım
+                                {t('links.help')}
                             </Link>
                             <Link href={`/${locale}/docs`} className="hover:text-gray-900 transition-colors">
-                                Dokümantasyon
+                                {t('links.docs')}
                             </Link>
                         </div>
                     </div>
@@ -86,8 +88,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                             <span className="text-xl font-bold">PylonChat</span>
                         </Link>
                         <p className="text-gray-400 text-sm mb-6 max-w-xs">
-                            AI destekli chatbot'lar ile müşteri deneyimini dönüştürün.
-                            Dakikalar içinde kurulum, 7/24 destek.
+                            {t('description')}
                         </p>
                         <div className="flex gap-4">
                             <a href="https://twitter.com/pylonchat" target="_blank" rel="noopener noreferrer"
@@ -111,7 +112,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
 
                     {/* Product */}
                     <div>
-                        <h3 className="font-semibold text-white mb-4">Ürün</h3>
+                        <h3 className="font-semibold text-white mb-4">{t('sections.product')}</h3>
                         <ul className="space-y-3">
                             {productLinks.map((link) => (
                                 <li key={link.name}>
@@ -125,7 +126,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
 
                     {/* Company */}
                     <div>
-                        <h3 className="font-semibold text-white mb-4">Şirket</h3>
+                        <h3 className="font-semibold text-white mb-4">{t('sections.company')}</h3>
                         <ul className="space-y-3">
                             {companyLinks.map((link) => (
                                 <li key={link.name}>
@@ -139,7 +140,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
 
                     {/* Support */}
                     <div>
-                        <h3 className="font-semibold text-white mb-4">Destek</h3>
+                        <h3 className="font-semibold text-white mb-4">{t('sections.support')}</h3>
                         <ul className="space-y-3">
                             {supportLinks.map((link) => (
                                 <li key={link.name}>
@@ -153,7 +154,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
 
                     {/* Legal */}
                     <div>
-                        <h3 className="font-semibold text-white mb-4">Yasal</h3>
+                        <h3 className="font-semibold text-white mb-4">{t('sections.legal')}</h3>
                         <ul className="space-y-3">
                             {legalLinks.map((link) => (
                                 <li key={link.name}>
@@ -173,13 +174,9 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                             <Mail className="h-4 w-4" />
                             info@pylonchat.com
                         </a>
-                        <a href="tel:+902161234567" className="flex items-center gap-2 hover:text-white transition-colors">
-                            <Phone className="h-4 w-4" />
-                            +90 216 123 45 67
-                        </a>
                         <span className="flex items-center gap-2">
                             <MapPin className="h-4 w-4" />
-                            İstanbul, Türkiye
+                            {t('location')}
                         </span>
                     </div>
                 </div>
@@ -190,7 +187,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <p className="text-gray-400 text-sm">
-                            © {currentYear} PylonChat. Tüm hakları saklıdır.
+                            © {currentYear} PylonChat. {t('copyright')}
                         </p>
                         <div className="flex items-center gap-6">
                             <select
@@ -200,6 +197,9 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                             >
                                 <option value="tr">🇹🇷 Türkçe</option>
                                 <option value="en">🇺🇸 English</option>
+                                <option value="es">🇪🇸 Español</option>
+                                <option value="fr">🇫🇷 Français</option>
+                                <option value="de">🇩🇪 Deutsch</option>
                             </select>
                         </div>
                     </div>

@@ -87,7 +87,11 @@
       "title": "Get Started Now",
       "subtitle": "Create a free account and set up your AI chatbot in 5 minutes",
       "button": "Open Free Account",
-      "login": "Log In"
+      "login": "Log In",
+      "badge": "500+ businesses using right now",
+      "trust1": "Start for free",
+      "trust2": "No credit card required",
+      "trust3": "Cancel anytime"
     },
     "features": {
       "title": "Why PylonChat?",
@@ -1858,5 +1862,35 @@
     "portalDesc": "Your invoice history and downloadable documents are securely stored in the Stripe Customer Portal.",
     "goToPortal": "Go to Billing Portal",
     "expires": "Expiry date"
+  },
+  "footer": {
+    "description": "Transform customer experience with AI-powered chatbots. Setup in minutes, 24/7 support.",
+    "copyright": "All rights reserved.",
+    "location": "Istanbul, Turkey",
+    "sections": {
+      "product": "Product",
+      "company": "Company",
+      "support": "Support",
+      "legal": "Legal"
+    },
+    "links": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "demo": "Demo",
+      "api": "API",
+      "about": "About Us",
+      "blog": "Blog",
+      "careers": "Careers",
+      "contact": "Contact",
+      "helpCenter": "Help Center",
+      "docs": "Documentation",
+      "faq": "FAQ",
+      "status": "Status",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy",
+      "gdpr": "GDPR",
+      "help": "Help"
+    }
   }
 }

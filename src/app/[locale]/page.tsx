@@ -207,7 +207,7 @@ export default async function HomePage({ params }: HomePageProps) {
                     <div className="container mx-auto px-4 text-center relative z-10">
                         <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm mb-8">
                             <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                            Şu an 500+ işletme kullanıyor
+                            {t('cta.badge')}
                         </div>
 
                         <h2 className="text-4xl md:text-5xl font-bold mb-6 max-w-3xl mx-auto">
@@ -235,15 +235,15 @@ export default async function HomePage({ params }: HomePageProps) {
                         <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-blue-200">
                             <div className="flex items-center gap-2">
                                 <CheckCircle className="h-5 w-5 text-green-400" />
-                                <span>Ücretsiz başla</span>
+                                <span>{t('cta.trust1')}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <CheckCircle className="h-5 w-5 text-green-400" />
-                                <span>Kredi kartı gerekmez</span>
+                                <span>{t('cta.trust2')}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <CheckCircle className="h-5 w-5 text-green-400" />
-                                <span>İstediğiniz zaman iptal</span>
+                                <span>{t('cta.trust3')}</span>
                             </div>
                         </div>
                     </div>

@@ -87,7 +87,11 @@
       "title": "Commencer Maintenant",
       "subtitle": "Créez un compte gratuit et configurez votre chatbot IA en 5 minutes",
       "button": "Créer un Compte Gratuit",
-      "login": "Se connecter"
+      "login": "Se connecter",
+      "badge": "500+ entreprises l'utilisent actuellement",
+      "trust1": "Commencez gratuitement",
+      "trust2": "Aucune carte de crédit requise",
+      "trust3": "Annulez à tout moment"
     },
     "features": {
       "title": "Pourquoi PylonChat ?",
@@ -1721,133 +1725,163 @@
       "tip4": "Vous pouvez voir toutes les écoles d’un pays en saisissant le nom du pays"
     }
   },
-    "demo": {
-      "education": {
-        "title": "Démo du Chatbot Éducatif",
-        "subtitle": "Obtenez des conseils assistés par IA sur les études à l’étranger, les visas et les écoles de langues",
-        "demoLimited": "La version démo vous permet d’envoyer 5 messages",
-        "chatTitle": "Conseiller Éducatif IA",
-        "chatSubtitle": "Votre expert des études à l’étranger",
-        "messagesLeft": "messages restants",
-        "demoEnded": "La démo est terminée",
-        "demoEndedDesc": "5/5 messages",
-        "createAccount": "Créer un compte gratuit – Messages illimités",
-        "inputPlaceholder": "Posez une question sur l’éducation… (ex : « conditions de visa pour le Royaume-Uni »)",
-        "features": {
-          "title": "Fonctionnalités de la Démo",
-          "visa": "Conseils visa (70+ pays)",
-          "schools": "Recommandations d’écoles de langues",
-          "scholarships": "Informations sur les bourses"
-        },
-        "premium": {
-          "title": "Version Premium",
-          "subtitle": "Accès à toutes les fonctionnalités",
-          "unlimited": "Messages illimités",
-          "fileUpload": "Téléversement de fichiers",
-          "schoolDatabase": "Base de données de plus de 150 écoles de langues",
-          "visaGuide": "Guide détaillé des visas",
-          "scholarships": "Bourses (500+)",
-          "startFree": "Commencer gratuitement"
-        },
-        "sampleQuestions": {
-          "title": "Questions d’exemple",
-          "visa": "Quels documents sont nécessaires pour un visa étudiant au Royaume-Uni ?",
-          "schools": "Existe-t-il des écoles de langues abordables à Malte ?",
-          "scholarships": "Quelles sont les possibilités de bourses pour un master en Allemagne ?"
-        },
-        "responses": {
-          "visa": "🛂 **Conseils pour le Visa Étudiant**\n\nPour quel pays souhaitez-vous des informations sur le visa ? Destinations populaires :\n\n• **États-Unis (Visa F-1)** – Frais $350, délai 2 à 8 semaines\n• **Royaume-Uni (Student Visa)** – Frais £348, délai 3 à 8 semaines\n• **Allemagne (Visa National)** – Frais €75, délai 4 à 8 semaines\n• **Canada (Permis d’études)** – Frais CAD $150, délai 4 à 12 semaines\n\n💡 **Exigences générales :** Lettre d’admission, preuve de ressources financières, certificat de langue, assurance santé\n\nInscrivez-vous pour accéder à notre guide complet des visas.",
-          "language": "🗣️ **Recommandations d’Écoles de Langues**\n\nÉcoles adaptées à votre profil :\n\n• **EF Education First** – Campus dans plus de 50 pays, $300–500/semaine\n• **Kaplan International** – Spécialiste de l’anglais, $350–450/semaine\n• **EC English** – Abordable à Malte, $250–350/semaine\n• **ILAC Canada** – Programmes passerelles vers l’université, $300–400/semaine\n\n🎯 **Destinations populaires :**\n- Londres, New York (Premium)\n- Malte, Dublin (Abordable)\n- Toronto, Sydney (Haute qualité)\n\nNotre base complète comprend plus de 150 écoles. Inscrivez-vous pour tout voir.",
-          "scholarships": "💰 **Opportunités de Bourses**\n\nBourses qui pourraient vous convenir :\n\n• **Bourse Chevening** (Royaume-Uni) – Bourse complète\n• **Bourse DAAD** (Allemagne) – €850/mois + frais\n• **Erasmus+** (Europe) – Échange de 3 à 12 mois\n• **Fulbright** (États-Unis) – Bourse complète de troisième cycle\n\n🎓 **Critères courants :**\n- GPA minimum de 3.0\n- IELTS 6.5+ ou TOEFL 80+\n- Lettre de motivation\n- Lettres de recommandation\n\nAccédez à plus de 500 bourses avec l’abonnement Premium.",
-          "university": "🎓 **Guide de Candidature Universitaire**\n\nPour postuler à une université à l’étranger :\n\n**📋 Documents requis :**\n- Relevés de notes (certifiés)\n- Diplôme / certificat de fin d’études\n- Certificat de langue (IELTS/TOEFL)\n- Lettre de motivation (SOP)\n- Lettres de recommandation (2–3)\n- CV\n\n**⏰ Calendrier de candidature :**\n- Septembre–Novembre : Semestre d’automne\n- Décembre–Février : Semestre de printemps\n\n**💡 Conseils :**\n- Commencez tôt (6 à 8 mois à l’avance)\n- Postulez à plusieurs universités\n- Prévoyez un plan B\n\nAccédez à notre base de données universitaire avec la version Premium.",
-          "welcome": "Bonjour ! 👋 Je suis votre conseiller éducatif IA.\n\nJe peux vous aider pour :\n• Les études à l’étranger 🎓\n• Les démarches de visa étudiant 🛂\n• Les écoles et cours de langues 🗣️\n• Les bourses 💰\n• Les processus de candidature universitaire 📚\n\nDans cette démo, vous pouvez envoyer {maxMessages} messages. Comment puis-je vous aider ?",
-          "default": "Je suis prêt à vous aider pour toutes vos questions éducatives 📚\n\nVous pouvez poser des questions sur :\n• **Les visas** (70+ pays)\n• **Les écoles de langues** (150+ écoles)\n• **Les candidatures universitaires** (guide mondial)\n• **Les bourses** (500+ actives)\n\nCommencez par une question précise. Exemple : « Quelles sont les conditions de visa pour le Royaume-Uni ? » ou « Existe-t-il des écoles de langues à Malte ? »\n\n💫 **Note :** Ceci est une version démo. Inscrivez-vous pour accéder à toutes les fonctionnalités."
-        }
-      }
-    },
-    "educationChatbot": {
-      "title": "Conseiller Éducatif IA",
-      "subtitle": "Conseils assistés par IA pour le choix des universités, les bourses, les visas et plus encore",
+  "demo": {
+    "education": {
+      "title": "Démo du Chatbot Éducatif",
+      "subtitle": "Obtenez des conseils assistés par IA sur les études à l’étranger, les visas et les écoles de langues",
+      "demoLimited": "La version démo vous permet d’envoyer 5 messages",
+      "chatTitle": "Conseiller Éducatif IA",
+      "chatSubtitle": "Votre expert des études à l’étranger",
+      "messagesLeft": "messages restants",
+      "demoEnded": "La démo est terminée",
+      "demoEndedDesc": "5/5 messages",
+      "createAccount": "Créer un compte gratuit – Messages illimités",
+      "inputPlaceholder": "Posez une question sur l’éducation… (ex : « conditions de visa pour le Royaume-Uni »)",
       "features": {
-        "universitySelection": {
-          "title": "Choix de l’Université",
-          "description": "50+ pays, 1000+ universités"
-        },
-        "scholarships": {
-          "title": "Opportunités de Bourses",
-          "description": "Bourses publiques et privées"
-        },
-        "languageSchools": {
-          "title": "Écoles de Langues",
-          "description": "Préparation IELTS / TOEFL"
-        },
-        "visaInfo": {
-          "title": "Informations sur les Visas",
-          "description": "Procédures de candidature"
-        }
+        "title": "Fonctionnalités de la Démo",
+        "visa": "Conseils visa (70+ pays)",
+        "schools": "Recommandations d’écoles de langues",
+        "scholarships": "Informations sur les bourses"
       },
-      "quickAccess": {
-        "title": "Accès Rapide au Tableau de Bord Éducatif",
-        "studentProfile": "Mon Profil Étudiant",
-        "applications": "Mes Candidatures",
-        "scholarshipApplications": "Mes Candidatures aux Bourses"
+      "premium": {
+        "title": "Version Premium",
+        "subtitle": "Accès à toutes les fonctionnalités",
+        "unlimited": "Messages illimités",
+        "fileUpload": "Téléversement de fichiers",
+        "schoolDatabase": "Base de données de plus de 150 écoles de langues",
+        "visaGuide": "Guide détaillé des visas",
+        "scholarships": "Bourses (500+)",
+        "startFree": "Commencer gratuitement"
       },
-      "chat": {
-        "title": "Conseiller Éducatif",
-        "status": "Actif",
-        "placeholder": "Écrivez votre question… (ex : Quelle université devrais-je choisir ?)",
-        "welcomeMessage": "Bonjour ! Je suis votre assistant éducatif IA 🎓 Comment puis-je vous aider ?",
-        "suggestions": {
-          "university": "Quelle université devrais-je choisir ?",
-          "scholarship": "Quelles sont les bourses disponibles ?",
-          "ielts": "Comment me préparer à l’examen IELTS ?",
-          "visa": "Comment se déroulent les démarches de visa ?",
-          "languageSchool": "Recommandations d’écoles de langues"
-        }
+      "sampleQuestions": {
+        "title": "Questions d’exemple",
+        "visa": "Quels documents sont nécessaires pour un visa étudiant au Royaume-Uni ?",
+        "schools": "Existe-t-il des écoles de langues abordables à Malte ?",
+        "scholarships": "Quelles sont les possibilités de bourses pour un master en Allemagne ?"
+      },
+      "responses": {
+        "visa": "🛂 **Conseils pour le Visa Étudiant**\n\nPour quel pays souhaitez-vous des informations sur le visa ? Destinations populaires :\n\n• **États-Unis (Visa F-1)** – Frais $350, délai 2 à 8 semaines\n• **Royaume-Uni (Student Visa)** – Frais £348, délai 3 à 8 semaines\n• **Allemagne (Visa National)** – Frais €75, délai 4 à 8 semaines\n• **Canada (Permis d’études)** – Frais CAD $150, délai 4 à 12 semaines\n\n💡 **Exigences générales :** Lettre d’admission, preuve de ressources financières, certificat de langue, assurance santé\n\nInscrivez-vous pour accéder à notre guide complet des visas.",
+        "language": "🗣️ **Recommandations d’Écoles de Langues**\n\nÉcoles adaptées à votre profil :\n\n• **EF Education First** – Campus dans plus de 50 pays, $300–500/semaine\n• **Kaplan International** – Spécialiste de l’anglais, $350–450/semaine\n• **EC English** – Abordable à Malte, $250–350/semaine\n• **ILAC Canada** – Programmes passerelles vers l’université, $300–400/semaine\n\n🎯 **Destinations populaires :**\n- Londres, New York (Premium)\n- Malte, Dublin (Abordable)\n- Toronto, Sydney (Haute qualité)\n\nNotre base complète comprend plus de 150 écoles. Inscrivez-vous pour tout voir.",
+        "scholarships": "💰 **Opportunités de Bourses**\n\nBourses qui pourraient vous convenir :\n\n• **Bourse Chevening** (Royaume-Uni) – Bourse complète\n• **Bourse DAAD** (Allemagne) – €850/mois + frais\n• **Erasmus+** (Europe) – Échange de 3 à 12 mois\n• **Fulbright** (États-Unis) – Bourse complète de troisième cycle\n\n🎓 **Critères courants :**\n- GPA minimum de 3.0\n- IELTS 6.5+ ou TOEFL 80+\n- Lettre de motivation\n- Lettres de recommandation\n\nAccédez à plus de 500 bourses avec l’abonnement Premium.",
+        "university": "🎓 **Guide de Candidature Universitaire**\n\nPour postuler à une université à l’étranger :\n\n**📋 Documents requis :**\n- Relevés de notes (certifiés)\n- Diplôme / certificat de fin d’études\n- Certificat de langue (IELTS/TOEFL)\n- Lettre de motivation (SOP)\n- Lettres de recommandation (2–3)\n- CV\n\n**⏰ Calendrier de candidature :**\n- Septembre–Novembre : Semestre d’automne\n- Décembre–Février : Semestre de printemps\n\n**💡 Conseils :**\n- Commencez tôt (6 à 8 mois à l’avance)\n- Postulez à plusieurs universités\n- Prévoyez un plan B\n\nAccédez à notre base de données universitaire avec la version Premium.",
+        "welcome": "Bonjour ! 👋 Je suis votre conseiller éducatif IA.\n\nJe peux vous aider pour :\n• Les études à l’étranger 🎓\n• Les démarches de visa étudiant 🛂\n• Les écoles et cours de langues 🗣️\n• Les bourses 💰\n• Les processus de candidature universitaire 📚\n\nDans cette démo, vous pouvez envoyer {maxMessages} messages. Comment puis-je vous aider ?",
+        "default": "Je suis prêt à vous aider pour toutes vos questions éducatives 📚\n\nVous pouvez poser des questions sur :\n• **Les visas** (70+ pays)\n• **Les écoles de langues** (150+ écoles)\n• **Les candidatures universitaires** (guide mondial)\n• **Les bourses** (500+ actives)\n\nCommencez par une question précise. Exemple : « Quelles sont les conditions de visa pour le Royaume-Uni ? » ou « Existe-t-il des écoles de langues à Malte ? »\n\n💫 **Note :** Ceci est une version démo. Inscrivez-vous pour accéder à toutes les fonctionnalités."
+      }
+    }
+  },
+  "educationChatbot": {
+    "title": "Conseiller Éducatif IA",
+    "subtitle": "Conseils assistés par IA pour le choix des universités, les bourses, les visas et plus encore",
+    "features": {
+      "universitySelection": {
+        "title": "Choix de l’Université",
+        "description": "50+ pays, 1000+ universités"
+      },
+      "scholarships": {
+        "title": "Opportunités de Bourses",
+        "description": "Bourses publiques et privées"
+      },
+      "languageSchools": {
+        "title": "Écoles de Langues",
+        "description": "Préparation IELTS / TOEFL"
+      },
+      "visaInfo": {
+        "title": "Informations sur les Visas",
+        "description": "Procédures de candidature"
       }
     },
-    "profile": {
-      "planPro": "Plan Pro",
-      "statusActive": "Compte Actif",
-      "personalInfo": "Informations Personnelles",
-      "personalInfoDesc": "Votre nom et vos coordonnées.",
-      "fullName": "Nom Complet",
-      "fullNamePlaceholder": "Votre nom complet",
-      "email": "Adresse e-mail",
-      "emailReadOnly": "Pour des raisons de sécurité, l’adresse e-mail ne peut pas être modifiée.",
-      "phone": "Numéro de Téléphone",
-      "securityTitle": "Mot de passe et Sécurité",
-      "securityDesc": "Changer régulièrement votre mot de passe améliore votre sécurité.",
-      "cancel": "Annuler",
-      "changePassword": "Changer le Mot de Passe",
-      "currentPassword": "Mot de Passe Actuel",
-      "newPassword": "Nouveau Mot de Passe",
-      "confirmPassword": "Nouveau Mot de Passe (Confirmation)",
-      "updatePassword": "Mettre à Jour le Mot de Passe",
-      "successMessage": "Modifications enregistrées !",
-      "saving": "Enregistrement…",
-      "saveChanges": "Enregistrer les Modifications"
+    "quickAccess": {
+      "title": "Accès Rapide au Tableau de Bord Éducatif",
+      "studentProfile": "Mon Profil Étudiant",
+      "applications": "Mes Candidatures",
+      "scholarshipApplications": "Mes Candidatures aux Bourses"
     },
-    "billing": {
-      "paymentMethod": "Méthode de Paiement",
-      "updateCard": "Mettre à Jour la Carte",
-      "securePayment": "Paiement Sécurisé",
-      "managedByStripe": "Géré par Stripe",
-      "invoiceHistory": "Historique des Factures",
-      "invoiceDesc": "Consultez et téléchargez vos paiements et factures précédents.",
-      "date": "Date",
-      "amount": "Montant",
-      "plan": "Plan",
+    "chat": {
+      "title": "Conseiller Éducatif",
+      "status": "Actif",
+      "placeholder": "Écrivez votre question… (ex : Quelle université devrais-je choisir ?)",
+      "welcomeMessage": "Bonjour ! Je suis votre assistant éducatif IA 🎓 Comment puis-je vous aider ?",
+      "suggestions": {
+        "university": "Quelle université devrais-je choisir ?",
+        "scholarship": "Quelles sont les bourses disponibles ?",
+        "ielts": "Comment me préparer à l’examen IELTS ?",
+        "visa": "Comment se déroulent les démarches de visa ?",
+        "languageSchool": "Recommandations d’écoles de langues"
+      }
+    }
+  },
+  "profile": {
+    "planPro": "Plan Pro",
+    "statusActive": "Compte Actif",
+    "personalInfo": "Informations Personnelles",
+    "personalInfoDesc": "Votre nom et vos coordonnées.",
+    "fullName": "Nom Complet",
+    "fullNamePlaceholder": "Votre nom complet",
+    "email": "Adresse e-mail",
+    "emailReadOnly": "Pour des raisons de sécurité, l’adresse e-mail ne peut pas être modifiée.",
+    "phone": "Numéro de Téléphone",
+    "securityTitle": "Mot de passe et Sécurité",
+    "securityDesc": "Changer régulièrement votre mot de passe améliore votre sécurité.",
+    "cancel": "Annuler",
+    "changePassword": "Changer le Mot de Passe",
+    "currentPassword": "Mot de Passe Actuel",
+    "newPassword": "Nouveau Mot de Passe",
+    "confirmPassword": "Nouveau Mot de Passe (Confirmation)",
+    "updatePassword": "Mettre à Jour le Mot de Passe",
+    "successMessage": "Modifications enregistrées !",
+    "saving": "Enregistrement…",
+    "saveChanges": "Enregistrer les Modifications"
+  },
+  "billing": {
+    "paymentMethod": "Méthode de Paiement",
+    "updateCard": "Mettre à Jour la Carte",
+    "securePayment": "Paiement Sécurisé",
+    "managedByStripe": "Géré par Stripe",
+    "invoiceHistory": "Historique des Factures",
+    "invoiceDesc": "Consultez et téléchargez vos paiements et factures précédents.",
+    "date": "Date",
+    "amount": "Montant",
+    "plan": "Plan",
+    "status": "Statut",
+    "paid": "Payé",
+    "failed": "Échoué",
+    "noInvoices": "Aucune facture pour le moment.",
+    "month": "Mois",
+    "noPaymentMethod": "Aucune méthode de paiement enregistrée",
+    "addCard": "Ajouter une Carte",
+    "viewInPortal": "Voir les Factures dans le Portail",
+    "portalDesc": "Votre historique de facturation est stocké en toute sécurité dans le Portail Client Stripe.",
+    "goToPortal": "Aller au Portail de Paiement",
+    "expires": "Date d'expiration"
+  },
+  "footer": {
+    "description": "Transformez l'expérience client avec des chatbots alimentés par l'IA. Configuration en minutes, support 24/7.",
+    "copyright": "Tous droits réservés.",
+    "location": "Istanbul, Turquie",
+    "sections": {
+      "product": "Produit",
+      "company": "Entreprise",
+      "support": "Support",
+      "legal": "Juridique"
+    },
+    "links": {
+      "features": "Fonctionnalités",
+      "pricing": "Tarifs",
+      "demo": "Démo",
+      "api": "API",
+      "about": "À propos",
+      "blog": "Blog",
+      "careers": "Carrières",
+      "contact": "Contact",
+      "helpCenter": "Centre d'aide",
+      "docs": "Documentation",
+      "faq": "FAQ",
       "status": "Statut",
-      "paid": "Payé",
-      "failed": "Échoué",
-      "noInvoices": "Aucune facture pour le moment.",
-      "month": "Mois",
-      "noPaymentMethod": "Aucune méthode de paiement enregistrée",
-      "addCard": "Ajouter une Carte",
-      "viewInPortal": "Voir les Factures dans le Portail",
-      "portalDesc": "Votre historique de facturation est stocké en toute sécurité dans le Portail Client Stripe.",
-      "goToPortal": "Aller au Portail de Paiement",
-      "expires": "Date d’expiration"
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d'utilisation",
+      "cookies": "Politique de cookies",
+      "gdpr": "RGPD",
+      "help": "Aide"
     }
   }
+}
