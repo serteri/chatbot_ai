@@ -2119,5 +2119,83 @@
       "status": "System Status",
       "help": "Help"
     }
+  },
+  "pricing": {
+    "title": "Plans et Tarifs",
+    "subtitle": "Choisissez le plan adapté à votre entreprise",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "save": "Économisez 20%",
+    "perMonth": "/mois",
+    "mostPopular": "Le Plus Populaire",
+    "getStarted": "Commencer",
+    "choosePlan": "Choisir le Plan",
+    "chatbotTypes": "Parfait pour les deux types de chatbot",
+    "education": "Consultation Éducative",
+    "ecommerce": "Support E-commerce",
+    "plans": {
+      "free": {
+        "name": "Gratuit",
+        "price": "€0",
+        "description": "Parfait pour commencer",
+        "features": {
+          "0": "1 Chatbot",
+          "1": "3 Documents",
+          "2": "50 Conversations/mois",
+          "3": "Support par E-mail"
+        }
+      },
+      "pro": {
+        "name": "Pro",
+        "price": "€29",
+        "description": "Idéal pour les petites entreprises",
+        "features": {
+          "0": "5 Chatbots",
+          "1": "50 Documents",
+          "2": "1,000 Conversations/mois",
+          "3": "Support Prioritaire",
+          "4": "Branding Personnalisé",
+          "5": "Tableau de bord Analytics"
+        }
+      },
+      "business": {
+        "name": "Business",
+        "price": "€99",
+        "description": "Pour les équipes en croissance",
+        "features": {
+          "0": "20 Chatbots",
+          "1": "200 Documents",
+          "2": "10,000 Conversations/mois",
+          "3": "Support 24/7",
+          "4": "Analytique Avancée",
+          "5": "Accès API",
+          "6": "Domaine Personnalisé"
+        }
+      },
+      "enterprise": {
+        "name": "Entreprise",
+        "price": "Personnalisé",
+        "description": "Pour les grandes organisations",
+        "features": {
+          "0": "Chatbots Illimités",
+          "1": "Documents Illimités",
+          "2": "Conversations Illimitées",
+          "3": "Support Dédié 24/7",
+          "4": "Domaine Personnalisé",
+          "5": "Accès API"
+        }
+      }
+    },
+    "faq": {
+      "title": "Questions Fréquemment Posées",
+      "q1": "Puis-je changer mon plan plus tard?",
+      "a1": "Oui, vous pouvez mettre à niveau ou rétrograder votre plan à tout moment depuis les paramètres de votre compte.",
+      "q2": "Quels modes de paiement acceptez-vous?",
+      "a2": "Nous acceptons toutes les principales cartes de crédit, PayPal et les virements bancaires pour les plans entreprise.",
+      "q3": "Y a-t-il un essai gratuit?",
+      "a3": "Oui! Notre plan Gratuit est disponible pour toujours sans carte de crédit requise.",
+      "q4": "Puis-je annuler à tout moment?",
+      "a4": "Absolument. Vous pouvez annuler votre abonnement à tout moment sans pénalités ni frais."
+    }
   }
 }

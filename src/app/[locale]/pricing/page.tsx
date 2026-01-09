@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { PublicNav } from '@/components/layout/PublicNav'
 import { Footer } from '@/components/Footer'
@@ -19,6 +20,7 @@ export default function PricingPage() {
     const t = useTranslations()
     const params = useParams()
     const locale = params.locale as string
+    const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly')
 
     const plans = [
         {
@@ -134,11 +136,24 @@ export default function PricingPage() {
 
                         {/* Billing Toggle */}
                         <div className="flex items-center justify-center space-x-4 mb-8">
-                            <span className="text-blue-100">{t('pricing.monthly')}</span>
-                            <div className="bg-blue-500/30 p-1 rounded-lg">
-                                <div className="bg-white text-blue-600 px-4 py-2 rounded text-sm font-medium">
-                                    {t('pricing.yearly')} - {t('pricing.save')}
-                                </div>
+                            <span className={`text-base font-medium ${billingPeriod === 'monthly' ? 'text-white' : 'text-blue-200'}`}>
+                                {t('pricing.monthly')}
+                            </span>
+                            <button
+                                onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'yearly' : 'monthly')}
+                                className="relative w-14 h-7 bg-blue-500/30 rounded-full p-1 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                            >
+                                <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 ${billingPeriod === 'yearly' ? 'translate-x-7' : ''}`} />
+                            </button>
+                            <div className="flex items-center space-x-2">
+                                <span className={`text-base font-medium ${billingPeriod === 'yearly' ? 'text-white' : 'text-blue-200'}`}>
+                                    {t('pricing.yearly')}
+                                </span>
+                                {billingPeriod === 'yearly' && (
+                                    <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                        {t('pricing.save')}
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -189,8 +204,8 @@ export default function PricingPage() {
                                         </h3>
                                         <div className={`text-4xl font-bold ${plan.priceColor} mb-2`}>
                                             {plan.price}
-                                            {plan.id !== 'free' && (
-                                                <span className="text-lg text-gray-400 font-normal">/ay</span>
+                                            {plan.id !== 'free' && plan.id !== 'enterprise' && (
+                                                <span className="text-lg text-gray-400 font-normal">{t('pricing.perMonth')}</span>
                                             )}
                                         </div>
                                         <p className="text-gray-500">{plan.description}</p>
