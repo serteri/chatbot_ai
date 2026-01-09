@@ -121,14 +121,14 @@ export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDia
                         <div className="space-y-1.5 relative">
                             <Label htmlFor="type" className="text-slate-700 font-semibold text-sm flex items-center gap-2">
                                 <Briefcase className="h-3.5 w-3.5 text-purple-500" />
-                                Sektör / Tür
+                                {t('industryType')}
                             </Label>
                             <Select
                                 value={formData.type}
                                 onValueChange={(value) => setFormData({ ...formData, type: value })}
                             >
                                 <SelectTrigger className="bg-slate-50 border-slate-200 h-11 focus:ring-2 focus:ring-purple-100 focus:border-purple-500 bg-white">
-                                    <SelectValue placeholder="Seçiniz" />
+                                    <SelectValue placeholder={t('select')} />
                                 </SelectTrigger>
                                 {/* ✅ KRİTİK DÜZELTME: z-index artırıldı, bg-white zorlandı, pozisyonlama düzeltildi */}
                                 <SelectContent
@@ -139,19 +139,19 @@ export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDia
                                     <SelectItem value="general" className="cursor-pointer hover:bg-slate-50 focus:bg-slate-50 py-2.5">
                                         <div className="flex items-center gap-2">
                                             <Bot className="h-4 w-4 text-slate-500" />
-                                            <span className="font-medium text-slate-900">Genel</span>
+                                            <span className="font-medium text-slate-900">{t('generalType')}</span>
                                         </div>
                                     </SelectItem>
                                     <SelectItem value="education" className="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 py-2.5">
                                         <div className="flex items-center gap-2">
                                             <GraduationCap className="h-4 w-4 text-blue-500" />
-                                            <span className="font-medium text-slate-900">Eğitim</span>
+                                            <span className="font-medium text-slate-900">{t('educationType')}</span>
                                         </div>
                                     </SelectItem>
                                     <SelectItem value="ecommerce" className="cursor-pointer hover:bg-green-50 focus:bg-green-50 py-2.5">
                                         <div className="flex items-center gap-2">
                                             <ShoppingCart className="h-4 w-4 text-green-500" />
-                                            <span className="font-medium text-slate-900">E-ticaret</span>
+                                            <span className="font-medium text-slate-900">{t('ecommerceType')}</span>
                                         </div>
                                     </SelectItem>
                                 </SelectContent>
@@ -192,7 +192,7 @@ export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDia
                             {loading ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Oluşturuluyor...
+                                    {t('creating')}
                                 </>
                             ) : (
                                 <>
