@@ -23,7 +23,7 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select'
-import { Bot, MessageSquare, Briefcase, GraduationCap, ShoppingCart, Loader2, Sparkles, Plus } from 'lucide-react'
+import { Bot, MessageSquare, Briefcase, GraduationCap, ShoppingCart, Loader2, Sparkles, Plus, AlertCircle } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
 interface CreateChatbotDialogProps {
@@ -33,6 +33,7 @@ interface CreateChatbotDialogProps {
         type?: string
         botName?: string
         welcomeMessage?: string
+        industry?: string
     }
 }
 
@@ -41,35 +42,74 @@ export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDia
     const t = useTranslations('chatbots')
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [nameError, setNameError] = useState('')
 
     // Varsayılan değerler
     const [formData, setFormData] = useState({
         name: prefilledData?.name || '',
-        type: prefilledData?.type || 'general',
+        type: prefilledData?.type || prefilledData?.industry || 'general',
         welcomeMessage: prefilledData?.welcomeMessage || ''
     })
 
+    const validateForm = () => {
+        if (!formData.name.trim()) {
+            setNameError(t('nameRequired'))
+            return false
+        }
+        if (formData.name.trim().length < 2) {
+            setNameError(t('nameTooShort'))
+            return false
+        }
+        setNameError('')
+        return true
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+
+        if (!validateForm()) {
+            return
+        }
+
         setLoading(true)
 
         try {
-            const response = await fetch('/api/chatbot', {
+            // Map type to industry for the API
+            const industry = formData.type
+
+            const response = await fetch('/api/chatbot/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    name: formData.name.trim(),
+                    industry: industry,
+                    welcomeMessage: formData.welcomeMessage || undefined
+                })
             })
 
-            if (!response.ok) throw new Error('Failed to create')
-
             const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to create')
+            }
+
             toast.success(t('createSuccess'))
             setOpen(false)
+            setFormData({ name: '', type: 'general', welcomeMessage: '' })
             router.refresh()
-        } catch (error) {
-            toast.error(t('errorOccurred') || 'Bir hata oluştu')
+        } catch (error: any) {
+            console.error('Create chatbot error:', error)
+            toast.error(error.message || t('errorOccurred'))
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleNameChange = (value: string) => {
+        setFormData({ ...formData, name: value })
+        // Clear error when user starts typing
+        if (nameError && value.trim().length >= 2) {
+            setNameError('')
         }
     }
 
@@ -111,13 +151,19 @@ export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDia
                                 id="name"
                                 placeholder={t('namePlaceholder')}
                                 value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                                className="bg-slate-50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all h-11"
+                                onChange={(e) => handleNameChange(e.target.value)}
+                                className={`bg-slate-50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all h-11 ${nameError ? 'border-red-400 focus:border-red-500 focus:ring-red-100' : ''
+                                    }`}
                             />
+                            {nameError && (
+                                <div className="flex items-center gap-1.5 text-red-500 text-sm mt-1">
+                                    <AlertCircle className="h-3.5 w-3.5" />
+                                    <span>{nameError}</span>
+                                </div>
+                            )}
                         </div>
 
-                        {/* Sektör Seçimi - DÜZELTİLDİ */}
+                        {/* Sektör Seçimi */}
                         <div className="space-y-1.5 relative">
                             <Label htmlFor="type" className="text-slate-700 font-semibold text-sm flex items-center gap-2">
                                 <Briefcase className="h-3.5 w-3.5 text-purple-500" />
@@ -130,7 +176,6 @@ export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDia
                                 <SelectTrigger className="bg-slate-50 border-slate-200 h-11 focus:ring-2 focus:ring-purple-100 focus:border-purple-500 bg-white">
                                     <SelectValue placeholder={t('select')} />
                                 </SelectTrigger>
-                                {/* ✅ KRİTİK DÜZELTME: z-index artırıldı, bg-white zorlandı, pozisyonlama düzeltildi */}
                                 <SelectContent
                                     className="bg-white border border-slate-200 shadow-xl z-[9999]"
                                     position="popper"
