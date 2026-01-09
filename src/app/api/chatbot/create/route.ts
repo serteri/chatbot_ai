@@ -27,23 +27,16 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Subscription kontrolü - yoksa default free plan oluştur
-    let subscription = await prisma.subscription.findUnique({
+    // Subscription kontrolü
+    const subscription = await prisma.subscription.findUnique({
       where: { userId: session.user.id }
     })
 
-    // Subscription yoksa, bir tane oluştur (free tier)
     if (!subscription) {
-      subscription = await prisma.subscription.create({
-        data: {
-          userId: session.user.id,
-          plan: 'free',
-          status: 'active',
-          maxChatbots: 2,
-          maxDocuments: 5,
-          maxConversations: 100,
-        }
-      })
+      return NextResponse.json(
+        { error: 'No subscription found. Please choose a plan first.' },
+        { status: 404 }
+      )
     }
 
     // Chatbot limit kontrolü
@@ -77,7 +70,7 @@ export async function POST(req: NextRequest) {
         welcomeMessage: validatedData.welcomeMessage || 'Hello! How can I help you today?',
         placeholderText: validatedData.placeholderText,
         fallbackMessage: validatedData.fallbackMessage,
-        isActive: false, // Başlangıçta pasif
+        isActive: false,
         isPublished: false,
         industry: validatedData.industry
       },
