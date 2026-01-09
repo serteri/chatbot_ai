@@ -72,6 +72,19 @@ export default function PricingPage() {
         return planPrices.display
     }
 
+    // Calculate total yearly cost
+    const getYearlyTotal = (planId: string) => {
+        const planPrices = monthlyPrices[planId as keyof typeof monthlyPrices]
+        if (!planPrices || planId === 'free') return ''
+
+        const yearlyTotal = Math.round(planPrices.price * 12 * 0.8) // 20% discount
+        const currency = getCurrency()
+        if (locale === 'tr') {
+            return `₺${yearlyTotal.toLocaleString('tr-TR')}`
+        }
+        return `${currency}${yearlyTotal}`
+    }
+
     // Calculate yearly savings
     const getYearlySavings = (planId: string) => {
         const planPrices = monthlyPrices[planId as keyof typeof monthlyPrices]
@@ -198,8 +211,8 @@ export default function PricingPage() {
                             <button
                                 onClick={() => setBillingPeriod('monthly')}
                                 className={`px-4 py-2 rounded-lg font-medium transition-all ${billingPeriod === 'monthly'
-                                        ? 'bg-white text-blue-600'
-                                        : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
+                                    ? 'bg-white text-blue-600'
+                                    : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
                                     }`}
                             >
                                 {t('pricing.monthly')}
@@ -207,8 +220,8 @@ export default function PricingPage() {
                             <button
                                 onClick={() => setBillingPeriod('yearly')}
                                 className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 ${billingPeriod === 'yearly'
-                                        ? 'bg-white text-blue-600'
-                                        : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
+                                    ? 'bg-white text-blue-600'
+                                    : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
                                     }`}
                             >
                                 <span>{t('pricing.yearly')}</span>
@@ -270,9 +283,14 @@ export default function PricingPage() {
                                             )}
                                         </div>
                                         {billingPeriod === 'yearly' && plan.id !== 'free' && (
-                                            <p className="text-sm text-green-600 font-medium">
-                                                {t('pricing.save')}: {getYearlySavings(plan.id)}/{locale === 'tr' ? 'yıl' : 'year'}
-                                            </p>
+                                            <div className="space-y-1">
+                                                <p className="text-base text-gray-600">
+                                                    {locale === 'tr' ? 'Yıllık Toplam:' : 'Yearly Total:'} <span className="font-semibold">{getYearlyTotal(plan.id)}</span>
+                                                </p>
+                                                <p className="text-sm text-green-600 font-medium">
+                                                    ✨ {locale === 'tr' ? 'Tasarruf:' : 'You save:'} {getYearlySavings(plan.id)}
+                                                </p>
+                                            </div>
                                         )}
                                         <p className="text-gray-500 mt-2">{plan.description}</p>
                                     </div>
