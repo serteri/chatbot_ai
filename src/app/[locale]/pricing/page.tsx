@@ -22,26 +22,67 @@ export default function PricingPage() {
     const locale = params.locale as string
     const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly')
 
-    // Price configurations (monthly prices in USD)
-    const monthlyPrices = {
-        free: 0,
-        pro: 29,
-        business: 69,
-        enterprise: 99
+    // Currency based on locale
+    const getCurrency = () => {
+        switch (locale) {
+            case 'tr': return '₺'
+            case 'en': return '$'
+            default: return '€'
+        }
     }
+
+    // Monthly prices based on locale
+    const getMonthlyPrices = () => {
+        const currency = getCurrency()
+        switch (locale) {
+            case 'tr':
+                return {
+                    free: { price: 0, display: '₺0' },
+                    pro: { price: 899, display: '₺899' },
+                    business: { price: 2099, display: '₺2.099' },
+                    enterprise: { price: 2999, display: '₺2.999' }
+                }
+            default: // USD/EUR
+                return {
+                    free: { price: 0, display: `${currency}0` },
+                    pro: { price: 29, display: `${currency}29` },
+                    business: { price: 69, display: `${currency}69` },
+                    enterprise: { price: 99, display: `${currency}99` }
+                }
+        }
+    }
+
+    const monthlyPrices = getMonthlyPrices()
 
     // Calculate yearly price with 20% discount
     const getPrice = (planId: string) => {
-        const monthly = monthlyPrices[planId as keyof typeof monthlyPrices]
-        if (planId === 'free') return '$0'
-        if (planId === 'enterprise') return t('pricing.plans.enterprise.price')
+        const planPrices = monthlyPrices[planId as keyof typeof monthlyPrices]
+        if (!planPrices) return getCurrency() + '0'
+
+        if (planId === 'free') return planPrices.display
 
         if (billingPeriod === 'yearly') {
-            const yearly = Math.round(monthly * 12 * 0.8) // 20% discount
-            const monthlyEquivalent = Math.round(yearly / 12)
-            return `$${monthlyEquivalent}`
+            const yearlyMonthly = Math.round(planPrices.price * 0.8) // 20% discount
+            const currency = getCurrency()
+            if (locale === 'tr') {
+                return `₺${yearlyMonthly.toLocaleString('tr-TR')}`
+            }
+            return `${currency}${yearlyMonthly}`
         }
-        return `$${monthly}`
+        return planPrices.display
+    }
+
+    // Calculate yearly savings
+    const getYearlySavings = (planId: string) => {
+        const planPrices = monthlyPrices[planId as keyof typeof monthlyPrices]
+        if (!planPrices || planId === 'free') return ''
+
+        const savings = Math.round(planPrices.price * 12 * 0.2)
+        const currency = getCurrency()
+        if (locale === 'tr') {
+            return `₺${savings.toLocaleString('tr-TR')}`
+        }
+        return `${currency}${savings}`
     }
 
     const plans = [
@@ -224,13 +265,13 @@ export default function PricingPage() {
                                         </h3>
                                         <div className={`text-4xl font-bold ${plan.priceColor} mb-2`}>
                                             {getPrice(plan.id)}
-                                            {plan.id !== 'free' && plan.id !== 'enterprise' && (
+                                            {plan.id !== 'free' && (
                                                 <span className="text-lg text-gray-400 font-normal">{t('pricing.perMonth')}</span>
                                             )}
                                         </div>
-                                        {billingPeriod === 'yearly' && plan.id !== 'free' && plan.id !== 'enterprise' && (
+                                        {billingPeriod === 'yearly' && plan.id !== 'free' && (
                                             <p className="text-sm text-green-600 font-medium">
-                                                {t('pricing.save')} - ${Math.round(monthlyPrices[plan.id as keyof typeof monthlyPrices] * 12 * 0.2)}/{locale === 'tr' ? 'yıl' : 'year'}
+                                                {t('pricing.save')}: {getYearlySavings(plan.id)}/{locale === 'tr' ? 'yıl' : 'year'}
                                             </p>
                                         )}
                                         <p className="text-gray-500 mt-2">{plan.description}</p>
