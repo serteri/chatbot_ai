@@ -95,7 +95,7 @@ export default async function EducationChatbotsPage(props: {
                                     <GraduationCap className="h-4 w-4" />
                                 </div>
                                 {/* Başlık Çevirisi: 'dashboard.educationChatbots' varsayılmıştır */}
-                                <span className="font-semibold text-slate-900">Eğitim Asistanları</span>
+                                <span className="font-semibold text-slate-900">{t('chatbots.educationAssistants')}</span>
                             </div>
                         </div>
 
@@ -183,7 +183,7 @@ export default async function EducationChatbotsPage(props: {
                             </div>
                             <h3 className="text-xl font-semibold text-slate-900 mb-2">{t('chatbots.noChatbots')}</h3>
                             <p className="text-slate-500 max-w-sm mb-6 text-sm">
-                                {query || statusFilter !== 'all' ? 'Filtreleme sonucunda eğitim asistanı bulunamadı.' : 'Henüz bir eğitim asistanı oluşturmadınız.'}
+                                {query || statusFilter !== 'all' ? t('chatbots.noFilterResults') : t('chatbots.noEducationChatbotsYet')}
                             </p>
                             {!query && statusFilter === 'all' && (
                                 <CreateChatbotDialog
@@ -213,11 +213,10 @@ export default async function EducationChatbotsPage(props: {
                                                     {chatbot.name}
                                                 </CardTitle>
                                                 <div className="mt-1.5 flex gap-2">
-                                                    <Badge variant={chatbot.isActive ? "default" : "secondary"} className={`text-[10px] px-2 py-0.5 h-5 ${
-                                                        chatbot.isActive
+                                                    <Badge variant={chatbot.isActive ? "default" : "secondary"} className={`text-[10px] px-2 py-0.5 h-5 ${chatbot.isActive
                                                             ? "bg-green-100 text-green-700 hover:bg-green-200 border-green-200"
                                                             : "bg-slate-100 text-slate-500 border-slate-200"
-                                                    }`}>
+                                                        }`}>
                                                         {chatbot.isActive ? t('chatbots.active') : t('chatbots.inactive')}
                                                     </Badge>
                                                 </div>
@@ -225,14 +224,14 @@ export default async function EducationChatbotsPage(props: {
                                         </div>
 
                                         {/* HATA ÇÖZÜMÜ: ChatbotCardActions Bileşeni */}
-                                        <ChatbotCardActions 
+                                        <ChatbotCardActions
                                             chatbotId={chatbot.id}
                                             locale={locale}
                                             labels={{
-                                                embed: 'Siteye Ekle',
+                                                embed: t('chatbots.embedOnSite'),
                                                 manage: t('manage'),
-                                                settings: 'Ayarlar',
-                                                delete: 'Sil'
+                                                settings: t('chatbots.settings'),
+                                                delete: t('delete')
                                             }}
                                         />
                                     </div>
