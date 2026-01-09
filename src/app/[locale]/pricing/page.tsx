@@ -22,11 +22,32 @@ export default function PricingPage() {
     const locale = params.locale as string
     const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly')
 
+    // Price configurations (monthly prices in USD)
+    const monthlyPrices = {
+        free: 0,
+        pro: 29,
+        business: 69,
+        enterprise: 99
+    }
+
+    // Calculate yearly price with 20% discount
+    const getPrice = (planId: string) => {
+        const monthly = monthlyPrices[planId as keyof typeof monthlyPrices]
+        if (planId === 'free') return '$0'
+        if (planId === 'enterprise') return t('pricing.plans.enterprise.price')
+
+        if (billingPeriod === 'yearly') {
+            const yearly = Math.round(monthly * 12 * 0.8) // 20% discount
+            const monthlyEquivalent = Math.round(yearly / 12)
+            return `$${monthlyEquivalent}`
+        }
+        return `$${monthly}`
+    }
+
     const plans = [
         {
             id: 'free',
             name: t('pricing.plans.free.name'),
-            price: t('pricing.plans.free.price'),
             description: t('pricing.plans.free.description'),
             features: [
                 t('pricing.plans.free.features.0'),
@@ -43,7 +64,6 @@ export default function PricingPage() {
         {
             id: 'pro',
             name: t('pricing.plans.pro.name'),
-            price: t('pricing.plans.pro.price'),
             description: t('pricing.plans.pro.description'),
             features: [
                 t('pricing.plans.pro.features.0'),
@@ -62,7 +82,6 @@ export default function PricingPage() {
         {
             id: 'business',
             name: t('pricing.plans.business.name'),
-            price: t('pricing.plans.business.price'),
             description: t('pricing.plans.business.description'),
             features: [
                 t('pricing.plans.business.features.0'),
@@ -82,7 +101,6 @@ export default function PricingPage() {
         {
             id: 'enterprise',
             name: t('pricing.plans.enterprise.name'),
-            price: t('pricing.plans.enterprise.price'),
             description: t('pricing.plans.enterprise.description'),
             features: [
                 t('pricing.plans.enterprise.features.0'),
@@ -136,25 +154,27 @@ export default function PricingPage() {
 
                         {/* Billing Toggle */}
                         <div className="flex items-center justify-center space-x-4 mb-8">
-                            <span className={`text-base font-medium ${billingPeriod === 'monthly' ? 'text-white' : 'text-blue-200'}`}>
-                                {t('pricing.monthly')}
-                            </span>
                             <button
-                                onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'yearly' : 'monthly')}
-                                className="relative w-14 h-7 bg-blue-500/30 rounded-full p-1 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                                onClick={() => setBillingPeriod('monthly')}
+                                className={`px-4 py-2 rounded-lg font-medium transition-all ${billingPeriod === 'monthly'
+                                        ? 'bg-white text-blue-600'
+                                        : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
+                                    }`}
                             >
-                                <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 ${billingPeriod === 'yearly' ? 'translate-x-7' : ''}`} />
+                                {t('pricing.monthly')}
                             </button>
-                            <div className="flex items-center space-x-2">
-                                <span className={`text-base font-medium ${billingPeriod === 'yearly' ? 'text-white' : 'text-blue-200'}`}>
-                                    {t('pricing.yearly')}
+                            <button
+                                onClick={() => setBillingPeriod('yearly')}
+                                className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 ${billingPeriod === 'yearly'
+                                        ? 'bg-white text-blue-600'
+                                        : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
+                                    }`}
+                            >
+                                <span>{t('pricing.yearly')}</span>
+                                <span className="bg-green-500 text-white px-2 py-0.5 rounded-full text-xs font-semibold">
+                                    {t('pricing.save')}
                                 </span>
-                                {billingPeriod === 'yearly' && (
-                                    <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                                        {t('pricing.save')}
-                                    </span>
-                                )}
-                            </div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -203,12 +223,17 @@ export default function PricingPage() {
                                             {plan.name}
                                         </h3>
                                         <div className={`text-4xl font-bold ${plan.priceColor} mb-2`}>
-                                            {plan.price}
+                                            {getPrice(plan.id)}
                                             {plan.id !== 'free' && plan.id !== 'enterprise' && (
                                                 <span className="text-lg text-gray-400 font-normal">{t('pricing.perMonth')}</span>
                                             )}
                                         </div>
-                                        <p className="text-gray-500">{plan.description}</p>
+                                        {billingPeriod === 'yearly' && plan.id !== 'free' && plan.id !== 'enterprise' && (
+                                            <p className="text-sm text-green-600 font-medium">
+                                                {t('pricing.save')} - ${Math.round(monthlyPrices[plan.id as keyof typeof monthlyPrices] * 12 * 0.2)}/{locale === 'tr' ? 'yıl' : 'year'}
+                                            </p>
+                                        )}
+                                        <p className="text-gray-500 mt-2">{plan.description}</p>
                                     </div>
 
                                     <ul className="space-y-3 mb-8">

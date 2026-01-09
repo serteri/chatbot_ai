@@ -2160,7 +2160,7 @@
       },
       "business": {
         "name": "Negocios",
-        "price": "€99",
+        "price": "€69",
         "description": "Para equipos en crecimiento",
         "features": {
           "0": "20 Chatbots",
@@ -2174,7 +2174,7 @@
       },
       "enterprise": {
         "name": "Empresa",
-        "price": "Personalizado",
+        "price": "€99",
         "description": "Para grandes organizaciones",
         "features": {
           "0": "Chatbots Ilimitados",

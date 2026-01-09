@@ -2155,7 +2155,7 @@
       },
       "business": {
         "name": "İşletme",
-        "price": "₺2.999",
+        "price": "₺2.099",
         "description": "Büyüyen ekipler için",
         "features": {
           "0": "20 Chatbot",
@@ -2169,7 +2169,7 @@
       },
       "enterprise": {
         "name": "Kurumsal",
-        "price": "Özel",
+        "price": "₺2.999",
         "description": "Büyük organizasyonlar için",
         "features": {
           "0": "Sınırsız Chatbot",

@@ -2139,7 +2139,7 @@
       },
       "business": {
         "name": "Business",
-        "price": "$99",
+        "price": "$69",
         "description": "For growing teams",
         "features": {
           "0": "20 Chatbots",
@@ -2153,7 +2153,7 @@
       },
       "enterprise": {
         "name": "Enterprise",
-        "price": "Custom",
+        "price": "$99",
         "description": "For large organizations",
         "features": {
           "0": "Unlimited Chatbots",
