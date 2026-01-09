@@ -13,7 +13,8 @@ import {
     GraduationCap,
     ShoppingCart,
     ArrowRight,
-    HelpCircle
+    ChevronDown,
+    ChevronUp
 } from 'lucide-react'
 
 export default function PricingPage() {
@@ -21,6 +22,7 @@ export default function PricingPage() {
     const params = useParams()
     const locale = params.locale as string
     const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly')
+    const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
 
     // Currency based on locale
     const getCurrency = () => {
@@ -173,23 +175,19 @@ export default function PricingPage() {
     ]
 
     const faqs = [
-        {
-            question: t('pricing.faq.q1'),
-            answer: t('pricing.faq.a1')
-        },
-        {
-            question: t('pricing.faq.q2'),
-            answer: t('pricing.faq.a2')
-        },
-        {
-            question: t('pricing.faq.q3'),
-            answer: t('pricing.faq.a3')
-        },
-        {
-            question: t('pricing.faq.q4'),
-            answer: t('pricing.faq.a4')
-        }
+        { question: t('pricing.faq.q1'), answer: t('pricing.faq.a1') },
+        { question: t('pricing.faq.q2'), answer: t('pricing.faq.a2') },
+        { question: t('pricing.faq.q3'), answer: t('pricing.faq.a3') },
+        { question: t('pricing.faq.q4'), answer: t('pricing.faq.a4') },
+        { question: t('pricing.faq.q5'), answer: t('pricing.faq.a5') },
+        { question: t('pricing.faq.q6'), answer: t('pricing.faq.a6') },
+        { question: t('pricing.faq.q7'), answer: t('pricing.faq.a7') },
+        { question: t('pricing.faq.q8'), answer: t('pricing.faq.a8') }
     ]
+
+    const toggleFaq = (index: number) => {
+        setOpenFaqIndex(openFaqIndex === index ? null : index)
+    }
 
     return (
         <>
@@ -211,8 +209,8 @@ export default function PricingPage() {
                             <button
                                 onClick={() => setBillingPeriod('monthly')}
                                 className={`px-4 py-2 rounded-lg font-medium transition-all ${billingPeriod === 'monthly'
-                                    ? 'bg-white text-blue-600'
-                                    : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
+                                        ? 'bg-white text-blue-600'
+                                        : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
                                     }`}
                             >
                                 {t('pricing.monthly')}
@@ -220,8 +218,8 @@ export default function PricingPage() {
                             <button
                                 onClick={() => setBillingPeriod('yearly')}
                                 className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 ${billingPeriod === 'yearly'
-                                    ? 'bg-white text-blue-600'
-                                    : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
+                                        ? 'bg-white text-blue-600'
+                                        : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
                                     }`}
                             >
                                 <span>{t('pricing.yearly')}</span>
@@ -261,12 +259,12 @@ export default function PricingPage() {
                             {plans.map((plan) => (
                                 <div
                                     key={plan.id}
-                                    className={`relative bg-white border-2 rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${plan.borderColor}`}
+                                    className={`relative bg-white border-2 rounded-2xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${plan.borderColor} ${plan.popular ? 'pt-10' : ''}`}
                                 >
                                     {plan.popular && (
-                                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                                            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-full text-sm font-semibold flex items-center space-x-1 shadow-lg">
-                                                <Star className="h-4 w-4" />
+                                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                                            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center space-x-1 shadow-lg whitespace-nowrap">
+                                                <Star className="h-3 w-3" />
                                                 <span>{t('pricing.mostPopular')}</span>
                                             </div>
                                         </div>
@@ -321,28 +319,43 @@ export default function PricingPage() {
                     </div>
                 </div>
 
-                {/* FAQ Section */}
+                {/* FAQ Section - Accordion Style */}
                 <div className="py-20 bg-gray-50">
                     <div className="container mx-auto px-4">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="text-center mb-16">
+                        <div className="max-w-3xl mx-auto">
+                            <div className="text-center mb-12">
                                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
                                     {t('pricing.faq.title')}
                                 </h2>
                             </div>
 
-                            <div className="space-y-6">
+                            <div className="space-y-4">
                                 {faqs.map((faq, index) => (
-                                    <div key={index} className="bg-white p-6 rounded-lg shadow-sm">
-                                        <div className="flex items-start space-x-4">
-                                            <HelpCircle className="h-6 w-6 text-blue-600 flex-shrink-0 mt-1" />
-                                            <div className="flex-1">
-                                                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                                    {faq.question}
-                                                </h3>
-                                                <p className="text-gray-600 leading-relaxed">
-                                                    {faq.answer}
-                                                </p>
+                                    <div
+                                        key={index}
+                                        className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+                                    >
+                                        <button
+                                            onClick={() => toggleFaq(index)}
+                                            className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
+                                        >
+                                            <span className="text-lg font-semibold text-gray-900 pr-4">
+                                                {faq.question}
+                                            </span>
+                                            {openFaqIndex === index ? (
+                                                <ChevronUp className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                                            ) : (
+                                                <ChevronDown className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                                            )}
+                                        </button>
+                                        <div
+                                            className={`transition-all duration-300 ease-in-out ${openFaqIndex === index
+                                                    ? 'max-h-96 opacity-100'
+                                                    : 'max-h-0 opacity-0 overflow-hidden'
+                                                }`}
+                                        >
+                                            <div className="px-5 pb-5 text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
+                                                {faq.answer}
                                             </div>
                                         </div>
                                     </div>

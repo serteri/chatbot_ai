@@ -2163,7 +2163,15 @@
       "q3": "Gibt es eine kostenlose Testversion?",
       "a3": "Ja! Unser kostenloser Plan ist für immer verfügbar, ohne Kreditkarte erforderlich.",
       "q4": "Kann ich jederzeit kündigen?",
-      "a4": "Auf jeden Fall. Sie können Ihr Abonnement jederzeit ohne Strafen oder Gebühren kündigen."
+      "a4": "Auf jeden Fall. Sie können Ihr Abonnement jederzeit ohne Strafen oder Gebühren kündigen.",
+      "q5": "Wie viele Chatbots kann ich erstellen?",
+      "a5": "Die Anzahl der Chatbots hängt von Ihrem Plan ab. Der kostenlose Plan umfasst 1, Pro umfasst 5, Business umfasst 20, und Enterprise bietet unbegrenzte Chatbots.",
+      "q6": "Kann ich meine eigene Domain verwenden?",
+      "a6": "Ja! Business- und Enterprise-Pläne beinhalten benutzerdefinierte Domain-Unterstützung. Sie können den Chatbot nahtlos auf Ihrer eigenen Website einbetten.",
+      "q7": "Sind meine Daten sicher?",
+      "a7": "Absolut. Wir verwenden branchenübliche Verschlüsselung und sind DSGVO-konform. Ihre Daten werden sicher gespeichert und niemals an Dritte weitergegeben.",
+      "q8": "Bieten Sie Support an?",
+      "a8": "Ja! Der kostenlose Plan beinhaltet E-Mail-Support, Pro hat Prioritäts-Support, und Business/Enterprise-Pläne beinhalten 24/7 dedizierten Support."
     }
   }
 }

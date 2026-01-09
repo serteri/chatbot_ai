@@ -2190,7 +2190,15 @@
       "q3": "Ücretsiz deneme var mı?",
       "a3": "Evet! Ücretsiz planımız kredi kartı gerektirmeden sonsuza kadar kullanılabilir.",
       "q4": "İstediğim zaman iptal edebilir miyim?",
-      "a4": "Kesinlikle. Aboneliğinizi istediğiniz zaman ceza veya ücret ödemeden iptal edebilirsiniz."
+      "a4": "Kesinlikle. Aboneliğinizi istediğiniz zaman ceza veya ücret ödemeden iptal edebilirsiniz.",
+      "q5": "Kaç tane chatbot oluşturabilirim?",
+      "a5": "Chatbot sayısı planınıza bağlıdır. Ücretsiz plan 1, Pro 5, İşletme 20 chatbot içerir ve Kurumsal sınırsız chatbot sunar.",
+      "q6": "Kendi domainimi kullanabilir miyim?",
+      "a6": "Evet! İşletme ve Kurumsal planlar özel domain desteği içerir. Chatbot'u kendi web sitenize sorunsuz bir şekilde entegre edebilirsiniz.",
+      "q7": "Verilerim güvende mi?",
+      "a7": "Kesinlikle. Endüstri standardı şifreleme kullanıyoruz ve GDPR uyumluyuz. Verileriniz güvenli bir şekilde saklanır ve üçüncü taraflarla paylaşılmaz.",
+      "q8": "Destek sunuyor musunuz?",
+      "a8": "Evet! Ücretsiz plan e-posta desteği içerir, Pro'da öncelikli destek var ve İşletme/Kurumsal planlar 7/24 özel destek içerir."
     }
   },
   "footer": {

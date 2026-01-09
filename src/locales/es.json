@@ -2195,7 +2195,15 @@
       "q3": "¿Hay una prueba gratuita?",
       "a3": "¡Sí! Nuestro plan Gratuito está disponible para siempre sin necesidad de tarjeta de crédito.",
       "q4": "¿Puedo cancelar en cualquier momento?",
-      "a4": "Absolutamente. Puedes cancelar tu suscripción en cualquier momento sin penalizaciones ni tarifas."
+      "a4": "Absolutamente. Puedes cancelar tu suscripción en cualquier momento sin penalizaciones ni tarifas.",
+      "q5": "¿Cuántos chatbots puedo crear?",
+      "a5": "El número de chatbots depende de tu plan. El plan Gratuito incluye 1, Pro incluye 5, Negocios incluye 20, y Empresa ofrece chatbots ilimitados.",
+      "q6": "¿Puedo usar mi propio dominio?",
+      "a6": "¡Sí! Los planes Negocios y Empresa incluyen soporte para dominio personalizado. Puedes integrar el chatbot en tu sitio web sin problemas.",
+      "q7": "¿Mis datos están seguros?",
+      "a7": "Absolutamente. Usamos cifrado estándar de la industria y cumplimos con GDPR. Tus datos se almacenan de forma segura y nunca se comparten con terceros.",
+      "q8": "¿Ofrecen soporte?",
+      "a8": "¡Sí! El plan Gratuito incluye soporte por email, Pro tiene soporte prioritario, y los planes Negocios/Empresa incluyen soporte dedicado 24/7."
     }
   }
 }

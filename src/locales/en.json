@@ -2174,7 +2174,15 @@
       "q3": "Is there a free trial?",
       "a3": "Yes! Our Free plan is available forever with no credit card required.",
       "q4": "Can I cancel anytime?",
-      "a4": "Absolutely. You can cancel your subscription at any time with no penalties or fees."
+      "a4": "Absolutely. You can cancel your subscription at any time with no penalties or fees.",
+      "q5": "How many chatbots can I create?",
+      "a5": "The number of chatbots depends on your plan. Free plan includes 1 chatbot, Pro includes 5, Business includes 20, and Enterprise offers unlimited chatbots.",
+      "q6": "Can I use my own domain?",
+      "a6": "Yes! Business and Enterprise plans include custom domain support. You can embed the chatbot on your own website seamlessly.",
+      "q7": "Is my data secure?",
+      "a7": "Absolutely. We use industry-standard encryption and are GDPR compliant. Your data is stored securely and never shared with third parties.",
+      "q8": "Do you offer support?",
+      "a8": "Yes! Free plan includes email support, Pro has priority support, and Business/Enterprise plans include 24/7 dedicated support."
     }
   },
   "footer": {
