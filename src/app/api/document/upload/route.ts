@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 import { processDocument, getDocumentType } from '@/lib/document/processor'
-import crypto from 'crypto' // ID oluşturmak için gerekli
+import crypto from 'crypto'
 
 export const runtime = 'nodejs'
-export const maxDuration = 60
+export const maxDuration = 300 // 5 dakika - Pro plan için maksimum
 
 export async function POST(req: NextRequest) {
     try {
@@ -53,17 +53,33 @@ export async function POST(req: NextRequest) {
             }
         })
 
-        // Background'da process et (await kullanmıyoruz, asenkron devam etsin)
-        processDocumentAsync(document.id, buffer, file.name, chatbotId)
+        // ✅ DÜZELTME: İşlemeyi senkron olarak yap
+        // Vercel serverless'da background job çalışmaz
+        // Bu yüzden işlemeyi await ile beklemeliyiz
+        try {
+            await processDocumentSync(document.id, buffer, file.name, chatbotId)
 
-        return NextResponse.json(
-            {
-                success: true,
-                documentId: document.id, // Frontend polling için ID dönüyoruz
-                message: 'Doküman yüklendi, işleniyor...'
-            },
-            { status: 201 }
-        )
+            return NextResponse.json(
+                {
+                    success: true,
+                    documentId: document.id,
+                    status: 'ready',
+                    message: 'Doküman başarıyla işlendi!'
+                },
+                { status: 201 }
+            )
+        } catch (processingError) {
+            console.error('Processing error:', processingError)
+            return NextResponse.json(
+                {
+                    success: true,
+                    documentId: document.id,
+                    status: 'failed',
+                    message: 'Doküman yüklendi ancak işleme başarısız oldu.'
+                },
+                { status: 201 }
+            )
+        }
 
     } catch (error) {
         console.error('Document upload error:', error)
@@ -72,44 +88,41 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * Dokümanı arka planda işle ve Vektör Veritabanına kaydet
+ * Dokümanı senkron olarak işle ve Vektör Veritabanına kaydet
  */
-async function processDocumentAsync(
+async function processDocumentSync(
     documentId: string,
     buffer: Buffer,
     filename: string,
     chatbotId: string
 ) {
+    const startTime = Date.now()
+    console.log(`[DOC] Processing document ${documentId} (${filename})...`)
+
     try {
-        console.log(`Processing document ${documentId}...`)
-
-        console.time('AI_Processing_Time');
+        // 1. Dokümanı işle (text çıkar, chunk'la, embedding oluştur)
+        console.log(`[DOC] Step 1: Extracting text and creating embeddings...`)
         const result = await processDocument(buffer, filename)
-        console.timeEnd('AI_Processing_Time');
 
-        // ✅ DÜZELTME: Raw SQL için Insert Sorgularını Hazırla
-        // createMany yerine $executeRaw kullanıyoruz çünkü 'Unsupported' tipi standart create ile çalışmaz.
+        const extractTime = Date.now() - startTime
+        console.log(`[DOC] Step 1 completed in ${extractTime}ms - ${result.chunks.length} chunks created`)
+
+        // 2. Chunk'ları veritabanına kaydet
+        console.log(`[DOC] Step 2: Saving ${result.chunks.length} chunks to database...`)
 
         const chunkInserts = result.chunks.map((chunk, index) => {
-            const chunkId = crypto.randomUUID(); // Manuel ID oluşturuyoruz
+            const chunkId = crypto.randomUUID();
             const embeddingArray = result.embeddings[index];
             const tokenCount = Math.ceil(chunk.length / 4);
-
-            // Vektörü string formatına çevir: "[0.123, 0.456, ...]"
             const embeddingString = `[${embeddingArray.join(',')}]`;
 
-            // SQL Sorgusu: Vektör tipine cast ediyoruz (::vector)
             return prisma.$executeRaw`
                 INSERT INTO "DocumentChunk" ("id", "documentId", "content", "chunkIndex", "tokenCount", "embedding", "createdAt")
                 VALUES (${chunkId}, ${documentId}, ${chunk}, ${index}, ${tokenCount}, ${embeddingString}::vector, NOW())
             `;
         });
 
-        console.time('DB_Transaction_Time');
-
-        // Transaction ile hem durumu güncelle hem de parçaları ekle
         await prisma.$transaction([
-            // 1. Doküman durumunu güncelle
             prisma.document.update({
                 where: { id: documentId },
                 data: {
@@ -119,22 +132,20 @@ async function processDocumentAsync(
                     totalTokens: result.tokenCount,
                 }
             }),
-            // 2. Hazırlanan tüm INSERT sorgularını çalıştır
             ...chunkInserts
         ]);
 
-        console.timeEnd('DB_Transaction_Time');
-
-        // Chatbot güncellenme tarihini yenile
+        // 3. Chatbot'u güncelle
         await prisma.chatbot.update({
             where: { id: chatbotId },
             data: { updatedAt: new Date() }
         })
 
-        console.log(`Document ${documentId} processed successfully!`)
+        const totalTime = Date.now() - startTime
+        console.log(`[DOC] ✅ Document ${documentId} processed successfully in ${totalTime}ms!`)
 
     } catch (error) {
-        console.error(`Document processing failed for ${documentId}:`, error)
+        console.error(`[DOC] ❌ Document processing failed for ${documentId}:`, error)
 
         await prisma.document.update({
             where: { id: documentId },
@@ -143,5 +154,7 @@ async function processDocumentAsync(
                 errorMessage: error instanceof Error ? error.message : 'İşleme hatası',
             }
         })
+
+        throw error
     }
 }

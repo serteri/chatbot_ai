@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
@@ -13,14 +13,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog'
-import { FileText, Upload, X } from 'lucide-react'
+import { FileText, Upload, X, Loader2 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { Progress } from '@/components/ui/progress'
-import { sleep } from '@/lib/utils' // utils dosyanızdan sleep fonksiyonu
-
-// Polling ayarları
-const POLLING_INTERVAL_MS = 2000;
-const MAX_ATTEMPTS = 90; // Maksimum 3 dakika (90 * 2s) bekleme
 
 interface UploadDocumentDialogProps {
     chatbotId: string
@@ -35,8 +30,8 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
     const [isUploading, setIsUploading] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [uploadProgress, setUploadProgress] = useState(0)
+    const [statusMessage, setStatusMessage] = useState('')
 
-    // Varsayılan dosya boyutu formatlayıcı (utils'den import edilmediği varsayılır)
     const formatFileSize = (bytes: number): string => {
         if (bytes === 0) return '0 Bytes'
         const k = 1024
@@ -66,52 +61,13 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
         setSelectedFile(file)
     }
 
-    // ✅ YENİ/DÜZELTİLMİŞ: İşlem durumunu kontrol etme (Polling)
-    const startPolling = async (documentId: string) => {
-        setUploadProgress(75); // İşleniyor durumuna sabitleniyor
-
-        for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-            await sleep(POLLING_INTERVAL_MS);
-
-            try {
-                // Dokümanın anlık durumunu sorgula
-                // NOT: Bu endpoint'in (örneğin /api/document/status) 'ready', 'processing' veya 'failed' döndürmesi gerekir.
-                const checkResponse = await fetch(`/api/document/status?documentId=${documentId}`);
-                if (!checkResponse.ok) throw new Error("Status check failed");
-
-                const statusData = await checkResponse.json();
-
-                if (statusData.status === 'ready') {
-                    setUploadProgress(100);
-                    toast.success(t('processingComplete')); // BİTTİ MESAJI
-                    return true; // Başarılı
-                }
-
-                if (statusData.status === 'failed') {
-                    toast.error(t('processingError'));
-                    return false;
-                }
-
-            } catch (error) {
-                console.error("Polling error:", error);
-                // Bir sonraki denemede tekrar dener
-            }
-        }
-        toast.error(t('processingTimeout')); // Zaman aşımı
-        return false;
-    };
-
-    // Yükleme sırasında iptal butonu için
     const handleCancel = () => {
-        setIsUploading(false);
-        setUploadProgress(0);
-        setSelectedFile(null);
-        setOpen(false);
-        toast.error(t('uploadCancelled'));
+        if (!isUploading) {
+            setSelectedFile(null)
+            setOpen(false)
+        }
     }
 
-
-    // ✅ DÜZELTİLMİŞ: Yükleme sonrası hemen sayfa yenilenir, işleme arka planda devam eder
     const handleUpload = async () => {
         if (!selectedFile) {
             toast.error(t('pleaseSelectFile'))
@@ -120,15 +76,17 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
 
         setIsUploading(true)
         setUploadProgress(10)
+        setStatusMessage(t('uploading'))
 
         try {
             const formData = new FormData()
             formData.append('file', selectedFile)
             formData.append('chatbotId', chatbotId)
 
-            setUploadProgress(50)
+            setUploadProgress(30)
+            setStatusMessage(t('processing'))
 
-            // 1. Dosyayı yükle
+            // API artık senkron çalışıyor - işleme bitene kadar bekleyecek
             const response = await fetch('/api/document/upload', {
                 method: 'POST',
                 body: formData,
@@ -144,16 +102,27 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
             }
 
             setUploadProgress(100)
-            toast.success(t('documentUploadedStartProcessing'))
 
-            // 2. Dialog'u kapat ve sayfayı hemen yenile
-            // İşleme arka planda devam eder, kullanıcı "İşleniyor" durumunu görecek
+            if (data.status === 'ready') {
+                toast.success(t('processingComplete'), {
+                    icon: '✅',
+                    duration: 3000,
+                })
+            } else if (data.status === 'failed') {
+                toast.error(t('processingError'), {
+                    icon: '❌',
+                    duration: 3000,
+                })
+            } else {
+                toast.success(t('documentUploadedStartProcessing'))
+            }
+
+            // Dialog'u kapat ve sayfayı yenile
             setIsUploading(false)
             setUploadProgress(0)
             setSelectedFile(null)
             setOpen(false)
 
-            // Sayfayı yenile - kullanıcı dokümanı "İşleniyor" durumunda görecek
             window.location.reload()
 
         } catch (error) {
@@ -165,10 +134,10 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
         }
     }
 
-
-
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(newOpen) => {
+            if (!isUploading) setOpen(newOpen)
+        }}>
             <DialogTrigger asChild>
                 {trigger || (
                     <Button size="sm">
@@ -177,7 +146,6 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
                     </Button>
                 )}
             </DialogTrigger>
-            {/* ✅ Dialog Content, önceki hatadan dolayı beyaz arka planlı */}
             <DialogContent className="max-w-md bg-white dark:bg-zinc-900">
                 <DialogHeader>
                     <DialogTitle>{t('uploadDocument')}</DialogTitle>
@@ -222,7 +190,7 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
                                 </div>
                                 {!isUploading && (
                                     <button
-                                        onClick={handleCancel}
+                                        onClick={() => setSelectedFile(null)}
                                         className="text-gray-400 hover:text-gray-600"
                                     >
                                         <X className="h-5 w-5" />
@@ -234,9 +202,10 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
                             {isUploading && (
                                 <div className="mt-4 space-y-2">
                                     <Progress value={uploadProgress} />
-                                    <p className="text-xs text-center text-gray-500">
-                                        {uploadProgress < 75 ? t('uploading') : t('processing')}
-                                    </p>
+                                    <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                        {statusMessage}
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -263,7 +232,14 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
                         onClick={handleUpload}
                         disabled={!selectedFile || isUploading}
                     >
-                        {isUploading ? t('uploading') : t('upload')}
+                        {isUploading ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                {t('processing')}
+                            </>
+                        ) : (
+                            t('upload')
+                        )}
                     </Button>
                 </DialogFooter>
             </DialogContent>
