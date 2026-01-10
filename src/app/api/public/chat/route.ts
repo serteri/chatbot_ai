@@ -111,6 +111,8 @@ export async function POST(req: NextRequest) {
 
         // Conversation var mı kontrol et
         let conversation
+        let isNewConversation = false
+
         if (conversationId) {
             conversation = await prisma.conversation.findUnique({
                 where: { id: conversationId },
@@ -124,6 +126,7 @@ export async function POST(req: NextRequest) {
         }
 
         if (!conversation) {
+            isNewConversation = true
             conversation = await prisma.conversation.create({
                 data: {
                     chatbotId: chatbot.id,
@@ -185,7 +188,7 @@ export async function POST(req: NextRequest) {
                 })
 
                 // Stats güncelle
-                await updateStats(chatbot.id, conversation.id, subscription, chatbot.userId)
+                await updateStats(chatbot.id, conversation.id, subscription, chatbot.userId, isNewConversation)
 
                 const response = new NextResponse(liveSupportMsg)
                 response.headers.set('X-Conversation-Id', conversation.id)
@@ -238,7 +241,7 @@ export async function POST(req: NextRequest) {
                 }
             }
         }
-// Vize bilgisi
+        // Vize bilgisi
         if (intentResult.intent === 'visa_information') {
             const visaInfo = await prisma.visaInfo.findMany({
                 where: {
@@ -392,7 +395,7 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
                 }
             })
 
-            await updateStats(chatbot.id, conversation.id, subscription, chatbot.userId)
+            await updateStats(chatbot.id, conversation.id, subscription, chatbot.userId, isNewConversation)
 
             const response = new NextResponse(fallbackText)
             response.headers.set('X-Conversation-Id', conversation.id)
@@ -458,7 +461,7 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
                     }
                 }
 
-                await updateStats(chatbot.id, conversation.id, subscription, chatbot.userId)
+                await updateStats(chatbot.id, conversation.id, subscription, chatbot.userId, isNewConversation)
             }
         })
 
@@ -483,13 +486,14 @@ Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
 }
 
 // Helper: Stats güncelle
-async function updateStats(chatbotId: string, conversationId: string, subscription: any, userId: string) {
+async function updateStats(chatbotId: string, conversationId: string, subscription: any, userId: string, isNewConversation: boolean = false) {
     await prisma.conversation.update({
         where: { id: conversationId },
         data: { updatedAt: new Date() }
     })
 
-    if (subscription && subscription.maxConversations !== -1) {
+    // Sadece YENİ konuşmalarda conversationsUsed artır
+    if (isNewConversation && subscription && subscription.maxConversations !== -1) {
         await prisma.subscription.update({
             where: { userId },
             data: {
