@@ -122,6 +122,7 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
         setUploadProgress(10)
 
         let documentId = '';
+        let uploadSuccess = false;
 
         try {
             const formData = new FormData()
@@ -147,26 +148,24 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
             toast.success(t('documentUploadedStartProcessing'));
 
             // 2. Polling'i başlat ve sonucunu bekle
-            const success = await startPolling(documentId);
-
-            if (success) {
-                setOpen(false)
-                router.refresh(); // ✅ BAŞARIYLA BİTTİ: Sayfayı yenile
-            }
+            uploadSuccess = await startPolling(documentId);
 
         } catch (error) {
             console.error('Upload error:', error)
             toast.error(t('errorOccurred'))
         } finally {
-            // Hata, zaman aşımı veya başarısız işleme durumunda temizle ve kapat
-            if (uploadProgress < 100) {
-                setIsUploading(false)
-                setUploadProgress(0)
-                setSelectedFile(null)
-                setOpen(false);
+            setIsUploading(false)
+            setUploadProgress(0)
+            setSelectedFile(null)
+            setOpen(false)
+
+            // Başarılı yükleme sonrası sayfayı yenile
+            if (uploadSuccess) {
+                router.refresh();
             }
         }
     }
+
 
 
     return (
