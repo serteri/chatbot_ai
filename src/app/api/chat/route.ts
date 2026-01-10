@@ -176,13 +176,45 @@ export async function POST(req: NextRequest) {
         }
 
         const chatbot = await prisma.chatbot.findFirst({
-            where: { OR: [ { id: chatbotId }, { identifier: chatbotId } ] },
-            select: { id: true, name: true, welcomeMessage: true }
+            where: { OR: [{ id: chatbotId }, { identifier: chatbotId }] },
+            select: { id: true, name: true, welcomeMessage: true, userId: true }
         });
 
         if (!chatbot) {
             return NextResponse.json({ error: "Chatbot bulunamadı" }, { status: 404 });
         }
+
+        // Conversation ID'yi al veya yeni oluştur
+        const existingConversationId = body.conversationId;
+        let conversation;
+        let isNewConversation = false;
+        const visitorId = body.visitorId || `visitor_${Date.now()}`;
+
+        if (existingConversationId) {
+            conversation = await prisma.conversation.findUnique({
+                where: { id: existingConversationId }
+            });
+        }
+
+        if (!conversation) {
+            isNewConversation = true;
+            conversation = await prisma.conversation.create({
+                data: {
+                    chatbotId: chatbot.id,
+                    visitorId: visitorId,
+                    status: 'active',
+                }
+            });
+        }
+
+        // Kullanıcı mesajını kaydet
+        await prisma.conversationMessage.create({
+            data: {
+                conversationId: conversation.id,
+                role: 'user',
+                content: messageContent,
+            }
+        });
 
         // --- RAG ARAMASI ---
         const searchResult = await performVectorSearch(messageContent, chatbot.id);
@@ -221,9 +253,27 @@ ${ragContext || "Şu an için ilgili bir doküman parçası bulunamadı."}
 
         const aiResponse = response.choices[0].message.content || "Cevap üretilemedi.";
 
+        // AI yanıtını kaydet
+        await prisma.conversationMessage.create({
+            data: {
+                conversationId: conversation.id,
+                role: 'assistant',
+                content: aiResponse,
+            }
+        });
+
+        // İstatistikleri güncelle
+        await prisma.chatbot.update({
+            where: { id: chatbot.id },
+            data: {
+                totalMessages: { increment: 2 },
+            }
+        });
+
         return NextResponse.json({
             success: true,
             response: aiResponse,
+            conversationId: conversation.id,
             context: {
                 mode: finalMode,
                 dataSourcesUsed: Array.from(new Set(dataSourcesUsed)),
