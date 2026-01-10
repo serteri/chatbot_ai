@@ -214,8 +214,8 @@ export default async function EcommerceChatbotsPage(props: {
                                                 </CardTitle>
                                                 <div className="mt-1.5 flex gap-2">
                                                     <Badge variant={chatbot.isActive ? "default" : "secondary"} className={`text-[10px] px-2 py-0.5 h-5 ${chatbot.isActive
-                                                            ? "bg-green-100 text-green-700 hover:bg-green-200 border-green-200"
-                                                            : "bg-slate-100 text-slate-500 border-slate-200"
+                                                        ? "bg-green-100 text-green-700 hover:bg-green-200 border-green-200"
+                                                        : "bg-slate-100 text-slate-500 border-slate-200"
                                                         }`}>
                                                         {chatbot.isActive ? t('chatbots.active') : t('chatbots.inactive')}
                                                     </Badge>
@@ -229,9 +229,16 @@ export default async function EcommerceChatbotsPage(props: {
                                             locale={locale}
                                             labels={{
                                                 embed: t('chatbots.embedOnSite'),
-                                                manage: t('manage'),
+                                                manage: t('chatbots.manage'),
                                                 settings: t('chatbots.settings'),
-                                                delete: t('delete')
+                                                delete: t('chatbots.delete'),
+                                                deleteTitle: t('chatbots.deleteTitle'),
+                                                deleteDescription: t('chatbots.deleteDescription'),
+                                                deleteCancel: t('chatbots.deleteCancel'),
+                                                deleteConfirm: t('chatbots.deleteConfirm'),
+                                                deleting: t('chatbots.deleting'),
+                                                deleteSuccess: t('chatbots.deleteSuccess'),
+                                                deleteError: t('chatbots.deleteError')
                                             }}
                                         />
                                     </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
     MoreVertical,
     Code,
@@ -28,7 +28,6 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { EmbedCodeDialog } from '@/components/chatbot/EmbedCodeDialog';
 import { toast } from 'react-hot-toast';
@@ -41,6 +40,13 @@ interface ChatbotCardActionsProps {
         manage: string;
         settings: string;
         delete: string;
+        deleteTitle?: string;
+        deleteDescription?: string;
+        deleteCancel?: string;
+        deleteConfirm?: string;
+        deleting?: string;
+        deleteSuccess?: string;
+        deleteError?: string;
     };
 }
 
@@ -48,6 +54,7 @@ export function ChatbotCardActions({ chatbotId, locale, labels }: ChatbotCardAct
     const router = useRouter();
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const handleDelete = async () => {
         setIsDeleting(true);
@@ -56,24 +63,33 @@ export function ChatbotCardActions({ chatbotId, locale, labels }: ChatbotCardAct
                 method: 'DELETE',
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                throw new Error('Failed to delete chatbot');
+                throw new Error(data.error || 'Failed to delete chatbot');
             }
 
-            toast.success('Chatbot deleted successfully');
+            toast.success(labels.deleteSuccess || 'Chatbot deleted successfully');
             setShowDeleteDialog(false);
             router.refresh();
         } catch (error) {
             console.error('Delete error:', error);
-            toast.error('Failed to delete chatbot');
+            toast.error(labels.deleteError || 'Failed to delete chatbot');
         } finally {
             setIsDeleting(false);
         }
     };
 
+    const openDeleteDialog = () => {
+        setDropdownOpen(false); // Close dropdown first
+        setTimeout(() => {
+            setShowDeleteDialog(true); // Then open dialog
+        }, 100);
+    };
+
     return (
         <>
-            <DropdownMenu>
+            <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                     <Button
                         variant="ghost"
@@ -117,7 +133,7 @@ export function ChatbotCardActions({ chatbotId, locale, labels }: ChatbotCardAct
                     <DropdownMenuItem
                         onSelect={(e) => {
                             e.preventDefault();
-                            setShowDeleteDialog(true);
+                            openDeleteDialog();
                         }}
                         className="cursor-pointer py-2.5 px-3 rounded-xl text-red-600 focus:text-red-700 focus:bg-red-50 transition-colors duration-200 font-medium my-0.5"
                     >
@@ -131,14 +147,15 @@ export function ChatbotCardActions({ chatbotId, locale, labels }: ChatbotCardAct
             <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
                 <AlertDialogContent className="bg-white">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Chatbot</AlertDialogTitle>
+                        <AlertDialogTitle>{labels.deleteTitle || 'Delete Chatbot'}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Are you sure you want to delete this chatbot? This action cannot be undone.
-                            All conversations, documents, and settings will be permanently deleted.
+                            {labels.deleteDescription || 'Are you sure you want to delete this chatbot? This action cannot be undone. All conversations, documents, and settings will be permanently deleted.'}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel disabled={isDeleting}>
+                            {labels.deleteCancel || 'Cancel'}
+                        </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleDelete}
                             disabled={isDeleting}
@@ -147,10 +164,10 @@ export function ChatbotCardActions({ chatbotId, locale, labels }: ChatbotCardAct
                             {isDeleting ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Deleting...
+                                    {labels.deleting || 'Deleting...'}
                                 </>
                             ) : (
-                                'Delete'
+                                labels.deleteConfirm || 'Delete'
                             )}
                         </AlertDialogAction>
                     </AlertDialogFooter>
