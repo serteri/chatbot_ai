@@ -18,8 +18,8 @@ import { WidgetCustomizer } from '@/components/chatbot/WidgetCustomizer'
 import { ChatbotSettings } from '@/components/chatbot/ChatbotSettings'
 
 export default async function ChatbotDetailPage({
-                                                    params,
-                                                }: {
+    params,
+}: {
     params: Promise<{ chatbotId: string; locale: string }>
 }) {
     const { chatbotId, locale } = await params
@@ -53,6 +53,14 @@ export default async function ChatbotDetailPage({
     if (chatbot.userId !== session.user.id) {
         redirect('/dashboard')
     }
+
+    // Kullanıcının subscription bilgisini al (feature gating için)
+    const subscription = await prisma.subscription.findUnique({
+        where: { userId: session.user.id }
+    })
+
+    const planType = subscription?.planType || 'free'
+    const hasPremiumFeatures = planType !== 'free' // Pro, Business, Enterprise
 
     // Chatbot türünü (industry) etikete dönüştüren yardımcı fonksiyon
     const getIndustryBadge = (industry: string | null) => {
@@ -167,23 +175,29 @@ export default async function ChatbotDetailPage({
 
             {/* Tabs */}
             <Tabs defaultValue="documents" className="w-full">
-                <TabsList className="grid w-full grid-cols-6 mb-8">
+                <TabsList className={`grid w-full mb-8 ${hasPremiumFeatures ? 'grid-cols-6' : 'grid-cols-3'}`}>
                     <TabsTrigger value="documents">
                         <FileText className="w-4 h-4 mr-2" />
                         {t('chatbots.documents')}
                     </TabsTrigger>
-                    <TabsTrigger value="analytics">
-                        <BarChart3 className="w-4 h-4 mr-2" />
-                        {t('chatbots.analytics')}
-                    </TabsTrigger>
-                    <TabsTrigger value="customize">
-                        <Palette className="w-4 h-4 mr-2" />
-                        {t('chatbots.customize')}
-                    </TabsTrigger>
-                    <TabsTrigger value="security">
-                        <Shield className="w-4 h-4 mr-2" />
-                        {t('chatbots.security')}
-                    </TabsTrigger>
+                    {hasPremiumFeatures && (
+                        <TabsTrigger value="analytics">
+                            <BarChart3 className="w-4 h-4 mr-2" />
+                            {t('chatbots.analytics')}
+                        </TabsTrigger>
+                    )}
+                    {hasPremiumFeatures && (
+                        <TabsTrigger value="customize">
+                            <Palette className="w-4 h-4 mr-2" />
+                            {t('chatbots.customize')}
+                        </TabsTrigger>
+                    )}
+                    {hasPremiumFeatures && (
+                        <TabsTrigger value="security">
+                            <Shield className="w-4 h-4 mr-2" />
+                            {t('chatbots.security')}
+                        </TabsTrigger>
+                    )}
                     <TabsTrigger value="embed">
                         <Code className="w-4 h-4 mr-2" />
                         {t('chatbots.embed')}
@@ -256,35 +270,41 @@ export default async function ChatbotDetailPage({
                     </Card>
                 </TabsContent>
 
-                {/* Analytics Tab */}
-                <TabsContent value="analytics">
-                    <AnalyticsPage chatbotId={chatbotId} />
-                </TabsContent>
+                {/* Analytics Tab - Pro+ only */}
+                {hasPremiumFeatures && (
+                    <TabsContent value="analytics">
+                        <AnalyticsPage chatbotId={chatbotId} />
+                    </TabsContent>
+                )}
 
-                {/* Customize Tab */}
-                <TabsContent value="customize">
-                    <WidgetCustomizer
-                        chatbotId={chatbotId}
-                        initialSettings={{
-                            widgetPrimaryColor: chatbot.widgetPrimaryColor,
-                            widgetButtonColor: chatbot.widgetButtonColor,
-                            widgetTextColor: chatbot.widgetTextColor,
-                            widgetPosition: chatbot.widgetPosition,
-                            widgetSize: chatbot.widgetSize,
-                            widgetLogoUrl: chatbot.widgetLogoUrl,
-                            welcomeMessage: chatbot.welcomeMessage,
-                            botName: chatbot.botName
-                        }}
-                    />
-                </TabsContent>
+                {/* Customize Tab - Pro+ only */}
+                {hasPremiumFeatures && (
+                    <TabsContent value="customize">
+                        <WidgetCustomizer
+                            chatbotId={chatbotId}
+                            initialSettings={{
+                                widgetPrimaryColor: chatbot.widgetPrimaryColor,
+                                widgetButtonColor: chatbot.widgetButtonColor,
+                                widgetTextColor: chatbot.widgetTextColor,
+                                widgetPosition: chatbot.widgetPosition,
+                                widgetSize: chatbot.widgetSize,
+                                widgetLogoUrl: chatbot.widgetLogoUrl,
+                                welcomeMessage: chatbot.welcomeMessage,
+                                botName: chatbot.botName
+                            }}
+                        />
+                    </TabsContent>
+                )}
 
-                {/* Security Tab */}
-                <TabsContent value="security">
-                    <DomainManager
-                        chatbotId={chatbotId}
-                        initialDomains={chatbot.allowedDomains}
-                    />
-                </TabsContent>
+                {/* Security Tab - Pro+ only */}
+                {hasPremiumFeatures && (
+                    <TabsContent value="security">
+                        <DomainManager
+                            chatbotId={chatbotId}
+                            initialDomains={chatbot.allowedDomains}
+                        />
+                    </TabsContent>
+                )}
 
                 {/* Embed Tab */}
                 <TabsContent value="embed">
