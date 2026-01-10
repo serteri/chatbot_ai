@@ -1902,6 +1902,17 @@
     "goToPortal": "Go to Billing Portal",
     "expires": "Expiry date"
   },
+  "usage": {
+    "title": "Usage Overview",
+    "chatbots": "Chatbots",
+    "conversations": "Conversations",
+    "documents": "Documents",
+    "unlimited": "Unlimited",
+    "warningTitle": "Approaching Limit",
+    "warningMessage": "You're approaching your plan limits. Consider upgrading for more capacity.",
+    "upgrade": "Upgrade Plan",
+    "resetDate": "Resets on {date}"
+  },
   "footer": {
     "description": "Transform customer experience with AI-powered chatbots. Setup in minutes, 24/7 support.",
     "copyright": "All rights reserved.",

@@ -1918,6 +1918,17 @@
     "goToPortal": "Ödeme Portalına Git",
     "expires": "Son kullanma tarihi"
   },
+  "usage": {
+    "title": "Kullanım Özeti",
+    "chatbots": "Chatbotlar",
+    "conversations": "Konuşmalar",
+    "documents": "Dokümanlar",
+    "unlimited": "Sınırsız",
+    "warningTitle": "Limite Yaklaşıyorsunuz",
+    "warningMessage": "Plan limitinize yaklaşıyorsunuz. Daha fazla kapasite için plan yükseltin.",
+    "upgrade": "Planı Yükselt",
+    "resetDate": "{date} tarihinde sıfırlanacak"
+  },
   "footer": {
     "description": "AI destekli chatbot'lar ile müşteri deneyimini dönüştürün. Dakikalar içinde kurulum, 7/24 destek.",
     "copyright": "Tüm hakları saklıdır.",

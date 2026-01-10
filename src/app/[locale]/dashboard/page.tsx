@@ -10,19 +10,20 @@ import {
     MessageSquare,
     FileText,
     BarChart3,
-    Users, // Orijinal listede vardı
-    ChevronRight, // Orijinal listede vardı
+    Users,
+    ChevronRight,
     ShoppingCart,
     GraduationCap,
-    Plus, // Orijinal listede vardı
+    Plus,
     ArrowRight,
-    MessageCircle // ✅ YENİ EKLENEN: Konuşmalar butonu için
+    MessageCircle
 } from 'lucide-react'
 import Link from 'next/link'
+import { UsageIndicator } from '@/components/dashboard/UsageIndicator'
 
 export default async function DashboardPage({
-                                                params,
-                                            }: {
+    params,
+}: {
     params: Promise<{ locale: string }>
 }) {
     const { locale } = await params
@@ -32,6 +33,11 @@ export default async function DashboardPage({
     if (!session?.user?.id) {
         redirect('/login')
     }
+
+    // Fetch subscription data
+    const subscription = await prisma.subscription.findUnique({
+        where: { userId: session.user.id }
+    })
 
     // Fetch real chatbot counts
     const chatbots = await prisma.chatbot.findMany({
@@ -49,7 +55,6 @@ export default async function DashboardPage({
     // Chatbotları türlerine göre filtreleme
     const educationChatbots = chatbots.filter(bot => bot.industry === 'education')
     const ecommerceChatbots = chatbots.filter(bot => bot.industry === 'ecommerce')
-    // Sektörü 'education' veya 'ecommerce' olmayanlar 'general' olarak kabul edilir.
     const generalChatbots = chatbots.filter(bot => bot.industry !== 'education' && bot.industry !== 'ecommerce')
 
     const totalDocuments = chatbots.reduce((sum, bot) => sum + bot._count.documents, 0)
@@ -150,6 +155,27 @@ export default async function DashboardPage({
 
             {/* Platform Statistics */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                {/* Usage Indicator - Only show if user has subscription */}
+                {subscription && (
+                    <div className="mb-8">
+                        <UsageIndicator
+                            locale={locale}
+                            subscription={{
+                                planType: subscription.planType,
+                                maxChatbots: subscription.maxChatbots,
+                                maxDocuments: subscription.maxDocuments,
+                                maxConversations: subscription.maxConversations,
+                                conversationsUsed: subscription.conversationsUsed,
+                                currentPeriodEnd: subscription.currentPeriodEnd
+                            }}
+                            currentUsage={{
+                                chatbots: chatbots.length,
+                                documents: totalDocuments
+                            }}
+                        />
+                    </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

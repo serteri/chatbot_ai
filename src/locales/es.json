@@ -1864,6 +1864,17 @@
     "goToPortal": "Ir al Portal de Pagos",
     "expires": "Fecha de vencimiento"
   },
+  "usage": {
+    "title": "Resumen de uso",
+    "chatbots": "Chatbots",
+    "conversations": "Conversaciones",
+    "documents": "Documentos",
+    "unlimited": "Ilimitado",
+    "warningTitle": "Acercándose al límite",
+    "warningMessage": "Te estás acercando a los límites de tu plan. Considera actualizar para más capacidad.",
+    "upgrade": "Actualizar plan",
+    "resetDate": "Se reinicia el {date}"
+  },
   "footer": {
     "description": "Plataforma de interacción con clientes impulsada por IA.",
     "location": "Brisbane, Australia",

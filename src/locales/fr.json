@@ -1864,6 +1864,17 @@
     "goToPortal": "Aller au Portail de Paiement",
     "expires": "Date d'expiration"
   },
+  "usage": {
+    "title": "Aperçu d'utilisation",
+    "chatbots": "Chatbots",
+    "conversations": "Conversations",
+    "documents": "Documents",
+    "unlimited": "Illimité",
+    "warningTitle": "Limite proche",
+    "warningMessage": "Vous approchez de vos limites de plan. Pensez à mettre à niveau pour plus de capacité.",
+    "upgrade": "Mettre à niveau",
+    "resetDate": "Réinitialisé le {date}"
+  },
   "footer": {
     "description": "Plateforme d'engagement client propulsée par l'IA.",
     "location": "Brisbane, Australie",

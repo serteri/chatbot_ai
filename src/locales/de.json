@@ -1078,6 +1078,17 @@
     "goToPortal": "Zum Zahlungsportal",
     "expires": "Ablaufdatum"
   },
+  "usage": {
+    "title": "Nutzungsübersicht",
+    "chatbots": "Chatbots",
+    "conversations": "Gespräche",
+    "documents": "Dokumente",
+    "unlimited": "Unbegrenzt",
+    "warningTitle": "Limit erreicht bald",
+    "warningMessage": "Sie nähern sich Ihren Planlimits. Erwägen Sie ein Upgrade für mehr Kapazität.",
+    "upgrade": "Plan upgraden",
+    "resetDate": "Zurückgesetzt am {date}"
+  },
   "pricing": {
     "title": "Pläne und Preise",
     "subtitle": "Wählen Sie den richtigen Plan für Ihr Unternehmen",
