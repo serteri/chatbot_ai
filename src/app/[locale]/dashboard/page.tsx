@@ -35,9 +35,31 @@ export default async function DashboardPage({
     }
 
     // Fetch subscription data
-    const subscription = await prisma.subscription.findUnique({
+    let subscription = await prisma.subscription.findUnique({
         where: { userId: session.user.id }
     })
+
+    // On-demand period refresh: Free kullanıcıların süresi geçmişse yenile
+    if (subscription && subscription.planType === 'free') {
+        const now = new Date()
+        const periodEnd = subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd) : null
+
+        if (!periodEnd || periodEnd < now) {
+            // Dönem geçmiş, yenile
+            const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+            const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+
+            subscription = await prisma.subscription.update({
+                where: { id: subscription.id },
+                data: {
+                    currentPeriodStart: currentMonthStart,
+                    currentPeriodEnd: nextMonthStart,
+                    conversationsUsed: 0 // Yeni dönem için sıfırla
+                }
+            })
+            console.log('✅ Free subscription period auto-refreshed for:', session.user.email)
+        }
+    }
 
     // Fetch real chatbot counts
     const chatbots = await prisma.chatbot.findMany({

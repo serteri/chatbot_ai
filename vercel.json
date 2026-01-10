@@ -8,10 +8,6 @@
     {
       "path": "/api/scholarships/balance-countries",
       "schedule": "0 3 * * 0"
-    },
-    {
-      "path": "/api/cron/reset-free-subscriptions",
-      "schedule": "0 0 1 * *"
     }
   ]
 }
