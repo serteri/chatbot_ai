@@ -8,6 +8,7 @@ export const runtime = 'nodejs'
 const PLAN_LIMITS: Record<string, { maxChatbots: number; maxDocuments: number; maxConversations: number }> = {
     'free': { maxChatbots: 1, maxDocuments: 3, maxConversations: 50 },
     'pro': { maxChatbots: 5, maxDocuments: 50, maxConversations: 1000 },
+    'business': { maxChatbots: 10, maxDocuments: 100, maxConversations: 5000 },
     'enterprise': { maxChatbots: -1, maxDocuments: -1, maxConversations: -1 } // -1 = unlimited
 }
 

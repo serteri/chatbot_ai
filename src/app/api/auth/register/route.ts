@@ -15,25 +15,25 @@ const registerSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    
+
     // Validate input
     const validatedData = registerSchema.parse(body)
-    
+
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email: validatedData.email }
     })
-    
+
     if (existingUser) {
       return NextResponse.json(
         { error: 'Bu email adresi zaten kullanılıyor' },
         { status: 400 }
       )
     }
-    
+
     // Hash password
     const hashedPassword = await hash(validatedData.password, 12)
-    
+
     // Create user
     const user = await prisma.user.create({
       data: {
@@ -50,39 +50,43 @@ export async function POST(req: NextRequest) {
         companyName: true,
       }
     })
-    
+
     // Create default subscription (Free plan)
     await prisma.subscription.create({
       data: {
         userId: user.id,
-        plan: 'free',
+        planType: 'free',
         status: 'active',
         maxChatbots: 1,
-        maxDocuments: 5,
+        maxDocuments: 3,
         maxConversations: 50,
-        storageLimit: 50,
+        conversationsUsed: 0,
+        storageLimit: 100,
+        storageUsed: 0,
+        currentPeriodStart: new Date(),
+        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       }
     })
-    
+
     return NextResponse.json(
-      { 
+      {
         success: true,
         message: 'Hesabınız oluşturuldu! Şimdi giriş yapabilirsiniz.',
-        user 
+        user
       },
       { status: 201 }
     )
-    
+
   } catch (error) {
     console.error('Register error:', error)
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: error.issues[0].message },
         { status: 400 }
       )
     }
-    
+
     return NextResponse.json(
       { error: 'Bir hata oluştu. Lütfen tekrar deneyin.' },
       { status: 500 }
