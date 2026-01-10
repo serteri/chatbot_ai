@@ -111,7 +111,7 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
     }
 
 
-    // ✅ DÜZELTİLMİŞ: Yükleme ve Polling Başlatma
+    // ✅ DÜZELTİLMİŞ: Yükleme sonrası hemen sayfa yenilenir, işleme arka planda devam eder
     const handleUpload = async () => {
         if (!selectedFile) {
             toast.error(t('pleaseSelectFile'))
@@ -121,15 +121,12 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
         setIsUploading(true)
         setUploadProgress(10)
 
-        let documentId = '';
-        let uploadSuccess = false;
-
         try {
             const formData = new FormData()
             formData.append('file', selectedFile)
             formData.append('chatbotId', chatbotId)
 
-            setUploadProgress(30)
+            setUploadProgress(50)
 
             // 1. Dosyayı yükle
             const response = await fetch('/api/document/upload', {
@@ -141,29 +138,30 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
 
             if (!response.ok) {
                 toast.error(data.error || t('uploadFailed'))
+                setIsUploading(false)
+                setUploadProgress(0)
                 return
             }
 
-            documentId = data.documentId;
-            toast.success(t('documentUploadedStartProcessing'));
+            setUploadProgress(100)
+            toast.success(t('documentUploadedStartProcessing'))
 
-            // 2. Polling'i başlat ve sonucunu bekle
-            uploadSuccess = await startPolling(documentId);
-
-        } catch (error) {
-            console.error('Upload error:', error)
-            toast.error(t('errorOccurred'))
-        } finally {
+            // 2. Dialog'u kapat ve sayfayı hemen yenile
+            // İşleme arka planda devam eder, kullanıcı "İşleniyor" durumunu görecek
             setIsUploading(false)
             setUploadProgress(0)
             setSelectedFile(null)
             setOpen(false)
 
-            // Başarılı yükleme sonrası sayfayı yenile
-            if (uploadSuccess) {
-                // router.refresh() bazen çalışmayabileceği için window.location.reload kullanıyoruz
-                window.location.reload();
-            }
+            // Sayfayı yenile - kullanıcı dokümanı "İşleniyor" durumunda görecek
+            window.location.reload()
+
+        } catch (error) {
+            console.error('Upload error:', error)
+            toast.error(t('errorOccurred'))
+            setIsUploading(false)
+            setUploadProgress(0)
+            setSelectedFile(null)
         }
     }
 

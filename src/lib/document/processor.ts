@@ -151,9 +151,9 @@ function chunkText(text: string, chunkSize: number, overlap: number): string[] {
  */
 async function createEmbeddings(chunks: string[]): Promise<number[][]> {
     try {
-        // OpenAI batch embedding
+        // OpenAI batch embedding - text-embedding-3-small daha hızlı ve 5x daha ucuz
         const response = await openai.embeddings.create({
-            model: 'text-embedding-ada-002',
+            model: 'text-embedding-3-small',
             input: chunks,
         })
 
