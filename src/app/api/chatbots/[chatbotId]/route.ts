@@ -18,12 +18,15 @@ export async function DELETE(
 
         const { chatbotId } = await params
 
+        console.log('Delete chatbot request for ID:', chatbotId)
+
         // Verify ownership
         const chatbot = await prisma.chatbot.findUnique({
             where: { id: chatbotId }
         })
 
         if (!chatbot) {
+            console.log('Chatbot not found:', chatbotId)
             return NextResponse.json(
                 { error: 'Chatbot not found' },
                 { status: 404 }
@@ -31,44 +34,32 @@ export async function DELETE(
         }
 
         if (chatbot.userId !== session.user.id) {
+            console.log('Permission denied for chatbot:', chatbotId, 'user:', session.user.id)
             return NextResponse.json(
                 { error: 'You do not have permission to delete this chatbot' },
                 { status: 403 }
             )
         }
 
-        // Delete related records first (cascade)
-        await prisma.$transaction([
-            // Delete all conversations and messages
-            prisma.message.deleteMany({
-                where: {
-                    conversation: {
-                        chatbotId: chatbotId
-                    }
-                }
-            }),
-            prisma.conversation.deleteMany({
-                where: { chatbotId: chatbotId }
-            }),
-            // Delete documents
-            prisma.document.deleteMany({
-                where: { chatbotId: chatbotId }
-            }),
-            // Delete allowed domains
-            prisma.allowedDomain.deleteMany({
-                where: { chatbotId: chatbotId }
-            }),
-            // Finally delete the chatbot
-            prisma.chatbot.delete({
-                where: { id: chatbotId }
-            })
-        ])
+        // Most relations have onDelete: Cascade, so just delete the chatbot
+        // The database will automatically delete:
+        // - Documents (and DocumentChunks via cascade)
+        // - Conversations (and ConversationMessages via cascade)
+        // - ChatbotAnalytics
+        // - LiveSupportRequest
+        // - TemplatePurchase (will be SetNull, not deleted)
 
+        // Delete the chatbot - cascades will handle related records
+        await prisma.chatbot.delete({
+            where: { id: chatbotId }
+        })
+
+        console.log('Chatbot deleted successfully:', chatbotId)
         return NextResponse.json({ success: true })
     } catch (error) {
         console.error('Delete chatbot error:', error)
         return NextResponse.json(
-            { error: 'Failed to delete chatbot' },
+            { error: 'Failed to delete chatbot', details: error instanceof Error ? error.message : 'Unknown error' },
             { status: 500 }
         )
     }
