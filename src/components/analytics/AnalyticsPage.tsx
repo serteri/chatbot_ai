@@ -8,9 +8,12 @@ import {
     ArrowUpRight, ArrowDownRight, Clock, Star
 } from "lucide-react";
 
-export default async function AnalyticsPage({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params;
-    const t = await getTranslations({ locale, namespace: 'analytics' });
+interface AnalyticsPageProps {
+    chatbotId: string;
+}
+
+export default async function AnalyticsPage({ chatbotId }: AnalyticsPageProps) {
+    const t = await getTranslations('analytics');
     const session = await auth();
 
     if (!session?.user?.id) {
@@ -18,13 +21,8 @@ export default async function AnalyticsPage({ params }: { params: Promise<{ loca
     }
 
     // --- GERÇEK VERİLERİ ÇEKME ---
-    // 1. Kullanıcının tüm chatbotlarını bul
-    const userChatbots = await prisma.chatbot.findMany({
-        where: { userId: session.user.id },
-        select: { id: true }
-    });
-
-    const chatbotIds = userChatbots.map(bot => bot.id);
+    // Sadece bu chatbot için veriler
+    const chatbotIds = [chatbotId];
 
     // 2. Toplam Konuşma Sayısı
     const totalConversations = await prisma.conversation.count({
@@ -73,7 +71,7 @@ export default async function AnalyticsPage({ params }: { params: Promise<{ loca
         return {
             date: d,
             count: count,
-            label: d.toLocaleDateString(locale, { weekday: 'short' }) // Pzt, Sal vb.
+            label: d.toLocaleDateString(undefined, { weekday: 'short' }) // Pzt, Sal vb.
         };
     });
 
