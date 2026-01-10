@@ -53,8 +53,9 @@ export function UsageIndicator({ locale, subscription, currentUsage }: UsageIndi
     const conversationPercent = getPercentage(currentUsage.conversations, subscription.maxConversations)
     const documentPercent = getPercentage(currentUsage.documents, subscription.maxDocuments)
 
-    const hasAnyWarning = isWarning(currentUsage.chatbots, subscription.maxChatbots) ||
-        isWarning(currentUsage.conversations, subscription.maxConversations) ||
+    // Sadece konuşma ve doküman limitleri için uyarı göster
+    // Chatbot limiti Free plan için beklenen bir durum, uyarı vermeye gerek yok
+    const hasAnyWarning = isWarning(currentUsage.conversations, subscription.maxConversations) ||
         isWarning(currentUsage.documents, subscription.maxDocuments)
 
     const formatDate = (date: Date | null | undefined): string => {
