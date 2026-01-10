@@ -21,6 +21,7 @@ interface UsageIndicatorProps {
     currentUsage: {
         chatbots: number
         documents: number
+        conversations: number
     }
 }
 
@@ -49,11 +50,11 @@ export function UsageIndicator({ locale, subscription, currentUsage }: UsageIndi
     }
 
     const chatbotPercent = getPercentage(currentUsage.chatbots, subscription.maxChatbots)
-    const conversationPercent = getPercentage(subscription.conversationsUsed, subscription.maxConversations)
+    const conversationPercent = getPercentage(currentUsage.conversations, subscription.maxConversations)
     const documentPercent = getPercentage(currentUsage.documents, subscription.maxDocuments)
 
     const hasAnyWarning = isWarning(currentUsage.chatbots, subscription.maxChatbots) ||
-        isWarning(subscription.conversationsUsed, subscription.maxConversations) ||
+        isWarning(currentUsage.conversations, subscription.maxConversations) ||
         isWarning(currentUsage.documents, subscription.maxDocuments)
 
     const formatDate = (date: Date | null | undefined): string => {
@@ -127,7 +128,7 @@ export function UsageIndicator({ locale, subscription, currentUsage }: UsageIndi
                             <span>{t('conversations')}</span>
                         </div>
                         <span className="font-medium">
-                            {subscription.conversationsUsed} / {subscription.maxConversations === -1 ? t('unlimited') : subscription.maxConversations}
+                            {currentUsage.conversations} / {subscription.maxConversations === -1 ? t('unlimited') : subscription.maxConversations}
                         </span>
                     </div>
                     <div className="relative">

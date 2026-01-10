@@ -170,7 +170,8 @@ export default async function DashboardPage({
                             }}
                             currentUsage={{
                                 chatbots: chatbots.length,
-                                documents: totalDocuments
+                                documents: totalDocuments,
+                                conversations: totalConversations
                             }}
                         />
                     </div>
