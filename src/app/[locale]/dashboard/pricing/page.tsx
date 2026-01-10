@@ -46,6 +46,7 @@ export default async function PricingPage({
                                 <th className="text-left p-4">{t('pricing.feature')}</th>
                                 <th className="text-center p-4">{t('pricing.plans.free.name')}</th>
                                 <th className="text-center p-4">{t('pricing.plans.pro.name')}</th>
+                                <th className="text-center p-4">{t('pricing.plans.business.name')}</th>
                                 <th className="text-center p-4">{t('pricing.plans.enterprise.name')}</th>
                             </tr>
                         </thead>
@@ -54,23 +55,27 @@ export default async function PricingPage({
                                 <td className="p-4">{t('pricing.chatbotCount')}</td>
                                 <td className="text-center p-4">1</td>
                                 <td className="text-center p-4">5</td>
+                                <td className="text-center p-4">10</td>
                                 <td className="text-center p-4">{t('pricing.unlimited')}</td>
                             </tr>
                             <tr className="border-b">
                                 <td className="p-4">{t('pricing.documentCount')}</td>
                                 <td className="text-center p-4">3</td>
                                 <td className="text-center p-4">50</td>
+                                <td className="text-center p-4">100</td>
                                 <td className="text-center p-4">{t('pricing.unlimited')}</td>
                             </tr>
                             <tr className="border-b">
                                 <td className="p-4">{t('pricing.monthlyConversations')}</td>
                                 <td className="text-center p-4">50</td>
                                 <td className="text-center p-4">1,000</td>
+                                <td className="text-center p-4">5,000</td>
                                 <td className="text-center p-4">{t('pricing.unlimited')}</td>
                             </tr>
                             <tr className="border-b">
                                 <td className="p-4">{t('pricing.analytics')}</td>
                                 <td className="text-center p-4">❌</td>
+                                <td className="text-center p-4">✅</td>
                                 <td className="text-center p-4">✅</td>
                                 <td className="text-center p-4">✅</td>
                             </tr>
@@ -79,9 +84,18 @@ export default async function PricingPage({
                                 <td className="text-center p-4">❌</td>
                                 <td className="text-center p-4">✅</td>
                                 <td className="text-center p-4">✅</td>
+                                <td className="text-center p-4">✅</td>
+                            </tr>
+                            <tr className="border-b">
+                                <td className="p-4">{t('pricing.teamCollaboration')}</td>
+                                <td className="text-center p-4">❌</td>
+                                <td className="text-center p-4">❌</td>
+                                <td className="text-center p-4">✅</td>
+                                <td className="text-center p-4">✅</td>
                             </tr>
                             <tr className="border-b">
                                 <td className="p-4">{t('pricing.apiAccess')}</td>
+                                <td className="text-center p-4">❌</td>
                                 <td className="text-center p-4">❌</td>
                                 <td className="text-center p-4">❌</td>
                                 <td className="text-center p-4">✅</td>
@@ -89,6 +103,7 @@ export default async function PricingPage({
                             <tr className="border-b">
                                 <td className="p-4">{t('pricing.support')}</td>
                                 <td className="text-center p-4">{t('pricing.emailSupport')}</td>
+                                <td className="text-center p-4">{t('pricing.prioritySupport')}</td>
                                 <td className="text-center p-4">{t('pricing.prioritySupport')}</td>
                                 <td className="text-center p-4">{t('pricing.support247')}</td>
                             </tr>
