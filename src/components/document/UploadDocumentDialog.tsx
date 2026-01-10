@@ -161,7 +161,8 @@ export function UploadDocumentDialog({ chatbotId, trigger }: UploadDocumentDialo
 
             // Başarılı yükleme sonrası sayfayı yenile
             if (uploadSuccess) {
-                router.refresh();
+                // router.refresh() bazen çalışmayabileceği için window.location.reload kullanıyoruz
+                window.location.reload();
             }
         }
     }
