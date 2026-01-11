@@ -1,15 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
-    BarChart3, TrendingUp, Users, MessageSquare,
+    TrendingUp, Users, MessageSquare,
     ArrowUpRight, ArrowDownRight, Clock, Star,
-    Download, Calendar, Globe, Zap, Target, PieChart
+    Download, Calendar, Globe, Zap, Target
 } from "lucide-react"
 import toast from 'react-hot-toast'
 
@@ -23,10 +23,13 @@ interface AdvancedAnalyticsProps {
         avgResponseTime: number
         uniqueVisitors: number
         resolutionRate: number
-        peakHour: number
         topQueries: { query: string; count: number }[]
-        dailyData: { date: string; conversations: number; messages: number }[]
-        hourlyData: { hour: number; count: number }[]
+        // Raw timestamps for client-side local time calculation
+        conversationTimestamps?: string[]
+        // Fallback for missing raw data
+        dailyData?: { date: string; conversations: number; messages: number }[]
+        hourlyData?: { hour: number; count: number }[]
+        peakHour?: number
         geographyData: { country: string; count: number }[]
     }
 }
@@ -35,6 +38,74 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
     const t = useTranslations('advancedAnalytics')
     const [dateRange, setDateRange] = useState('30d')
     const [isExporting, setIsExporting] = useState(false)
+    const [clientStats, setClientStats] = useState<{
+        dailyData: { date: string; conversations: number; messages: number }[];
+        hourlyData: { hour: number; count: number }[];
+        peakHour: number;
+    }>({
+        dailyData: data.dailyData || [],
+        hourlyData: data.hourlyData || [],
+        peakHour: data.peakHour || 0
+    })
+
+    // Local Time Calculation
+    useEffect(() => {
+        if (!data.conversationTimestamps) return;
+
+        const timestamps = data.conversationTimestamps.map(ts => new Date(ts));
+        const now = new Date();
+        const hourCounts = new Array(24).fill(0);
+
+        // Filter by date range
+        let daysToLookBack = 30;
+        if (dateRange === '7d') daysToLookBack = 7;
+        if (dateRange === '90d') daysToLookBack = 90;
+        if (dateRange === 'year') daysToLookBack = 365;
+
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - daysToLookBack);
+
+        const filteredTimestamps = timestamps.filter(d => d >= startDate);
+
+        // Calculate Hourly Distribution (Local Time)
+        filteredTimestamps.forEach(date => {
+            const hour = date.getHours(); // Browser's local time
+            hourCounts[hour]++;
+        });
+
+        const newHourlyData = hourCounts.map((count, hour) => ({ hour, count }));
+        const newPeakHour = hourCounts.indexOf(Math.max(...hourCounts));
+
+        // Calculate Daily Trend (Local Time)
+        const dailyCounts = new Map<string, number>();
+        // Initialize last N days with 0
+        for (let i = 0; i < daysToLookBack; i++) {
+            const d = new Date();
+            d.setDate(d.getDate() - (daysToLookBack - 1 - i));
+            const key = d.toLocaleDateString('en-CA'); // YYYY-MM-DD
+            dailyCounts.set(key, 0);
+        }
+
+        filteredTimestamps.forEach(date => {
+            const key = date.toLocaleDateString('en-CA');
+            if (dailyCounts.has(key)) {
+                dailyCounts.set(key, (dailyCounts.get(key) || 0) + 1);
+            }
+        });
+
+        const newDailyData = Array.from(dailyCounts.entries()).map(([dateStr, count]) => ({
+            date: dateStr,
+            conversations: count,
+            messages: count * 4 // Mock estimate
+        }));
+
+        setClientStats({
+            dailyData: newDailyData,
+            hourlyData: newHourlyData,
+            peakHour: newPeakHour
+        });
+
+    }, [data.conversationTimestamps, dateRange]);
 
     const handleExport = async (format: 'csv' | 'excel') => {
         setIsExporting(true)
@@ -108,7 +179,7 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
         },
         {
             title: t('peakHour'),
-            value: `${data.peakHour}:00`,
+            value: `${clientStats.peakHour}:00`,
             change: "",
             trend: "neutral",
             icon: Zap,
@@ -117,8 +188,8 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
         }
     ]
 
-    const maxDailyConversations = Math.max(...data.dailyData.map(d => d.conversations)) || 1
-    const maxHourlyCount = Math.max(...data.hourlyData.map(d => d.count)) || 1
+    const maxDailyConversations = Math.max(...clientStats.dailyData.map(d => d.conversations)) || 1
+    const maxHourlyCount = Math.max(...clientStats.hourlyData.map(d => d.count)) || 1
 
     return (
         <div className="space-y-6">
@@ -204,7 +275,7 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
                     </CardHeader>
                     <CardContent>
                         <div className="h-[200px] flex items-end justify-between gap-1">
-                            {data.dailyData.slice(-14).map((day, i) => (
+                            {clientStats.dailyData.map((day, i) => (
                                 <div key={i} className="flex flex-col items-center gap-1 flex-1 group">
                                     <div className="w-full flex flex-col items-center gap-0.5">
                                         <div
@@ -239,7 +310,7 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
                     </CardHeader>
                     <CardContent>
                         <div className="h-[200px] flex items-end justify-between gap-0.5">
-                            {data.hourlyData.map((hour, i) => (
+                            {clientStats.hourlyData.map((hour, i) => (
                                 <div key={i} className="flex flex-col items-center gap-1 flex-1 group">
                                     <div
                                         className="w-full bg-purple-500 rounded-t-sm hover:bg-purple-600 transition-all relative"

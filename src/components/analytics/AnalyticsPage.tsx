@@ -109,42 +109,13 @@ export default async function AnalyticsPage({ chatbotId, hasAdvancedAnalytics = 
             select: { createdAt: true }
         });
 
-        monthlyConversations.forEach(c => {
-            const hour = c.createdAt.getHours();
-            hourCounts[hour]++;
-        });
+        // 6. Saatlik ve Günlük Dağılım için Raw Data (Client-side hesaplanacak)
+        const conversationTimestamps = monthlyConversations.map(c => c.createdAt.toISOString());
 
-        const peakHour = hourCounts.indexOf(Math.max(...hourCounts));
+        // Geography (IP takibi henüz yok, boş veri)
+        const geographyData: { country: string; count: number }[] = [];
 
-        // 5. Günlük Trend (Son 30 gün)
-        const dailyData = Array.from({ length: 30 }).map((_, i) => {
-            const d = new Date();
-            d.setDate(d.getDate() - (29 - i));
-            const dateString = d.toISOString().split('T')[0];
-
-            const count = monthlyConversations.filter(c =>
-                c.createdAt.toISOString().split('T')[0] === dateString
-            ).length;
-
-            return {
-                date: d.toISOString(),
-                conversations: count,
-                messages: count * 4 // Tahmini ortalama
-            };
-        });
-
-        // 6. Saatlik Dağılım
-        const hourlyData = hourCounts.map((count, hour) => ({ hour, count }));
-
-        // 7. Geography (Mock - IP takibi yoksa)
-        const geographyData = [
-            { country: "Turkey", count: Math.round(uniqueVisitors * 0.6) },
-            { country: "Germany", count: Math.round(uniqueVisitors * 0.15) },
-            { country: "USA", count: Math.round(uniqueVisitors * 0.1) },
-            { country: "Other", count: Math.round(uniqueVisitors * 0.15) }
-        ];
-
-        // 8. Top Queries (İlk mesajlar)
+        // Top Queries
         const topQueriesData = await prisma.conversationMessage.findMany({
             where: {
                 conversation: { chatbotId: { in: chatbotIds } },
