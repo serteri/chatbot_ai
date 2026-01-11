@@ -64,6 +64,7 @@ export default async function ChatbotDetailPage({
     // Feature erişim kontrolü - flags veya plan bazlı fallback
     // Production'da feature flags kolonları henüz olmayabilir
     const hasAnalytics = (subscription as Record<string, unknown>)?.hasAnalytics === true || planType !== 'free'
+    const hasAdvancedAnalytics = (subscription as Record<string, unknown>)?.hasAdvancedAnalytics === true || planType === 'enterprise'
     const hasCustomBranding = (subscription as Record<string, unknown>)?.hasCustomBranding === true || planType !== 'free'
     const hasPremiumFeatures = planType !== 'free' // Pro, Business, Enterprise
 
@@ -278,7 +279,10 @@ export default async function ChatbotDetailPage({
                 {/* Analytics Tab - Pro+ only */}
                 {hasPremiumFeatures && (
                     <TabsContent value="analytics">
-                        <AnalyticsPage chatbotId={chatbotId} />
+                        <AnalyticsPage
+                            chatbotId={chatbotId}
+                            hasAdvancedAnalytics={hasAdvancedAnalytics}
+                        />
                     </TabsContent>
                 )}
 
