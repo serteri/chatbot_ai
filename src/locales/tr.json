@@ -2297,7 +2297,6 @@
     "helpIps": "Virgülle ayrılmış IPv4 adresleri.",
     "labelLimit": "Hız Sınırı (İstek/Dk)",
     "placeholderLimit": "Örn. 60",
-    "placeholderLimit": "Örn. 60",
     "restrictIps": "Kısıtlı: {count} IP",
     "globalAccess": "Global Erişim",
     "limitPerMin": "Limit: {limit}/dk",

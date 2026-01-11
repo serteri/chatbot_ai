@@ -155,34 +155,34 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                         <DialogHeader>
                             <DialogTitle>{t('dialogTitle')}</DialogTitle>
                             <DialogDescription>
-                                Secure your API access with optional IP restrictions and limits.
+                                {t('dialogDesc')}
                             </DialogDescription>
                         </DialogHeader>
                         <div className="py-4 space-y-4">
                             <div>
-                                <Label htmlFor="name" className="mb-2 block">Key Name</Label>
+                                <Label htmlFor="name" className="mb-2 block">{t('keyName')}</Label>
                                 <Input
                                     id="name"
                                     value={newKeyName}
                                     onChange={(e) => setNewKeyName(e.target.value)}
-                                    placeholder="e.g. Website Widget, Backend Service"
+                                    placeholder={t('keyNamePlaceholder')}
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label htmlFor="ips" className="mb-2 block text-xs">Allowed IPs (Optional)</Label>
+                                    <Label htmlFor="ips" className="mb-2 block text-xs">{t('labelIps')}</Label>
                                     <Input
                                         id="ips"
                                         value={newKeyIps}
                                         onChange={(e) => setNewKeyIps(e.target.value)}
-                                        placeholder="1.2.3.4, 5.6.7.8"
+                                        placeholder={t('placeholderIps')}
                                         className="text-xs"
                                     />
-                                    <p className="text-[10px] text-muted-foreground mt-1">Comma separated IPv4 addresses.</p>
+                                    <p className="text-[10px] text-muted-foreground mt-1">{t('helpIps')}</p>
                                 </div>
                                 <div>
-                                    <Label htmlFor="limit" className="mb-2 block text-xs">Rate Limit (Req/Min)</Label>
+                                    <Label htmlFor="limit" className="mb-2 block text-xs">{t('labelLimit')}</Label>
                                     <Input
                                         id="limit"
                                         type="number"
