@@ -35,17 +35,14 @@ export async function GET(req: NextRequest) {
             select: {
                 id: true,
                 name: true,
-                key: true, // Güvenlik notu: Genelde key'in sadece sonu gösterilir ama burada tam key dönüyoruz şimdilik (dashboard'da copy için)
+                key: true,
                 createdAt: true,
-                lastUsed: true
+                lastUsed: true,
+                allowedIps: true,
+                scopes: true,
+                rateLimit: true
             }
         });
-
-        // Frontend için key'i maskele (Sonra tam göstermek için ayrı mantık kurabiliriz ama basitlik için tam gönderiyoruz)
-        // Şimdilik güvenlik için sadece son 4 hanesini gösterip, 'fullKey' diye ayrı field dönelim mi?
-        // Hayır, kullanıcı key'i kaybettiyse yeniden oluşturur. Oluşturma anında gösterilmeli sadece.
-        // Ancak kullanıcı "Copy" butonu istiyor.
-        // O yüzden full key dönelim, ama HTTPS altında güvenli.
 
         return NextResponse.json(keys);
 
@@ -62,7 +59,7 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { chatbotId, name } = body;
+        const { chatbotId, name, allowedIps, scopes, rateLimit } = body;
 
         if (!chatbotId || !name) {
             return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
@@ -87,7 +84,10 @@ export async function POST(req: NextRequest) {
             data: {
                 chatbotId,
                 name,
-                key: newKey
+                key: newKey,
+                allowedIps: allowedIps || [],
+                scopes: scopes || ['chat:read', 'chat:write'],
+                rateLimit: rateLimit ? parseInt(rateLimit) : null
             }
         });
 

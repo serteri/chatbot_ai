@@ -662,15 +662,21 @@ model ApplicationReminder {
 }
 
 model ApiKey {
-  id        String    @id @default(cuid())
-  key       String    @unique
-  name      String
-  chatbotId String
-  createdAt DateTime  @default(now())
-  lastUsed  DateTime?
-  expiresAt DateTime?
-  isActive  Boolean   @default(true)
-  chatbot   Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  id          String    @id @default(cuid())
+  key         String    @unique
+  name        String
+  chatbotId   String
+  createdAt   DateTime  @default(now())
+  lastUsed    DateTime?
+  expiresAt   DateTime?
+  isActive    Boolean   @default(true)
+  
+  // Enterprise Security Features
+  allowedIps  String[]  @default([]) // Empty means all IPs allowed
+  scopes      String[]  @default(["chat:read", "chat:write"]) // Default scopes
+  rateLimit   Int?      // Requests per minute, null means unlimited
+
+  chatbot     Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
 
   @@index([chatbotId])
 }

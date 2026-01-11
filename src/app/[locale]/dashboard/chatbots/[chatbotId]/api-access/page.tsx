@@ -42,6 +42,8 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
     const [newKeyName, setNewKeyName] = useState('');
+    const [newKeyIps, setNewKeyIps] = useState('');
+    const [newKeyRateLimit, setNewKeyRateLimit] = useState('');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
@@ -71,13 +73,20 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
             const res = await fetch('/api/api-keys', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chatbotId, name: newKeyName })
+                body: JSON.stringify({
+                    chatbotId,
+                    name: newKeyName,
+                    allowedIps: newKeyIps ? newKeyIps.split(',').map(ip => ip.trim()).filter(Boolean) : [],
+                    rateLimit: newKeyRateLimit ? parseInt(newKeyRateLimit) : null
+                })
             });
 
             if (res.ok) {
                 const newKey = await res.json();
                 setKeys([newKey, ...keys]);
                 setNewKeyName('');
+                setNewKeyIps('');
+                setNewKeyRateLimit('');
                 setIsDialogOpen(false);
                 toast.success('API Key created successfully');
             } else {
@@ -136,21 +145,48 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                             <Plus className="mr-2 h-4 w-4" /> Create New Key
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="sm:max-w-[500px]">
                         <DialogHeader>
                             <DialogTitle>Create API Key</DialogTitle>
                             <DialogDescription>
-                                Give your key a friendly name to identify it later.
+                                Secure your API access with optional IP restrictions and limits.
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="py-4">
-                            <Label htmlFor="name" className="mb-2 block">Key Name</Label>
-                            <Input
-                                id="name"
-                                value={newKeyName}
-                                onChange={(e) => setNewKeyName(e.target.value)}
-                                placeholder="e.g. Website Widget, Mobile App, Testing"
-                            />
+                        <div className="py-4 space-y-4">
+                            <div>
+                                <Label htmlFor="name" className="mb-2 block">Key Name</Label>
+                                <Input
+                                    id="name"
+                                    value={newKeyName}
+                                    onChange={(e) => setNewKeyName(e.target.value)}
+                                    placeholder="e.g. Website Widget, Backend Service"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <Label htmlFor="ips" className="mb-2 block text-xs">Allowed IPs (Optional)</Label>
+                                    <Input
+                                        id="ips"
+                                        value={newKeyIps}
+                                        onChange={(e) => setNewKeyIps(e.target.value)}
+                                        placeholder="1.2.3.4, 5.6.7.8"
+                                        className="text-xs"
+                                    />
+                                    <p className="text-[10px] text-muted-foreground mt-1">Comma separated IPv4 addresses.</p>
+                                </div>
+                                <div>
+                                    <Label htmlFor="limit" className="mb-2 block text-xs">Rate Limit (Req/Min)</Label>
+                                    <Input
+                                        id="limit"
+                                        type="number"
+                                        value={newKeyRateLimit}
+                                        onChange={(e) => setNewKeyRateLimit(e.target.value)}
+                                        placeholder="e.g. 60"
+                                        className="text-xs"
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
@@ -187,11 +223,12 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-muted/50 [&_tr]:border-b">
                                     <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Name</th>
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Key Prefix</th>
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Created</th>
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Last Used</th>
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-right">Actions</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Name</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Key Prefix</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Security</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Created</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Last Used</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="[&_tr:last-child]:border-0">
@@ -209,6 +246,22 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                                     >
                                                         {copiedKey === key.key ? <Check className="h-3 w-3 text-green-600" /> : <Copy className="h-3 w-3" />}
                                                     </Button>
+                                                </div>
+                                            </td>
+                                            <td className="p-4 align-middle">
+                                                <div className="flex flex-col gap-1">
+                                                    {(key as any).allowedIps?.length > 0 ? (
+                                                        <Badge variant="outline" className="w-fit text-[10px] bg-green-50 text-green-700 border-green-200">
+                                                            Restrict: {(key as any).allowedIps.length} IPs
+                                                        </Badge>
+                                                    ) : (
+                                                        <Badge variant="outline" className="w-fit text-[10px] text-yellow-600 border-yellow-200 bg-yellow-50">
+                                                            Global Access
+                                                        </Badge>
+                                                    )}
+                                                    {(key as any).rateLimit ? (
+                                                        <span className="text-[10px] text-muted-foreground">Limit: {(key as any).rateLimit}/min</span>
+                                                    ) : null}
                                                 </div>
                                             </td>
                                             <td className="p-4 align-middle">{formatDate(key.createdAt)}</td>
