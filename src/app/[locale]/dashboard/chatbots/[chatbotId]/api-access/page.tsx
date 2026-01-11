@@ -309,8 +309,8 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                     <div className="space-y-4">
                         <Tabs defaultValue="curl" className="w-full">
                             <TabsList className="grid w-full grid-cols-2 mb-4">
-                                <TabsTrigger value="curl">cURL (Terminal)</TabsTrigger>
-                                <TabsTrigger value="js">JavaScript (Web/Node.js)</TabsTrigger>
+                                <TabsTrigger value="curl">{t('curlLabel')}</TabsTrigger>
+                                <TabsTrigger value="js">{t('jsLabel')}</TabsTrigger>
                             </TabsList>
                             <TabsContent value="curl">
                                 <p className="text-sm text-muted-foreground mb-3">

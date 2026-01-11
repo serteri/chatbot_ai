@@ -1070,7 +1070,9 @@
     "globalAccess": "Acceso global",
     "limitPerMin": "Límite: {limit}/min",
     "curlDesc": "Ejecute este comando en su terminal para probar la conexión:",
-    "jsDesc": "Use este código para enviar un mensaje desde su sitio web o aplicación Node.js:"
+    "jsDesc": "Use este código para enviar un mensaje desde su sitio web o aplicación Node.js:",
+    "curlLabel": "cURL (Terminal)",
+    "jsLabel": "JavaScript (Web/Node.js)"
   },
   "pricing": {
     "title": "Planes y Precios",
