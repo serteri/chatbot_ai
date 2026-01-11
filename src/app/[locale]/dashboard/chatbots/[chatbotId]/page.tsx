@@ -180,7 +180,7 @@ export default async function ChatbotDetailPage({
 
             {/* Tabs */}
             <Tabs defaultValue="documents" className="w-full">
-                <TabsList className={`grid w-full mb-8 ${hasPremiumFeatures ? 'grid-cols-6' : 'grid-cols-3'}`}>
+                <TabsList className={`grid w-full mb-8 ${hasPremiumFeatures ? 'grid-cols-7' : 'grid-cols-3'}`}>
                     <TabsTrigger value="documents">
                         <FileText className="w-4 h-4 mr-2" />
                         {t('chatbots.documents')}
@@ -197,10 +197,11 @@ export default async function ChatbotDetailPage({
                             {t('chatbots.customize')}
                         </TabsTrigger>
                     )}
-                    <TabsTrigger value="security">
-                        <Shield className="w-4 h-4 mr-2" />
-                        {t('chatbots.security')}
-                    </TabsTrigger>
+                    {hasPremiumFeatures && (
+                        <TabsTrigger value="security">
+                            <Shield className="w-4 h-4 mr-2" />
+                            {t('chatbots.security')}
+                        </TabsTrigger>
                     )}
                     {hasPremiumFeatures && (
                         <TabsTrigger value="api-access">
@@ -311,61 +312,62 @@ export default async function ChatbotDetailPage({
 
                 {/* Security Tab - Pro+ only */}
                 {hasPremiumFeatures && (
-                    <DomainManager
-                        chatbotId={chatbotId}
-                        initialDomains={chatbot.allowedDomains}
-                    />
+                    <TabsContent value="security">
+                        <DomainManager
+                            chatbotId={chatbotId}
+                            initialDomains={chatbot.allowedDomains}
+                        />
                     </TabsContent>
                 )}
 
-            {/* API Access Tab */}
-            {hasPremiumFeatures && (
-                <TabsContent value="api-access">
-                    <ApiAccessPage params={{ chatbotId, locale }} />
-                </TabsContent>
-            )}
+                {/* API Access Tab */}
+                {hasPremiumFeatures && (
+                    <TabsContent value="api-access">
+                        <ApiAccessPage params={{ chatbotId, locale }} />
+                    </TabsContent>
+                )}
 
-            {/* Embed Tab */}
-            <TabsContent value="embed">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t('chatbots.embedCode')}</CardTitle>
-                        <CardDescription>{t('chatbots.embedDesc')}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            <div className="rounded-lg bg-gray-900 p-4">
-                                <code className="text-sm text-green-400 break-all">
-                                    {`<script src="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/widget.js?id=${chatbot.identifier}"></script>`}
-                                </code>
+                {/* Embed Tab */}
+                <TabsContent value="embed">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('chatbots.embedCode')}</CardTitle>
+                            <CardDescription>{t('chatbots.embedDesc')}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="rounded-lg bg-gray-900 p-4">
+                                    <code className="text-sm text-green-400 break-all">
+                                        {`<script src="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/widget.js?id=${chatbot.identifier}"></script>`}
+                                    </code>
+                                </div>
+                                <div className="flex space-x-2">
+                                    <Button className="flex-1" variant="outline" asChild>
+                                        <Link href="/widget-test" target="_blank">
+                                            <Code className="mr-2 h-4 w-4" />
+                                            {t('chatbots.testWidget')}
+                                        </Link>
+                                    </Button>
+                                </div>
                             </div>
-                            <div className="flex space-x-2">
-                                <Button className="flex-1" variant="outline" asChild>
-                                    <Link href="/widget-test" target="_blank">
-                                        <Code className="mr-2 h-4 w-4" />
-                                        {t('chatbots.testWidget')}
-                                    </Link>
-                                </Button>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </TabsContent>
-            <TabsContent value="settings">
-                <ChatbotSettings
-                    chatbotId={chatbotId}
-                    initialSettings={{
-                        name: chatbot.name,
-                        botName: chatbot.botName,
-                        welcomeMessage: chatbot.welcomeMessage,
-                        fallbackMessage: chatbot.fallbackMessage,
-                        aiModel: chatbot.aiModel,
-                        temperature: chatbot.temperature,
-                        language: chatbot.language
-                    }}
-                />
-            </TabsContent>
-        </Tabs>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="settings">
+                    <ChatbotSettings
+                        chatbotId={chatbotId}
+                        initialSettings={{
+                            name: chatbot.name,
+                            botName: chatbot.botName,
+                            welcomeMessage: chatbot.welcomeMessage,
+                            fallbackMessage: chatbot.fallbackMessage,
+                            aiModel: chatbot.aiModel,
+                            temperature: chatbot.temperature,
+                            language: chatbot.language
+                        }}
+                    />
+                </TabsContent>
+            </Tabs>
         </div >
     )
 }
