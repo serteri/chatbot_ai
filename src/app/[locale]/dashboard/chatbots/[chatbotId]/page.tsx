@@ -206,7 +206,7 @@ export default async function ChatbotDetailPage({
                     {hasPremiumFeatures && (
                         <TabsTrigger value="api-access">
                             <Key className="w-4 h-4 mr-2" />
-                            API Access
+                            {t('chatbots.apiAccess')}
                         </TabsTrigger>
                     )}
                     <TabsTrigger value="embed">

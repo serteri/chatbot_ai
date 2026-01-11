@@ -749,6 +749,7 @@
     "settings": "Ayarlar",
     "embed": "Embed Kod",
     "security": "Güvenlik",
+    "apiAccess": "API Erişimi",
     "uploadDocument": "Doküman Yükle",
     "noDocuments": "Henüz doküman yok",
     "createTitle": "Yeni Chatbot Oluştur",

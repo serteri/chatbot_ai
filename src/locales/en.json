@@ -800,6 +800,7 @@
     "tabs": {
       "profile": "Profile",
       "security": "Security",
+      "apiAccess": "API Access",
       "notifications": "Notifications",
       "preferences": "Preferences"
     },

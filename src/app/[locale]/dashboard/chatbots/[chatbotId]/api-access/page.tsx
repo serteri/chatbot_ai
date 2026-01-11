@@ -145,7 +145,7 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                 </Button>
 
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogContent className="sm:max-w-[500px]">
+                    <DialogContent className="sm:max-w-[500px] bg-white dark:bg-slate-950 border shadow-lg">
                         <DialogHeader>
                             <DialogTitle>{t('dialogTitle')}</DialogTitle>
                             <DialogDescription>
