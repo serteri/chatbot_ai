@@ -2212,5 +2212,32 @@
       "prioritySupport": "Öncelikli Destek",
       "whiteLabel": "White Label"
     }
+  },
+  "advancedAnalytics": {
+    "title": "Gelişmiş Analitik",
+    "subtitle": "Detaylı performans metrikleri ve raporlar",
+    "totalConversations": "Toplam Konuşma",
+    "uniqueVisitors": "Benzersiz Ziyaretçi",
+    "resolutionRate": "Çözüm Oranı",
+    "avgResponseTime": "Ort. Yanıt Süresi",
+    "avgRating": "Ortalama Puan",
+    "peakHour": "En Yoğun Saat",
+    "last7Days": "Son 7 Gün",
+    "last30Days": "Son 30 Gün",
+    "last90Days": "Son 90 Gün",
+    "lastYear": "Son Yıl",
+    "dailyTrend": "Günlük Trend",
+    "dailyTrendDesc": "Günlük konuşma sayısı trendi",
+    "hourlyDistribution": "Saatlik Dağılım",
+    "hourlyDistributionDesc": "Konuşmaların saatlere göre dağılımı",
+    "topQueries": "En Çok Sorulan Sorular",
+    "topQueriesDesc": "Kullanıcıların en sık sorduğu sorular",
+    "geography": "Coğrafi Dağılım",
+    "geographyDesc": "Ziyaretçilerin ülkelere göre dağılımı",
+    "conversations": "konuşma",
+    "noData": "Henüz veri yok",
+    "exportSuccess": "Rapor başarıyla indirildi!",
+    "exportError": "Rapor indirilemedi",
+    "exporting": "İndiriliyor..."
   }
 }

@@ -2195,5 +2195,32 @@
       "prioritySupport": "Priority Support",
       "whiteLabel": "White Label"
     }
+  },
+  "advancedAnalytics": {
+    "title": "Advanced Analytics",
+    "subtitle": "Detailed performance metrics and reports",
+    "totalConversations": "Total Conversations",
+    "uniqueVisitors": "Unique Visitors",
+    "resolutionRate": "Resolution Rate",
+    "avgResponseTime": "Avg Response Time",
+    "avgRating": "Average Rating",
+    "peakHour": "Peak Hour",
+    "last7Days": "Last 7 Days",
+    "last30Days": "Last 30 Days",
+    "last90Days": "Last 90 Days",
+    "lastYear": "Last Year",
+    "dailyTrend": "Daily Trend",
+    "dailyTrendDesc": "Daily conversation count trend",
+    "hourlyDistribution": "Hourly Distribution",
+    "hourlyDistributionDesc": "Distribution of conversations by hour",
+    "topQueries": "Top Queries",
+    "topQueriesDesc": "Most frequently asked questions",
+    "geography": "Geographic Distribution",
+    "geographyDesc": "Visitor distribution by country",
+    "conversations": "conversations",
+    "noData": "No data yet",
+    "exportSuccess": "Report downloaded successfully!",
+    "exportError": "Failed to download report",
+    "exporting": "Downloading..."
   }
 }
