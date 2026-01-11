@@ -232,6 +232,7 @@ model Chatbot {
   enableRating       Boolean              @default(true)
   enableSources      Boolean              @default(true)
   allowedDomains     String[]             @default([])
+  customDomain       String?              @unique
   liveChatWebhook    String?
   emailNotification  String?
   isActive           Boolean              @default(true)

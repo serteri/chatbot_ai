@@ -20,6 +20,7 @@ import { ChatbotSettings } from '@/components/chatbot/ChatbotSettings'
 import ApiAccessPage from '@/app/[locale]/dashboard/chatbots/[chatbotId]/api-access/page'
 import EmbedCodeGenerator from '@/components/dashboard/EmbedCodeGenerator'
 import { CopyButton } from '@/components/common/CopyButton'
+import CustomDomainSettings from '@/components/dashboard/CustomDomainSettings'
 
 export default async function ChatbotDetailPage({
     params,
@@ -383,6 +384,13 @@ export default async function ChatbotDetailPage({
                                 language: chatbot.language
                             }}
                         />
+
+                        {hasCustomBranding && (
+                            <CustomDomainSettings
+                                chatbotId={chatbotId}
+                                initialDomain={chatbot.customDomain}
+                            />
+                        )}
                     </TabsContent>
                 </Tabs>
             </div >

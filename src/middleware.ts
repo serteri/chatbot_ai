@@ -1,20 +1,41 @@
 import createMiddleware from 'next-intl/middleware';
+import { NextRequest, NextResponse } from 'next/server';
 
-export default createMiddleware({
-  // Desteklenen diller
+const intlMiddleware = createMiddleware({
   locales: ['en', 'tr', 'de', 'fr', 'es'],
-
-  // Varsayılan dil (İngilizce)
   defaultLocale: 'en',
-
-  // Tarayıcı dil algılamasını KAPAT - her zaman İngilizce başlasın
   localeDetection: false,
-
-  // Varsayılan dilin URL'de görünmemesini sağlar (/en yerine /)
   localePrefix: 'as-needed'
 });
 
+export default async function middleware(req: NextRequest) {
+  const host = req.headers.get('host');
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+  // Extract hostname from APP_URL for comparison
+  const appHostname = new URL(appUrl).host;
+
+  // Check if it's a custom domain
+  // 1. Host exists
+  // 2. Host is NOT the app's main hostname
+  // 3. Host is NOT localhost (unless appUrl is also localhost, but usually we test with custom hosts file)
+  const isCustomDomain = host && host !== appHostname && !host.includes('vercel.app'); // Exclude vercel previews if needed
+
+  if (isCustomDomain) {
+    // Rewrite to the domain handler page
+    // We pass the path as well so /domain.com/abc -> /domain/domain.com/abc
+    const url = req.nextUrl.clone();
+    url.pathname = `/domain/${host}${req.nextUrl.pathname}`;
+    return NextResponse.rewrite(url);
+  }
+
+  // Otherwise, use standard internationalization middleware
+  return intlMiddleware(req);
+}
+
 export const config = {
-  // Chatbot (iframe) ve API yollarını hariç tutmaya devam ediyoruz
+  // Chatbot (iframe), API routes, and now the internal /domain route are excluded from intl middleware primarily
+  // But wait, /domain is an internal rewrite destination, so it won't be matched by the incoming request matcher naturally?
+  // Actually, rewrite happens internally. Valid requests hitting middleware are external.
   matcher: ['/((?!api|_next|_static|.*\\..*|chatbot|embed).*)']
 };
