@@ -2136,6 +2136,7 @@
     "curlDesc": "Führen Sie diesen Befehl in Ihrem Terminal aus, um die Verbindung zu testen:",
     "jsDesc": "Verwenden Sie diesen Code, um eine Nachricht von Ihrer Website oder Node.js-App zu senden:",
     "curlLabel": "cURL (Terminal)",
-    "jsLabel": "JavaScript (Web/Node.js)"
+    "jsLabel": "JavaScript (Web/Node.js)",
+    "never": "Noch nie verwendet"
   }
 }

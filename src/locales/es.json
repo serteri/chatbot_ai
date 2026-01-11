@@ -1072,7 +1072,8 @@
     "curlDesc": "Ejecute este comando en su terminal para probar la conexión:",
     "jsDesc": "Use este código para enviar un mensaje desde su sitio web o aplicación Node.js:",
     "curlLabel": "cURL (Terminal)",
-    "jsLabel": "JavaScript (Web/Node.js)"
+    "jsLabel": "JavaScript (Web/Node.js)",
+    "never": "Nunca usado"
   },
   "pricing": {
     "title": "Planes y Precios",

@@ -2303,6 +2303,7 @@
     "curlDesc": "Bağlantıyı test etmek için bu komutu terminalinizde çalıştırın:",
     "jsDesc": "Bu kodu web sitenizde veya Node.js uygulamanızda kullanarak mesaj gönderebilirsiniz:",
     "curlLabel": "cURL (Terminal)",
-    "jsLabel": "JavaScript (Web/Node.js)"
+    "jsLabel": "JavaScript (Web/Node.js)",
+    "never": "Hiç kullanılmadı"
   }
 }

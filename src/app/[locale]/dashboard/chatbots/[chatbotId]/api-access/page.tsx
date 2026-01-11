@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 // import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'; -> Kaldırıldı, HTML table kullanacağız
 import { Badge } from '@/components/ui/badge';
-import { Plus, Trash2, Copy, Check, Key, Code, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Copy, Check, Key, Code, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import {
     Dialog,
@@ -45,6 +45,7 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
     const [newKeyName, setNewKeyName] = useState('');
     const [newKeyIps, setNewKeyIps] = useState('');
     const [newKeyRateLimit, setNewKeyRateLimit] = useState('');
+    const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({});
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [copiedKey, setCopiedKey] = useState<string | null>(null);
     const [origin, setOrigin] = useState('');
@@ -137,6 +138,10 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
             month: 'long',
             day: 'numeric'
         });
+    };
+
+    const toggleKeyVisibility = (id: string) => {
+        setVisibleKeys(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
     return (
@@ -246,14 +251,22 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                             <td className="p-4 align-middle font-medium">{key.name}</td>
                                             <td className="p-4 align-middle">
                                                 <div className="flex items-center gap-2 bg-slate-100 px-2 py-1 rounded w-fit font-mono text-xs">
-                                                    {key.key.substring(0, 12)}...
+                                                    {visibleKeys[key.id] ? key.key : `${key.key.substring(0, 12)}...`}
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-4 w-4 ml-1"
+                                                        className="h-4 w-4 ml-1 hover:bg-slate-200"
+                                                        onClick={() => toggleKeyVisibility(key.id)}
+                                                    >
+                                                        {visibleKeys[key.id] ? <EyeOff className="h-3 w-3 text-slate-500" /> : <Eye className="h-3 w-3 text-slate-500" />}
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-4 w-4 hover:bg-slate-200"
                                                         onClick={() => copyToClipboard(key.key)}
                                                     >
-                                                        {copiedKey === key.key ? <Check className="h-3 w-3 text-green-600" /> : <Copy className="h-3 w-3" />}
+                                                        {copiedKey === key.key ? <Check className="h-3 w-3 text-green-600" /> : <Copy className="h-3 w-3 text-slate-500" />}
                                                     </Button>
                                                 </div>
                                             </td>
@@ -276,7 +289,7 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                             <td className="p-4 align-middle">{formatDate(key.createdAt)}</td>
                                             <td className="p-4 align-middle">
                                                 {key.lastUsed ? formatDate(key.lastUsed) : (
-                                                    <Badge variant="secondary" className="text-xs font-normal">Never</Badge>
+                                                    <Badge variant="secondary" className="text-xs font-normal">{t('never')}</Badge>
                                                 )}
                                             </td>
                                             <td className="p-4 align-middle text-right">
