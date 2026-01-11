@@ -134,20 +134,20 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
         <div className="space-y-8 p-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">API Access</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
                     <p className="text-muted-foreground mt-2">
-                        Manage API keys to access your chatbot programmatically.
+                        {t('desc')}
                     </p>
                 </div>
+
+                <Button onClick={() => setIsDialogOpen(true)}>
+                    <Plus className="mr-2 h-4 w-4" /> {t('createKey')}
+                </Button>
+
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" /> Create New Key
-                        </Button>
-                    </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px]">
                         <DialogHeader>
-                            <DialogTitle>Create API Key</DialogTitle>
+                            <DialogTitle>{t('dialogTitle')}</DialogTitle>
                             <DialogDescription>
                                 Secure your API access with optional IP restrictions and limits.
                             </DialogDescription>
@@ -182,16 +182,16 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                         type="number"
                                         value={newKeyRateLimit}
                                         onChange={(e) => setNewKeyRateLimit(e.target.value)}
-                                        placeholder="e.g. 60"
+                                        placeholder={t('placeholderLimit')}
                                         className="text-xs"
                                     />
                                 </div>
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>{t('cancel')}</Button>
                             <Button onClick={createKey} disabled={isCreating || !newKeyName.trim()}>
-                                {isCreating ? 'Creating...' : 'Create Key'}
+                                {isCreating ? t('creating') : t('create')}
                             </Button>
                         </DialogFooter>
                     </DialogContent>
@@ -214,21 +214,21 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                     ) : keys.length === 0 ? (
                         <div className="text-center py-12 border-2 border-dashed rounded-lg bg-slate-50">
                             <Key className="mx-auto h-8 w-8 text-slate-300 mb-3" />
-                            <h3 className="text-lg font-medium text-slate-900">No API Keys</h3>
-                            <p className="text-slate-500 mb-4">You haven't created any API keys yet.</p>
-                            <Button variant="outline" onClick={() => setIsDialogOpen(true)}>Create your first key</Button>
+                            <h3 className="text-lg font-medium text-slate-900">{t('noKeys')}</h3>
+                            <p className="text-slate-500 mb-4">{t('noKeysDesc')}</p>
+                            <Button variant="outline" onClick={() => setIsDialogOpen(true)}>{t('createFirst')}</Button>
                         </div>
                     ) : (
                         <div className="rounded-md border">
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-muted/50 [&_tr]:border-b">
                                     <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Name</th>
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Key Prefix</th>
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Security</th>
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Created</th>
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">Last Used</th>
-                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground text-right">Actions</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">{t('colName')}</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">{t('colPrefix')}</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">{t('colSecurity')}</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">{t('colCreated')}</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground">{t('colLastUsed')}</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground text-right">{t('colActions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="[&_tr:last-child]:border-0">
@@ -252,15 +252,15 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                                 <div className="flex flex-col gap-1">
                                                     {(key as any).allowedIps?.length > 0 ? (
                                                         <Badge variant="outline" className="w-fit text-[10px] bg-green-50 text-green-700 border-green-200">
-                                                            Restrict: {(key as any).allowedIps.length} IPs
+                                                            {t('restrictIps', { count: (key as any).allowedIps.length })}
                                                         </Badge>
                                                     ) : (
                                                         <Badge variant="outline" className="w-fit text-[10px] text-yellow-600 border-yellow-200 bg-yellow-50">
-                                                            Global Access
+                                                            {t('globalAccess')}
                                                         </Badge>
                                                     )}
                                                     {(key as any).rateLimit ? (
-                                                        <span className="text-[10px] text-muted-foreground">Limit: {(key as any).rateLimit}/min</span>
+                                                        <span className="text-[10px] text-muted-foreground">{t('limitPerMin', { limit: (key as any).rateLimit })}</span>
                                                     ) : null}
                                                 </div>
                                             </td>
