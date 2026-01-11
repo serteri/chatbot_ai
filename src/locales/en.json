@@ -2242,6 +2242,8 @@
     "topQueriesDesc": "Most frequently asked questions",
     "geography": "Geographic Distribution",
     "geographyDesc": "Visitor distribution by country",
+    "localTime": "Local Time",
+    "demoData": "Demo Data",
     "conversations": "conversations",
     "noData": "No data yet",
     "exportSuccess": "Report downloaded successfully!",

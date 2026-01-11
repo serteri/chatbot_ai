@@ -2258,6 +2258,8 @@
     "topQueriesDesc": "Kullanıcıların en sık sorduğu sorular",
     "geography": "Coğrafi Dağılım",
     "geographyDesc": "Ziyaretçilerin ülkelere göre dağılımı",
+    "localTime": "Yerel Saat",
+    "demoData": "Demo Veri",
     "conversations": "konuşma",
     "noData": "Henüz veri yok",
     "exportSuccess": "Rapor başarıyla indirildi!",
