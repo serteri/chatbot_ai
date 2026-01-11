@@ -2249,5 +2249,26 @@
     "exportSuccess": "Report downloaded successfully!",
     "exportError": "Failed to download report",
     "exporting": "Downloading..."
+  },
+  "ApiAccess": {
+    "title": "API Access",
+    "desc": "Manage API keys to access your chatbot programmatically.",
+    "createKey": "Create New Key",
+    "keyName": "Key Name",
+    "keyNamePlaceholder": "e.g. Website Widget, Mobile App",
+    "create": "Create Key",
+    "cancel": "Cancel",
+    "activeKeys": "Active API Keys",
+    "activeKeysDesc": "These keys grant full access to your chatbot. Keep them secret.",
+    "noKeys": "No API Keys",
+    "noKeysDesc": "You haven't created any API keys yet.",
+    "colName": "Name",
+    "colPrefix": "Key Prefix",
+    "colCreated": "Created",
+    "colActions": "Actions",
+    "colKeyPrefix": "Key Prefix",
+    "colLastUsed": "Last Used",
+    "usageExample": "Usage Example",
+    "usageDesc": "How to use your API key to send messages."
   }
 }

@@ -2265,5 +2265,26 @@
     "exportSuccess": "Rapor başarıyla indirildi!",
     "exportError": "Rapor indirilemedi",
     "exporting": "İndiriliyor..."
+  },
+  "ApiAccess": {
+    "title": "API Erişimi",
+    "desc": "Chatbot'unuza programatik olarak erişmek için API anahtarları oluşturun.",
+    "createKey": "Yeni Anahtar Oluştur",
+    "keyName": "Anahtar Adı",
+    "keyNamePlaceholder": "Örn. Web Sitesi, Mobil Uygulama",
+    "create": "Oluştur",
+    "cancel": "İptal",
+    "activeKeys": "Aktif Anahtarlar",
+    "activeKeysDesc": "Bu anahtarlar botunuza tam erişim sağlar. Gizli tutun.",
+    "noKeys": "Henüz API anahtarı yok",
+    "noKeysDesc": "İlk anahtarınızı oluşturarak başlayın.",
+    "colName": "İsim",
+    "colPrefix": "Anahtar",
+    "colCreated": "Oluşturulma",
+    "colActions": "İşlemler",
+    "colKeyPrefix": "Ön Ek",
+    "colLastUsed": "Son Kullanım",
+    "usageExample": "Kullanım Örneği",
+    "usageDesc": "API anahtarınızı kullanarak mesaj gönderme örneği."
   }
 }

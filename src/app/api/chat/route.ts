@@ -204,7 +204,11 @@ export async function POST(req: NextRequest) {
             const countryCode = req.headers.get('x-vercel-ip-country'); // Vercel Edge'den gelir
 
             let countryName = null;
-            if (countryCode) {
+
+            // Localhost kontrolü (Kullanıcı Avustralya'da)
+            if (ip === '127.0.0.1' || ip === '::1') {
+                countryName = 'Australia';
+            } else if (countryCode) {
                 try {
                     const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
                     countryName = regionNames.of(countryCode);

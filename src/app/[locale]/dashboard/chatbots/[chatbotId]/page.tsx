@@ -16,9 +16,10 @@ import AnalyticsPage from '@/components/analytics/AnalyticsPage'
 import { DomainManager } from '@/components/chatbot/DomainManager'
 import { WidgetCustomizer } from '@/components/chatbot/WidgetCustomizer'
 import { ChatbotSettings } from '@/components/chatbot/ChatbotSettings'
-
-export default async function ChatbotDetailPage({
-    params,
+import ApiAccessPage from '@/app/[locale]/dashboard/chatbots/[chatbotId]/api-access/page'
+// ✅ Key ikonu eklendi (zaten vardı ama kontrol edelim)
+import { Bot, FileText, MessageSquare, Settings, Code, BarChart3, Shield, Palette, TestTube, Key } from 'lucide-react'
+params,
 }: {
     params: Promise<{ chatbotId: string; locale: string }>
 }) {
@@ -195,10 +196,15 @@ export default async function ChatbotDetailPage({
                             {t('chatbots.customize')}
                         </TabsTrigger>
                     )}
+                    <TabsTrigger value="security">
+                        <Shield className="w-4 h-4 mr-2" />
+                        {t('chatbots.security')}
+                    </TabsTrigger>
+                    )}
                     {hasPremiumFeatures && (
-                        <TabsTrigger value="security">
-                            <Shield className="w-4 h-4 mr-2" />
-                            {t('chatbots.security')}
+                        <TabsTrigger value="api-access">
+                            <Key className="w-4 h-4 mr-2" />
+                            API Access
                         </TabsTrigger>
                     )}
                     <TabsTrigger value="embed">
@@ -304,55 +310,61 @@ export default async function ChatbotDetailPage({
 
                 {/* Security Tab - Pro+ only */}
                 {hasPremiumFeatures && (
-                    <TabsContent value="security">
-                        <DomainManager
-                            chatbotId={chatbotId}
-                            initialDomains={chatbot.allowedDomains}
-                        />
+                    <DomainManager
+                        chatbotId={chatbotId}
+                        initialDomains={chatbot.allowedDomains}
+                    />
                     </TabsContent>
                 )}
 
-                {/* Embed Tab */}
-                <TabsContent value="embed">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t('chatbots.embedCode')}</CardTitle>
-                            <CardDescription>{t('chatbots.embedDesc')}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                <div className="rounded-lg bg-gray-900 p-4">
-                                    <code className="text-sm text-green-400 break-all">
-                                        {`<script src="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/widget.js?id=${chatbot.identifier}"></script>`}
-                                    </code>
-                                </div>
-                                <div className="flex space-x-2">
-                                    <Button className="flex-1" variant="outline" asChild>
-                                        <Link href="/widget-test" target="_blank">
-                                            <Code className="mr-2 h-4 w-4" />
-                                            {t('chatbots.testWidget')}
-                                        </Link>
-                                    </Button>
-                                </div>
+            {/* API Access Tab */}
+            {hasPremiumFeatures && (
+                <TabsContent value="api-access">
+                    <ApiAccessPage params={{ chatbotId, locale }} />
+                </TabsContent>
+            )}
+
+            {/* Embed Tab */}
+            <TabsContent value="embed">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('chatbots.embedCode')}</CardTitle>
+                        <CardDescription>{t('chatbots.embedDesc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            <div className="rounded-lg bg-gray-900 p-4">
+                                <code className="text-sm text-green-400 break-all">
+                                    {`<script src="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/widget.js?id=${chatbot.identifier}"></script>`}
+                                </code>
                             </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="settings">
-                    <ChatbotSettings
-                        chatbotId={chatbotId}
-                        initialSettings={{
-                            name: chatbot.name,
-                            botName: chatbot.botName,
-                            welcomeMessage: chatbot.welcomeMessage,
-                            fallbackMessage: chatbot.fallbackMessage,
-                            aiModel: chatbot.aiModel,
-                            temperature: chatbot.temperature,
-                            language: chatbot.language
-                        }}
-                    />
-                </TabsContent>
-            </Tabs>
-        </div>
+                            <div className="flex space-x-2">
+                                <Button className="flex-1" variant="outline" asChild>
+                                    <Link href="/widget-test" target="_blank">
+                                        <Code className="mr-2 h-4 w-4" />
+                                        {t('chatbots.testWidget')}
+                                    </Link>
+                                </Button>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </TabsContent>
+            <TabsContent value="settings">
+                <ChatbotSettings
+                    chatbotId={chatbotId}
+                    initialSettings={{
+                        name: chatbot.name,
+                        botName: chatbot.botName,
+                        welcomeMessage: chatbot.welcomeMessage,
+                        fallbackMessage: chatbot.fallbackMessage,
+                        aiModel: chatbot.aiModel,
+                        temperature: chatbot.temperature,
+                        language: chatbot.language
+                    }}
+                />
+            </TabsContent>
+        </Tabs>
+        </div >
     )
 }
