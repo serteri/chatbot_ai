@@ -96,9 +96,12 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                 setIsDialogOpen(false);
                 toast.success('API Key created successfully');
             } else {
-                toast.error('Failed to create API key');
+                const errorData = await res.json();
+                toast.error(errorData.error || 'Failed to create API key');
+                console.error('Create Key Error:', errorData);
             }
         } catch (error) {
+            console.error('Create Key Exception:', error);
             toast.error('Error creating key');
         } finally {
             setIsCreating(false);

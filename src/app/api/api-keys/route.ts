@@ -94,7 +94,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(apiKey);
 
     } catch (error) {
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        console.error('API KEY CREATE ERROR:', error);
+        return NextResponse.json({ error: 'Internal Server Error', details: String(error) }, { status: 500 });
     }
 }
 
