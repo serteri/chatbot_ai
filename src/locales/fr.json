@@ -1642,7 +1642,9 @@
       "placeholderLimit": "ex. 60",
       "restrictIps": "Restreint: {count} IPs",
       "globalAccess": "Accès global",
-      "limitPerMin": "Limite: {limit}/min"
+      "limitPerMin": "Limite: {limit}/min",
+      "curlDesc": "Exécutez cette commande dans votre terminal pour tester la connexion :",
+      "jsDesc": "Utilisez ce code pour envoyer un message depuis votre site web ou votre application Node.js :"
     },
     "viewModes": {
       "grid": "Vue en Cartes",

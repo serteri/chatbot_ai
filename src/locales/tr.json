@@ -2297,8 +2297,11 @@
     "helpIps": "Virgülle ayrılmış IPv4 adresleri.",
     "labelLimit": "Hız Sınırı (İstek/Dk)",
     "placeholderLimit": "Örn. 60",
+    "placeholderLimit": "Örn. 60",
     "restrictIps": "Kısıtlı: {count} IP",
     "globalAccess": "Global Erişim",
-    "limitPerMin": "Limit: {limit}/dk"
+    "limitPerMin": "Limit: {limit}/dk",
+    "curlDesc": "Bağlantıyı test etmek için bu komutu terminalinizde çalıştırın:",
+    "jsDesc": "Bu kodu web sitenizde veya Node.js uygulamanızda kullanarak mesaj gönderebilirsiniz:"
   }
 }

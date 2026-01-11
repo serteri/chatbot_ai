@@ -1068,7 +1068,9 @@
     "placeholderLimit": "ej. 60",
     "restrictIps": "Restringido: {count} IPs",
     "globalAccess": "Acceso global",
-    "limitPerMin": "Límite: {limit}/min"
+    "limitPerMin": "Límite: {limit}/min",
+    "curlDesc": "Ejecute este comando en su terminal para probar la conexión:",
+    "jsDesc": "Use este código para enviar un mensaje desde su sitio web o aplicación Node.js:"
   },
   "pricing": {
     "title": "Planes y Precios",

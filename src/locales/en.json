@@ -738,6 +738,7 @@
     "settings": "Settings",
     "embed": "Embed Code",
     "security": "Security",
+    "apiAccess": "API Access",
     "uploadDocument": "Upload Document",
     "noDocuments": "No documents yet",
     "createTitle": "Create New Chatbot",
@@ -2283,6 +2284,8 @@
     "placeholderLimit": "e.g. 60",
     "restrictIps": "Restrict: {count} IPs",
     "globalAccess": "Global Access",
-    "limitPerMin": "Limit: {limit}/min"
+    "limitPerMin": "Limit: {limit}/min",
+    "curlDesc": "Run this command in your terminal to test the connection:",
+    "jsDesc": "Use this code to send a message from your website or Node.js app:"
   }
 }

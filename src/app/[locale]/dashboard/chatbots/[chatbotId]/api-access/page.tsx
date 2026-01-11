@@ -47,6 +47,11 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
     const [newKeyRateLimit, setNewKeyRateLimit] = useState('');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [copiedKey, setCopiedKey] = useState<string | null>(null);
+    const [origin, setOrigin] = useState('');
+
+    useEffect(() => {
+        setOrigin(window.location.origin);
+    }, []);
 
     useEffect(() => {
         fetchKeys();
@@ -304,16 +309,19 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                     <div className="space-y-4">
                         <Tabs defaultValue="curl" className="w-full">
                             <TabsList className="grid w-full grid-cols-2 mb-4">
-                                <TabsTrigger value="curl">cURL</TabsTrigger>
-                                <TabsTrigger value="js">JavaScript (Fetch)</TabsTrigger>
+                                <TabsTrigger value="curl">cURL (Terminal)</TabsTrigger>
+                                <TabsTrigger value="js">JavaScript (Web/Node.js)</TabsTrigger>
                             </TabsList>
                             <TabsContent value="curl">
+                                <p className="text-sm text-muted-foreground mb-3">
+                                    {t('curlDesc') || "Run this command in your terminal to test the connection:"}
+                                </p>
                                 <div className="bg-slate-950 text-slate-50 p-4 rounded-lg font-mono text-sm relative overflow-x-auto group">
                                     <Button
                                         variant="ghost"
                                         size="icon"
                                         className="absolute top-2 right-2 text-slate-400 hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        onClick={() => copyToClipboard(`curl -X POST ${typeof window !== 'undefined' ? window.location.origin : ''}/api/chat \\
+                                        onClick={() => copyToClipboard(`curl -X POST ${origin || 'https://api.pylonchat.com'}/api/chat \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer ${keys[0]?.key || 'YOUR_API_KEY'}" \\
   -d '{"message": "Hello", "chatbotId": "${chatbotId}"}'`)}
@@ -321,7 +329,7 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                         {copiedKey ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                                     </Button>
                                     <pre className="whitespace-pre-wrap break-all">
-                                        {`curl -X POST /api/chat \\
+                                        {`curl -X POST ${origin || 'https://api.pylonchat.com'}/api/chat \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer ${keys[0]?.key || 'YOUR_API_KEY'}" \\
   -d '{"message": "Hello", "chatbotId": "${chatbotId}"}'`}
@@ -329,12 +337,15 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                 </div>
                             </TabsContent>
                             <TabsContent value="js">
+                                <p className="text-sm text-muted-foreground mb-3">
+                                    {t('jsDesc') || "Use this code to send a message from your website or Node.js app:"}
+                                </p>
                                 <div className="bg-slate-950 text-slate-50 p-4 rounded-lg font-mono text-sm relative overflow-x-auto group">
                                     <Button
                                         variant="ghost"
                                         size="icon"
                                         className="absolute top-2 right-2 text-slate-400 hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        onClick={() => copyToClipboard(`fetch('/api/chat', {
+                                        onClick={() => copyToClipboard(`fetch('${origin || 'https://api.pylonchat.com'}/api/chat', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -351,7 +362,7 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                         {copiedKey ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                                     </Button>
                                     <pre className="whitespace-pre-wrap break-all">
-                                        {`fetch('/api/chat', {
+                                        {`fetch('${origin || 'https://api.pylonchat.com'}/api/chat', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
