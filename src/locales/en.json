@@ -2179,5 +2179,21 @@
       "status": "System Status",
       "help": "Help"
     }
+  },
+  "featureGate": {
+    "requiresPlan": "Requires {plan} plan",
+    "upgrade": "Upgrade",
+    "upgradeMessage": "This feature is available in {plan} and higher plans.",
+    "upgradeToPlan": "Upgrade to {plan}",
+    "features": {
+      "analytics": "Analytics Dashboard",
+      "advancedAnalytics": "Advanced Analytics",
+      "customBranding": "Custom Branding",
+      "teamCollaboration": "Team Collaboration",
+      "customDomain": "Custom Domain",
+      "apiAccess": "API Access",
+      "prioritySupport": "Priority Support",
+      "whiteLabel": "White Label"
+    }
   }
 }

@@ -56,10 +56,25 @@ export default async function ChatbotDetailPage({
 
     // Kullanıcının subscription bilgisini al (feature gating için)
     const subscription = await prisma.subscription.findUnique({
-        where: { userId: session.user.id }
+        where: { userId: session.user.id },
+        select: {
+            planType: true,
+            hasAnalytics: true,
+            hasAdvancedAnalytics: true,
+            hasCustomBranding: true,
+            hasTeamCollaboration: true,
+            hasCustomDomain: true,
+            hasApiAccess: true,
+            hasPrioritySupport: true,
+            hasWhiteLabel: true
+        }
     })
 
     const planType = subscription?.planType || 'free'
+
+    // Feature erişim kontrolü - flags veya plan bazlı
+    const hasAnalytics = subscription?.hasAnalytics || planType !== 'free'
+    const hasCustomBranding = subscription?.hasCustomBranding || planType !== 'free'
     const hasPremiumFeatures = planType !== 'free' // Pro, Business, Enterprise
 
     // Chatbot türünü (industry) etikete dönüştüren yardımcı fonksiyon

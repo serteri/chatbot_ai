@@ -2196,5 +2196,21 @@
       "status": "Sistem Durumu",
       "help": "Yardım"
     }
+  },
+  "featureGate": {
+    "requiresPlan": "{plan} planı gerektirir",
+    "upgrade": "Yükselt",
+    "upgradeMessage": "Bu özellik {plan} ve üzeri planlarda kullanılabilir.",
+    "upgradeToPlan": "{plan} Planına Yükselt",
+    "features": {
+      "analytics": "Analitik Dashboard",
+      "advancedAnalytics": "Gelişmiş Analitik",
+      "customBranding": "Özel Markalama",
+      "teamCollaboration": "Takım İşbirliği",
+      "customDomain": "Özel Domain",
+      "apiAccess": "API Erişimi",
+      "prioritySupport": "Öncelikli Destek",
+      "whiteLabel": "White Label"
+    }
   }
 }
