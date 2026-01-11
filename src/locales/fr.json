@@ -750,6 +750,9 @@
     "instructions": "Instructions",
     "embedInstructions": "Pour ajouter le chatbot à votre site web, copiez le code ci-dessous et collez-le dans le code HTML de votre site, juste avant la balise fermante </body>.",
     "positionInfo": "Le widget apparaîtra par défaut dans le coin inférieur droit de la page.",
+    "widgetPosition": "Position du Widget",
+    "bottomLeft": "Bas Gauche",
+    "bottomRight": "Bas Droite",
     "copyCode": "Copier le code",
     "copied": "Copié !",
     "widgetPreview": "Aperçu du widget"

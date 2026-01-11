@@ -779,6 +779,9 @@
     "instructions": "Talimatlar",
     "embedInstructions": "Chatbot'u web sitenize eklemek için aşağıdaki kodu kopyalayın ve sayfanızın HTML kodunda, kapanan </body> etiketinden hemen önce yapıştırın.",
     "positionInfo": "Widget varsayılan olarak sayfanın sağ alt köşesinde görünecektir.",
+    "widgetPosition": "Widget Konumu",
+    "bottomLeft": "Sol Alt",
+    "bottomRight": "Sağ Alt",
     "copyCode": "Kodu Kopyala",
     "copied": "Kopyalandı!",
     "widgetPreview": "Widget Önizlemesi"

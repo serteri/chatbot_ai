@@ -15,7 +15,7 @@ interface EmbedCodeGeneratorProps {
 }
 
 export default function EmbedCodeGenerator({ chatbotId, initialPosition, appUrl }: EmbedCodeGeneratorProps) {
-    const t = useTranslations('Chatbots') // Assuming access to Chatbots namespace
+    const t = useTranslations('chatbots') // Correct lowercase namespace
     const [position, setPosition] = useState(initialPosition)
     const [isUpdating, setIsUpdating] = useState(false)
     const [copied, setCopied] = useState(false)
@@ -97,7 +97,7 @@ export default function EmbedCodeGenerator({ chatbotId, initialPosition, appUrl 
             <div className="bg-white border border-slate-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-4">
                     <LayoutTemplate className="h-5 w-5 text-blue-600" />
-                    <h4 className="font-medium text-slate-800">Widget Position</h4>
+                    <h4 className="font-medium text-slate-800">{t('widgetPosition')}</h4>
                 </div>
 
                 <RadioGroup
@@ -114,7 +114,7 @@ export default function EmbedCodeGenerator({ chatbotId, initialPosition, appUrl 
                             <div className="mb-2 h-16 w-24 rounded-md bg-slate-100 relative border border-slate-200">
                                 <div className="absolute bottom-2 left-2 h-6 w-6 rounded-full bg-blue-600 shadow-md"></div>
                             </div>
-                            <span className="block w-full text-center text-sm font-medium">Bottom Left</span>
+                            <span className="block w-full text-center text-sm font-medium">{t('bottomLeft')}</span>
                         </Label>
                     </div>
 
@@ -127,7 +127,7 @@ export default function EmbedCodeGenerator({ chatbotId, initialPosition, appUrl 
                             <div className="mb-2 h-16 w-24 rounded-md bg-slate-100 relative border border-slate-200">
                                 <div className="absolute bottom-2 right-2 h-6 w-6 rounded-full bg-blue-600 shadow-md"></div>
                             </div>
-                            <span className="block w-full text-center text-sm font-medium">Bottom Right</span>
+                            <span className="block w-full text-center text-sm font-medium">{t('bottomRight')}</span>
                         </Label>
                     </div>
                 </RadioGroup>
