@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 // ✅ Düzeltme: TestTube ikonu eklendi
-import { Bot, FileText, MessageSquare, Settings, Code, BarChart3, Shield, Palette, TestTube } from 'lucide-react'
+// ✅ Key ve TestTube ikonları eklendi
+import { Bot, FileText, MessageSquare, Settings, Code, BarChart3, Shield, Palette, TestTube, Key } from 'lucide-react'
 import Link from 'next/link'
 import { UploadDocumentDialog } from '@/components/document/UploadDocumentDialog'
 import { DeleteDocumentButton } from '@/components/document/DeleteDocumentButton'
@@ -17,9 +18,9 @@ import { DomainManager } from '@/components/chatbot/DomainManager'
 import { WidgetCustomizer } from '@/components/chatbot/WidgetCustomizer'
 import { ChatbotSettings } from '@/components/chatbot/ChatbotSettings'
 import ApiAccessPage from '@/app/[locale]/dashboard/chatbots/[chatbotId]/api-access/page'
-// ✅ Key ikonu eklendi (zaten vardı ama kontrol edelim)
-import { Bot, FileText, MessageSquare, Settings, Code, BarChart3, Shield, Palette, TestTube, Key } from 'lucide-react'
-params,
+
+export default async function ChatbotDetailPage({
+    params,
 }: {
     params: Promise<{ chatbotId: string; locale: string }>
 }) {
