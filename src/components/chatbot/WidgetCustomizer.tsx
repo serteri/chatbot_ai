@@ -182,7 +182,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                                 <SelectTrigger className="mt-2">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-white text-slate-900 border-slate-200">
                                     <SelectItem value="bottom-right">{t('widget.bottomRight')}</SelectItem>
                                     <SelectItem value="bottom-left">{t('widget.bottomLeft')}</SelectItem>
                                 </SelectContent>
@@ -198,7 +198,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                                 <SelectTrigger className="mt-2">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-white text-slate-900 border-slate-200">
                                     <SelectItem value="small">{t('widget.small')}</SelectItem>
                                     <SelectItem value="medium">{t('widget.medium')}</SelectItem>
                                     <SelectItem value="large">{t('widget.large')}</SelectItem>
@@ -303,9 +303,8 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
 
                             {/* Widget Preview */}
                             <div
-                                className={`absolute ${
-                                    settings.widgetPosition === 'bottom-right' ? 'bottom-6 right-6' : 'bottom-6 left-6'
-                                }`}
+                                className={`absolute ${settings.widgetPosition === 'bottom-right' ? 'bottom-6 right-6' : 'bottom-6 left-6'
+                                    }`}
                             >
                                 {/* Chat Button */}
                                 <button
@@ -313,10 +312,9 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                                         backgroundColor: settings.widgetButtonColor,
                                         color: settings.widgetTextColor
                                     }}
-                                    className={`rounded-full shadow-lg flex items-center justify-center ${
-                                        settings.widgetSize === 'small' ? 'w-12 h-12' :
+                                    className={`rounded-full shadow-lg flex items-center justify-center ${settings.widgetSize === 'small' ? 'w-12 h-12' :
                                             settings.widgetSize === 'large' ? 'w-20 h-20' : 'w-16 h-16'
-                                    }`}
+                                        }`}
                                 >
                                     {logoPreview ? (
                                         <img src={logoPreview} alt="Logo" className="w-8 h-8 object-contain" />

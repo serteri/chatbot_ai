@@ -718,6 +718,8 @@
     "test": "Probar",
     "manage": "Gestionar",
     "documents": "Documentos",
+    "settings": "Configuración",
+    "copyCode": "Copiar código",
     "embed": "Código Embed",
     "security": "Seguridad",
     "apiAccess": "Acceso API",

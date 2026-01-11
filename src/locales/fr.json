@@ -717,6 +717,8 @@
     "deleteError": "Impossible de supprimer le chatbot. Veuillez réessayer.",
     "test": "Tester",
     "manage": "Gérer",
+    "settings": "Paramètres",
+    "copyCode": "Copier le code",
     "documents": "Documents",
     "embed": "Code d'Intégration",
     "security": "Sécurité",
