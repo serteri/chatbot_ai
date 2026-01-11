@@ -38,6 +38,7 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
     const t = useTranslations('advancedAnalytics')
     const [dateRange, setDateRange] = useState('30d')
     const [isExporting, setIsExporting] = useState(false)
+    const [timezone, setTimezone] = useState<string>('')
     const [clientStats, setClientStats] = useState<{
         dailyData: { date: string; conversations: number; messages: number }[];
         hourlyData: { hour: number; count: number }[];
@@ -50,7 +51,11 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
 
     // Local Time Calculation
     useEffect(() => {
+        // Set Timezone
+        setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+
         if (!data.conversationTimestamps) return;
+        // ... (rest of the effect)
 
         const timestamps = data.conversationTimestamps.map(ts => new Date(ts));
         const now = new Date();
@@ -306,7 +311,10 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
                             <Clock className="w-5 h-5 text-purple-600" />
                             {t('hourlyDistribution')}
                         </CardTitle>
-                        <CardDescription>{t('hourlyDistributionDesc')}</CardDescription>
+                        <CardDescription>
+                            {t('hourlyDistributionDesc')}
+                            {timezone && <span className="ml-1 text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-medium">({timezone})</span>}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="h-[200px] flex items-end justify-between gap-0.5">
@@ -400,9 +408,14 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
                                     )
                                 })
                             ) : (
-                                <p className="text-sm text-slate-500 text-center py-4">
-                                    {t('noData')}
-                                </p>
+                                <div className="text-center py-6">
+                                    <Globe className="w-8 h-8 text-slate-200 mx-auto mb-2" />
+                                    <p className="text-sm font-medium text-slate-900">Location Data Unavailable</p>
+                                    <p className="text-xs text-slate-500 mt-1">
+                                        Geographic tracking will be enabled in a future update.
+                                        Check back soon!
+                                    </p>
+                                </div>
                             )}
                         </div>
                     </CardContent>

@@ -116,14 +116,6 @@ export default async function ChatbotDetailPage({
                         </p>
                     </div>
 
-                    {/* DEBUG: Remove later */}
-                    <div className="mt-2 bg-yellow-100 p-2 rounded text-xs text-yellow-800 border border-yellow-200">
-                        <p><strong>Debug Info:</strong></p>
-                        <p>Plan: {planType}</p>
-                        <p>Has Analytics: {String(hasAnalytics)}</p>
-                        <p>Has Advanced Analytics: {String(hasAdvancedAnalytics)}</p>
-                    </div>
-
                     {/* ✅ Düzeltme: Sohbeti Başlat/Test Et butonu eklendi */}
                     <div className="flex space-x-2">
                         <Link
@@ -136,10 +128,6 @@ export default async function ChatbotDetailPage({
                             </Button>
                         </Link>
 
-                        <Button variant="outline">
-                            <Settings className="mr-2 h-4 w-4" />
-                            {t('settings.title')}
-                        </Button>
                         <ToggleActiveButton
                             chatbotId={chatbot.id}
                             initialIsActive={chatbot.isActive}
