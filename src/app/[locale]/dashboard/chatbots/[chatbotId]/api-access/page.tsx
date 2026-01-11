@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'; -> Kaldırıldı, HTML table kullanacağız
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, Copy, Check, Key, Code, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -184,22 +184,22 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                         </div>
                     ) : (
                         <div className="rounded-md border">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Name</TableHead>
-                                        <TableHead>Key Prefix</TableHead>
-                                        <TableHead>Created</TableHead>
-                                        <TableHead>Last Used</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-muted/50 [&_tr]:border-b">
+                                    <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Name</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Key Prefix</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Created</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">Last Used</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="[&_tr:last-child]:border-0">
                                     {keys.map((key) => (
-                                        <TableRow key={key.id}>
-                                            <TableCell className="font-medium">{key.name}</TableCell>
-                                            <TableCell className="font-mono text-xs">
-                                                <div className="flex items-center gap-2 bg-slate-100 px-2 py-1 rounded w-fit">
+                                        <tr key={key.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                            <td className="p-4 align-middle font-medium">{key.name}</td>
+                                            <td className="p-4 align-middle">
+                                                <div className="flex items-center gap-2 bg-slate-100 px-2 py-1 rounded w-fit font-mono text-xs">
                                                     {key.key.substring(0, 12)}...
                                                     <Button
                                                         variant="ghost"
@@ -210,14 +210,14 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                                         {copiedKey === key.key ? <Check className="h-3 w-3 text-green-600" /> : <Copy className="h-3 w-3" />}
                                                     </Button>
                                                 </div>
-                                            </TableCell>
-                                            <TableCell>{formatDate(key.createdAt)}</TableCell>
-                                            <TableCell>
+                                            </td>
+                                            <td className="p-4 align-middle">{formatDate(key.createdAt)}</td>
+                                            <td className="p-4 align-middle">
                                                 {key.lastUsed ? formatDate(key.lastUsed) : (
                                                     <Badge variant="secondary" className="text-xs font-normal">Never</Badge>
                                                 )}
-                                            </TableCell>
-                                            <TableCell className="text-right">
+                                            </td>
+                                            <td className="p-4 align-middle text-right">
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
@@ -226,11 +226,11 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
-                                            </TableCell>
-                                        </TableRow>
+                                            </td>
+                                        </tr>
                                     ))}
-                                </TableBody>
-                            </Table>
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </CardContent>
