@@ -53,6 +53,15 @@ export function UsageIndicator({ locale, subscription, currentUsage }: UsageIndi
     const conversationPercent = getPercentage(currentUsage.conversations, subscription.maxConversations)
     const documentPercent = getPercentage(currentUsage.documents, subscription.maxDocuments)
 
+    // Enterprise gibi yüksek limitler için "unlimited" göster
+    const isUnlimited = (max: number, type: 'chatbot' | 'conversation' | 'document'): boolean => {
+        if (max === -1) return true
+        if (type === 'chatbot' && max >= 100) return true
+        if (type === 'document' && max >= 500) return true
+        if (type === 'conversation' && max >= 50000) return true
+        return false
+    }
+
     // Sadece konuşma ve doküman limitleri için uyarı göster
     // Chatbot limiti Free plan için beklenen bir durum, uyarı vermeye gerek yok
     const hasAnyWarning = isWarning(currentUsage.conversations, subscription.maxConversations) ||
@@ -109,16 +118,21 @@ export function UsageIndicator({ locale, subscription, currentUsage }: UsageIndi
                             <span>{t('chatbots')}</span>
                         </div>
                         <span className="font-medium">
-                            {currentUsage.chatbots} / {subscription.maxChatbots === -1 ? t('unlimited') : subscription.maxChatbots}
+                            {isUnlimited(subscription.maxChatbots, 'chatbot')
+                                ? <><span>{currentUsage.chatbots}</span> <span className="text-green-600">({t('unlimited')})</span></>
+                                : `${currentUsage.chatbots} / ${subscription.maxChatbots}`
+                            }
                         </span>
                     </div>
-                    <div className="relative">
-                        <Progress value={chatbotPercent} className="h-2" />
-                        <div
-                            className={`absolute top-0 left-0 h-2 rounded-full transition-all ${getProgressColor(chatbotPercent)}`}
-                            style={{ width: `${chatbotPercent}%` }}
-                        />
-                    </div>
+                    {!isUnlimited(subscription.maxChatbots, 'chatbot') && (
+                        <div className="relative">
+                            <Progress value={chatbotPercent} className="h-2" />
+                            <div
+                                className={`absolute top-0 left-0 h-2 rounded-full transition-all ${getProgressColor(chatbotPercent)}`}
+                                style={{ width: `${chatbotPercent}%` }}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* Conversations */}
@@ -129,16 +143,21 @@ export function UsageIndicator({ locale, subscription, currentUsage }: UsageIndi
                             <span>{t('conversations')}</span>
                         </div>
                         <span className="font-medium">
-                            {currentUsage.conversations} / {subscription.maxConversations === -1 ? t('unlimited') : subscription.maxConversations}
+                            {isUnlimited(subscription.maxConversations, 'conversation')
+                                ? <><span>{currentUsage.conversations}</span> <span className="text-green-600">({t('unlimited')})</span></>
+                                : `${currentUsage.conversations} / ${subscription.maxConversations}`
+                            }
                         </span>
                     </div>
-                    <div className="relative">
-                        <Progress value={conversationPercent} className="h-2" />
-                        <div
-                            className={`absolute top-0 left-0 h-2 rounded-full transition-all ${getProgressColor(conversationPercent)}`}
-                            style={{ width: `${conversationPercent}%` }}
-                        />
-                    </div>
+                    {!isUnlimited(subscription.maxConversations, 'conversation') && (
+                        <div className="relative">
+                            <Progress value={conversationPercent} className="h-2" />
+                            <div
+                                className={`absolute top-0 left-0 h-2 rounded-full transition-all ${getProgressColor(conversationPercent)}`}
+                                style={{ width: `${conversationPercent}%` }}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* Documents */}
@@ -149,16 +168,21 @@ export function UsageIndicator({ locale, subscription, currentUsage }: UsageIndi
                             <span>{t('documents')}</span>
                         </div>
                         <span className="font-medium">
-                            {currentUsage.documents} / {subscription.maxDocuments === -1 ? t('unlimited') : subscription.maxDocuments}
+                            {isUnlimited(subscription.maxDocuments, 'document')
+                                ? <><span>{currentUsage.documents}</span> <span className="text-green-600">({t('unlimited')})</span></>
+                                : `${currentUsage.documents} / ${subscription.maxDocuments}`
+                            }
                         </span>
                     </div>
-                    <div className="relative">
-                        <Progress value={documentPercent} className="h-2" />
-                        <div
-                            className={`absolute top-0 left-0 h-2 rounded-full transition-all ${getProgressColor(documentPercent)}`}
-                            style={{ width: `${documentPercent}%` }}
-                        />
-                    </div>
+                    {!isUnlimited(subscription.maxDocuments, 'document') && (
+                        <div className="relative">
+                            <Progress value={documentPercent} className="h-2" />
+                            <div
+                                className={`absolute top-0 left-0 h-2 rounded-full transition-all ${getProgressColor(documentPercent)}`}
+                                style={{ width: `${documentPercent}%` }}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* Upgrade Button */}
