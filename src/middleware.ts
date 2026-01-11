@@ -15,11 +15,19 @@ export default async function middleware(req: NextRequest) {
   // Extract hostname from APP_URL for comparison
   const appHostname = new URL(appUrl).host;
 
+  // Normalize hosts to handle www. prefix correctly
+  const cleanHost = host?.replace(/^www\./, '');
+  const cleanAppHostname = appHostname.replace(/^www\./, '');
+
   // Check if it's a custom domain
   // 1. Host exists
-  // 2. Host is NOT the app's main hostname
-  // 3. Host is NOT localhost (unless appUrl is also localhost, but usually we test with custom hosts file)
-  const isCustomDomain = host && host !== appHostname && !host.includes('vercel.app'); // Exclude vercel previews if needed
+  // 2. Host is NOT the app's main hostname (ignoring www)
+  // 3. Host is NOT localhost (unless appUrl is also localhost)
+  // 4. Host is NOT a vercel preview URL
+  const isCustomDomain =
+    cleanHost &&
+    cleanHost !== cleanAppHostname &&
+    !host?.includes('vercel.app');
 
   if (isCustomDomain) {
     // Rewrite to the domain handler page
