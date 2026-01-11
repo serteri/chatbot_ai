@@ -4,7 +4,6 @@ import { useState, useRef } from 'react';
 import {
     MoreVertical,
     Code,
-    Eye,
     Settings,
     Trash2,
     Loader2
@@ -117,13 +116,7 @@ export function ChatbotCardActions({ chatbotId, locale, labels }: ChatbotCardAct
 
                     <DropdownMenuItem asChild>
                         <Link href={`/${locale}/dashboard/chatbots/${chatbotId}`} className="cursor-pointer py-2.5 px-3 rounded-xl text-slate-600 focus:text-slate-900 focus:bg-slate-50 transition-colors duration-200 font-medium my-0.5 w-full flex items-center">
-                            <Eye className="mr-3 h-4.5 w-4.5" /> {labels.manage}
-                        </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                        <Link href={`/${locale}/dashboard/chatbots/${chatbotId}/settings`} className="cursor-pointer py-2.5 px-3 rounded-xl text-slate-600 focus:text-slate-900 focus:bg-slate-50 transition-colors duration-200 font-medium my-0.5 w-full flex items-center">
-                            <Settings className="mr-3 h-4.5 w-4.5" /> {labels.settings}
+                            <Settings className="mr-3 h-4.5 w-4.5" /> {labels.manage}
                         </Link>
                     </DropdownMenuItem>
 
