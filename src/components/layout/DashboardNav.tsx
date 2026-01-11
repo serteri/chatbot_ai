@@ -15,6 +15,7 @@ import {
 import {
     LogOut,
     User,
+    Users,
     Globe,
     GraduationCap,
     ShoppingCart,
@@ -239,6 +240,13 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                                     <Link href={`/${currentLocale}/dashboard/settings`} className="cursor-pointer py-2.5">
                                         <Settings className="h-4 w-4 mr-2 text-gray-500" />
                                         {t('nav.settings')}
+                                    </Link>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem asChild>
+                                    <Link href={`/${currentLocale}/dashboard/team`} className="cursor-pointer py-2.5">
+                                        <Users className="h-4 w-4 mr-2 text-gray-500" />
+                                        {t('nav.team')}
                                     </Link>
                                 </DropdownMenuItem>
 

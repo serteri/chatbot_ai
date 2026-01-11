@@ -705,7 +705,8 @@
     "language": "Dil",
     "view": "Görüntüle",
     "settings": "Ayarlar",
-    "analytics": "Analitik",
+    "team": "Takım",
+    "analytics": "Gelişmiş Analitik",
     "createNewDesc": "Yeni AI asistan oluştur",
     "createFirstChatbot": "İlk Chatbot'umu Oluştur",
     "quickTemplates": "Hızlı Şablonlar",
@@ -2077,13 +2078,30 @@
       "step2": "İlk chatbotunuzu yapılandırın",
       "step3": "Widget'ı sitenize gömün"
     },
-    "api": {
+    "team": {
+      "title": "Takım Yönetimi",
+      "subtitle": "Takım üyelerinizi yönetin ve rolleri düzenleyin.",
+      "inviteMember": "Üye Davet Et",
+      "emailPlaceholder": "ornek@sirket.com",
+      "role": "Rol",
+      "joinedAt": "Katılma Tarihi",
+      "actions": "İşlemler",
+      "remove": "Çıkar",
+      "changeRole": "Rol Değiştir",
+      "admin": "Yönetici",
+      "member": "Üye",
+      "inviteSent": "Davet başarıyla gönderildi",
+      "removeConfirm": "Bu üyeyi takımdan çıkarmak istediğinize emin misiniz?",
+      "removeSuccess": "Üye takımdan çıkarıldı",
+      "updateSuccess": "Rol güncellendi",
+      "upgradeRequired": "Bu özellik için Business veya Enterprise planına geçin."
+    },
+    "apiKeys": {
       "title": "API Referansı",
       "subtitle": "Chatbotları programatik olarak yönetin, konuşma geçmişini alın ve performans ölçümlerini analiz edin.",
       "auth": "Kimlik Doğrulama",
       "authDesc": "PylonChat API, istekleri doğrulamak için API anahtarları kullanır.",
       "chatbots": "Chatbotlar",
-      "chatbotsDesc": "Hesabınızla ilişkili chatbotların bir listesini döndürür.",
       "conversations": "Konuşmalar",
       "messages": "Mesajlar"
     }

@@ -694,6 +694,7 @@
     "language": "Language",
     "view": "View",
     "settings": "Settings",
+    "team": "Team",
     "analytics": "Analytics",
     "createNewDesc": "Create new AI assistant",
     "createFirstChatbot": "Create My First Chatbot",
@@ -2060,7 +2061,25 @@
       "step2": "Configure your first chatbot",
       "step3": "Embed the widget on your site"
     },
-    "api": {
+    "team": {
+      "title": "Team Management",
+      "subtitle": "Manage your team members and roles.",
+      "inviteMember": "Invite Member",
+      "emailPlaceholder": "example@company.com",
+      "role": "Role",
+      "joinedAt": "Joined At",
+      "actions": "Actions",
+      "remove": "Remove",
+      "changeRole": "Change Role",
+      "admin": "Admin",
+      "member": "Member",
+      "inviteSent": "Invitation sent successfully",
+      "removeConfirm": "Are you sure you want to remove this member?",
+      "removeSuccess": "Member removed",
+      "updateSuccess": "Role updated",
+      "upgradeRequired": "Upgrade to Business or Enterprise plan for this feature."
+    },
+    "apiKeys": {
       "title": "API Reference",
       "subtitle": "Programmatically manage chatbots, retrieve conversation history, and analyze performance metrics.",
       "auth": "Authentication",
