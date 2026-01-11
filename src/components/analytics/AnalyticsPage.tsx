@@ -151,10 +151,8 @@ export default async function AnalyticsPage({ chatbotId, hasAdvancedAnalytics = 
                     avgResponseTime,
                     uniqueVisitors,
                     resolutionRate,
-                    peakHour,
                     topQueries: topQueries.length > 0 ? topQueries : [{ query: "Merhaba", count: 12 }, { query: "Fiyatlar nedir?", count: 8 }],
-                    dailyData,
-                    hourlyData,
+                    conversationTimestamps,
                     geographyData
                 }}
             />
