@@ -437,7 +437,13 @@
     "integrationTests": "Integration Tests",
     "integrationTestsDesc": "Widget and API tests",
     "manageChatbots": "Manage Chatbots",
-    "manageChatbotsDesc": "Manage all your chatbots"
+    "manageChatbotsDesc": "Manage all your chatbots",
+    "instructions": "Instructions",
+    "embedInstructions": "To add the chatbot to your website, copy the code below and paste it into your website's HTML, just before the closing </body> tag.",
+    "positionInfo": "The widget will appear in the bottom-right corner of the page by default.",
+    "copyCode": "Copy Code",
+    "copied": "Copied!",
+    "widgetPreview": "Widget Preview"
   },
   "education": {
     "platformTitle": "Education Platform",

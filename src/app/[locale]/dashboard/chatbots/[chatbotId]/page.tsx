@@ -340,19 +340,77 @@ export default async function ChatbotDetailPage({
                             <CardDescription>{t('chatbots.embedDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-4">
-                                <div className="rounded-lg bg-gray-900 p-4">
-                                    <code className="text-sm text-green-400 break-all">
-                                        {`<script src="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/widget.js?id=${chatbot.identifier}"></script>`}
-                                    </code>
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div className="space-y-4">
+                                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                        <h4 className="font-medium text-sm mb-2 text-slate-700">{t('chatbots.instructions')}</h4>
+                                        <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+                                            {t('chatbots.embedInstructions')}
+                                        </p>
+                                        <div className="flex items-start gap-2 text-xs text-slate-500 bg-blue-50 p-3 rounded text-blue-700">
+                                            <div className="mt-0.5">ℹ️</div>
+                                            <div>{t('chatbots.positionInfo')}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="relative group">
+                                        <div className="absolute top-2 right-2">
+                                            <Button
+                                                size="sm"
+                                                variant="secondary"
+                                                className="h-7 text-xs bg-slate-700 text-white hover:bg-slate-600"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(`<script src="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/widget.js?id=${chatbot.identifier}"></script>`)
+                                                    toast.success(t('chatbots.copied'))
+                                                }}
+                                            >
+                                                <Copy className="h-3 w-3 mr-1" />
+                                                {t('chatbots.copyCode')}
+                                            </Button>
+                                        </div>
+                                        <div className="rounded-lg bg-slate-900 p-4 pt-10 overflow-x-auto">
+                                            <code className="text-sm font-mono text-green-400 whitespace-nowrap">
+                                                {`<script src="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/widget.js?id=${chatbot.identifier}"></script>`}
+                                            </code>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex space-x-2">
+                                        <Button className="flex-1" variant="outline" asChild>
+                                            <Link href={`/${locale}/widget-test?chatbotId=${chatbot.identifier}&mode=${botIndustry}`} target="_blank">
+                                                <TestTube className="mr-2 h-4 w-4" />
+                                                {t('chatbots.testWidget')}
+                                            </Link>
+                                        </Button>
+                                    </div>
                                 </div>
-                                <div className="flex space-x-2">
-                                    <Button className="flex-1" variant="outline" asChild>
-                                        <Link href="/widget-test" target="_blank">
-                                            <Code className="mr-2 h-4 w-4" />
-                                            {t('chatbots.testWidget')}
-                                        </Link>
-                                    </Button>
+
+                                {/* Visual Preview Mockup */}
+                                <div className="hidden md:block border rounded-lg bg-slate-100 p-4 relative h-[300px] overflow-hidden">
+                                    <div className="absolute inset-0 flex items-center justify-center text-slate-300 font-bold text-4xl select-none pointer-events-none opacity-20">
+                                        WEBSITE
+                                    </div>
+                                    {/* Mock content lines */}
+                                    <div className="space-y-4 opacity-10 blur-[1px]">
+                                        <div className="h-8 bg-slate-300 w-full rounded"></div>
+                                        <div className="h-32 bg-slate-300 w-full rounded"></div>
+                                        <div className="grid grid-cols-3 gap-4">
+                                            <div className="h-24 bg-slate-300 rounded"></div>
+                                            <div className="h-24 bg-slate-300 rounded"></div>
+                                            <div className="h-24 bg-slate-300 rounded"></div>
+                                        </div>
+                                    </div>
+
+                                    {/* Widget Mock */}
+                                    <div className="absolute bottom-4 right-4 animate-in slide-in-from-bottom-10 fade-in duration-700">
+                                        <div className="bg-blue-600 text-white p-3 rounded-full shadow-lg hover:scale-105 transition-transform cursor-pointer flex items-center gap-2 px-4">
+                                            <MessageSquare className="h-6 w-6" />
+                                            <span className="font-medium">Chat</span>
+                                        </div>
+                                    </div>
+                                    <div className="absolute bottom-16 right-4 right-20 bg-white p-2 rounded shadow text-xs text-slate-500 arrow-down">
+                                        {t('chatbots.widgetPreview')}
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
