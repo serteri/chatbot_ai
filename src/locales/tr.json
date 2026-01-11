@@ -738,7 +738,7 @@
     "test": "Test Et",
     "manage": "Yönet",
     "documents": "Dokümanlar",
-    "analytics": "Analytics",
+    "analytics": "Analitik",
     "settings": "Ayarlar",
     "embed": "Embed Kod",
     "security": "Güvenlik",
@@ -1073,7 +1073,7 @@
     "documentCount": "Doküman Sayısı",
     "monthlyConversations": "Aylık Konuşma",
     "unlimited": "Sınırsız",
-    "analytics": "Analytics",
+    "analytics": "Analitik",
     "customBranding": "Özel Branding",
     "teamCollaboration": "Takım İşbirliği",
     "apiAccess": "API Erişimi",
@@ -1092,7 +1092,7 @@
     "proFeat3": "1,000 Konuşma/ay",
     "proFeat4": "Öncelikli Destek",
     "proFeat5": "Özel Branding",
-    "proFeat6": "Analytics Dashboard",
+    "proFeat6": "Analitik Dashboard",
     "entFeat1": "Sınırsız Chatbot",
     "entFeat2": "Sınırsız Doküman",
     "entFeat3": "Sınırsız Konuşma",
@@ -1105,7 +1105,7 @@
     "bizFeat3": "5,000 Konuşma/ay",
     "bizFeat4": "Öncelikli Destek",
     "bizFeat5": "Özel Branding",
-    "bizFeat6": "Analytics Dashboard",
+    "bizFeat6": "Analitik Dashboard",
     "bizFeat7": "Takım İşbirliği",
     "downgradeUnavailable": "Düşürme Mevcut Değil",
     "includedInCurrentPlan": "Planınıza dahil",
@@ -1136,7 +1136,7 @@
           "1,000 Konuşma/ay",
           "Öncelikli Destek",
           "Özel Branding",
-          "Analytics Dashboard"
+          "Analitik Dashboard"
         ]
       },
       "business": {
@@ -1149,7 +1149,7 @@
           "5,000 Konuşma/ay",
           "Öncelikli Destek",
           "Özel Branding",
-          "Analytics Dashboard",
+          "Analitik Dashboard",
           "Takım İşbirliği"
         ]
       },
@@ -1163,7 +1163,8 @@
           "Sınırsız Konuşma",
           "7/24 Destek",
           "Özel Domain",
-          "API Erişimi"
+          "API Erişimi",
+          "Gelişmiş Analitik"
         ]
       }
     },
