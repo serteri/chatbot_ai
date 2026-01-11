@@ -9,10 +9,11 @@ import { toast } from 'react-hot-toast'
 
 interface ToggleActiveButtonProps {
     chatbotId: string
-    initialIsActive: boolean
+    isActive: boolean
+    t?: any
 }
 
-export function ToggleActiveButton({ chatbotId, initialIsActive }: ToggleActiveButtonProps) {
+export function ToggleActiveButton({ chatbotId, isActive: initialIsActive, t: translations }: ToggleActiveButtonProps) {
     const [isActive, setIsActive] = useState(initialIsActive)
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()

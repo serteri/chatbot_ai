@@ -2233,6 +2233,24 @@
       "whiteLabel": "White Label"
     }
   },
+  "customDomainSettings": {
+    "title": "Custom Domain",
+    "description": "Publish your chatbot on your own domain.",
+    "label": "Domain Name",
+    "placeholder": "e.g. chat.yourcompany.com",
+    "instructionTitle": "DNS Configuration",
+    "instruction": "To use your custom domain, you must add the following CNAME record in your DNS provider (GoDaddy, Cloudflare, etc.):",
+    "step1": "1. Go to your DNS provider's control panel",
+    "step2": "2. Create a new CNAME record",
+    "step3": "3. In the Host/Name field, enter your subdomain (e.g. 'chat' or '@' for the whole domain)",
+    "step4": "4. In the Value/Points to field, enter:",
+    "cnameTarget": "app.pylonchat.com",
+    "propagationNote": "Note: DNS changes may take up to 24 hours to propagate.",
+    "save": "Save Domain",
+    "saving": "Saving...",
+    "success": "Custom domain saved successfully!",
+    "error": "Failed to save domain. It may already be in use by another user."
+  },
   "advancedAnalytics": {
     "title": "Advanced Analytics",
     "subtitle": "Detailed performance metrics and reports",
