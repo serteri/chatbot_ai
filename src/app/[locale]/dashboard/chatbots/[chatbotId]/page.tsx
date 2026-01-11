@@ -25,6 +25,7 @@ export default async function ChatbotDetailPage({
     params: Promise<{ chatbotId: string; locale: string }>
 }) {
     const { chatbotId, locale } = await params
+    console.log(`[Page] Loading chatbot details: ${chatbotId}`);
     const t = await getTranslations({ locale })
     const session = await auth()
 
