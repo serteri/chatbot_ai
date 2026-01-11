@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
+import { revalidatePath } from 'next/cache' // Eklendi
 
 export async function POST(
     request: NextRequest,
@@ -41,6 +42,10 @@ export async function POST(
             where: { id: chatbotId },
             data: { isActive: !chatbot.isActive }
         })
+
+        // Sayfa cache'ini temizle ki UI güncellensin
+        // Tüm diller için revalidate ediyoruz
+        revalidatePath('/[locale]/dashboard/chatbots/[chatbotId]', 'page')
 
         return NextResponse.json({
             success: true,

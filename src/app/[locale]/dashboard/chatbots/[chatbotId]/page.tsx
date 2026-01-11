@@ -108,9 +108,9 @@ export default async function ChatbotDetailPage({
                             <h1 className="text-3xl font-bold">{chatbot.name}</h1>
                             {getIndustryBadge(chatbot.industry)}
                             {chatbot.isActive ? (
-                                <Badge className="bg-green-500">{t('chatbots.active')}</Badge>
+                                <Badge className="bg-green-600 hover:bg-green-700">{t('chatbots.active')}</Badge>
                             ) : (
-                                <Badge variant="secondary">{t('chatbots.inactive')}</Badge>
+                                <Badge className="bg-red-500 hover:bg-red-600 text-white">{t('chatbots.inactive')}</Badge>
                             )}
                         </div>
                         <p className="mt-2 text-gray-600">
