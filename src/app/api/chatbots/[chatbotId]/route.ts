@@ -116,3 +116,70 @@ export async function GET(
         )
     }
 }
+
+export async function PATCH(
+    req: NextRequest,
+    { params }: { params: Promise<{ chatbotId: string }> }
+) {
+    try {
+        const session = await auth()
+
+        if (!session?.user?.id) {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            )
+        }
+
+        const { chatbotId } = await params
+        const body = await req.json()
+
+        // Verify ownership
+        const chatbot = await prisma.chatbot.findUnique({
+            where: { id: chatbotId }
+        })
+
+        if (!chatbot) {
+            return NextResponse.json(
+                { error: 'Chatbot not found' },
+                { status: 404 }
+            )
+        }
+
+        if (chatbot.userId !== session.user.id) {
+            return NextResponse.json(
+                { error: 'Access denied' },
+                { status: 403 }
+            )
+        }
+
+        // Allowed fields to update
+        const allowedUpdates = [
+            'name', 'botName', 'welcomeMessage', 'fallbackMessage',
+            'language', 'aiModel', 'temperature', 'widgetPosition',
+            'widgetPrimaryColor', 'widgetButtonColor', 'widgetTextColor'
+        ]
+
+        const updates: any = {}
+        for (const key of Object.keys(body)) {
+            if (allowedUpdates.includes(key)) {
+                updates[key] = body[key]
+            }
+        }
+
+        // Update chatbot
+        const updatedChatbot = await prisma.chatbot.update({
+            where: { id: chatbotId },
+            data: updates
+        })
+
+        return NextResponse.json(updatedChatbot)
+
+    } catch (error) {
+        console.error('Update chatbot error:', error)
+        return NextResponse.json(
+            { error: 'Failed to update chatbot' },
+            { status: 500 }
+        )
+    }
+}

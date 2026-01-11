@@ -18,6 +18,7 @@ import { DomainManager } from '@/components/chatbot/DomainManager'
 import { WidgetCustomizer } from '@/components/chatbot/WidgetCustomizer'
 import { ChatbotSettings } from '@/components/chatbot/ChatbotSettings'
 import ApiAccessPage from '@/app/[locale]/dashboard/chatbots/[chatbotId]/api-access/page'
+import EmbedCodeGenerator from '@/components/dashboard/EmbedCodeGenerator'
 import { CopyButton } from '@/components/common/CopyButton'
 
 export default async function ChatbotDetailPage({
@@ -357,16 +358,11 @@ export default async function ChatbotDetailPage({
                                             </div>
                                         </div>
 
-                                        <div className="relative group">
-                                            <div className="absolute top-2 right-2">
-                                                <CopyButton
-                                                    text={`<script src="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/widget.js?id=${chatbot.identifier}"></script>`}
-                                                    label={t('chatbots.copyCode')}
-                                                    successMessage={t('chatbots.copied')}
-                                                />
-                                            </div>
-                                            {/* ... */}
-                                        </div>
+                                        <EmbedCodeGenerator
+                                            chatbotId={chatbot.id}
+                                            initialPosition={chatbot.widgetPosition || 'bottom-right'}
+                                            appUrl={process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}
+                                        />
                                         {/* ... */}
                                     </div>
                                     {/* ... */}
