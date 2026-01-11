@@ -437,7 +437,7 @@
     "integrationTests": "Integration Tests",
     "integrationTestsDesc": "Widget and API tests",
     "manageChatbots": "Manage Chatbots",
-    "manageChatbotsDesc": "Manage all your chatbots",
+    "manageChatbotsDesc": "Manage all your chatbots"
   },
   "education": {
     "platformTitle": "Education Platform",

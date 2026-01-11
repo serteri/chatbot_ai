@@ -432,7 +432,7 @@
     "integrationTests": "Pruebas de Integración",
     "integrationTestsDesc": "Pruebas de widget y API",
     "manageChatbots": "Gestionar Chatbots",
-    "manageChatbotsDesc": "Gestiona todos tus chatbots",
+    "manageChatbotsDesc": "Gestiona todos tus chatbots"
   },
   "education": {
     "platformTitle": "Plataforma Educativa",

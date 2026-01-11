@@ -440,7 +440,7 @@
     "integrationTests": "Entegrasyon Testleri",
     "integrationTestsDesc": "Widget ve API testleri",
     "manageChatbots": "Chatbot'ları Yönet",
-    "manageChatbotsDesc": "Tüm chatbot'larınızı yönetin",
+    "manageChatbotsDesc": "Tüm chatbot'larınızı yönetin"
   },
   "education": {
     "platformTitle": "Eğitim Platform",
