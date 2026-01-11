@@ -433,12 +433,6 @@
     "integrationTestsDesc": "Widget- und API-Tests",
     "manageChatbots": "Chatbots verwalten",
     "manageChatbotsDesc": "Verwalten Sie alle Ihre Chatbots",
-    "instructions": "Anleitung",
-    "embedInstructions": "Um den Chatbot zu Ihrer Website hinzuzufügen, kopieren Sie den unten stehenden Code und fügen Sie ihn in den HTML-Code Ihrer Website direkt vor dem schließenden </body>-Tag ein.",
-    "positionInfo": "Das Widget erscheint standardmäßig in der unteren rechten Ecke der Seite.",
-    "copyCode": "Code kopieren",
-    "copied": "Kopiert!",
-    "widgetPreview": "Widget-Vorschau"
   },
   "education": {
     "platformTitle": "Bildungsplattform",
@@ -750,7 +744,13 @@
     "docError": "Fehler",
     "embedCode": "Einbettungscode",
     "embedDesc": "Fügen Sie diesen Code zu Ihrer Website hinzu",
-    "testWidget": "Testen"
+    "testWidget": "Testen",
+    "instructions": "Anleitung",
+    "embedInstructions": "Um den Chatbot zu Ihrer Website hinzuzufügen, kopieren Sie den unten stehenden Code und fügen Sie ihn in den HTML-Code Ihrer Website direkt vor dem schließenden </body>-Tag ein.",
+    "positionInfo": "Das Widget erscheint standardmäßig in der unteren rechten Ecke der Seite.",
+    "copyCode": "Code kopieren",
+    "copied": "Kopiert!",
+    "widgetPreview": "Widget-Vorschau"
   },
   "conversations": {
     "title": "Gespräche",

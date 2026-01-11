@@ -441,12 +441,6 @@
     "integrationTestsDesc": "Widget ve API testleri",
     "manageChatbots": "Chatbot'ları Yönet",
     "manageChatbotsDesc": "Tüm chatbot'larınızı yönetin",
-    "instructions": "Talimatlar",
-    "embedInstructions": "Chatbot'u web sitenize eklemek için aşağıdaki kodu kopyalayın ve sayfanızın HTML kodunda, kapanan </body> etiketinden hemen önce yapıştırın.",
-    "positionInfo": "Widget varsayılan olarak sayfanın sağ alt köşesinde görünecektir.",
-    "copyCode": "Kodu Kopyala",
-    "copied": "Kopyalandı!",
-    "widgetPreview": "Widget Önizlemesi"
   },
   "education": {
     "platformTitle": "Eğitim Platform",
@@ -780,7 +774,13 @@
     "docError": "Hata",
     "embedCode": "Embed Kodu",
     "embedDesc": "Bu kodu website'nize ekleyin",
-    "testWidget": "Test Et"
+    "testWidget": "Test Et",
+    "instructions": "Talimatlar",
+    "embedInstructions": "Chatbot'u web sitenize eklemek için aşağıdaki kodu kopyalayın ve sayfanızın HTML kodunda, kapanan </body> etiketinden hemen önce yapıştırın.",
+    "positionInfo": "Widget varsayılan olarak sayfanın sağ alt köşesinde görünecektir.",
+    "copyCode": "Kodu Kopyala",
+    "copied": "Kopyalandı!",
+    "widgetPreview": "Widget Önizlemesi"
   },
   "conversations": {
     "title": "Konuşmalar",

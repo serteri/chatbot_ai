@@ -433,12 +433,6 @@
     "integrationTestsDesc": "Tests de widget et API",
     "manageChatbots": "Gérer les Chatbots",
     "manageChatbotsDesc": "Gérez tous vos chatbots",
-    "instructions": "Instructions",
-    "embedInstructions": "Pour ajouter le chatbot à votre site web, copiez le code ci-dessous et collez-le dans le code HTML de votre site, juste avant la balise fermante </body>.",
-    "positionInfo": "Le widget apparaîtra par défaut dans le coin inférieur droit de la page.",
-    "copyCode": "Copier le code",
-    "copied": "Copié !",
-    "widgetPreview": "Aperçu du widget"
   },
   "education": {
     "platformTitle": "Plateforme Éducative",
@@ -750,7 +744,13 @@
     "docError": "Erreur",
     "embedCode": "Code d'Intégration",
     "embedDesc": "Ajoutez ce code à votre site web",
-    "testWidget": "Tester"
+    "testWidget": "Tester",
+    "instructions": "Instructions",
+    "embedInstructions": "Pour ajouter le chatbot à votre site web, copiez le code ci-dessous et collez-le dans le code HTML de votre site, juste avant la balise fermante </body>.",
+    "positionInfo": "Le widget apparaîtra par défaut dans le coin inférieur droit de la page.",
+    "copyCode": "Copier le code",
+    "copied": "Copié !",
+    "widgetPreview": "Aperçu du widget"
   },
   "conversations": {
     "title": "Conversations",
