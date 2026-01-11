@@ -2114,5 +2114,23 @@
       "processingTitle": "Procesamiento de Datos",
       "processingText": "Procesamos sus datos solo según sea necesario para proporcionar nuestros servicios, mejorar nuestra plataforma y cumplir con las obligaciones legales."
     }
+  },
+  "customDomainSettings": {
+    "title": "Dominio personalizado",
+    "description": "Publica tu chatbot en tu propio dominio.",
+    "label": "Nombre de dominio",
+    "placeholder": "ej: chat.tuempresa.com",
+    "instructionTitle": "Configuración DNS",
+    "instruction": "Para usar tu dominio personalizado, debes agregar el siguiente registro CNAME en tu proveedor DNS (GoDaddy, Cloudflare, etc.):",
+    "step1": "1. Accede al panel de control de tu proveedor DNS",
+    "step2": "2. Crea un nuevo registro CNAME",
+    "step3": "3. En el campo Host/Nombre, ingresa tu subdominio (ej: 'chat' o '@' para todo el dominio)",
+    "step4": "4. En el campo Valor/Apunta a, ingresa:",
+    "cnameTarget": "app.pylonchat.com",
+    "propagationNote": "Nota: Los cambios DNS pueden tardar hasta 24 horas en propagarse.",
+    "save": "Guardar dominio",
+    "saving": "Guardando...",
+    "success": "¡Dominio personalizado guardado exitosamente!",
+    "error": "Error al guardar el dominio. Puede que ya esté siendo utilizado por otro usuario."
   }
 }

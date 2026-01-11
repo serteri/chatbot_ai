@@ -2148,5 +2148,23 @@
     "curlLabel": "cURL (Terminal)",
     "jsLabel": "JavaScript (Web/Node.js)",
     "never": "Noch nie verwendet"
+  },
+  "customDomainSettings": {
+    "title": "Eigene Domain",
+    "description": "Veröffentlichen Sie Ihren Chatbot unter Ihrer eigenen Domain.",
+    "label": "Domain-Name",
+    "placeholder": "z.B. chat.ihrefirma.de",
+    "instructionTitle": "DNS-Konfiguration",
+    "instruction": "Um Ihre eigene Domain zu verwenden, müssen Sie den folgenden CNAME-Eintrag bei Ihrem DNS-Anbieter (GoDaddy, Cloudflare usw.) hinzufügen:",
+    "step1": "1. Öffnen Sie das Kontrollpanel Ihres DNS-Anbieters",
+    "step2": "2. Erstellen Sie einen neuen CNAME-Eintrag",
+    "step3": "3. Geben Sie im Feld Host/Name Ihre Subdomain ein (z.B. 'chat' oder '@' für die gesamte Domain)",
+    "step4": "4. Geben Sie im Feld Wert/Zeigt auf ein:",
+    "cnameTarget": "app.pylonchat.com",
+    "propagationNote": "Hinweis: DNS-Änderungen können bis zu 24 Stunden dauern, um sich zu verbreiten.",
+    "save": "Domain speichern",
+    "saving": "Wird gespeichert...",
+    "success": "Eigene Domain erfolgreich gespeichert!",
+    "error": "Domain konnte nicht gespeichert werden. Sie wird möglicherweise bereits von einem anderen Benutzer verwendet."
   }
 }

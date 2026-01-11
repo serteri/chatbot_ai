@@ -2114,5 +2114,23 @@
     "curlLabel": "cURL (Terminal)",
     "jsLabel": "JavaScript (Web/Node.js)",
     "never": "Jamais utilisé"
+  },
+  "customDomainSettings": {
+    "title": "Domaine personnalisé",
+    "description": "Publiez votre chatbot sur votre propre domaine.",
+    "label": "Nom de domaine",
+    "placeholder": "ex: chat.votreentreprise.fr",
+    "instructionTitle": "Configuration DNS",
+    "instruction": "Pour utiliser votre domaine personnalisé, vous devez ajouter l'enregistrement CNAME suivant chez votre fournisseur DNS (GoDaddy, Cloudflare, etc.):",
+    "step1": "1. Accédez au panneau de configuration de votre fournisseur DNS",
+    "step2": "2. Créez un nouvel enregistrement CNAME",
+    "step3": "3. Dans le champ Hôte/Nom, entrez votre sous-domaine (ex: 'chat' ou '@' pour tout le domaine)",
+    "step4": "4. Dans le champ Valeur/Pointe vers, entrez:",
+    "cnameTarget": "app.pylonchat.com",
+    "propagationNote": "Note: Les modifications DNS peuvent prendre jusqu'à 24 heures pour se propager.",
+    "save": "Enregistrer le domaine",
+    "saving": "Enregistrement...",
+    "success": "Domaine personnalisé enregistré avec succès!",
+    "error": "Échec de l'enregistrement du domaine. Il est peut-être déjà utilisé par un autre utilisateur."
   }
 }
