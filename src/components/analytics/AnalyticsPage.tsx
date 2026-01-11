@@ -112,8 +112,24 @@ export default async function AnalyticsPage({ chatbotId, hasAdvancedAnalytics = 
         // 6. Saatlik ve Günlük Dağılım için Raw Data (Client-side hesaplanacak)
         const conversationTimestamps = monthlyConversations.map(c => c.createdAt.toISOString());
 
-        // Geography (IP takibi henüz yok, boş veri)
-        const geographyData: { country: string; count: number }[] = [];
+        // Geography (Gerçek Veri)
+        const geoGroups = await prisma.conversation.groupBy({
+            by: ['country'],
+            where: {
+                chatbotId: { in: chatbotIds },
+                country: { not: null }
+            },
+            _count: { country: true },
+            orderBy: {
+                _count: { country: 'desc' }
+            },
+            take: 10
+        });
+
+        const geographyData = geoGroups.map(g => ({
+            country: g.country || 'Unknown',
+            count: g._count.country
+        }));
 
         // Top Queries
         const topQueriesData = await prisma.conversationMessage.findMany({

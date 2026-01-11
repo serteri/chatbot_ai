@@ -198,11 +198,28 @@ export async function POST(req: NextRequest) {
 
         if (!conversation) {
             isNewConversation = true;
+
+            // Coğrafi Veri Toplama (Vercel/Next.js Headers)
+            const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
+            const countryCode = req.headers.get('x-vercel-ip-country'); // Vercel Edge'den gelir
+
+            let countryName = null;
+            if (countryCode) {
+                try {
+                    const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+                    countryName = regionNames.of(countryCode);
+                } catch (e) {
+                    countryName = countryCode;
+                }
+            }
+
             conversation = await prisma.conversation.create({
                 data: {
                     chatbotId: chatbot.id,
                     visitorId: visitorId,
                     status: 'active',
+                    ipAddress: ip,
+                    country: countryName
                 }
             });
         }

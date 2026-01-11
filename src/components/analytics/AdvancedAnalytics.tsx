@@ -387,39 +387,31 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
                         <CardDescription>{t('geographyDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {data.geographyData.length === 0 && (
-                            <div className="absolute top-0 right-0 m-4">
-                                <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs">
-                                    {t('demoData')}
-                                </Badge>
-                            </div>
-                        )}
                         <div className="space-y-3">
-                            {(data.geographyData.length > 0 ? data.geographyData : [
-                                { country: "United States", count: 45 },
-                                { country: "Germany", count: 28 },
-                                { country: "United Kingdom", count: 15 },
-                                { country: "France", count: 12 },
-                                { country: "Turkey", count: 8 },
-                                { country: "Others", count: 25 }
-                            ]).slice(0, 6).map((geo, i, arr) => {
-                                const maxGeo = arr[0]?.count || 1
-                                const percentage = (geo.count / maxGeo) * 100
-                                return (
-                                    <div key={i} className="space-y-1">
-                                        <div className="flex items-center justify-between text-sm">
-                                            <span className="text-slate-700">{geo.country}</span>
-                                            <span className="text-slate-500">{geo.count}</span>
+                            {data.geographyData.length > 0 ? (
+                                data.geographyData.slice(0, 6).map((geo, i) => {
+                                    const maxGeo = data.geographyData[0]?.count || 1
+                                    const percentage = (geo.count / maxGeo) * 100
+                                    return (
+                                        <div key={i} className="space-y-1">
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="text-slate-700">{geo.country}</span>
+                                                <span className="text-slate-500">{geo.count}</span>
+                                            </div>
+                                            <div className="w-full bg-slate-100 rounded-full h-2">
+                                                <div
+                                                    className="bg-amber-500 h-2 rounded-full transition-all"
+                                                    style={{ width: `${percentage}%` }}
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="w-full bg-slate-100 rounded-full h-2">
-                                            <div
-                                                className="bg-amber-500 h-2 rounded-full transition-all"
-                                                style={{ width: `${percentage}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                )
-                            })}
+                                    )
+                                })
+                            ) : (
+                                <p className="text-sm text-slate-500 text-center py-4">
+                                    {t('noData')}
+                                </p>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
