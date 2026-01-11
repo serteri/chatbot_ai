@@ -27,7 +27,8 @@ export default async function middleware(req: NextRequest) {
   const isCustomDomain =
     cleanHost &&
     cleanHost !== cleanAppHostname &&
-    !host?.includes('vercel.app');
+    !host?.includes('vercel.app') &&
+    !host?.includes('pylonchat.com');
 
   if (isCustomDomain) {
     // Rewrite to the domain handler page
