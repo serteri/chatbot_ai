@@ -202,10 +202,10 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Key className="h-5 w-5 text-blue-600" />
-                        Active API Keys
+                        {t('activeKeys')}
                     </CardTitle>
                     <CardDescription>
-                        These keys grant full access to your chatbot. Keep them secret.
+                        {t('activeKeysDesc')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

@@ -69,6 +69,7 @@ export default async function ChatbotDetailPage({
     const hasAdvancedAnalytics = (subscription as Record<string, unknown>)?.hasAdvancedAnalytics === true || planType.toLowerCase().includes('enterprise')
     const hasCustomBranding = (subscription as Record<string, unknown>)?.hasCustomBranding === true || planType !== 'free'
     const hasPremiumFeatures = planType !== 'free' // Pro, Business, Enterprise
+    const isEnterpriseUser = planType.toLowerCase().includes('enterprise')
 
     // Chatbot türünü (industry) etikete dönüştüren yardımcı fonksiyon
     const getIndustryBadge = (industry: string | null) => {
@@ -101,21 +102,30 @@ export default async function ChatbotDetailPage({
                     </svg>
                     {t('chatbots.backToDashboard')}
                 </Link>
-                <div className="flex items-center justify-between">
+
+                <div className="flex justify-between items-start">
                     <div>
-                        <div className="flex items-center space-x-3">
-                            <Bot className="h-8 w-8 text-blue-600" />
-                            <h1 className="text-3xl font-bold">{chatbot.name}</h1>
-                            {getIndustryBadge(chatbot.industry)}
-                            {chatbot.isActive ? (
-                                <Badge className="bg-green-600 hover:bg-green-700">{t('chatbots.active')}</Badge>
-                            ) : (
-                                <Badge className="bg-red-500 hover:bg-red-600 text-white">{t('chatbots.inactive')}</Badge>
-                            )}
+                        <div className="flex items-center gap-3 mb-2">
+                            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                                {chatbot.name}
+                            </h1>
+                            <ToggleActiveButton
+                                chatbotId={chatbot.id}
+                                isActive={chatbot.isActive}
+                                t={{
+                                    active: t('chatbots.active'),
+                                    inactive: t('chatbots.inactive'),
+                                    status: t('chatbots.status'),
+                                    activating: "Aktifleşiyor...",
+                                    deactivating: "Pasifleşiyor..."
+                                }}
+                            />
                         </div>
-                        <p className="mt-2 text-gray-600">
-                            {t('chatbots.chatbotId')}: <code className="bg-gray-100 px-2 py-1 rounded">{chatbot.identifier}</code>
-                        </p>
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                            {getIndustryBadge(chatbot.industry)}
+                            <span>•</span>
+                            <span>{new Date(chatbot.createdAt).toLocaleDateString(locale)}</span>
+                        </div>
                     </div>
 
                     {/* ✅ Düzeltme: Sohbeti Başlat/Test Et butonu eklendi */}
@@ -129,11 +139,6 @@ export default async function ChatbotDetailPage({
                                 {t('chatbots.startChat')}
                             </Button>
                         </Link>
-
-                        <ToggleActiveButton
-                            chatbotId={chatbot.id}
-                            initialIsActive={chatbot.isActive}
-                        />
                     </div>
                 </div>
             </div>
@@ -203,7 +208,7 @@ export default async function ChatbotDetailPage({
                             {t('chatbots.security')}
                         </TabsTrigger>
                     )}
-                    {hasPremiumFeatures && (
+                    {isEnterpriseUser && (
                         <TabsTrigger value="api-access">
                             <Key className="w-4 h-4 mr-2" />
                             {t('chatbots.apiAccess')}
