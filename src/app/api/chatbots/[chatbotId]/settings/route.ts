@@ -46,7 +46,8 @@ export async function POST(
                 enableLiveChat: data.enableLiveChat,
                 liveSupportUrl: data.liveSupportUrl,
                 whatsappNumber: data.whatsappNumber
-            })
+            }
+        })
 
         return NextResponse.json({
             success: true,
