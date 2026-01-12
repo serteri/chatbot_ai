@@ -161,10 +161,10 @@ export function TeamList() {
                             {t('inviteMember')}
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
+                    <DialogContent className="sm:max-w-md bg-white dark:bg-slate-950 text-foreground border-border">
                         <DialogHeader>
-                            <DialogTitle>{t('inviteMember')}</DialogTitle>
-                            <DialogDescription>
+                            <DialogTitle className="text-foreground">{t('inviteMember')}</DialogTitle>
+                            <DialogDescription className="text-muted-foreground">
                                 {t('inviteDescription')}
                             </DialogDescription>
                         </DialogHeader>

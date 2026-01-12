@@ -3,13 +3,19 @@ import { redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { TeamList } from '@/components/team/TeamList'
 
-export default async function TeamPage() {
+interface TeamPageProps {
+    params: Promise<{ locale: string }>
+}
+
+export default async function TeamPage({ params }: TeamPageProps) {
+    const { locale } = await params
     const session = await auth()
+
     if (!session?.user?.id) {
-        redirect('/login')
+        redirect(`/${locale}/login`)
     }
 
-    const t = await getTranslations('team')
+    const t = await getTranslations({ locale, namespace: 'team' })
 
     return (
         <div className="space-y-6">
