@@ -231,6 +231,7 @@ model Chatbot {
   enableEmailCapture Boolean              @default(true)
   enableRating       Boolean              @default(true)
   enableSources      Boolean              @default(true)
+  hideBranding       Boolean              @default(false)
   allowedDomains     String[]             @default([])
   customDomain       String?              @unique
   liveChatWebhook    String?

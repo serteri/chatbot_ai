@@ -42,7 +42,8 @@ export async function POST(
                 widgetSize: data.widgetSize,
                 widgetLogoUrl: data.widgetLogoUrl,
                 botName: data.botName,
-                welcomeMessage: data.welcomeMessage
+                welcomeMessage: data.welcomeMessage,
+                hideBranding: data.hideBranding ?? false
             }
         })
 

@@ -35,6 +35,7 @@ interface ChatInterfaceProps {
         welcomeMessage: string | null;
         widgetPrimaryColor: string | null;
         widgetButtonColor: string | null;
+        hideBranding?: boolean;
     };
     translations: ChatTranslations;
     language: 'tr' | 'en'; // Mevcut dili bilmemiz gerekiyor
@@ -313,11 +314,13 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                     </Button>
                 </form>
                 
-                <div className="text-center mt-3">
-                    <span className="text-[10px] font-medium text-slate-300 flex items-center justify-center gap-1.5">
-                        <Sparkles className="w-3 h-3" /> {t.poweredBy}
-                    </span>
-                </div>
+                {!chatbot.hideBranding && (
+                    <div className="text-center mt-3">
+                        <span className="text-[10px] font-medium text-slate-300 flex items-center justify-center gap-1.5">
+                            <Sparkles className="w-3 h-3" /> {t.poweredBy}
+                        </span>
+                    </div>
+                )}
             </div>
         </div>
     );

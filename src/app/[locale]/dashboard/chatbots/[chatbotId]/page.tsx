@@ -315,8 +315,11 @@ export default async function ChatbotDetailPage({
                                     widgetSize: chatbot.widgetSize,
                                     widgetLogoUrl: chatbot.widgetLogoUrl,
                                     welcomeMessage: chatbot.welcomeMessage,
-                                    botName: chatbot.botName
+                                    botName: chatbot.botName,
+                                    hideBranding: chatbot.hideBranding
                                 }}
+                                hasCustomBranding={hasCustomBranding}
+                                locale={locale}
                             />
                         </TabsContent>
                     )}

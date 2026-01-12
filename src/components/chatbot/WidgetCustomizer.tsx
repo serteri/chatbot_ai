@@ -8,9 +8,11 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { Loader2, Palette, Image as ImageIcon } from 'lucide-react'
+import { Loader2, Palette, Image as ImageIcon, Eye, EyeOff, Crown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { Switch } from '@/components/ui/switch'
 import toast from 'react-hot-toast'
+import Link from 'next/link'
 
 interface WidgetCustomizerProps {
     chatbotId: string
@@ -23,10 +25,13 @@ interface WidgetCustomizerProps {
         widgetLogoUrl: string | null
         welcomeMessage: string
         botName: string
+        hideBranding: boolean
     }
+    hasCustomBranding?: boolean
+    locale?: string
 }
 
-export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomizerProps) {
+export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding = false, locale = 'en' }: WidgetCustomizerProps) {
     const router = useRouter()
     const t = useTranslations()
     const [saving, setSaving] = useState(false)
@@ -269,6 +274,58 @@ export function WidgetCustomizer({ chatbotId, initialSettings }: WidgetCustomize
                                 {t('widget.logoInfo')}
                             </p>
                         </div>
+                    </CardContent>
+                </Card>
+
+                {/* Branding / White Label */}
+                <Card className={!hasCustomBranding ? 'border-dashed border-2 border-purple-200' : ''}>
+                    <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                            <div className="flex items-center">
+                                {settings.hideBranding ? (
+                                    <EyeOff className="mr-2 h-5 w-5" />
+                                ) : (
+                                    <Eye className="mr-2 h-5 w-5" />
+                                )}
+                                {t('widget.branding')}
+                            </div>
+                            {!hasCustomBranding && (
+                                <span className="flex items-center text-xs font-normal text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
+                                    <Crown className="w-3 h-3 mr-1" />
+                                    Pro+
+                                </span>
+                            )}
+                        </CardTitle>
+                        <CardDescription>{t('widget.brandingDesc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {hasCustomBranding ? (
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-1">
+                                    <Label htmlFor="hideBranding">{t('widget.hideBranding')}</Label>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t('widget.hideBrandingDesc')}
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="hideBranding"
+                                    checked={settings.hideBranding}
+                                    onCheckedChange={(checked) => setSettings({ ...settings, hideBranding: checked })}
+                                />
+                            </div>
+                        ) : (
+                            <div className="text-center py-4">
+                                <p className="text-sm text-muted-foreground mb-3">
+                                    {t('widget.brandingUpgradeMessage')}
+                                </p>
+                                <Link href={`/${locale}/dashboard/pricing`}>
+                                    <Button variant="outline" className="border-purple-200 text-purple-600 hover:bg-purple-50">
+                                        <Crown className="mr-2 h-4 w-4" />
+                                        {t('widget.upgradePlan')}
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
 

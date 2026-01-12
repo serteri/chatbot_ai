@@ -977,7 +977,13 @@
     "logoDesc": "Widget için özel logo yükleyin",
     "logoInfo": "PNG, JPG veya SVG. Maksimum 2MB.",
     "livePreview": "Canlı Önizleme",
-    "previewDesc": "Widget görünümünü test edin"
+    "previewDesc": "Widget görünümünü test edin",
+    "branding": "Marka Görünürlüğü",
+    "brandingDesc": "Widget'ta 'Powered by PylonChat' yazısının görünürlüğünü kontrol edin",
+    "hideBranding": "Markayı Gizle",
+    "hideBrandingDesc": "Chat widget'ından 'Powered by PylonChat' yazısını kaldırın",
+    "brandingUpgradeMessage": "Widget'ınızdan PylonChat markasını kaldırmak için Pro veya daha üst plana yükseltin",
+    "upgradePlan": "Planı Yükselt"
   },
   "common": {
     "loading": "Yükleniyor...",
