@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -61,8 +62,7 @@ type InviteFormValues = z.infer<typeof inviteSchema>
 
 export function TeamList() {
     const t = useTranslations('team')
-    const [members, setMembers] = useState<TeamMember[]>([])
-    const [loading, setLoading] = useState(true)
+    const queryClient = useQueryClient()
     const [isInviteOpen, setIsInviteOpen] = useState(false)
 
     const form = useForm<InviteFormValues>({
@@ -72,28 +72,19 @@ export function TeamList() {
         }
     })
 
-    // Fetch members
-    const fetchMembers = async () => {
-        try {
+    // Fetch members using React Query
+    const { data: members = [], isLoading: loading } = useQuery<TeamMember[]>({
+        queryKey: ['team-members'],
+        queryFn: async () => {
             const response = await fetch('/api/team')
             if (!response.ok) throw new Error('Failed to fetch members')
-            const data = await response.json()
-            setMembers(data)
-        } catch (error) {
-            console.error('Error fetching members:', error)
-            toast.error('Failed to load team members')
-        } finally {
-            setLoading(false)
+            return response.json()
         }
-    }
+    })
 
-    useEffect(() => {
-        fetchMembers()
-    }, [])
-
-    // Invite member
-    const onInvite = async (data: InviteFormValues) => {
-        try {
+    // Invite member mutation
+    const inviteMutation = useMutation({
+        mutationFn: async (data: InviteFormValues) => {
             const response = await fetch('/api/team', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -101,45 +92,48 @@ export function TeamList() {
             })
 
             const result = await response.json()
-
             if (!response.ok) {
-                // Özel hata mesajları
-                if (response.status === 403) {
-                    toast.error(t('upgradeRequired'))
-                } else if (response.status === 404) {
-                    toast.error('User not found. They must sign up first.') // Translate in future
-                } else {
-                    toast.error(result.error || 'Failed to invite')
-                }
-                return
+                if (response.status === 403) throw new Error(t('upgradeRequired'))
+                if (response.status === 404) throw new Error('User not found. They must sign up first.')
+                throw new Error(result.error || 'Failed to invite')
             }
-
+            return result
+        },
+        onSuccess: () => {
             toast.success(t('inviteSent'))
             setIsInviteOpen(false)
             form.reset()
-            fetchMembers()
-
-        } catch (error) {
-            toast.error('Something went wrong')
+            queryClient.invalidateQueries({ queryKey: ['team-members'] })
+        },
+        onError: (error: Error) => {
+            toast.error(error.message)
         }
+    })
+
+    const onInvite = (data: InviteFormValues) => {
+        inviteMutation.mutate(data)
     }
 
-    // Remove member
-    const onRemove = async (memberId: string) => {
-        if (!confirm(t('removeConfirm'))) return
-
-        try {
+    // Remove member mutation
+    const removeMutation = useMutation({
+        mutationFn: async (memberId: string) => {
             const response = await fetch(`/api/team/${memberId}`, {
                 method: 'DELETE'
             })
-
             if (!response.ok) throw new Error('Failed to remove')
-
+        },
+        onSuccess: () => {
             toast.success(t('removeSuccess'))
-            setMembers(prev => prev.filter(m => m.id !== memberId))
-        } catch (error) {
+            queryClient.invalidateQueries({ queryKey: ['team-members'] })
+        },
+        onError: () => {
             toast.error('Failed to remove member')
         }
+    })
+
+    const onRemove = (memberId: string) => {
+        if (!confirm(t('removeConfirm'))) return
+        removeMutation.mutate(memberId)
     }
 
     // Helper: Initials for Avatar

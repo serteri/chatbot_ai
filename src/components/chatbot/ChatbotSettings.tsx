@@ -8,8 +8,9 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Loader2, Save } from 'lucide-react'
+import { Loader2, Save, Headset } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { Switch } from '@/components/ui/switch'
 import toast from 'react-hot-toast'
 
 interface ChatbotSettingsProps {
@@ -22,6 +23,9 @@ interface ChatbotSettingsProps {
         aiModel: string
         temperature: number
         language: string
+        enableLiveChat?: boolean
+        liveSupportUrl?: string | null
+        whatsappNumber?: string | null
     }
 }
 
@@ -153,6 +157,61 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
                             ⚠️ <strong>{t('settings.important')}:</strong> {t('settings.fallbackDesc')}
                         </p>
                     </div>
+                </CardContent>
+            </Card>
+
+            {/* Live Support / Canlı Destek */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Headset className="h-5 w-5" />
+                        {t('settings.liveSupport')}
+                    </CardTitle>
+                    <CardDescription>{t('settings.liveSupportDesc')}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                            <Label className="text-base">{t('settings.enableLiveSupport')}</Label>
+                            <p className="text-xs text-muted-foreground">{t('settings.enableLiveSupportDesc')}</p>
+                        </div>
+                        <Switch
+                            checked={settings.enableLiveChat ?? false}
+                            onCheckedChange={(checked) => setSettings({ ...settings, enableLiveChat: checked })}
+                        />
+                    </div>
+
+                    {(settings.enableLiveChat) && (
+                        <div className="space-y-4 animate-in fade-in pt-4 border-t">
+                            <div>
+                                <Label htmlFor="whatsappNumber">{t('settings.whatsappNumber')}</Label>
+                                <Input
+                                    id="whatsappNumber"
+                                    value={settings.whatsappNumber || ''}
+                                    onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
+                                    placeholder="+90 555 123 45 67"
+                                    className="mt-2"
+                                />
+                                <p className="text-xs text-gray-500 mt-1">
+                                    {t('settings.whatsappDesc')}
+                                </p>
+                            </div>
+
+                            <div>
+                                <Label htmlFor="liveSupportUrl">{t('settings.customSupportUrl')}</Label>
+                                <Input
+                                    id="liveSupportUrl"
+                                    value={settings.liveSupportUrl || ''}
+                                    onChange={(e) => setSettings({ ...settings, liveSupportUrl: e.target.value })}
+                                    placeholder="https://tawk.to/..."
+                                    className="mt-2"
+                                />
+                                <p className="text-xs text-gray-500 mt-1">
+                                    {t('settings.customSupportDesc')}
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 

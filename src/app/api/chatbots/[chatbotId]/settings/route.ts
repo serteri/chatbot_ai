@@ -41,9 +41,12 @@ export async function POST(
                 fallbackMessage: data.fallbackMessage,
                 aiModel: data.aiModel,
                 temperature: data.temperature,
-                language: data.language
-            }
-        })
+                language: data.language,
+                // Live Support fields
+                enableLiveChat: data.enableLiveChat,
+                liveSupportUrl: data.liveSupportUrl,
+                whatsappNumber: data.whatsappNumber
+            })
 
         return NextResponse.json({
             success: true,

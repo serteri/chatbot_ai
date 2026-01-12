@@ -383,8 +383,12 @@ export default async function ChatbotDetailPage({
                                 welcomeMessage: chatbot.welcomeMessage,
                                 fallbackMessage: chatbot.fallbackMessage,
                                 aiModel: chatbot.aiModel,
+                                aiModel: chatbot.aiModel,
                                 temperature: chatbot.temperature,
-                                language: chatbot.language
+                                language: chatbot.language,
+                                enableLiveChat: chatbot.enableLiveChat,
+                                liveSupportUrl: chatbot.liveSupportUrl,
+                                whatsappNumber: chatbot.whatsappNumber
                             }}
                         />
 

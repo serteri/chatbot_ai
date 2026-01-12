@@ -1,4 +1,14 @@
-import { ReactNode } from 'react'
+import QueryProvider from '@/components/providers/QueryProvider'
+import { ToastProvider } from '@/components/providers/ToastProvider'
+
+// ...
+
+<NextIntlClientProvider messages={messages} locale={locale}>
+    <QueryProvider>
+        <ToastProvider />
+        {children}
+    </QueryProvider>
+</NextIntlClientProvider>
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import "../globals.css";
@@ -17,12 +27,12 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 
     return (
         <html lang={locale}>
-        <body className="min-h-screen bg-background font-sans antialiased">
-        {/* locale prop'unu buraya da ekledik */}
-        <NextIntlClientProvider messages={messages} locale={locale}>
-            {children}
-        </NextIntlClientProvider>
-        </body>
+            <body className="min-h-screen bg-background font-sans antialiased">
+                {/* locale prop'unu buraya da ekledik */}
+                <NextIntlClientProvider messages={messages} locale={locale}>
+                    {children}
+                </NextIntlClientProvider>
+            </body>
         </html>
     )
 }

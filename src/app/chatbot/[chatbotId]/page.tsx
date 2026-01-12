@@ -13,7 +13,7 @@ type Props = {
 export async function generateMetadata(props: Props): Promise<Metadata> {
     const params = await props.params;
     const { chatbotId } = params;
-    
+
     const chatbot = await prisma.chatbot.findFirst({
         where: { OR: [{ id: chatbotId }, { identifier: chatbotId }] },
         select: { name: true }
@@ -28,13 +28,13 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 export default async function ChatbotPage(props: Props) {
     const params = await props.params;
     const searchParams = await props.searchParams;
-    
+
     const { chatbotId } = params;
     const { lang } = searchParams;
 
     // Dil seçimi: URL'de ?lang=en varsa onu kullan, yoksa 'tr'
     const locale = lang === 'en' ? 'en' : 'tr';
-    
+
     // Geçici Çeviriler (MISSING_MESSAGE hatasını önlemek için burada tutuyoruz)
     const localTranslations = {
         tr: {
@@ -70,8 +70,8 @@ export default async function ChatbotPage(props: Props) {
 
     // Veritabanından Chatbot'u çek
     const chatbot = await prisma.chatbot.findFirst({
-        where: { 
-             OR: [
+        where: {
+            OR: [
                 { id: chatbotId },
                 { identifier: chatbotId }
             ]
@@ -82,6 +82,9 @@ export default async function ChatbotPage(props: Props) {
             welcomeMessage: true,
             widgetPrimaryColor: true,
             widgetButtonColor: true,
+            enableLiveChat: true,
+            liveSupportUrl: true,
+            whatsappNumber: true,
             // HATA DÜZELTME: 'type' ve 'industry' alanları şemada olmadığı için kaldırıldı.
         }
     });
@@ -90,10 +93,10 @@ export default async function ChatbotPage(props: Props) {
 
     return (
         <div className="h-[100dvh] w-full overflow-hidden bg-white">
-            <ChatInterface 
-                chatbot={chatbot} 
-                translations={t} 
-                language={locale} 
+            <ChatInterface
+                chatbot={chatbot}
+                translations={t}
+                language={locale}
             />
         </div>
     );

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, X, RefreshCw, Paperclip, Loader2, Sparkles, Globe, FileText, XCircle } from 'lucide-react';
+import { Send, X, RefreshCw, Paperclip, Loader2, Sparkles, Globe, FileText, XCircle, Headset } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useRouter, usePathname } from 'next/navigation';
@@ -36,6 +36,9 @@ interface ChatInterfaceProps {
         widgetPrimaryColor: string | null;
         widgetButtonColor: string | null;
         hideBranding?: boolean;
+        enableLiveChat?: boolean;
+        liveSupportUrl?: string | null;
+        whatsappNumber?: string | null;
     };
     translations: ChatTranslations;
     language: 'tr' | 'en'; // Mevcut dili bilmemiz gerekiyor
@@ -44,17 +47,17 @@ interface ChatInterfaceProps {
 export default function ChatInterface({ chatbot, translations: t, language }: ChatInterfaceProps) {
     const router = useRouter();
     const pathname = usePathname();
-    
+
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null); // Seçilen dosya state'i
-    
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null); // Gizli input referansı
 
     // Renk Ayarları
-    const userBubbleColor = '#18181b'; 
+    const userBubbleColor = '#18181b';
 
     useEffect(() => {
         if (chatbot.welcomeMessage && messages.length === 0) {
@@ -97,7 +100,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
     // --- MESAJ GÖNDERME ---
     const handleSendMessage = async (e?: React.FormEvent) => {
         e?.preventDefault();
-        
+
         // Hem mesaj hem dosya yoksa gönderme
         if ((!inputValue.trim() && !selectedFile) || isLoading) return;
 
@@ -154,6 +157,15 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
         window.parent.postMessage({ type: 'CHATBOT_CLOSE' }, '*');
     };
 
+    const handleLiveSupport = () => {
+        if (chatbot.whatsappNumber) {
+            const number = chatbot.whatsappNumber.replace(/[^0-9]/g, '');
+            window.open(`https://wa.me/${number}`, '_blank');
+        } else if (chatbot.liveSupportUrl) {
+            window.open(chatbot.liveSupportUrl, '_blank');
+        }
+    };
+
     return (
         <div className="flex flex-col h-full bg-white font-sans overflow-hidden border-l border-slate-100">
             {/* --- HEADER --- */}
@@ -165,7 +177,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                         </div>
                         <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></span>
                     </div>
-                    
+
                     <div className="flex flex-col">
                         <h1 className="font-bold text-slate-900 text-base leading-tight">
                             {t.displayName}
@@ -178,10 +190,22 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
 
                 {/* Aksiyon Butonları */}
                 <div className="flex items-center gap-1">
+                    {/* YENİ: Canlı Destek Butonu */}
+                    {chatbot.enableLiveChat && (chatbot.whatsappNumber || chatbot.liveSupportUrl) && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-slate-400 hover:text-green-600 hover:bg-green-50 h-9 w-9 rounded-full transition-colors"
+                            onClick={handleLiveSupport}
+                            title="Live Support"
+                        >
+                            <Headset className="w-5 h-5" />
+                        </Button>
+                    )}
                     {/* YENİ: Dil Değiştirme Butonu */}
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         className="text-slate-400 hover:text-slate-700 hover:bg-slate-50 h-9 w-9 rounded-full transition-colors font-bold text-xs"
                         onClick={toggleLanguage}
                         title={t.changeLanguage}
@@ -189,18 +213,18 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                         {language === 'tr' ? 'EN' : 'TR'}
                     </Button>
 
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         className="text-slate-400 hover:text-slate-700 hover:bg-slate-50 h-9 w-9 rounded-full transition-colors"
-                        onClick={() => setMessages([])} 
+                        onClick={() => setMessages([])}
                         title={t.clearChat}
                     >
                         <RefreshCw className="w-4 h-4" />
                     </Button>
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         className="text-slate-400 hover:text-slate-700 hover:bg-slate-50 h-9 w-9 rounded-full transition-colors"
                         onClick={handleClose}
                     >
@@ -220,7 +244,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                         )}
                     >
                         <div className={cn("flex max-w-[85%] flex-col gap-1.5", msg.role === 'user' ? "items-end" : "items-start")}>
-                            
+
                             <span className="text-[10px] text-slate-400 font-medium px-1">
                                 {msg.role === 'user' ? t.you : t.assistant}
                             </span>
@@ -228,7 +252,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                             <div
                                 className={cn(
                                     "px-5 py-3.5 text-[14px] leading-relaxed shadow-sm",
-                                    msg.role === 'user' 
+                                    msg.role === 'user'
                                         ? "text-white rounded-[20px] rounded-tr-sm"
                                         : "bg-slate-50 text-slate-800 rounded-[20px] rounded-tl-sm border border-slate-100"
                                 )}
@@ -243,7 +267,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                                 )}
                                 {msg.content}
                             </div>
-                            
+
                             <span className="text-[10px] text-slate-300 px-1 select-none">
                                 {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
@@ -276,36 +300,36 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                     </div>
                 )}
 
-                <form 
-                    onSubmit={handleSendMessage} 
+                <form
+                    onSubmit={handleSendMessage}
                     className="flex items-center gap-2 bg-white border border-slate-200 p-1.5 rounded-full shadow-sm focus-within:ring-2 focus-within:ring-slate-100 focus-within:border-slate-300 transition-all"
                 >
                     <div className="pl-3">
-                         {/* Gizli Dosya Inputu */}
-                         <input 
-                            type="file" 
-                            ref={fileInputRef} 
-                            onChange={handleFileChange} 
-                            className="hidden" 
+                        {/* Gizli Dosya Inputu */}
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="hidden"
                             accept="image/*,.pdf,.doc,.docx"
-                         />
-                         {/* Ataç İkonu */}
-                         <Paperclip 
+                        />
+                        {/* Ataç İkonu */}
+                        <Paperclip
                             onClick={handlePaperclipClick}
-                            className="w-5 h-5 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors" 
-                         />
+                            className="w-5 h-5 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors"
+                        />
                     </div>
 
-                    <input 
+                    <input
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         placeholder={selectedFile ? `${selectedFile.name} gönderilecek...` : t.placeholder}
                         className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-3 px-2 placeholder:text-slate-400 outline-none"
                     />
-                    
-                    <Button 
-                        type="submit" 
-                        size="icon" 
+
+                    <Button
+                        type="submit"
+                        size="icon"
                         disabled={(!inputValue.trim() && !selectedFile) || isLoading}
                         className="h-10 w-10 rounded-full shrink-0 transition-all disabled:opacity-50 disabled:scale-95"
                         style={{ backgroundColor: (inputValue.trim() || selectedFile) ? '#18181b' : '#f4f4f5', color: (inputValue.trim() || selectedFile) ? 'white' : '#a1a1aa' }}
@@ -313,7 +337,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                         {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 ml-0.5" />}
                     </Button>
                 </form>
-                
+
                 {!chatbot.hideBranding && (
                     <div className="text-center mt-3">
                         <span className="text-[10px] font-medium text-slate-300 flex items-center justify-center gap-1.5">

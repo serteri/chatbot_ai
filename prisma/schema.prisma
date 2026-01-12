@@ -326,6 +326,7 @@ model Conversation {
   @@index([visitorId])
   @@index([status])
   @@index([startedAt])
+  @@index([chatbotId, startedAt])
 }
 
 model ConversationMessage {
@@ -344,6 +345,7 @@ model ConversationMessage {
 
   @@index([conversationId])
   @@index([createdAt])
+  @@index([conversationId, createdAt])
 }
 
 model ChatbotAnalytics {
@@ -575,6 +577,7 @@ model LiveSupportRequest {
 
   @@index([chatbotId])
   @@index([status])
+  @@index([chatbotId, status])
 }
 
 model Scholarship {
