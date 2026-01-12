@@ -2338,6 +2338,22 @@
     "title": "Team Management",
     "subtitle": "Manage your team members and permissions.",
     "inviteMember": "Invite Member",
-    "noMembers": "No team members yet. Invite someone!"
+    "noMembers": "No team members yet. Invite someone!",
+    "inviteDescription": "Invite a registered user to your team by email.",
+    "emailPlaceholder": "e.g. user@example.com",
+    "invite": "Invite",
+    "sending": "Sending...",
+    "user": "User",
+    "role": "Role",
+    "joinedAt": "Joined At",
+    "actions": "Actions",
+    "remove": "Remove",
+    "inviteSent": "Invitation sent successfully!",
+    "removeSuccess": "Member removed successfully!",
+    "removeConfirm": "Are you sure you want to remove this member?",
+    "upgradeRequired": "You need to upgrade your plan to add more members.",
+    "email": "Email",
+    "role_admin": "Admin",
+    "role_member": "Member"
   }
 }

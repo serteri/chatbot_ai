@@ -2347,6 +2347,22 @@
     "title": "Takım Yönetimi",
     "subtitle": "Takım üyelerinizi ve izinlerini yönetin.",
     "inviteMember": "Üye Davet Et",
-    "noMembers": "Henüz takım üyesi yok. Birini davet edin!"
+    "noMembers": "Henüz takım üyesi yok. Birini davet edin!",
+    "inviteDescription": "E-posta ile ekibinize kayıtlı bir kullanıcı davet edin.",
+    "emailPlaceholder": "örn. kullanici@ornek.com",
+    "invite": "Davet Et",
+    "sending": "Gönderiliyor...",
+    "user": "Kullanıcı",
+    "role": "Rol",
+    "joinedAt": "Katılma Tarihi",
+    "actions": "İşlemler",
+    "remove": "Kaldır",
+    "inviteSent": "Davetiye başarıyla gönderildi!",
+    "removeSuccess": "Üye başarıyla kaldırıldı!",
+    "removeConfirm": "Bu üyeyi kaldırmak istediğinizden emin misiniz?",
+    "upgradeRequired": "Daha fazla üye eklemek için planınızı yükseltmeniz gerekir.",
+    "email": "E-posta",
+    "role_admin": "Yönetici",
+    "role_member": "Üye"
   }
 }

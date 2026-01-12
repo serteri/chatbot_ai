@@ -169,13 +169,13 @@ export function TeamList() {
                         <DialogHeader>
                             <DialogTitle>{t('inviteMember')}</DialogTitle>
                             <DialogDescription>
-                                Invite a registered user to your team by email.
+                                {t('inviteDescription')}
                             </DialogDescription>
                         </DialogHeader>
 
                         <form onSubmit={form.handleSubmit(onInvite)} className="space-y-4">
                             <div className="space-y-2">
-                                <Label>Email</Label>
+                                <Label>{t('email')}</Label>
                                 <Input
                                     placeholder={t('emailPlaceholder')}
                                     {...form.register('email')}
@@ -186,7 +186,7 @@ export function TeamList() {
                             </div>
                             <DialogFooter>
                                 <Button type="submit" disabled={form.formState.isSubmitting}>
-                                    {form.formState.isSubmitting ? 'Sending...' : 'Invite'}
+                                    {form.formState.isSubmitting ? t('sending') : t('invite')}
                                 </Button>
                             </DialogFooter>
                         </form>
@@ -197,14 +197,14 @@ export function TeamList() {
                 {members.length === 0 ? (
                     <div className="text-center py-10 text-slate-500">
                         <Users className="mx-auto h-10 w-10 mb-3 opacity-20" />
-                        <p>No team members yet. Invite someone!</p>
+                        <p>{t('noMembers')}</p>
                     </div>
                 ) : (
                     <div className="relative w-full overflow-auto">
                         <table className="w-full caption-bottom text-sm text-left">
                             <thead className="[&_tr]:border-b">
                                 <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                    <th className="h-12 px-4 align-middle font-medium text-muted-foreground">User</th>
+                                    <th className="h-12 px-4 align-middle font-medium text-muted-foreground">{t('user')}</th>
                                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">{t('role')}</th>
                                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground">{t('joinedAt')}</th>
                                     <th className="h-12 px-4 align-middle font-medium text-muted-foreground text-right">{t('actions')}</th>
@@ -232,7 +232,7 @@ export function TeamList() {
                                                 ) : (
                                                     <UserIcon className="h-3.5 w-3.5 text-slate-500" />
                                                 )}
-                                                <span className="capitalize">{member.role}</span>
+                                                <span className="capitalize">{t(`role_${member.role}`)}</span>
                                             </div>
                                         </td>
                                         <td className="p-4 align-middle">

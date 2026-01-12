@@ -2137,6 +2137,22 @@
     "title": "Gestión de Equipo",
     "subtitle": "Administre los miembros de su equipo y permisos.",
     "inviteMember": "Invitar Miembro",
-    "noMembers": "No hay miembros del equipo aún. ¡Invite a alguien!"
+    "noMembers": "No hay miembros del equipo aún. ¡Invite a alguien!",
+    "inviteDescription": "Invite a un usuario registrado a su equipo por correo electrónico.",
+    "emailPlaceholder": "ej. usuario@ejemplo.com",
+    "invite": "Invitar",
+    "sending": "Enviando...",
+    "user": "Usuario",
+    "role": "Rol",
+    "joinedAt": "Se unió en",
+    "actions": "Acciones",
+    "remove": "Eliminar",
+    "inviteSent": "¡Invitación enviada con éxito!",
+    "removeSuccess": "¡Miembro eliminado con éxito!",
+    "removeConfirm": "¿Está seguro de que desea eliminar a este miembro?",
+    "upgradeRequired": "Necesita actualizar su plan para agregar más miembros.",
+    "email": "Correo electrónico",
+    "role_admin": "Administrador",
+    "role_member": "Miembro"
   }
 }

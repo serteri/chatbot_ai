@@ -2296,6 +2296,22 @@
     "title": "Teamverwaltung",
     "subtitle": "Verwalten Sie Ihre Teammitglieder und Berechtigungen.",
     "inviteMember": "Mitglied einladen",
-    "noMembers": "Noch keine Teammitglieder. Laden Sie jemanden ein!"
+    "noMembers": "Noch keine Teammitglieder. Laden Sie jemanden ein!",
+    "inviteDescription": "Laden Sie einen registrierten Benutzer per E-Mail in Ihr Team ein.",
+    "emailPlaceholder": "z.B. user@example.com",
+    "invite": "Einladen",
+    "sending": "Senden...",
+    "user": "Benutzer",
+    "role": "Rolle",
+    "joinedAt": "Beigetreten am",
+    "actions": "Aktionen",
+    "remove": "Entfernen",
+    "inviteSent": "Einladung erfolgreich gesendet!",
+    "removeSuccess": "Mitglied erfolgreich entfernt!",
+    "removeConfirm": "Sind Sie sicher, dass Sie dieses Mitglied entfernen möchten?",
+    "upgradeRequired": "Sie müssen Ihren Plan aktualisieren, um mehr Mitglieder hinzuzufügen.",
+    "email": "E-Mail",
+    "role_admin": "Administrator",
+    "role_member": "Mitglied"
   }
 }
