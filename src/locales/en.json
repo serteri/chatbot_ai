@@ -797,6 +797,12 @@
     "allConversations": "All Conversations",
     "recentConversations": "Your recent conversations",
     "messagesTitle": "Messages",
+    "filter": {
+      "all": "All Conversations",
+      "education": "Education",
+      "ecommerce": "E-Commerce",
+      "general": "General"
+    },
     "confidence": "Confidence"
   },
   "settings": {
