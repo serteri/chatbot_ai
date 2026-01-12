@@ -153,11 +153,7 @@ export function TeamList() {
 
     return (
         <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                    <CardTitle>{t('title')}</CardTitle>
-                    <CardDescription>{t('subtitle')}</CardDescription>
-                </div>
+            <CardHeader className="flex flex-row items-center justify-end space-y-0 pb-2">
                 <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
                     <DialogTrigger asChild>
                         <Button>
@@ -165,7 +161,7 @@ export function TeamList() {
                             {t('inviteMember')}
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="sm:max-w-md">
                         <DialogHeader>
                             <DialogTitle>{t('inviteMember')}</DialogTitle>
                             <DialogDescription>
