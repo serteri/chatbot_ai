@@ -1,30 +1,50 @@
-// API ROUTES FOR PRODUCTION AUTO-UPDATE
+// API ROUTES FOR SCHOLARSHIP SYNC & AUTO-UPDATE
 // src/app/api/scholarships/auto-update/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import ProductionScholarshipAutoUpdate from '@/lib/scholarship-sync/production-auto-update'
+import { UnifiedScholarshipManager } from '@/lib/unified-scholarship-manager'
 
-// POST /api/scholarships/auto-update - Refresh expired deadlines
+// POST /api/scholarships/auto-update
+// Supports actions: 'refresh' (default) or 'full-sync'
 export async function POST(request: NextRequest) {
     try {
-        console.log('🔄 API: Auto-updating scholarships...')
+        const { searchParams } = new URL(request.url)
+        const action = searchParams.get('action') || 'refresh'
 
-        const result = await ProductionScholarshipAutoUpdate.refreshExpiredDeadlines()
+        if (action === 'full-sync') {
+            console.log('🔄 API: Starting Full Scholarship Sync...')
+            const result = await UnifiedScholarshipManager.syncAll()
 
-        if (result.success) {
-            return NextResponse.json({
-                success: true,
-                message: `${result.updated} scholarship deadlines refreshed`,
-                updated: result.updated
-            })
+            if (result.success) {
+                return NextResponse.json({
+                    success: true,
+                    message: 'Full sync completed successfully',
+                })
+            } else {
+                return NextResponse.json({
+                    success: false,
+                    error: result.error
+                }, { status: 500 })
+            }
         } else {
-            return NextResponse.json({
-                success: false,
-                error: result.error
-            }, { status: 500 })
+            // Default: Refresh deadlines
+            const result = await UnifiedScholarshipManager.refreshDeadlines()
+
+            if (result.success) {
+                return NextResponse.json({
+                    success: true,
+                    message: `${result.updated} scholarship deadlines refreshed`,
+                    updated: result.updated
+                })
+            } else {
+                return NextResponse.json({
+                    success: false,
+                    error: result.error
+                }, { status: 500 })
+            }
         }
 
-    } catch (error) {
+    } catch (error: any) {
         return NextResponse.json({
             success: false,
             error: error.message
@@ -35,21 +55,12 @@ export async function POST(request: NextRequest) {
 // GET /api/scholarships/auto-update - Get stats
 export async function GET() {
     try {
-        const result = await ProductionScholarshipAutoUpdate.getStats()
-
-        if (result.success) {
-            return NextResponse.json({
-                success: true,
-                stats: result.stats
-            })
-        } else {
-            return NextResponse.json({
-                success: false,
-                error: result.error
-            }, { status: 500 })
-        }
-
-    } catch (error) {
+        const stats = await UnifiedScholarshipManager.getStats()
+        return NextResponse.json({
+            success: true,
+            stats
+        })
+    } catch (error: any) {
         return NextResponse.json({
             success: false,
             error: error.message

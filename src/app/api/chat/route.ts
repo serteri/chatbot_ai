@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import OpenAI from 'openai'
+import { checkRateLimit, rateLimitExceededResponse, getRateLimitHeaders, type PlanType } from '@/lib/rate-limit'
 
 // OpenAI İstemcisi
 const apiKey = process.env.OPENAI_API_KEY;
@@ -15,7 +16,7 @@ export const runtime = 'nodejs';
 // ---------------------------------------------------------------------------
 async function performKeywordSearch(query: string, chatbotId: string): Promise<{ context: string, sources: string[] } | null> {
     try {
-        console.log(`🔄 Fallback: Kelime Bazlı Arama deneniyor: "${query}"`);
+        // Fallback: Keyword-based search
 
         // ✅ GÜNCELLEME: Çok dilli Stop Words listesi (TR, EN, DE, FR, ES)
         const stopWords = [
@@ -39,8 +40,6 @@ async function performKeywordSearch(query: string, chatbotId: string): Promise<{
             .filter(t => t.length > 2) // 2 harften uzun kelimeleri al
             .filter(t => !stopWords.includes(t)); // Stop words listesindekileri at
 
-        console.log(`📝 Keyword Arama Terimleri:`, terms);
-
         if (terms.length === 0) return null;
 
         // Veritabanında kelime bazlı arama yap (OR mantığıyla herhangi biri geçiyorsa)
@@ -56,11 +55,10 @@ async function performKeywordSearch(query: string, chatbotId: string): Promise<{
         });
 
         if (!chunks || chunks.length === 0) {
-            console.log("❌ Keyword: Eşleşme bulunamadı.");
             return null;
         }
 
-        console.log(`✅ Keyword: ${chunks.length} parça bulundu.`);
+        // Score chunks based on keyword matches
 
         // Basit Puanlama (En çok kelime geçen en üste)
         const scoredChunks = chunks.map(chunk => {
@@ -93,7 +91,7 @@ async function performVectorSearch(query: string, chatbotId: string): Promise<{ 
     if (!openai) return null;
 
     try {
-        console.log(`🔍 Vektör Arama Başlatılıyor: "${query}"`);
+        // Vector-based semantic search
 
         const embeddingResponse = await openai.embeddings.create({
             model: 'text-embedding-3-small',
@@ -117,21 +115,15 @@ async function performVectorSearch(query: string, chatbotId: string): Promise<{ 
         `;
 
         if (!chunks || chunks.length === 0) {
-            console.log("❌ Vektör: Teknik eşleşme yok. Keyword deneniyor...");
             return await performKeywordSearch(query, chatbotId);
         }
 
-        // 🚨 KRİTİK DÜZELTME: Eşik değeri 0.10'a düşürüldü.
-        console.log(`📊 En iyi benzerlik skoru: ${chunks[0].similarity}`);
-
+        // Similarity threshold check
         const relevantChunks = chunks.filter(chunk => chunk.similarity > 0.10);
 
         if (relevantChunks.length === 0) {
-            console.log(`⚠️ Benzerlik oranı çok düşük (0.10 altı). Keyword aramasına geçiliyor...`);
             return await performKeywordSearch(query, chatbotId);
         }
-
-        console.log(`✅ Vektör: ${relevantChunks.length} parça bulundu.`);
 
         const contextText = relevantChunks.map(c => c.content).join('\n---\n');
         return { context: contextText, sources: ["Dokümanlar (Vektör)"] };
@@ -150,6 +142,14 @@ export async function POST(req: NextRequest) {
     let ragContext: string | null = null;
     let dataSourcesUsed: string[] = [];
     let finalMode = 'general';
+
+    // Rate limiting check
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || req.headers.get('x-real-ip') || '127.0.0.1';
+    const rateLimitResult = await checkRateLimit(ip, 'ip', 'free');
+
+    if (!rateLimitResult.allowed) {
+        return rateLimitExceededResponse(rateLimitResult.retryAfter);
+    }
 
     try {
         const body = await req.json();

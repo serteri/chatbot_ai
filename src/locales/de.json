@@ -72,7 +72,8 @@
       "feature2": "Datenbank mit 150+ Sprachschulen",
       "feature3": "Stipendienführer",
       "feature4": "Unterstützung bei Universitätsbewerbungen",
-      "tryFree": "Kostenlos testen (5 Nachrichten)"
+      "tryFree": "Kostenlos testen (5 Nachrichten)",
+      "demoLangNote": "🌐 Demo: Türkisch & Englisch"
     },
     "ecommerce": {
       "title": "E-Commerce-Chatbot",
@@ -81,7 +82,8 @@
       "feature2": "Bestellverfolgung",
       "feature3": "24/7 Kundensupport",
       "feature4": "Intelligenter Verkaufsassistent",
-      "tryFree": "Kostenlos testen (5 Nachrichten)"
+      "tryFree": "Kostenlos testen (5 Nachrichten)",
+      "demoLangNote": "🌐 Demo: Türkisch & Englisch"
     },
     "cta": {
       "title": "Jetzt starten",
@@ -646,7 +648,9 @@
     "messages": "Nachricht",
     "insufficientData": "Unzureichende Daten",
     "needMoreSalesData": "Mehr Daten für Verkaufsanalytik erforderlich",
-    "needMoreStudentData": "Mehr Daten für Bildungsanalytik erforderlich"
+    "needMoreStudentData": "Mehr Daten für Bildungsanalytik erforderlich",
+    "conversationTrendDesc": "Tägliches Gesprächsvolumen der letzten 7 Tage.",
+    "recentActivityDesc": "Neueste Interaktionen in Ihren Bots."
   },
   "chatbots": {
     "startChat": "Chat starten / Testen",
@@ -754,7 +758,9 @@
     "bottomRight": "Unten Rechts",
     "copyCode": "Code kopieren",
     "copied": "Kopiert!",
-    "widgetPreview": "Widget-Vorschau"
+    "widgetPreview": "Widget-Vorschau",
+    "team": "Team",
+    "documents": "Dokumente"
   },
   "conversations": {
     "title": "Gespräche",
@@ -795,6 +801,7 @@
     "tabs": {
       "profile": "Profil",
       "security": "Sicherheit",
+      "apiAccess": "API-Zugriff",
       "notifications": "Benachrichtigungen",
       "preferences": "Präferenzen"
     },
@@ -947,7 +954,13 @@
     "logoDesc": "Spezielles Logo für Widget hochladen",
     "logoInfo": "PNG, JPG oder SVG. Maximal 2MB.",
     "livePreview": "Live-Vorschau",
-    "previewDesc": "Widget-Aussehen testen"
+    "previewDesc": "Widget-Aussehen testen",
+    "branding": "Branding",
+    "brandingDesc": "Kontrolle über die Sichtbarkeit von 'Powered by PylonChat' im Widget",
+    "hideBranding": "Branding ausblenden",
+    "hideBrandingDesc": "'Powered by PylonChat' aus dem Chat-Widget entfernen",
+    "brandingUpgradeMessage": "Upgraden Sie auf Pro oder höher, um das PylonChat-Branding aus Ihrem Widget zu entfernen",
+    "upgradePlan": "Plan upgraden"
   },
   "common": {
     "loading": "Lädt...",
@@ -1000,7 +1013,8 @@
     "errorOccurred": "Ein Fehler ist aufgetreten",
     "uploadCancelled": "Hochladevorgang abgebrochen.",
     "documentUploadedStartProcessing": "Dokument hochgeladen, Verarbeitung beginnt...",
-    "processingComplete": "Verarbeitung abgeschlossen! Seite wird aktualisiert."
+    "processingComplete": "Verarbeitung abgeschlossen! Seite wird aktualisiert.",
+    "processingError": "Verarbeitung fehlgeschlagen. Bitte versuchen Sie es erneut."
   },
   "security": {
     "allowedDomains": "Erlaubte Domains",
@@ -1172,6 +1186,9 @@
     "emailSupport": "E-Mail-Support",
     "prioritySupport": "Prioritäts-Support",
     "support247": "24/7 Support",
+    "freeDesc": "Perfekt zum Einstieg",
+    "proDesc": "Ideal für kleine Unternehmen",
+    "enterpriseDesc": "Für große Organisationen",
     "freeFeat1": "1 Chatbot",
     "freeFeat2": "3 Dokumente",
     "freeFeat3": "50 Nachrichten/Monat",
@@ -1200,22 +1217,53 @@
       "free": {
         "name": "Kostenlos",
         "price": "€0",
-        "description": "Perfekt zum Einstieg"
+        "description": "Perfekt zum Einstieg",
+        "features": [
+          "1 Chatbot",
+          "3 Dokumente",
+          "50 Gespräche/Monat",
+          "E-Mail-Support"
+        ]
       },
       "pro": {
         "name": "Pro",
         "price": "€29",
-        "description": "Ideal für kleine Unternehmen"
+        "description": "Ideal für kleine Unternehmen",
+        "features": [
+          "5 Chatbots",
+          "50 Dokumente",
+          "1.000 Gespräche/Monat",
+          "Prioritäts-Support",
+          "Benutzerdefiniertes Branding",
+          "Analytik-Dashboard"
+        ]
       },
       "business": {
         "name": "Business",
         "price": "€69",
-        "description": "Für wachsende Teams"
+        "description": "Für wachsende Teams",
+        "features": [
+          "10 Chatbots",
+          "100 Dokumente",
+          "5.000 Gespräche/Monat",
+          "Prioritäts-Support",
+          "Benutzerdefiniertes Branding",
+          "Analytik-Dashboard",
+          "Team-Zusammenarbeit"
+        ]
       },
       "enterprise": {
         "name": "Enterprise",
         "price": "€99",
-        "description": "Für große Organisationen"
+        "description": "Für große Organisationen",
+        "features": [
+          "Unbegrenzte Chatbots",
+          "Unbegrenzte Dokumente",
+          "Unbegrenzte Gespräche",
+          "24/7 Support",
+          "Benutzerdefinierte Domain",
+          "API-Zugriff"
+        ]
       }
     },
     "faq": {
@@ -1701,7 +1749,7 @@
       "mid": "Mittlere Preisklasse ($300-400)",
       "premium": "Premium ($400+)",
       "duration": "Kursdauer",
-      "allDauern": "Alle Dauern",
+      "allDurations": "Alle Dauern",
       "shortTerm": "Kurzfristig (1-12 Wochen)",
       "longTerm": "Langfristig (12+ Wochen)",
       "certification": "Zertifizierung",
@@ -2072,6 +2120,34 @@
       "chatbotsDesc": "Gibt eine Liste der mit Ihrem Konto verknüpften Chatbots zurück.",
       "conversations": "Gespräche",
       "messages": "Nachrichten"
+    },
+    "team": {
+      "title": "Team-Verwaltung",
+      "subtitle": "Verwalten Sie Ihre Teammitglieder und Rollen.",
+      "inviteMember": "Mitglied einladen",
+      "emailPlaceholder": "beispiel@firma.de",
+      "role": "Rolle",
+      "joinedAt": "Beigetreten am",
+      "actions": "Aktionen",
+      "remove": "Entfernen",
+      "changeRole": "Rolle ändern",
+      "admin": "Administrator",
+      "member": "Mitglied",
+      "inviteSent": "Einladung erfolgreich gesendet",
+      "removeConfirm": "Möchten Sie dieses Mitglied wirklich entfernen?",
+      "removeSuccess": "Mitglied entfernt",
+      "updateSuccess": "Rolle aktualisiert",
+      "upgradeRequired": "Upgraden Sie auf Business oder Enterprise für diese Funktion."
+    },
+    "apiKeys": {
+      "title": "API-Referenz",
+      "subtitle": "Verwalten Sie Chatbots programmgesteuert, rufen Sie den Gesprächsverlauf ab und analysieren Sie Leistungskennzahlen.",
+      "auth": "Authentifizierung",
+      "authDesc": "Die PylonChat-API verwendet API-Schlüssel zur Authentifizierung von Anfragen.",
+      "chatbots": "Chatbots",
+      "chatbotsDesc": "Gibt eine Liste der mit Ihrem Konto verknüpften Chatbots zurück.",
+      "conversations": "Gespräche",
+      "messages": "Nachrichten"
     }
   },
   "legal": {
@@ -2165,6 +2241,55 @@
     "save": "Domain speichern",
     "saving": "Wird gespeichert...",
     "success": "Eigene Domain erfolgreich gespeichert!",
-    "error": "Domain konnte nicht gespeichert werden. Sie wird möglicherweise bereits von einem anderen Benutzer verwendet."
+    "error": "Domain konnte nicht gespeichert werden. Sie wird möglicherweise bereits von einem anderen Benutzer verwendet.",
+    "tableType": "Typ",
+    "tableHost": "Host/Name",
+    "tableValue": "Wert/Zeigt auf",
+    "tableHostExample": "chat (oder Ihre Subdomain)"
+  },
+  "featureGate": {
+    "requiresPlan": "Erfordert {plan}-Plan",
+    "upgrade": "Upgraden",
+    "upgradeMessage": "Diese Funktion ist in {plan} und höheren Plänen verfügbar.",
+    "upgradeToPlan": "Auf {plan} upgraden",
+    "features": {
+      "analytics": "Analyse-Dashboard",
+      "advancedAnalytics": "Erweiterte Analytik",
+      "customBranding": "Benutzerdefiniertes Branding",
+      "teamCollaboration": "Team-Zusammenarbeit",
+      "customDomain": "Benutzerdefinierte Domain",
+      "apiAccess": "API-Zugriff",
+      "prioritySupport": "Prioritäts-Support",
+      "whiteLabel": "White Label"
+    }
+  },
+  "advancedAnalytics": {
+    "title": "Erweiterte Analytik",
+    "subtitle": "Detaillierte Leistungsmetriken und Berichte",
+    "totalConversations": "Gesamtgespräche",
+    "uniqueVisitors": "Einzigartige Besucher",
+    "resolutionRate": "Lösungsrate",
+    "avgResponseTime": "Durchschn. Antwortzeit",
+    "avgRating": "Durchschnittsbewertung",
+    "peakHour": "Spitzenstunde",
+    "last7Days": "Letzte 7 Tage",
+    "last30Days": "Letzte 30 Tage",
+    "last90Days": "Letzte 90 Tage",
+    "lastYear": "Letztes Jahr",
+    "dailyTrend": "Täglicher Trend",
+    "dailyTrendDesc": "Täglicher Gesprächszähltrend",
+    "hourlyDistribution": "Stündliche Verteilung",
+    "hourlyDistributionDesc": "Verteilung der Gespräche nach Stunde",
+    "topQueries": "Häufigste Anfragen",
+    "topQueriesDesc": "Am häufigsten gestellte Fragen",
+    "geography": "Geografische Verteilung",
+    "geographyDesc": "Besucherverteilung nach Land",
+    "localTime": "Ortszeit",
+    "demoData": "Demo-Daten",
+    "conversations": "Gespräche",
+    "noData": "Noch keine Daten",
+    "exportSuccess": "Bericht erfolgreich heruntergeladen!",
+    "exportError": "Bericht konnte nicht heruntergeladen werden",
+    "exporting": "Wird heruntergeladen..."
   }
 }

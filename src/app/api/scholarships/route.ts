@@ -38,8 +38,6 @@ export async function GET(request: NextRequest) {
             })
         ])
 
-        console.log(`📊 Basic list: ${scholarships.length} scholarships (${total} total)`)
-
         return NextResponse.json({
             scholarships,
             pagination: {
@@ -84,8 +82,6 @@ export async function POST(request: NextRequest) {
                 lastSynced: new Date()
             }
         })
-
-        console.log(`✅ Created scholarship: ${scholarship.title}`)
 
         return NextResponse.json({
             success: true,

@@ -37,11 +37,8 @@ export async function GET(request: NextRequest) {
 
         // COUNTRY FILTER WITH TRANSLATION FIX
         if (country && country.trim() !== '') {
-            console.log(`🔍 Country filter input: "${country}"`)
-
             // Translate Turkish country name to English for database search
             const englishCountry = translateCountryForDB(country)
-            console.log(`🔍 Translated to English: "${englishCountry}"`)
 
             // Create separate country conditions
             const countryConditions = [
@@ -69,8 +66,6 @@ export async function GET(request: NextRequest) {
                 // No existing OR conditions, just add country conditions
                 whereConditions.OR = countryConditions
             }
-
-            console.log(`🔍 Country conditions:`, countryConditions)
         }
 
         // STUDY LEVEL FILTER
@@ -79,8 +74,6 @@ export async function GET(request: NextRequest) {
                 hasSome: [studyLevel]
             }
         }
-
-        console.log('🔍 Search conditions:', JSON.stringify(whereConditions, null, 2))
 
         // EXECUTE SEARCH
         const [scholarships, total] = await Promise.all([
@@ -94,8 +87,6 @@ export async function GET(request: NextRequest) {
                 where: whereConditions
             })
         ])
-
-        console.log(`📊 Found ${scholarships.length} scholarships (${total} total)`)
 
         return NextResponse.json({
             success: true,
