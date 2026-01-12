@@ -2333,5 +2333,11 @@
     "curlLabel": "cURL (Terminal)",
     "jsLabel": "JavaScript (Web/Node.js)",
     "never": "Never used"
+  },
+  "team": {
+    "title": "Team Management",
+    "subtitle": "Manage your team members and permissions.",
+    "inviteMember": "Invite Member",
+    "noMembers": "No team members yet. Invite someone!"
   }
 }

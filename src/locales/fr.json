@@ -2132,5 +2132,11 @@
     "saving": "Enregistrement...",
     "success": "Domaine personnalisé enregistré avec succès!",
     "error": "Échec de l'enregistrement du domaine. Il est peut-être déjà utilisé par un autre utilisateur."
+  },
+  "team": {
+    "title": "Gestion d'équipe",
+    "subtitle": "Gérez les membres de votre équipe et les permissions.",
+    "inviteMember": "Inviter un membre",
+    "noMembers": "Pas encore de membres. Invitez quelqu'un !"
   }
 }

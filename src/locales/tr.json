@@ -2342,5 +2342,11 @@
     "curlLabel": "cURL (Terminal)",
     "jsLabel": "JavaScript (Web/Node.js)",
     "never": "Hiç kullanılmadı"
+  },
+  "team": {
+    "title": "Takım Yönetimi",
+    "subtitle": "Takım üyelerinizi ve izinlerini yönetin.",
+    "inviteMember": "Üye Davet Et",
+    "noMembers": "Henüz takım üyesi yok. Birini davet edin!"
   }
 }

@@ -2291,5 +2291,11 @@
     "exportSuccess": "Bericht erfolgreich heruntergeladen!",
     "exportError": "Bericht konnte nicht heruntergeladen werden",
     "exporting": "Wird heruntergeladen..."
+  },
+  "team": {
+    "title": "Teamverwaltung",
+    "subtitle": "Verwalten Sie Ihre Teammitglieder und Berechtigungen.",
+    "inviteMember": "Mitglied einladen",
+    "noMembers": "Noch keine Teammitglieder. Laden Sie jemanden ein!"
   }
 }

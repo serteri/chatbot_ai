@@ -2132,5 +2132,11 @@
     "saving": "Guardando...",
     "success": "¡Dominio personalizado guardado exitosamente!",
     "error": "Error al guardar el dominio. Puede que ya esté siendo utilizado por otro usuario."
+  },
+  "team": {
+    "title": "Gestión de Equipo",
+    "subtitle": "Administre los miembros de su equipo y permisos.",
+    "inviteMember": "Invitar Miembro",
+    "noMembers": "No hay miembros del equipo aún. ¡Invite a alguien!"
   }
 }
