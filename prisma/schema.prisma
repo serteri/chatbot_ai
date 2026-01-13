@@ -102,6 +102,7 @@ model Subscription {
   hasPrioritySupport   Boolean   @default(false)
   hasTeamCollaboration Boolean   @default(false)
   hasWhiteLabel        Boolean   @default(false)
+  hasLiveSupport       Boolean   @default(false)
   user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])

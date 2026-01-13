@@ -378,6 +378,7 @@ export default async function ChatbotDetailPage({
                         <ChatbotSettings
                             chatbotId={chatbotId}
                             planType={planType}
+                            hasLiveSupport={(subscription as any)?.hasLiveSupport ?? ['business', 'enterprise'].includes(planType.toLowerCase())}
                             initialSettings={{
                                 name: chatbot.name,
                                 botName: chatbot.botName,
