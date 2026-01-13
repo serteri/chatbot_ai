@@ -170,13 +170,27 @@ export function ChatbotSettings({ chatbotId, planType, initialSettings }: Chatbo
                     </CardTitle>
                     <CardDescription>{t('settings.liveSupportDesc')}</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 relative">
+                    {/* Premium Lock Overlay */}
                     {!['business', 'enterprise'].includes(planType.toLowerCase()) && (
-                        <div className="absolute inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-[1px] z-10 flex items-center justify-center rounded-lg">
-                            <div className="bg-background shadow-lg border p-4 rounded-md flex flex-col items-center gap-2">
-                                <span className="font-semibold text-sm">Business & Enterprise Only</span>
-                                <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/plans')}>
-                                    Upgrade Plan
+                        <div className="absolute inset-0 top-0 left-0 w-full h-full z-20 flex flex-col items-center justify-center bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm rounded-lg transition-all duration-300">
+                            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-xl shadow-2xl flex flex-col items-center gap-3 max-w-sm text-center transform scale-100 hover:scale-105 transition-transform duration-300">
+                                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-1">
+                                    <Headset className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-lg text-slate-900 dark:text-slate-100 mb-1">
+                                        {t('settings.liveSupport')}
+                                    </h3>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 px-2">
+                                        WhatsApp ve özel link desteği sadece Business ve Enterprise paketlerinde mevcuttur.
+                                    </p>
+                                </div>
+                                <Button
+                                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md"
+                                    onClick={() => router.push('/dashboard/plans')}
+                                >
+                                    {t('upgradePlan') || "Planı Yükselt"}
                                 </Button>
                             </div>
                         </div>
