@@ -895,7 +895,15 @@
     "consistent": "Tutarlı",
     "balanced": "Dengeli",
     "creative": "Yaratıcı",
-    "temperatureDesc": "Düşük değerler daha tutarlı, yüksek değerler daha yaratıcı cevaplar verir"
+    "temperatureDesc": "Düşük değerler daha tutarlı, yüksek değerler daha yaratıcı cevaplar verir",
+    "liveSupport": "Canlı Destek",
+    "liveSupportDesc": "Canlı destek butonunu etkinleştir (WhatsApp veya Özel URL)",
+    "enableLiveSupport": "Canlı Desteği Etkinleştir",
+    "enableLiveSupportDesc": "Chat widget başlığında destek butonu göster",
+    "whatsappNumber": "WhatsApp Numarası",
+    "whatsappDesc": "Uluslararası format (örn. +905551234567)",
+    "customSupportUrl": "Özel Destek URL'si",
+    "customSupportDesc": "Destek sisteminize doğrudan bağlantı (örn. Tawk.to, Intercom)"
   },
   "WidgetTest": {
     "backToDetail": "Bot Detay Sayfasına Geri Dön",

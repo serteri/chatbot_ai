@@ -872,7 +872,15 @@
     "consistent": "Konsistent",
     "balanced": "Ausgewogen",
     "creative": "Kreativ",
-    "temperatureDesc": "Niedrige Werte ergeben konsistentere, hohe Werte kreativere Antworten"
+    "temperatureDesc": "Niedrige Werte ergeben konsistentere, hohe Werte kreativere Antworten",
+    "liveSupport": "Live-Support",
+    "liveSupportDesc": "Live-Chat-Button aktivieren (WhatsApp oder benutzerdefinierte URL)",
+    "enableLiveSupport": "Live-Support aktivieren",
+    "enableLiveSupportDesc": "Support-Button im Chat-Widget-Header anzeigen",
+    "whatsappNumber": "WhatsApp-Nummer",
+    "whatsappDesc": "Internationales Format (z.B. +491511234567)",
+    "customSupportUrl": "Benutzerdefinierte Support-URL",
+    "customSupportDesc": "Direkter Link zu Ihrem Support-System (z.B. Tawk.to, Intercom)"
   },
   "WidgetTest": {
     "backToDetail": "Zurück zur Bot-Detailseite",

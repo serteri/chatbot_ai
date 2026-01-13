@@ -884,7 +884,15 @@
     "consistent": "Consistent",
     "balanced": "Balanced",
     "creative": "Creative",
-    "temperatureDesc": "Lower values result in more consistent, higher values in more creative answers"
+    "temperatureDesc": "Lower values result in more consistent, higher values in more creative answers",
+    "liveSupport": "Live Support",
+    "liveSupportDesc": "Enable live chat button (WhatsApp or Custom URL)",
+    "enableLiveSupport": "Enable Live Support",
+    "enableLiveSupportDesc": "Show a support button in the chat widget header",
+    "whatsappNumber": "WhatsApp Number",
+    "whatsappDesc": "International format (e.g., +15551234567)",
+    "customSupportUrl": "Custom Support URL",
+    "customSupportDesc": "Direct link to your support system (e.g., Tawk.to, Intercom)"
   },
   "WidgetTest": {
     "backToDetail": "Back to Bot Detail Page",

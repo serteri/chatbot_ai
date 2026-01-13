@@ -867,7 +867,15 @@
     "consistent": "Cohérent",
     "balanced": "Équilibré",
     "creative": "Créatif",
-    "temperatureDesc": "Les valeurs faibles donnent des réponses plus cohérentes, les valeurs élevées plus créatives"
+    "temperatureDesc": "Les valeurs faibles donnent des réponses plus cohérentes, les valeurs élevées plus créatives",
+    "liveSupport": "Support en direct",
+    "liveSupportDesc": "Activer le bouton de chat en direct (WhatsApp ou URL personnalisée)",
+    "enableLiveSupport": "Activer le support en direct",
+    "enableLiveSupportDesc": "Afficher un bouton de support dans l'en-tête du widget",
+    "whatsappNumber": "Numéro WhatsApp",
+    "whatsappDesc": "Format international (ex. +33612345678)",
+    "customSupportUrl": "URL de support personnalisée",
+    "customSupportDesc": "Lien direct vers votre système de support (ex. Tawk.to, Intercom)"
   },
   "WidgetTest": {
     "backToDetail": "Retour à la Page de Détails du Bot",
