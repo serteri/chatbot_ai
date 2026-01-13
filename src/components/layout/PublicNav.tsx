@@ -14,7 +14,8 @@ import {
     Mail,
     GraduationCap,
     ShoppingCart,
-    ChevronDown
+    ChevronDown,
+    Building2
 } from 'lucide-react'
 
 export function PublicNav() {
@@ -177,6 +178,32 @@ export function PublicNav() {
                                             </div>
                                         </div>
                                     </Link>
+                                    <Link
+                                        href={`/${locale}/demo/realestate`}
+                                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
+                                    >
+                                        <div className="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center mr-3">
+                                            <Building2 className="h-5 w-5 text-white" />
+                                        </div>
+                                        <div>
+                                            <div className="font-medium">
+                                                {locale === 'tr' ? 'Emlak Chatbot'
+                                                    : locale === 'en' ? 'Real Estate Chatbot'
+                                                        : locale === 'de' ? 'Immobilien-Chatbot'
+                                                            : locale === 'es' ? 'Chatbot Inmobiliario'
+                                                                : locale === 'fr' ? 'Chatbot Immobilier'
+                                                                    : 'Real Estate Chatbot'}
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                                {locale === 'tr' ? 'Lead qualification asistanı'
+                                                    : locale === 'en' ? 'Lead qualification assistant'
+                                                        : locale === 'de' ? 'Lead-Qualifizierungs-Assistent'
+                                                            : locale === 'es' ? 'Asistente de calificación de leads'
+                                                                : locale === 'fr' ? 'Assistant qualification de leads'
+                                                                    : 'Lead qualification assistant'}
+                                            </div>
+                                        </div>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -280,6 +307,14 @@ export function PublicNav() {
                             >
                                 <ShoppingCart className="h-4 w-4 mr-2" />
                                 {t('ecommerceDemo')}
+                            </Link>
+
+                            <Link
+                                href={`/${locale}/demo/realestate`}
+                                className="flex items-center px-3 py-2 text-gray-700 hover:text-amber-600 hover:bg-gray-50 rounded-md transition-colors"
+                            >
+                                <Building2 className="h-4 w-4 mr-2" />
+                                {locale === 'tr' ? 'Emlak Demo' : 'Real Estate Demo'}
                             </Link>
 
                             <div className="pt-4 border-t border-gray-200">
