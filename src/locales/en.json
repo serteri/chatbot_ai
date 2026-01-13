@@ -27,7 +27,8 @@
     "login": "Login",
     "signup": "Sign Up",
     "toDashboard": "Go to Dashboard",
-    "register": "Register"
+    "register": "Register",
+    "team": "Team"
   },
   "home": {
     "hero": {
