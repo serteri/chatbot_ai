@@ -1087,7 +1087,20 @@ Provide these details for quick matching! 🔑
                 agentName={locale === 'tr' ? 'Emlak Danışmanı' : 'Real Estate Advisor'}
                 onLeadCapture={(lead) => {
                     console.log('Lead captured:', lead)
-                    // In production, this would send to your CRM/backend
+                    // In production: Send to CRM, save to database
+                }}
+                onHotLead={(lead) => {
+                    console.log('🔥 HOT LEAD ALERT:', lead)
+                    // In production: Trigger SMS/Email to sales team
+                    // Example: await sendSMS(salesTeamPhone, `Sıcak Lead: ${lead.contactName} - ${lead.contactPhone}`)
+                }}
+                onTenantIssue={(issue) => {
+                    console.log('Tenant issue reported:', issue)
+                    // In production: Create support ticket, notify maintenance team
+                }}
+                onAppointmentBooked={(slot, lead) => {
+                    console.log('Appointment booked:', slot, 'for lead:', lead)
+                    // In production: Add to Google Calendar, send SMS reminder
                 }}
             />
         </div>

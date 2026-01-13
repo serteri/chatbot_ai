@@ -16,7 +16,8 @@ import {
     GraduationCap,
     Plus,
     ArrowRight,
-    MessageCircle
+    MessageCircle,
+    Building2
 } from 'lucide-react'
 import Link from 'next/link'
 import { UsageIndicator } from '@/components/dashboard/UsageIndicator'
@@ -77,7 +78,8 @@ export default async function DashboardPage({
     // Chatbotları türlerine göre filtreleme
     const educationChatbots = chatbots.filter(bot => bot.industry === 'education')
     const ecommerceChatbots = chatbots.filter(bot => bot.industry === 'ecommerce')
-    const generalChatbots = chatbots.filter(bot => bot.industry !== 'education' && bot.industry !== 'ecommerce')
+    const realestateChatbots = chatbots.filter(bot => bot.industry === 'realestate')
+    const generalChatbots = chatbots.filter(bot => bot.industry !== 'education' && bot.industry !== 'ecommerce' && bot.industry !== 'realestate')
 
     const totalDocuments = chatbots.reduce((sum, bot) => sum + bot._count.documents, 0)
     const totalConversations = chatbots.reduce((sum, bot) => sum + bot._count.conversations, 0)
@@ -95,15 +97,15 @@ export default async function DashboardPage({
                     </div>
 
                     {/* Chatbot Type Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
                         {/* Education Chatbot */}
                         <Link href={`/${locale}/dashboard/education`}>
-                            <Card className="bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 transition-all cursor-pointer group">
+                            <Card className="bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 transition-all cursor-pointer group h-full">
                                 <CardContent className="p-6 text-center">
-                                    <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                        <GraduationCap className="h-8 w-8 text-white" />
+                                    <div className="w-14 h-14 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                        <GraduationCap className="h-7 w-7 text-white" />
                                     </div>
-                                    <h3 className="text-xl font-semibold mb-2">{t('nav.educationChatbot')}</h3>
+                                    <h3 className="text-lg font-semibold mb-2">{t('nav.educationChatbot')}</h3>
                                     <p className="text-purple-100 text-sm mb-4">
                                         {t('dashboard.educationChatbotDesc')}
                                     </p>
@@ -122,12 +124,12 @@ export default async function DashboardPage({
 
                         {/* E-commerce Chatbot */}
                         <Link href={`/${locale}/dashboard/ecommerce`}>
-                            <Card className="bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 transition-all cursor-pointer group">
+                            <Card className="bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 transition-all cursor-pointer group h-full">
                                 <CardContent className="p-6 text-center">
-                                    <div className="w-16 h-16 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                        <ShoppingCart className="h-8 w-8 text-white" />
+                                    <div className="w-14 h-14 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                        <ShoppingCart className="h-7 w-7 text-white" />
                                     </div>
-                                    <h3 className="text-xl font-semibold mb-2">{t('nav.ecommerceChatbot')}</h3>
+                                    <h3 className="text-lg font-semibold mb-2">{t('nav.ecommerceChatbot')}</h3>
                                     <p className="text-purple-100 text-sm mb-4">
                                         {t('dashboard.ecommerceChatbotDesc')}
                                     </p>
@@ -144,27 +146,47 @@ export default async function DashboardPage({
                             </Card>
                         </Link>
 
+                        {/* Real Estate Chatbot */}
+                        <Link href={`/${locale}/dashboard/realestate`}>
+                            <Card className="bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 transition-all cursor-pointer group h-full">
+                                <CardContent className="p-6 text-center">
+                                    <div className="w-14 h-14 bg-amber-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                        <Building2 className="h-7 w-7 text-white" />
+                                    </div>
+                                    <h3 className="text-lg font-semibold mb-2">{t('nav.realestateChatbot')}</h3>
+                                    <p className="text-purple-100 text-sm mb-4">
+                                        {t('dashboard.realestateChatbotDesc')}
+                                    </p>
+                                    {realestateChatbots.length > 0 && (
+                                        <Badge className="bg-amber-500 mb-2">
+                                            {realestateChatbots.length} {t('dashboard.active')}
+                                        </Badge>
+                                    )}
+                                    <div className="flex items-center justify-center text-sm">
+                                        <span>{t('dashboard.exploreRealestate')}</span>
+                                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
+
                         {/* General Chatbots */}
                         <Link href={`/${locale}/dashboard/chatbots`}>
-                            <Card className="bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 transition-all cursor-pointer group">
+                            <Card className="bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 transition-all cursor-pointer group h-full">
                                 <CardContent className="p-6 text-center">
-                                    <div className="w-16 h-16 bg-gray-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                        <Bot className="h-8 w-8 text-white" />
+                                    <div className="w-14 h-14 bg-gray-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                        <Bot className="h-7 w-7 text-white" />
                                     </div>
-                                    {/* Başlık: General Chatbots */}
-                                    <h3 className="text-xl font-semibold mb-2">{t('dashboard.generalChatbots')}</h3>
-                                    {/* Açıklama */}
+                                    <h3 className="text-lg font-semibold mb-2">{t('dashboard.generalChatbots')}</h3>
                                     <p className="text-purple-100 text-sm mb-4">
                                         {t('dashboard.generalChatbotsDesc')}
                                     </p>
-                                    {/* SADECE genel chatbot sayısını göster */}
                                     {generalChatbots.length > 0 && (
                                         <Badge className="bg-gray-500 mb-2">
                                             {generalChatbots.length} {t('dashboard.total')}
                                         </Badge>
                                     )}
                                     <div className="flex items-center justify-center text-sm">
-                                        {/* Link Metni */}
                                         <span>{t('dashboard.manageGeneralChatbots')}</span>
                                         <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                     </div>

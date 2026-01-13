@@ -25,7 +25,8 @@ import {
     LayoutDashboard,
     MessageSquare,
     BarChart3,
-    CreditCard
+    CreditCard,
+    Building2
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
@@ -122,8 +123,47 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                                                 <ShoppingCart className="h-4 w-4" />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="font-medium">E-Ticaret Asistanları</span>
-                                                <span className="text-xs text-gray-400 font-normal">Satış & Destek</span>
+                                                <span className="font-medium">
+                                                    {locale === 'tr' ? 'E-Ticaret Asistanları'
+                                                        : locale === 'en' ? 'E-Commerce Assistants'
+                                                            : locale === 'de' ? 'E-Commerce-Assistenten'
+                                                                : locale === 'es' ? 'Asistentes de E-Commerce'
+                                                                    : locale === 'fr' ? 'Assistants E-Commerce'
+                                                                        : 'E-Commerce Assistants'}
+                                                </span>
+                                                <span className="text-xs text-gray-400 font-normal">
+                                                    {locale === 'tr' ? 'Satış & Destek'
+                                                        : locale === 'en' ? 'Sales & Support'
+                                                            : locale === 'de' ? 'Vertrieb & Support'
+                                                                : locale === 'es' ? 'Ventas y Soporte'
+                                                                    : locale === 'fr' ? 'Ventes et Support'
+                                                                        : 'Sales & Support'}
+                                                </span>
+                                            </div>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link href={`/${currentLocale}/dashboard/realestate`} className="cursor-pointer flex items-center gap-2 py-2.5 text-gray-600 hover:text-amber-600">
+                                            <div className="p-1 bg-amber-100 rounded text-amber-600">
+                                                <Building2 className="h-4 w-4" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">
+                                                    {locale === 'tr' ? 'Emlak Asistanları'
+                                                        : locale === 'en' ? 'Real Estate Assistants'
+                                                            : locale === 'de' ? 'Immobilien-Assistenten'
+                                                                : locale === 'es' ? 'Asistentes Inmobiliarios'
+                                                                    : locale === 'fr' ? 'Assistants Immobiliers'
+                                                                        : 'Real Estate Assistants'}
+                                                </span>
+                                                <span className="text-xs text-gray-400 font-normal">
+                                                    {locale === 'tr' ? 'Lead Eleme & Randevu'
+                                                        : locale === 'en' ? 'Lead Qualification & Booking'
+                                                            : locale === 'de' ? 'Lead-Qualifizierung & Buchung'
+                                                                : locale === 'es' ? 'Calificación de Leads y Reservas'
+                                                                    : locale === 'fr' ? 'Qualification de Leads et Réservation'
+                                                                        : 'Lead Qualification & Booking'}
+                                                </span>
                                             </div>
                                         </Link>
                                     </DropdownMenuItem>
