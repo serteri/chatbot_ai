@@ -182,222 +182,222 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document', cust
             minute: '2-digit'
         })
     }
-}
 
-const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.8) return 'text-emerald-600 bg-emerald-50 border-emerald-200'
-    if (confidence >= 0.6) return 'text-amber-600 bg-amber-50 border-amber-200'
-    return 'text-red-600 bg-red-50 border-red-200'
-}
 
-return (
-    <Card className="h-[650px] w-full max-w-md flex flex-col shadow-2xl border-0 overflow-hidden ring-1 ring-slate-900/5">
-        {/* Header */}
-        <CardHeader
-            className="flex flex-row items-center justify-between py-4 px-5 shrink-0"
-            style={{ backgroundColor: primaryColor, color: textColor }}
-        >
-            <div className="flex items-center gap-3">
-                <div className="p-2 bg-white/10 rounded-full backdrop-blur-sm">
-                    {customization?.logoUrl ? (
-                        <img src={customization.logoUrl} alt="Bot Logo" className="h-5 w-5 object-contain" />
-                    ) : mode === 'education' ? (
-                        <BookOpen className="h-5 w-5" style={{ color: textColor }} />
-                    ) : (
-                        <Bot className="h-5 w-5" style={{ color: textColor }} />
-                    )}
-                </div>
-                <div>
-                    <CardTitle className="text-base font-semibold" style={{ color: textColor }}>
-                        {mode === 'education' ? t('educationAdvisor') : chatbotName}
-                    </CardTitle>
-                    <div className="flex items-center gap-1.5 opacity-90">
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
-                        </span>
-                        <span className="text-xs font-medium" style={{ color: textColor }}>Çevrimiçi</span>
+    const getConfidenceColor = (confidence: number) => {
+        if (confidence >= 0.8) return 'text-emerald-600 bg-emerald-50 border-emerald-200'
+        if (confidence >= 0.6) return 'text-amber-600 bg-amber-50 border-amber-200'
+        return 'text-red-600 bg-red-50 border-red-200'
+    }
+
+    return (
+        <Card className="h-[650px] w-full max-w-md flex flex-col shadow-2xl border-0 overflow-hidden ring-1 ring-slate-900/5">
+            {/* Header */}
+            <CardHeader
+                className="flex flex-row items-center justify-between py-4 px-5 shrink-0"
+                style={{ backgroundColor: primaryColor, color: textColor }}
+            >
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white/10 rounded-full backdrop-blur-sm">
+                        {customization?.logoUrl ? (
+                            <img src={customization.logoUrl} alt="Bot Logo" className="h-5 w-5 object-contain" />
+                        ) : mode === 'education' ? (
+                            <BookOpen className="h-5 w-5" style={{ color: textColor }} />
+                        ) : (
+                            <Bot className="h-5 w-5" style={{ color: textColor }} />
+                        )}
+                    </div>
+                    <div>
+                        <CardTitle className="text-base font-semibold" style={{ color: textColor }}>
+                            {mode === 'education' ? t('educationAdvisor') : chatbotName}
+                        </CardTitle>
+                        <div className="flex items-center gap-1.5 opacity-90">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
+                            </span>
+                            <span className="text-xs font-medium" style={{ color: textColor }}>Çevrimiçi</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className="flex items-center gap-1">
-                {/* Debug Toggle */}
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setShowDebug(!showDebug)}
-                    className="hover:bg-white/10 h-8 w-8"
-                    style={{ color: textColor }}
-                    title="Debug Info"
-                >
-                    {showDebug ? <ChevronUp className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                </Button>
-
-                {onClose && (
+                <div className="flex items-center gap-1">
+                    {/* Debug Toggle */}
                     <Button
                         variant="ghost"
                         size="icon"
-                        onClick={onClose}
-                        className="hover:bg-white/10 h-8 w-8 rounded-full"
+                        onClick={() => setShowDebug(!showDebug)}
+                        className="hover:bg-white/10 h-8 w-8"
                         style={{ color: textColor }}
+                        title="Debug Info"
                     >
-                        ✕
+                        {showDebug ? <ChevronUp className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
                     </Button>
-                )}
-            </div>
-        </CardHeader>
 
-        {/* Debug Panel (Opsiyonel) */}
-        {showDebug && (
-            <div className="bg-slate-100 p-2 text-[10px] font-mono text-slate-600 border-b max-h-32 overflow-y-auto shadow-inner">
-                <p className="font-bold mb-1">Debug Info:</p>
-                <pre className="whitespace-pre-wrap">{debugInfo || 'No debug data yet.'}</pre>
-                <p className="mt-1">ID: {chatbotId} | Mode: {mode}</p>
-            </div>
-        )}
+                    {onClose && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={onClose}
+                            className="hover:bg-white/10 h-8 w-8 rounded-full"
+                            style={{ color: textColor }}
+                        >
+                            ✕
+                        </Button>
+                    )}
+                </div>
+            </CardHeader>
 
-        {/* Messages Area */}
-        <CardContent className="flex-1 flex flex-col p-0 bg-slate-50 relative overflow-hidden">
-            <div className="flex-1 overflow-y-auto p-4 space-y-6 scroll-smooth">
-                {messages.map((message) => (
-                    <div key={message.id} className={`flex w-full ${message.isBot ? 'justify-start' : 'justify-end'}`}>
+            {/* Debug Panel (Opsiyonel) */}
+            {showDebug && (
+                <div className="bg-slate-100 p-2 text-[10px] font-mono text-slate-600 border-b max-h-32 overflow-y-auto shadow-inner">
+                    <p className="font-bold mb-1">Debug Info:</p>
+                    <pre className="whitespace-pre-wrap">{debugInfo || 'No debug data yet.'}</pre>
+                    <p className="mt-1">ID: {chatbotId} | Mode: {mode}</p>
+                </div>
+            )}
 
-                        {/* Avatar for Bot */}
-                        {message.isBot && (
-                            <div className="flex-shrink-0 mr-2 mt-1">
-                                <div className="h-8 w-8 rounded-full flex items-center justify-center border border-slate-200 bg-white">
-                                    {customization?.logoUrl ? (
-                                        <img src={customization.logoUrl} alt="Bot" className="h-5 w-5 object-contain" />
-                                    ) : mode === 'education' ? (
-                                        <BookOpen className="h-4 w-4" style={{ color: primaryColor }} />
-                                    ) : (
-                                        <Bot className="h-4 w-4" style={{ color: primaryColor }} />
+            {/* Messages Area */}
+            <CardContent className="flex-1 flex flex-col p-0 bg-slate-50 relative overflow-hidden">
+                <div className="flex-1 overflow-y-auto p-4 space-y-6 scroll-smooth">
+                    {messages.map((message) => (
+                        <div key={message.id} className={`flex w-full ${message.isBot ? 'justify-start' : 'justify-end'}`}>
+
+                            {/* Avatar for Bot */}
+                            {message.isBot && (
+                                <div className="flex-shrink-0 mr-2 mt-1">
+                                    <div className="h-8 w-8 rounded-full flex items-center justify-center border border-slate-200 bg-white">
+                                        {customization?.logoUrl ? (
+                                            <img src={customization.logoUrl} alt="Bot" className="h-5 w-5 object-contain" />
+                                        ) : mode === 'education' ? (
+                                            <BookOpen className="h-4 w-4" style={{ color: primaryColor }} />
+                                        ) : (
+                                            <Bot className="h-4 w-4" style={{ color: primaryColor }} />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Message Bubble */}
+                            <div className={`flex flex-col max-w-[85%] ${message.isBot ? 'items-start' : 'items-end'}`}>
+                                <div
+                                    className={`relative px-4 py-3 shadow-sm text-sm leading-relaxed ${message.isBot
+                                        ? 'bg-white text-slate-800 rounded-2xl rounded-tl-sm border border-slate-100'
+                                        : 'text-white rounded-2xl rounded-tr-sm'
+                                        }`}
+                                    style={!message.isBot ? { backgroundColor: buttonColor, color: textColor } : {}}
+                                >
+                                    {/* Mesaj İçeriği - Taşmayı önleyen sınıflar */}
+                                    <div className="whitespace-pre-wrap break-words overflow-hidden" style={{ wordBreak: 'break-word' }}>
+                                        {message.content}
+                                    </div>
+                                </div>
+
+                                {/* Metadata Row */}
+                                <div className="flex items-center gap-2 mt-1 px-1">
+                                    <span className="text-[10px] text-slate-400">
+                                        {formatTime(message.timestamp)}
+                                    </span>
+
+                                    {/* Confidence Badge (Bot Only) */}
+                                    {message.isBot && message.confidence !== undefined && message.confidence > 0 && (
+                                        <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[9px] font-medium ${getConfidenceColor(message.confidence)}`}>
+                                            <Zap className="h-2.5 w-2.5" />
+                                            %{Math.round(message.confidence * 100)}
+                                        </div>
                                     )}
                                 </div>
-                            </div>
-                        )}
 
-                        {/* Message Bubble */}
-                        <div className={`flex flex-col max-w-[85%] ${message.isBot ? 'items-start' : 'items-end'}`}>
-                            <div
-                                className={`relative px-4 py-3 shadow-sm text-sm leading-relaxed ${message.isBot
-                                    ? 'bg-white text-slate-800 rounded-2xl rounded-tl-sm border border-slate-100'
-                                    : 'text-white rounded-2xl rounded-tr-sm'
-                                    }`}
-                                style={!message.isBot ? { backgroundColor: buttonColor, color: textColor } : {}}
-                            >
-                                {/* Mesaj İçeriği - Taşmayı önleyen sınıflar */}
-                                <div className="whitespace-pre-wrap break-words overflow-hidden" style={{ wordBreak: 'break-word' }}>
-                                    {message.content}
-                                </div>
-                            </div>
-
-                            {/* Metadata Row */}
-                            <div className="flex items-center gap-2 mt-1 px-1">
-                                <span className="text-[10px] text-slate-400">
-                                    {formatTime(message.timestamp)}
-                                </span>
-
-                                {/* Confidence Badge (Bot Only) */}
-                                {message.isBot && message.confidence !== undefined && message.confidence > 0 && (
-                                    <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full border text-[9px] font-medium ${getConfidenceColor(message.confidence)}`}>
-                                        <Zap className="h-2.5 w-2.5" />
-                                        %{Math.round(message.confidence * 100)}
+                                {/* Sources (Bot Only) */}
+                                {message.isBot && message.sources && message.sources.length > 0 && (
+                                    <div className="mt-2 pl-1 w-full">
+                                        <p className="text-[10px] font-medium text-slate-500 mb-1.5 flex items-center gap-1">
+                                            <FileText className="h-3 w-3" />
+                                            Kaynaklar:
+                                        </p>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {message.sources.map((source, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-center gap-1 bg-white border border-slate-200 rounded-md px-2 py-1 shadow-sm transition-colors hover:bg-slate-50"
+                                                >
+                                                    <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
+                                                    <span className="text-[10px] text-slate-600 truncate max-w-[100px]" title={source.documentName}>
+                                                        {source.documentName}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 )}
                             </div>
 
-                            {/* Sources (Bot Only) */}
-                            {message.isBot && message.sources && message.sources.length > 0 && (
-                                <div className="mt-2 pl-1 w-full">
-                                    <p className="text-[10px] font-medium text-slate-500 mb-1.5 flex items-center gap-1">
-                                        <FileText className="h-3 w-3" />
-                                        Kaynaklar:
-                                    </p>
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {message.sources.map((source, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex items-center gap-1 bg-white border border-slate-200 rounded-md px-2 py-1 shadow-sm transition-colors hover:bg-slate-50"
-                                            >
-                                                <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
-                                                <span className="text-[10px] text-slate-600 truncate max-w-[100px]" title={source.documentName}>
-                                                    {source.documentName}
-                                                </span>
-                                            </div>
-                                        ))}
+                            {/* User Avatar (Optional, keeps layout balanced) */}
+                            {!message.isBot && (
+                                <div className="flex-shrink-0 ml-2 mt-1">
+                                    <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center shadow-md">
+                                        <User className="h-4 w-4 text-white" />
                                     </div>
                                 </div>
                             )}
                         </div>
+                    ))}
 
-                        {/* User Avatar (Optional, keeps layout balanced) */}
-                        {!message.isBot && (
-                            <div className="flex-shrink-0 ml-2 mt-1">
-                                <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center shadow-md">
-                                    <User className="h-4 w-4 text-white" />
+                    {/* Loading State */}
+                    {isLoading && (
+                        <div className="flex w-full justify-start animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div className="flex-shrink-0 mr-2">
+                                <div className="h-8 w-8 rounded-full bg-white border border-slate-200 flex items-center justify-center">
+                                    <Bot className="h-4 w-4" style={{ color: primaryColor }} />
                                 </div>
                             </div>
-                        )}
-                    </div>
-                ))}
-
-                {/* Loading State */}
-                {isLoading && (
-                    <div className="flex w-full justify-start animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        <div className="flex-shrink-0 mr-2">
-                            <div className="h-8 w-8 rounded-full bg-white border border-slate-200 flex items-center justify-center">
-                                <Bot className="h-4 w-4" style={{ color: primaryColor }} />
+                            <div className="bg-white border border-slate-100 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
+                                <div className="flex gap-1.5">
+                                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: primaryColor }}></div>
+                                    <div className="w-2 h-2 rounded-full animate-bounce delay-150" style={{ backgroundColor: primaryColor }}></div>
+                                    <div className="w-2 h-2 rounded-full animate-bounce delay-300" style={{ backgroundColor: primaryColor }}></div>
+                                </div>
                             </div>
                         </div>
-                        <div className="bg-white border border-slate-100 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
-                            <div className="flex gap-1.5">
-                                <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: primaryColor }}></div>
-                                <div className="w-2 h-2 rounded-full animate-bounce delay-150" style={{ backgroundColor: primaryColor }}></div>
-                                <div className="w-2 h-2 rounded-full animate-bounce delay-300" style={{ backgroundColor: primaryColor }}></div>
+                    )}
+
+                    {/* Görünmez element - Scroll'u aşağı çekmek için */}
+                    <div ref={messagesEndRef} className="h-1" />
+                </div>
+
+                {/* Input Area */}
+                <div className="p-4 bg-white border-t border-slate-100">
+                    <form onSubmit={handleSubmit} className="flex gap-2 items-end relative">
+                        <Input
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            placeholder={mode === 'education' ? t('placeholderEducation') : t('placeholderGeneral')}
+                            disabled={isLoading}
+                            className="flex-1 min-h-[44px] py-3 bg-slate-50 border-slate-200 focus-visible:ring-blue-500 focus-visible:ring-offset-0 rounded-xl pr-12"
+                        />
+                        <Button
+                            type="submit"
+                            size="icon"
+                            disabled={isLoading || !inputValue.trim()}
+                            className="absolute right-1.5 bottom-1.5 h-8 w-8 rounded-lg shadow-sm transition-all hover:scale-105 active:scale-95"
+                            style={{ backgroundColor: buttonColor, color: textColor }}
+                        >
+                            {isLoading ? (
+                                <RefreshCw className="h-4 w-4 animate-spin" />
+                            ) : (
+                                <Send className="h-4 w-4" />
+                            )}
+                        </Button>
+                    </form>
+                    {!customization?.hideBranding && (
+                        <div className="mt-2 text-center">
+                            <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
+                                AI destekli asistan · Powered by
+                                <span style={{ color: primaryColor, fontWeight: 600 }}>PylonChat</span>
                             </div>
                         </div>
-                    </div>
-                )}
-
-                {/* Görünmez element - Scroll'u aşağı çekmek için */}
-                <div ref={messagesEndRef} className="h-1" />
-            </div>
-
-            {/* Input Area */}
-            <div className="p-4 bg-white border-t border-slate-100">
-                <form onSubmit={handleSubmit} className="flex gap-2 items-end relative">
-                    <Input
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        placeholder={mode === 'education' ? t('placeholderEducation') : t('placeholderGeneral')}
-                        disabled={isLoading}
-                        className="flex-1 min-h-[44px] py-3 bg-slate-50 border-slate-200 focus-visible:ring-blue-500 focus-visible:ring-offset-0 rounded-xl pr-12"
-                    />
-                    <Button
-                        type="submit"
-                        size="icon"
-                        disabled={isLoading || !inputValue.trim()}
-                        className="absolute right-1.5 bottom-1.5 h-8 w-8 rounded-lg shadow-sm transition-all hover:scale-105 active:scale-95"
-                        style={{ backgroundColor: buttonColor, color: textColor }}
-                    >
-                        {isLoading ? (
-                            <RefreshCw className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Send className="h-4 w-4" />
-                        )}
-                    </Button>
-                </form>
-                {!customization?.hideBranding && (
-                    <div className="mt-2 text-center">
-                        <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
-                            AI destekli asistan · Powered by
-                            <span style={{ color: primaryColor, fontWeight: 600 }}>PylonChat</span>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </CardContent>
-    </Card>
-)
+                    )}
+                </div>
+            </CardContent>
+        </Card>
+    )
 }
