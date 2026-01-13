@@ -205,32 +205,59 @@ export function AdvancedAnalytics({ chatbotId, locale, data }: AdvancedAnalytics
                     <p className="text-slate-500">{t('subtitle')}</p>
                 </div>
                 <div className="flex items-center gap-3">
+                    {/* Modern Date Range Dropdown */}
                     <Select value={dateRange} onValueChange={setDateRange}>
-                        <SelectTrigger className="w-[140px]">
-                            <Calendar className="w-4 h-4 mr-2" />
-                            <SelectValue />
+                        <SelectTrigger className="w-[160px] h-10 bg-white border-slate-200 shadow-sm hover:bg-slate-50 transition-colors rounded-lg font-medium">
+                            <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-blue-600" />
+                                <SelectValue placeholder={t('last30Days')} />
+                            </div>
                         </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="7d">{t('last7Days')}</SelectItem>
-                            <SelectItem value="30d">{t('last30Days')}</SelectItem>
-                            <SelectItem value="90d">{t('last90Days')}</SelectItem>
-                            <SelectItem value="year">{t('lastYear')}</SelectItem>
+                        <SelectContent className="bg-white border-slate-200 shadow-xl rounded-xl overflow-hidden">
+                            <SelectItem value="7d" className="py-2.5 px-3 hover:bg-blue-50 cursor-pointer transition-colors">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                                    {t('last7Days')}
+                                </div>
+                            </SelectItem>
+                            <SelectItem value="30d" className="py-2.5 px-3 hover:bg-blue-50 cursor-pointer transition-colors">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                                    {t('last30Days')}
+                                </div>
+                            </SelectItem>
+                            <SelectItem value="90d" className="py-2.5 px-3 hover:bg-blue-50 cursor-pointer transition-colors">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                                    {t('last90Days')}
+                                </div>
+                            </SelectItem>
+                            <SelectItem value="year" className="py-2.5 px-3 hover:bg-blue-50 cursor-pointer transition-colors">
+                                <div className="flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-blue-700"></span>
+                                    {t('lastYear')}
+                                </div>
+                            </SelectItem>
                         </SelectContent>
                     </Select>
+
+                    {/* Export Buttons - Styled */}
                     <Button
                         variant="outline"
                         onClick={() => handleExport('csv')}
                         disabled={isExporting}
+                        className="h-10 px-4 rounded-lg border-slate-200 bg-white hover:bg-slate-50 shadow-sm transition-all hover:shadow"
                     >
-                        <Download className="w-4 h-4 mr-2" />
+                        <Download className="w-4 h-4 mr-2 text-slate-500" />
                         {isExporting ? t('exporting') : 'CSV'}
                     </Button>
                     <Button
                         variant="outline"
                         onClick={() => handleExport('excel')}
                         disabled={isExporting}
+                        className="h-10 px-4 rounded-lg border-slate-200 bg-white hover:bg-slate-50 shadow-sm transition-all hover:shadow"
                     >
-                        <Download className="w-4 h-4 mr-2" />
+                        <Download className="w-4 h-4 mr-2 text-green-600" />
                         Excel
                     </Button>
                 </div>
