@@ -15,6 +15,7 @@ import toast from 'react-hot-toast'
 
 interface ChatbotSettingsProps {
     chatbotId: string
+    planType: string
     initialSettings: {
         name: string
         botName: string
@@ -29,7 +30,7 @@ interface ChatbotSettingsProps {
     }
 }
 
-export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsProps) {
+export function ChatbotSettings({ chatbotId, planType, initialSettings }: ChatbotSettingsProps) {
     const router = useRouter()
     const t = useTranslations()
     const [saving, setSaving] = useState(false)
@@ -161,7 +162,7 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
             </Card>
 
             {/* Live Support / Canlı Destek */}
-            <Card>
+            <Card className={!['business', 'enterprise'].includes(planType.toLowerCase()) ? "opacity-60 relative" : ""}>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Headset className="h-5 w-5" />
@@ -170,6 +171,16 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
                     <CardDescription>{t('settings.liveSupportDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    {!['business', 'enterprise'].includes(planType.toLowerCase()) && (
+                        <div className="absolute inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-[1px] z-10 flex items-center justify-center rounded-lg">
+                            <div className="bg-background shadow-lg border p-4 rounded-md flex flex-col items-center gap-2">
+                                <span className="font-semibold text-sm">Business & Enterprise Only</span>
+                                <Button size="sm" variant="outline" onClick={() => router.push('/dashboard/plans')}>
+                                    Upgrade Plan
+                                </Button>
+                            </div>
+                        </div>
+                    )}
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
                             <Label className="text-base">{t('settings.enableLiveSupport')}</Label>
@@ -178,6 +189,7 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
                         <Switch
                             checked={settings.enableLiveChat ?? false}
                             onCheckedChange={(checked) => setSettings({ ...settings, enableLiveChat: checked })}
+                            disabled={!['business', 'enterprise'].includes(planType.toLowerCase())}
                         />
                     </div>
 
@@ -191,6 +203,7 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
                                     onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
                                     placeholder="+90 555 123 45 67"
                                     className="mt-2"
+                                    disabled={!['business', 'enterprise'].includes(planType.toLowerCase())}
                                 />
                                 <p className="text-xs text-gray-500 mt-1">
                                     {t('settings.whatsappDesc')}
@@ -205,6 +218,7 @@ export function ChatbotSettings({ chatbotId, initialSettings }: ChatbotSettingsP
                                     onChange={(e) => setSettings({ ...settings, liveSupportUrl: e.target.value })}
                                     placeholder="https://tawk.to/..."
                                     className="mt-2"
+                                    disabled={!['business', 'enterprise'].includes(planType.toLowerCase())}
                                 />
                                 <p className="text-xs text-gray-500 mt-1">
                                     {t('settings.customSupportDesc')}

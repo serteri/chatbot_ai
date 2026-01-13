@@ -377,6 +377,7 @@ export default async function ChatbotDetailPage({
                     <TabsContent value="settings">
                         <ChatbotSettings
                             chatbotId={chatbotId}
+                            planType={planType}
                             initialSettings={{
                                 name: chatbot.name,
                                 botName: chatbot.botName,
