@@ -16,7 +16,8 @@ import {
     FileText,
     BarChart,
     Code,
-    Settings
+    Settings,
+    Building2
 } from 'lucide-react'
 
 interface HomePageProps {
@@ -126,7 +127,7 @@ export default async function HomePage({ params }: HomePageProps) {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                         {/* Education Chatbot */}
                         <Card className="overflow-hidden border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-lg">
                             <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50">
@@ -228,6 +229,59 @@ export default async function HomePage({ params }: HomePageProps) {
                                     <Button className="w-full bg-green-600 hover:bg-green-700">
                                         <ShoppingCart className="mr-2 h-5 w-5" />
                                         {t('ecommerce.tryFree')}
+                                    </Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
+
+                        {/* Real Estate Chatbot */}
+                        <Card className="overflow-hidden border-2 border-amber-200 hover:border-amber-400 transition-all hover:shadow-lg">
+                            <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center">
+                                        <Building2 className="h-7 w-7 text-white" />
+                                    </div>
+                                    <Badge variant="secondary" className="bg-amber-100 text-amber-700">
+                                        {t('demo.badge')}
+                                    </Badge>
+                                </div>
+                                <CardTitle className="text-2xl">
+                                    {t('realestate.title')}
+                                </CardTitle>
+                                <CardDescription className="text-base">
+                                    {t('realestate.description')}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-6">
+                                <div className="space-y-4 mb-4">
+                                    <div className="flex items-center space-x-3">
+                                        <CheckCircle className="h-5 w-5 text-amber-500" />
+                                        <span>{t('realestate.feature1')}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        <CheckCircle className="h-5 w-5 text-amber-500" />
+                                        <span>{t('realestate.feature2')}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        <CheckCircle className="h-5 w-5 text-amber-500" />
+                                        <span>{t('realestate.feature3')}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        <CheckCircle className="h-5 w-5 text-amber-500" />
+                                        <span>{t('realestate.feature4')}</span>
+                                    </div>
+                                </div>
+
+                                <div className="mb-4 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg">
+                                    <span className="text-sm text-amber-700 font-medium">
+                                        {t('realestate.demoLangNote')}
+                                    </span>
+                                </div>
+
+                                <Link href={`/${locale}/demo/realestate`}>
+                                    <Button className="w-full bg-amber-600 hover:bg-amber-700">
+                                        <Building2 className="mr-2 h-5 w-5" />
+                                        {t('realestate.tryFree')}
                                     </Button>
                                 </Link>
                             </CardContent>

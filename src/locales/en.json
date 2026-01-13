@@ -81,6 +81,16 @@
       "tryFree": "Try for Free (5 messages)",
       "demoLangNote": "🌐 Demo: Turkish & English"
     },
+    "realestate": {
+      "title": "Real Estate Chatbot",
+      "description": "Automatically qualify leads and schedule viewings",
+      "feature1": "Budget screening",
+      "feature2": "Mortgage pre-approval check",
+      "feature3": "Location recommendations",
+      "feature4": "Automated appointment booking",
+      "tryFree": "Try for Free (5 messages)",
+      "demoLangNote": "🌐 Demo: Turkish & English"
+    },
     "cta": {
       "title": "Get Started Now",
       "subtitle": "Create a free account and set up your AI chatbot in 5 minutes",

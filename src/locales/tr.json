@@ -83,6 +83,16 @@
       "tryFree": "Ücretsiz Dene (5 mesaj)",
       "demoLangNote": "🌐 Demo: Türkçe & İngilizce"
     },
+    "realestate": {
+      "title": "Emlak Chatbot",
+      "description": "Potansiyel alıcıları otomatik eleyin ve randevu ayarlayın",
+      "feature1": "Bütçe eleme",
+      "feature2": "Kredi ön onay kontrolü",
+      "feature3": "Lokasyon önerileri",
+      "feature4": "Otomatik randevu ayarlama",
+      "tryFree": "Ücretsiz Dene (5 mesaj)",
+      "demoLangNote": "🌐 Demo: Türkçe & İngilizce"
+    },
     "cta": {
       "title": "Hemen Başlayın",
       "subtitle": "Ücretsiz hesap oluşturun ve AI chatbot'unuzu 5 dakikada kurun",
