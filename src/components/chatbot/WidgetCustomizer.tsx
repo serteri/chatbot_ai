@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import { Switch } from '@/components/ui/switch'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import ChatWidget from '@/components/ChatWidget'
 
 interface WidgetCustomizerProps {
     chatbotId: string
@@ -344,46 +345,49 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
 
             {/* Live Preview */}
             <div className="space-y-4">
-                <Card>
+                <Card className="sticky top-6">
                     <CardHeader>
                         <CardTitle>{t('widget.livePreview')}</CardTitle>
                         <CardDescription>{t('widget.previewDesc')}</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <div className="relative h-[600px] bg-gray-100 rounded-lg overflow-hidden">
-                            {/* Simulated website */}
-                            <div className="p-8 space-y-4">
-                                <div className="h-8 bg-gray-300 rounded w-1/3"></div>
-                                <div className="h-4 bg-gray-300 rounded w-2/3"></div>
-                                <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                    <CardContent className="flex justify-center p-6 bg-slate-100/50 min-h-[600px] items-end relative rounded-b-lg">
+
+                        {/* 1. CLOSED STATE (Launcher Button) */}
+                        <div className="absolute right-6 bottom-6 flex flex-col items-end gap-2 group cursor-pointer hover:scale-105 transition-transform">
+                            {/* Message Bubble Hint */}
+                            <div className="bg-white px-4 py-2 rounded-xl rounded-br-none shadow-md border border-slate-100 mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                <span className="text-sm font-medium text-slate-700">Deneme Önizlemesi</span>
                             </div>
 
-                            {/* Widget Preview */}
+                            {/* Launcher Button */}
                             <div
-                                className={`absolute ${settings.widgetPosition === 'bottom-right' ? 'bottom-6 right-6' : 'bottom-6 left-6'
-                                    }`}
+                                className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:opacity-90 transition-all text-white"
+                                style={{ backgroundColor: settings.widgetButtonColor }}
                             >
-                                {/* Chat Button */}
-                                <button
-                                    style={{
-                                        backgroundColor: settings.widgetButtonColor,
-                                        color: settings.widgetTextColor
-                                    }}
-                                    className={`rounded-full shadow-lg flex items-center justify-center ${settings.widgetSize === 'small' ? 'w-12 h-12' :
-                                            settings.widgetSize === 'large' ? 'w-20 h-20' : 'w-16 h-16'
-                                        }`}
-                                >
-                                    {logoPreview ? (
-                                        <img src={logoPreview} alt="Logo" className="w-8 h-8 object-contain" />
-                                    ) : (
-                                        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                                            <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
-                                        </svg>
-                                    )}
-                                </button>
+                                {logoPreview ? (
+                                    <img src={logoPreview} alt="Logo" className="w-8 h-8 object-contain" />
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" /></svg>
+                                )}
                             </div>
                         </div>
+
+                        {/* 2. OPEN STATE (The Widget) - Always visible in preview for ease of editing */}
+                        <div className="w-full max-w-[380px] shadow-2xl rounded-xl overflow-hidden scale-[0.9] origin-bottom sm:scale-100 mr-20">
+                            <ChatWidget
+                                chatbotId={chatbotId}
+                                customization={{
+                                    primaryColor: settings.widgetPrimaryColor,
+                                    buttonColor: settings.widgetButtonColor,
+                                    textColor: settings.widgetTextColor,
+                                    botName: settings.botName,
+                                    welcomeMessage: settings.welcomeMessage,
+                                    logoUrl: logoPreview,
+                                    hideBranding: settings.hideBranding
+                                }}
+                            />
+                        </div>
+
                     </CardContent>
                 </Card>
             </div>

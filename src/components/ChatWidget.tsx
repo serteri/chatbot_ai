@@ -25,9 +25,19 @@ interface ChatWidgetProps {
     chatbotId: string
     onClose?: () => void
     mode?: string
+    // Customization Props for Live Preview
+    customization?: {
+        primaryColor?: string
+        buttonColor?: string
+        textColor?: string
+        botName?: string
+        welcomeMessage?: string
+        logoUrl?: string | null
+        hideBranding?: boolean
+    }
 }
 
-export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: ChatWidgetProps) {
+export default function ChatWidget({ chatbotId, onClose, mode = 'document', customization }: ChatWidgetProps) {
     const t = useTranslations('ChatWidget')
     const [messages, setMessages] = useState<Message[]>([])
     const [inputValue, setInputValue] = useState('')
@@ -38,12 +48,17 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
     const [showDebug, setShowDebug] = useState(false)
     const [debugInfo, setDebugInfo] = useState<string>('')
 
-    const chatbotName = t('defaultBotName');
-    const welcomeMessage = t('defaultWelcomeMessage');
+    // Default values fallback to passed customization or translation
+    const chatbotName = customization?.botName || t('defaultBotName');
+    const welcomeMessage = customization?.welcomeMessage || t('defaultWelcomeMessage');
+
+    const primaryColor = customization?.primaryColor || '#2563EB'; // blue-600
+    const buttonColor = customization?.buttonColor || '#2563EB';
+    const textColor = customization?.textColor || '#FFFFFF';
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
-    // İlk yükleme
+    // İlk yükleme (ve customization değişirse güncelle)
     useEffect(() => {
         if (messages.length === 0) {
             setMessages([{
@@ -53,8 +68,14 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                 timestamp: new Date(),
                 mode
             }])
+        } else if (messages.length === 1 && messages[0].id === 'welcome' && customization?.welcomeMessage) {
+            // Canlı önizleme sırasında hoşgeldin mesajını güncelle
+            setMessages([{
+                ...messages[0],
+                content: customization.welcomeMessage
+            }])
         }
-    }, [welcomeMessage, mode])
+    }, [welcomeMessage, mode, customization?.welcomeMessage])
 
     // Otomatik kaydırma
     useEffect(() => {
@@ -168,17 +189,22 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
     return (
         <Card className="h-[650px] w-full max-w-md flex flex-col shadow-2xl border-0 overflow-hidden ring-1 ring-slate-900/5">
             {/* Header */}
-            <CardHeader className="flex flex-row items-center justify-between py-4 px-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white shrink-0">
+            <CardHeader
+                className="flex flex-row items-center justify-between py-4 px-5 shrink-0"
+                style={{ backgroundColor: primaryColor, color: textColor }}
+            >
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-white/10 rounded-full backdrop-blur-sm">
-                        {mode === 'education' ? (
-                            <BookOpen className="h-5 w-5 text-white" />
+                        {customization?.logoUrl ? (
+                            <img src={customization.logoUrl} alt="Bot Logo" className="h-5 w-5 object-contain" />
+                        ) : mode === 'education' ? (
+                            <BookOpen className="h-5 w-5" style={{ color: textColor }} />
                         ) : (
-                            <Bot className="h-5 w-5 text-white" />
+                            <Bot className="h-5 w-5" style={{ color: textColor }} />
                         )}
                     </div>
                     <div>
-                        <CardTitle className="text-base font-semibold text-white">
+                        <CardTitle className="text-base font-semibold" style={{ color: textColor }}>
                             {mode === 'education' ? t('educationAdvisor') : chatbotName}
                         </CardTitle>
                         <div className="flex items-center gap-1.5 opacity-90">
@@ -186,7 +212,7 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
                             </span>
-                            <span className="text-xs font-medium">Çevrimiçi</span>
+                            <span className="text-xs font-medium" style={{ color: textColor }}>Çevrimiçi</span>
                         </div>
                     </div>
                 </div>
@@ -196,7 +222,8 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                         variant="ghost"
                         size="icon"
                         onClick={() => setShowDebug(!showDebug)}
-                        className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8"
+                        className="hover:bg-white/10 h-8 w-8"
+                        style={{ color: textColor }}
                         title="Debug Info"
                     >
                         {showDebug ? <ChevronUp className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
@@ -207,7 +234,8 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                             variant="ghost"
                             size="icon"
                             onClick={onClose}
-                            className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8 rounded-full"
+                            className="hover:bg-white/10 h-8 w-8 rounded-full"
+                            style={{ color: textColor }}
                         >
                             ✕
                         </Button>
@@ -233,11 +261,13 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                             {/* Avatar for Bot */}
                             {message.isBot && (
                                 <div className="flex-shrink-0 mr-2 mt-1">
-                                    <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200">
-                                        {mode === 'education' ? (
-                                            <BookOpen className="h-4 w-4 text-blue-600" />
+                                    <div className="h-8 w-8 rounded-full flex items-center justify-center border border-slate-200 bg-white">
+                                        {customization?.logoUrl ? (
+                                            <img src={customization.logoUrl} alt="Bot" className="h-5 w-5 object-contain" />
+                                        ) : mode === 'education' ? (
+                                            <BookOpen className="h-4 w-4" style={{ color: primaryColor }} />
                                         ) : (
-                                            <Bot className="h-4 w-4 text-blue-600" />
+                                            <Bot className="h-4 w-4" style={{ color: primaryColor }} />
                                         )}
                                     </div>
                                 </div>
@@ -248,8 +278,9 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                                 <div
                                     className={`relative px-4 py-3 shadow-sm text-sm leading-relaxed ${message.isBot
                                             ? 'bg-white text-slate-800 rounded-2xl rounded-tl-sm border border-slate-100'
-                                            : 'bg-blue-600 text-white rounded-2xl rounded-tr-sm'
+                                            : 'text-white rounded-2xl rounded-tr-sm'
                                         }`}
+                                    style={!message.isBot ? { backgroundColor: buttonColor, color: textColor } : {}}
                                 >
                                     {/* Mesaj İçeriği - Taşmayı önleyen sınıflar */}
                                     <div className="whitespace-pre-wrap break-words overflow-hidden" style={{ wordBreak: 'break-word' }}>
@@ -285,7 +316,7 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                                                     key={index}
                                                     className="flex items-center gap-1 bg-white border border-slate-200 rounded-md px-2 py-1 shadow-sm transition-colors hover:bg-slate-50"
                                                 >
-                                                    <div className="h-1.5 w-1.5 rounded-full bg-blue-400"></div>
+                                                    <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: primaryColor }}></div>
                                                     <span className="text-[10px] text-slate-600 truncate max-w-[100px]" title={source.documentName}>
                                                         {source.documentName}
                                                     </span>
@@ -311,15 +342,15 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                     {isLoading && (
                         <div className="flex w-full justify-start animate-in fade-in slide-in-from-bottom-2 duration-300">
                             <div className="flex-shrink-0 mr-2">
-                                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                    <Bot className="h-4 w-4 text-blue-600" />
+                                <div className="h-8 w-8 rounded-full bg-white border border-slate-200 flex items-center justify-center">
+                                    <Bot className="h-4 w-4" style={{ color: primaryColor }} />
                                 </div>
                             </div>
                             <div className="bg-white border border-slate-100 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
                                 <div className="flex gap-1.5">
-                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-150"></div>
-                                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-300"></div>
+                                    <div className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: primaryColor }}></div>
+                                    <div className="w-2 h-2 rounded-full animate-bounce delay-150" style={{ backgroundColor: primaryColor }}></div>
+                                    <div className="w-2 h-2 rounded-full animate-bounce delay-300" style={{ backgroundColor: primaryColor }}></div>
                                 </div>
                             </div>
                         </div>
@@ -343,7 +374,8 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                             type="submit"
                             size="icon"
                             disabled={isLoading || !inputValue.trim()}
-                            className="absolute right-1.5 bottom-1.5 h-8 w-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition-all hover:scale-105 active:scale-95"
+                            className="absolute right-1.5 bottom-1.5 h-8 w-8 rounded-lg shadow-sm transition-all hover:scale-105 active:scale-95"
+                            style={{ backgroundColor: buttonColor, color: textColor }}
                         >
                             {isLoading ? (
                                 <RefreshCw className="h-4 w-4 animate-spin" />
@@ -352,11 +384,14 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                             )}
                         </Button>
                     </form>
-                    <div className="mt-2 text-center">
-                        <p className="text-[10px] text-slate-400">
-                            AI destekli asistan · Powered by PylonChat
-                        </p>
-                    </div>
+                    {!customization?.hideBranding && (
+                        <div className="mt-2 text-center">
+                            <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
+                                AI destekli asistan · Powered by
+                                <span style={{ color: primaryColor, fontWeight: 600 }}>PylonChat</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </CardContent>
         </Card>
