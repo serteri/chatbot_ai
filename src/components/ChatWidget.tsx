@@ -183,8 +183,8 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                         </CardTitle>
                         <div className="flex items-center gap-1.5 opacity-90">
                             <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
                             </span>
                             <span className="text-xs font-medium">Çevrimiçi</span>
                         </div>
@@ -246,11 +246,10 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                             {/* Message Bubble */}
                             <div className={`flex flex-col max-w-[85%] ${message.isBot ? 'items-start' : 'items-end'}`}>
                                 <div
-                                    className={`relative px-4 py-3 shadow-sm text-sm leading-relaxed ${
-                                        message.isBot
+                                    className={`relative px-4 py-3 shadow-sm text-sm leading-relaxed ${message.isBot
                                             ? 'bg-white text-slate-800 rounded-2xl rounded-tl-sm border border-slate-100'
                                             : 'bg-blue-600 text-white rounded-2xl rounded-tr-sm'
-                                    }`}
+                                        }`}
                                 >
                                     {/* Mesaj İçeriği - Taşmayı önleyen sınıflar */}
                                     <div className="whitespace-pre-wrap break-words overflow-hidden" style={{ wordBreak: 'break-word' }}>
@@ -355,7 +354,7 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document' }: Ch
                     </form>
                     <div className="mt-2 text-center">
                         <p className="text-[10px] text-slate-400">
-                            AI destekli asistan · Powered by ChatbotAI
+                            AI destekli asistan · Powered by PylonChat
                         </p>
                     </div>
                 </div>
