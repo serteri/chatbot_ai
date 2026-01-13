@@ -52,11 +52,8 @@
       "register": "Ücretsiz Başla"
     },
     "stats": {
-      "users": "50K+",
-      "usersLabel": "Aktif Kullanıcı",
-      "satisfaction": "95%",
-      "satisfactionLabel": "Müşteri Memnuniyeti",
-      "support": "24/7",
+      "setupTime": "Kurulum Süresi",
+      "languages": "Desteklenen Diller",
       "supportLabel": "Kesintisiz Destek"
     },
     "discover": {

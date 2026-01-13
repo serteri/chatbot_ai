@@ -58,24 +58,56 @@ export default async function HomePage({ params }: HomePageProps) {
                                 </Link>
                             </div>
 
-                            {/* Stats */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                                <div>
-                                    <div className="text-3xl font-bold">150+</div>
-                                    <div className="text-blue-200">
-                                        {t('stats.usersLabel')}
+                            {/* Stats - Modern Glassmorphism Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                                <div className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-blue-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="relative">
+                                        <div className="flex items-center justify-center gap-3 mb-2">
+                                            <div className="p-2 bg-white/20 rounded-lg">
+                                                <Zap className="h-5 w-5" />
+                                            </div>
+                                            <span className="text-4xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                                                5 dk
+                                            </span>
+                                        </div>
+                                        <div className="text-blue-100 text-sm font-medium">
+                                            {t('stats.setupTime')}
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <div className="text-3xl font-bold">70+</div>
-                                    <div className="text-blue-200">
-                                        {t('stats.satisfactionLabel')}
+
+                                <div className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 to-green-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="relative">
+                                        <div className="flex items-center justify-center gap-3 mb-2">
+                                            <div className="p-2 bg-white/20 rounded-lg">
+                                                <Globe className="h-5 w-5" />
+                                            </div>
+                                            <span className="text-4xl font-bold bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
+                                                5+
+                                            </span>
+                                        </div>
+                                        <div className="text-blue-100 text-sm font-medium">
+                                            {t('stats.languages')}
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <div className="text-3xl font-bold">24/7</div>
-                                    <div className="text-blue-200">
-                                        {t('stats.supportLabel')}
+
+                                <div className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="relative">
+                                        <div className="flex items-center justify-center gap-3 mb-2">
+                                            <div className="p-2 bg-white/20 rounded-lg">
+                                                <MessageSquare className="h-5 w-5" />
+                                            </div>
+                                            <span className="text-4xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+                                                24/7
+                                            </span>
+                                        </div>
+                                        <div className="text-blue-100 text-sm font-medium">
+                                            {t('stats.supportLabel')}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -52,11 +52,8 @@
       "register": "Commencer Gratuitement"
     },
     "stats": {
-      "users": "50K+",
-      "usersLabel": "Utilisateurs Actifs",
-      "satisfaction": "95%",
-      "satisfactionLabel": "Satisfaction Client",
-      "support": "24/7",
+      "setupTime": "Temps d'installation",
+      "languages": "Langues prises en charge",
       "supportLabel": "Support Continu"
     },
     "discover": {

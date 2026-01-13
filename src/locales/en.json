@@ -50,12 +50,9 @@
       "register": "Start for Free"
     },
     "stats": {
-      "users": "50K+",
-      "usersLabel": "Active Users",
-      "satisfaction": "95%",
-      "satisfactionLabel": "Customer Satisfaction",
-      "support": "24/7",
-      "supportLabel": "Uninterrupted Support"
+      "setupTime": "Setup Time",
+      "languages": "Supported Languages",
+      "supportLabel": "Continuous Support"
     },
     "discover": {
       "title": "Discover Our Chatbot Types",
