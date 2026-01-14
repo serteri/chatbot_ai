@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 import { z } from 'zod'
+import { notifyHotLead } from '@/lib/sms/notifications'
 
 // Validation schema for lead
 const leadSchema = z.object({
@@ -175,11 +176,13 @@ export async function POST(request: NextRequest) {
             }
         })
 
-        // If hot lead, could trigger notification here
-        // In production: send SMS/email to sales team
+        // If hot lead, trigger SMS notification
         if (category === 'hot') {
             console.log(`🔥 HOT LEAD: ${lead.name} - ${lead.phone} - Score: ${score}`)
-            // TODO: Trigger webhook/notification
+            // Send SMS notification to agent (async, don't await to avoid blocking response)
+            notifyHotLead(lead.id, chatbotId).catch(err =>
+                console.error('Failed to send hot lead notification:', err)
+            )
         }
 
         return NextResponse.json({

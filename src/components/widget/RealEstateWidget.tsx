@@ -8,9 +8,7 @@ import {
     Building2,
     Home,
     MapPin,
-    DollarSign,
     Calendar,
-    CreditCard,
     ChevronLeft,
     ChevronRight,
     Clock,
@@ -20,19 +18,11 @@ import {
     User,
     Wrench,
     TrendingUp,
-    Star,
-    AlertTriangle,
     Flame,
     Snowflake,
     ThermometerSun,
     Camera,
-    Upload,
-    Key,
-    FileText,
-    Banknote,
-    Target,
-    Briefcase,
-    Heart
+    Loader2
 } from 'lucide-react'
 
 // Types
@@ -41,7 +31,7 @@ interface Message {
     role: 'user' | 'assistant' | 'system'
     content: string
     timestamp: Date
-    type?: 'text' | 'cards' | 'form' | 'appointment' | 'quick-replies' | 'lead-score' | 'tenant-options' | 'photo-upload'
+    type?: 'text' | 'cards' | 'form' | 'appointment' | 'quick-replies' | 'lead-score' | 'photo-upload' | 'no-properties'
     data?: any
 }
 
@@ -51,11 +41,11 @@ interface Property {
     price: string
     location: string
     rooms: string
-    area: string
+    area: string | null
     image: string
-    badge?: string
-    monthlyRent?: string
-    roi?: string
+    badge?: string | null
+    monthlyRent?: string | null
+    roi?: string | null
 }
 
 interface LeadData {
@@ -63,6 +53,8 @@ interface LeadData {
     propertyType?: string
     budget?: string
     budgetLevel?: 'low' | 'medium' | 'high' | 'premium'
+    budgetMin?: number
+    budgetMax?: number
     location?: string
     timeline?: string
     timelineUrgency?: 'immediate' | 'soon' | 'later' | 'browsing'
@@ -73,7 +65,6 @@ interface LeadData {
     contactEmail?: string
     leadScore?: number
     leadCategory?: 'hot' | 'warm' | 'cold'
-    notes?: string[]
 }
 
 interface TenantIssue {
@@ -90,6 +81,7 @@ interface RealEstateWidgetProps {
     agentName?: string
     agentPhoto?: string
     companyLogo?: string
+    chatbotIdentifier?: string // Required for API calls
     onLeadCapture?: (lead: LeadData) => void
     onHotLead?: (lead: LeadData) => void
     onTenantIssue?: (issue: TenantIssue) => void
@@ -125,13 +117,13 @@ const translations = {
             contact: 'Sizinle iletişime geçebilmemiz için bilgilerinizi paylaşır mısınız?'
         },
         propertyTypes: ['Daire', 'Villa', 'Müstakil Ev', 'Arsa', 'Ticari'],
-        budgetRanges: {
-            low: ['1-2 Milyon TL', '2-3 Milyon TL'],
-            medium: ['3-5 Milyon TL', '5-7 Milyon TL'],
-            high: ['7-10 Milyon TL', '10-15 Milyon TL'],
-            premium: ['15-25 Milyon TL', '25+ Milyon TL']
-        },
-        allBudgets: ['1-3 Milyon TL', '3-5 Milyon TL', '5-10 Milyon TL', '10-20 Milyon TL', '20+ Milyon TL'],
+        budgetRanges: [
+            { label: '1-3 Milyon TL', min: 1000000, max: 3000000 },
+            { label: '3-5 Milyon TL', min: 3000000, max: 5000000 },
+            { label: '5-10 Milyon TL', min: 5000000, max: 10000000 },
+            { label: '10-20 Milyon TL', min: 10000000, max: 20000000 },
+            { label: '20+ Milyon TL', min: 20000000, max: 100000000 }
+        ],
         timelines: ['Hemen (Bu ay)', '1-3 ay içinde', '3-6 ay içinde', 'Sadece piyasayı araştırıyorum'],
         yesNo: ['Evet, var', 'Hayır, yok', 'Başvuracağım'],
         appointmentSlots: {
@@ -182,18 +174,23 @@ const translations = {
             hotLeadAlert: '🔥 Sıcak Lead Tespit Edildi!\n\nDanışmanımız en kısa sürede sizi arayacak. Ortalama yanıt süresi: 5 dakika.',
             warmLeadAlert: '👍 Bilgileriniz alındı!\n\nDanışmanımız 24 saat içinde sizinle iletişime geçecek.',
             coldLeadResponse: 'Anlıyorum, henüz araştırma aşamasındasınız.\n\nSize yardımcı olabilecek bazı kaynaklarımız var:\n• Bölge fiyat rehberi\n• Yatırım analiz raporu\n• Piyasa trend raporu\n\nE-posta adresinizi bırakırsanız bu raporları size gönderelim.',
-            lowBudgetResponse: 'Bu bütçe aralığında da güzel seçeneklerimiz var!\n\nSize özellikle şu bölgeleri önerebilirim:\n• Gelişmekte olan bölgeler\n• Yatırımlık 1+1 daireler\n• Taksitli satış projeleri\n\nBu seçenekleri incelemek ister misiniz?',
-            investmentMatch: 'Yatırım için mükemmel seçim!\n\nYüksek kira getirisi olan, üniversite/metro yakını lokasyonları listeliyorum...',
-            residenceMatch: 'Oturum için en iyi seçeneklerimizi getiriyorum!\n\nSosyal olanaklar, okul yakınlığı ve ulaşım kriterlerine göre filtreledim...',
+            searchingProperties: 'Kriterlerinize uygun ilanları arıyorum...',
+            propertiesFound: 'Size uygun ilanlarımız:',
+            noPropertiesFound: 'Şu an kriterlerinize uygun aktif ilanımız bulunmuyor.\n\nAncak danışmanımız sizin için özel arama yapabilir. İletişim bilgilerinizi bırakır mısınız?',
+            investmentMatch: 'Yatırım için mükemmel seçim!\n\nYüksek kira getirisi olan lokasyonları arıyorum...',
+            residenceMatch: 'Oturum için en iyi seçeneklerimizi getiriyorum!\n\nSosyal olanaklar ve ulaşım kriterlerine göre arıyorum...',
             appointmentConfirmed: 'Randevunuz onaylandı!\n\nAdres ve hatırlatma SMS olarak gönderilecektir.\n\n📍 Konum bilgisi randevudan 1 saat önce iletilecek.',
-            valuationResult: 'Yapay zeka değerleme sonucunuz hazır!'
+            valuationResult: 'Yapay zeka değerleme sonucunuz hazır!',
+            upsellHigherBudget: '💡 Bütçenizi biraz esnetirseniz şu harika seçeneklere bakabilirsiniz:',
+            upsellDifferentType: '🏠 Farklı emlak türlerinde alternatiflerimiz var:',
+            upsellNearby: '📍 Size yakın popüler ilanlarımız:',
+            alternativeQuestion: 'Bu seçeneklerden biri ilginizi çekti mi?'
         },
         thankYou: 'Teşekkür ederiz!',
         viewDetails: 'Detayları Gör',
         schedule: 'Randevu Al',
-        investmentProperties: 'Yatırımlık İlanlar',
-        residenceProperties: 'Oturum İçin İlanlar',
-        showMore: 'Daha Fazla Göster'
+        showMore: 'Daha Fazla Göster',
+        loading: 'Yükleniyor...'
     },
     en: {
         title: 'Real Estate Assistant',
@@ -222,13 +219,13 @@ const translations = {
             contact: 'Please share your contact info so we can reach you.'
         },
         propertyTypes: ['Apartment', 'Villa', 'House', 'Land', 'Commercial'],
-        budgetRanges: {
-            low: ['$50K-$150K', '$150K-$250K'],
-            medium: ['$250K-$400K', '$400K-$600K'],
-            high: ['$600K-$900K', '$900K-$1.2M'],
-            premium: ['$1.2M-$2M', '$2M+']
-        },
-        allBudgets: ['$100K-$300K', '$300K-$500K', '$500K-$800K', '$800K-$1.5M', '$1.5M+'],
+        budgetRanges: [
+            { label: '$100K-$300K', min: 100000, max: 300000 },
+            { label: '$300K-$500K', min: 300000, max: 500000 },
+            { label: '$500K-$800K', min: 500000, max: 800000 },
+            { label: '$800K-$1.5M', min: 800000, max: 1500000 },
+            { label: '$1.5M+', min: 1500000, max: 50000000 }
+        ],
         timelines: ['Immediately (This month)', 'Within 1-3 months', 'Within 3-6 months', 'Just browsing the market'],
         yesNo: ['Yes, I have it', 'No, not yet', 'Will apply soon'],
         appointmentSlots: {
@@ -279,135 +276,69 @@ const translations = {
             hotLeadAlert: '🔥 Hot Lead Detected!\n\nOur advisor will call you shortly. Average response time: 5 minutes.',
             warmLeadAlert: '👍 Your information has been received!\n\nOur advisor will contact you within 24 hours.',
             coldLeadResponse: 'I understand you\'re still in the research phase.\n\nWe have some helpful resources:\n• Area price guide\n• Investment analysis report\n• Market trend report\n\nLeave your email and we\'ll send these to you.',
-            lowBudgetResponse: 'We have great options in this budget range too!\n\nI can recommend these areas:\n• Emerging neighborhoods\n• Investment 1-bedroom units\n• Installment sale projects\n\nWould you like to explore these?',
-            investmentMatch: 'Great choice for investment!\n\nListing high rental yield properties near universities/metro...',
-            residenceMatch: 'Getting the best options for your new home!\n\nFiltered by amenities, schools, and transportation...',
+            searchingProperties: 'Searching for properties matching your criteria...',
+            propertiesFound: 'Here are properties matching your criteria:',
+            noPropertiesFound: 'We don\'t have active listings matching your criteria at the moment.\n\nHowever, our advisor can do a custom search for you. Would you like to leave your contact info?',
+            investmentMatch: 'Great choice for investment!\n\nSearching for high rental yield locations...',
+            residenceMatch: 'Getting the best options for your new home!\n\nSearching based on amenities and transportation...',
             appointmentConfirmed: 'Your appointment is confirmed!\n\nAddress and reminder will be sent via SMS.\n\n📍 Location details will be shared 1 hour before.',
-            valuationResult: 'Your AI valuation is ready!'
+            valuationResult: 'Your AI valuation is ready!',
+            upsellHigherBudget: '💡 If you stretch your budget a bit, check out these great options:',
+            upsellDifferentType: '🏠 We have alternatives in different property types:',
+            upsellNearby: '📍 Popular listings near your preferred area:',
+            alternativeQuestion: 'Interested in any of these options?'
         },
         thankYou: 'Thank you!',
         viewDetails: 'View Details',
         schedule: 'Schedule Viewing',
-        investmentProperties: 'Investment Properties',
-        residenceProperties: 'Residence Properties',
-        showMore: 'Show More'
+        showMore: 'Show More',
+        loading: 'Loading...'
     }
 }
-
-// Sample properties for demo - Investment focused
-const investmentProperties: Property[] = [
-    {
-        id: 'inv1',
-        title: 'Yatırımlık 1+1 Residence',
-        price: '2.200.000 TL',
-        location: 'Ataşehir, İstanbul',
-        rooms: '1+1',
-        area: '65 m²',
-        image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop',
-        badge: 'Yatırımlık',
-        monthlyRent: '18.000 TL/ay',
-        roi: '%9.8 Getiri'
-    },
-    {
-        id: 'inv2',
-        title: 'Üniversite Yanı Stüdyo',
-        price: '1.800.000 TL',
-        location: 'Avcılar, İstanbul',
-        rooms: '1+0',
-        area: '45 m²',
-        image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop',
-        badge: 'Öğrenci Garantili',
-        monthlyRent: '15.000 TL/ay',
-        roi: '%10 Getiri'
-    },
-    {
-        id: 'inv3',
-        title: 'Metro Yanı 2+1',
-        price: '3.500.000 TL',
-        location: 'Kartal, İstanbul',
-        rooms: '2+1',
-        area: '95 m²',
-        image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop',
-        badge: 'Yüksek Getiri',
-        monthlyRent: '28.000 TL/ay',
-        roi: '%9.6 Getiri'
-    }
-]
-
-// Sample properties - Residence focused
-const residenceProperties: Property[] = [
-    {
-        id: 'res1',
-        title: 'Modern 3+1 Aile Dairesi',
-        price: '4.500.000 TL',
-        location: 'Kadıköy, İstanbul',
-        rooms: '3+1',
-        area: '145 m²',
-        image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop',
-        badge: 'Aile İçin Ideal'
-    },
-    {
-        id: 'res2',
-        title: 'Bahçeli Müstakil Villa',
-        price: '8.500.000 TL',
-        location: 'Çekmeköy, İstanbul',
-        rooms: '4+1',
-        area: '220 m²',
-        image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&h=300&fit=crop',
-        badge: 'Villa'
-    },
-    {
-        id: 'res3',
-        title: 'Okul Yakını 3+1',
-        price: '5.200.000 TL',
-        location: 'Ataşehir, İstanbul',
-        rooms: '3+1',
-        area: '130 m²',
-        image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&h=300&fit=crop',
-        badge: 'Okula 5 dk'
-    }
-]
-
-// Appointment slots
-const appointmentSlots = [
-    { date: 'Bugün', time: '14:00', available: true },
-    { date: 'Bugün', time: '16:00', available: true },
-    { date: 'Yarın', time: '10:00', available: true },
-    { date: 'Yarın', time: '14:00', available: false },
-    { date: 'Yarın', time: '16:00', available: true },
-    { date: 'Cumartesi', time: '11:00', available: true },
-]
 
 // Lead scoring function
 function calculateLeadScore(lead: LeadData): { score: number; category: 'hot' | 'warm' | 'cold' } {
     let score = 0
 
-    // Timeline scoring (most important)
     if (lead.timelineUrgency === 'immediate') score += 40
     else if (lead.timelineUrgency === 'soon') score += 25
     else if (lead.timelineUrgency === 'later') score += 10
-    else if (lead.timelineUrgency === 'browsing') score += 0
 
-    // Pre-approval scoring
     if (lead.hasPreApproval === true) score += 30
     else if (lead.hasPreApproval === false) score += 5
 
-    // Budget level scoring
     if (lead.budgetLevel === 'premium') score += 20
     else if (lead.budgetLevel === 'high') score += 15
     else if (lead.budgetLevel === 'medium') score += 10
     else if (lead.budgetLevel === 'low') score += 5
 
-    // Contact info provided
     if (lead.contactPhone) score += 10
 
-    // Determine category
     let category: 'hot' | 'warm' | 'cold'
     if (score >= 70) category = 'hot'
     else if (score >= 40) category = 'warm'
     else category = 'cold'
 
     return { score, category }
+}
+
+// Map property type to API value
+function mapPropertyTypeToApi(type: string, locale: string): string {
+    const trMap: Record<string, string> = {
+        'Daire': 'apartment',
+        'Villa': 'villa',
+        'Müstakil Ev': 'house',
+        'Arsa': 'land',
+        'Ticari': 'commercial'
+    }
+    const enMap: Record<string, string> = {
+        'Apartment': 'apartment',
+        'Villa': 'villa',
+        'House': 'house',
+        'Land': 'land',
+        'Commercial': 'commercial'
+    }
+    return locale === 'tr' ? trMap[type] || 'apartment' : enMap[type] || 'apartment'
 }
 
 export function RealEstateWidget({
@@ -417,6 +348,7 @@ export function RealEstateWidget({
     agentName = 'Emlak Danışmanı',
     agentPhoto,
     companyLogo,
+    chatbotIdentifier,
     onLeadCapture,
     onHotLead,
     onTenantIssue,
@@ -431,6 +363,7 @@ export function RealEstateWidget({
     const [carouselIndex, setCarouselIndex] = useState(0)
     const [showNotification, setShowNotification] = useState(true)
     const [tenantIssue, setTenantIssue] = useState<TenantIssue>({ type: '' })
+    const [loadingProperties, setLoadingProperties] = useState(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -438,19 +371,16 @@ export function RealEstateWidget({
     const t = translations[locale]
     const positionClass = position === 'bottom-left' ? 'left-4' : 'right-4'
 
-    // Auto scroll to bottom
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
 
-    // Focus input when opened
     useEffect(() => {
         if (isOpen && inputRef.current) {
             setTimeout(() => inputRef.current?.focus(), 100)
         }
     }, [isOpen])
 
-    // Initialize with welcome message
     useEffect(() => {
         if (isOpen && messages.length === 0) {
             addBotMessage(t.welcome, 'quick-replies', {
@@ -484,10 +414,136 @@ export function RealEstateWidget({
         }])
     }, [])
 
+    // Fetch properties from API
+    const fetchProperties = async (purpose: string, budgetMax?: number, propertyType?: string): Promise<Property[]> => {
+        if (!chatbotIdentifier) {
+            console.warn('No chatbotIdentifier provided, cannot fetch properties')
+            return []
+        }
+
+        try {
+            const params = new URLSearchParams({
+                identifier: chatbotIdentifier,
+                purpose: purpose,
+                listingType: leadData.intent === 'rent' ? 'rent' : 'sale'
+            })
+
+            if (budgetMax) params.append('maxPrice', budgetMax.toString())
+            if (propertyType) params.append('propertyType', propertyType)
+
+            const response = await fetch(`/api/properties/search?${params.toString()}`)
+            if (!response.ok) return []
+
+            const data = await response.json()
+            return data.properties || []
+        } catch (error) {
+            console.error('Error fetching properties:', error)
+            return []
+        }
+    }
+
+    // Fetch alternative properties with expanded criteria (for upsell)
+    const fetchAlternativeProperties = async (
+        purpose: string,
+        budgetMax?: number,
+        propertyType?: string
+    ): Promise<{ properties: Property[]; reason: 'higher-budget' | 'different-type' | 'nearby' }> => {
+        if (!chatbotIdentifier) {
+            return { properties: [], reason: 'higher-budget' }
+        }
+
+        try {
+            // Try 1: Expand budget by 25%
+            const expandedBudget = budgetMax ? Math.round(budgetMax * 1.25) : undefined
+            const params1 = new URLSearchParams({
+                identifier: chatbotIdentifier,
+                purpose: purpose,
+                listingType: leadData.intent === 'rent' ? 'rent' : 'sale',
+                limit: '3'
+            })
+            if (expandedBudget) params1.append('maxPrice', expandedBudget.toString())
+            if (propertyType) params1.append('propertyType', propertyType)
+
+            const response1 = await fetch(`/api/properties/search?${params1.toString()}`)
+            if (response1.ok) {
+                const data1 = await response1.json()
+                if (data1.properties?.length > 0) {
+                    return { properties: data1.properties.slice(0, 3), reason: 'higher-budget' }
+                }
+            }
+
+            // Try 2: Remove property type filter
+            const params2 = new URLSearchParams({
+                identifier: chatbotIdentifier,
+                purpose: purpose,
+                listingType: leadData.intent === 'rent' ? 'rent' : 'sale',
+                limit: '3'
+            })
+            if (expandedBudget) params2.append('maxPrice', expandedBudget.toString())
+
+            const response2 = await fetch(`/api/properties/search?${params2.toString()}`)
+            if (response2.ok) {
+                const data2 = await response2.json()
+                if (data2.properties?.length > 0) {
+                    return { properties: data2.properties.slice(0, 3), reason: 'different-type' }
+                }
+            }
+
+            // Try 3: Get any available properties (featured/popular)
+            const params3 = new URLSearchParams({
+                identifier: chatbotIdentifier,
+                featured: 'true',
+                limit: '3'
+            })
+
+            const response3 = await fetch(`/api/properties/search?${params3.toString()}`)
+            if (response3.ok) {
+                const data3 = await response3.json()
+                if (data3.properties?.length > 0) {
+                    return { properties: data3.properties.slice(0, 3), reason: 'nearby' }
+                }
+            }
+
+            return { properties: [], reason: 'higher-budget' }
+        } catch (error) {
+            console.error('Error fetching alternative properties:', error)
+            return { properties: [], reason: 'higher-budget' }
+        }
+    }
+
+    // Save lead to API
+    const saveLead = async (leadInfo: LeadData) => {
+        if (!chatbotIdentifier) return
+
+        try {
+            await fetch('/api/leads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    identifier: chatbotIdentifier,
+                    name: leadInfo.contactName || '',
+                    phone: leadInfo.contactPhone || '',
+                    email: leadInfo.contactEmail || '',
+                    intent: leadInfo.intent,
+                    propertyType: leadInfo.propertyType,
+                    purpose: leadInfo.purpose,
+                    budget: leadInfo.budget,
+                    budgetMin: leadInfo.budgetMin,
+                    budgetMax: leadInfo.budgetMax,
+                    timeline: leadInfo.timeline,
+                    hasPreApproval: leadInfo.hasPreApproval,
+                    score: leadInfo.leadScore,
+                    category: leadInfo.leadCategory
+                })
+            })
+        } catch (error) {
+            console.error('Error saving lead:', error)
+        }
+    }
+
     const handleQuickReply = (reply: string) => {
         addUserMessage(reply)
 
-        // Handle different flows
         if (reply === t.quickReplies.buy) {
             setLeadData(prev => ({ ...prev, intent: 'buy' }))
             setCurrentStep('purpose')
@@ -508,17 +564,13 @@ export function RealEstateWidget({
             setLeadData(prev => ({ ...prev, intent: reply === t.quickReplies.sell ? 'sell' : 'value' }))
             setCurrentStep('valuation')
             setTimeout(() => {
-                addBotMessage(t.valuation.title, 'form', {
-                    type: 'valuation'
-                })
+                addBotMessage(t.valuation.title, 'form', { type: 'valuation' })
             }, 300)
         } else if (reply === t.quickReplies.tenant) {
             setLeadData(prev => ({ ...prev, intent: 'tenant' }))
             setCurrentStep('tenant')
             setTimeout(() => {
-                addBotMessage(t.tenant.greeting, 'quick-replies', {
-                    replies: t.tenant.options
-                })
+                addBotMessage(t.tenant.greeting, 'quick-replies', { replies: t.tenant.options })
             }, 300)
         }
     }
@@ -526,23 +578,22 @@ export function RealEstateWidget({
     const handlePurposeSelect = (purpose: string) => {
         addUserMessage(purpose)
         const purposeValue = purpose === t.leadQualification.purposeOptions[0] ? 'investment' :
-                           purpose === t.leadQualification.purposeOptions[1] ? 'residence' : 'investment'
+            purpose === t.leadQualification.purposeOptions[1] ? 'residence' : 'investment'
         setLeadData(prev => ({ ...prev, purpose: purposeValue }))
         setCurrentStep('propertyType')
         setTimeout(() => {
-            addBotMessage(t.leadQualification.propertyType, 'quick-replies', {
-                replies: t.propertyTypes
-            })
+            addBotMessage(t.leadQualification.propertyType, 'quick-replies', { replies: t.propertyTypes })
         }, 300)
     }
 
     const handlePropertyTypeSelect = (type: string) => {
         addUserMessage(type)
-        setLeadData(prev => ({ ...prev, propertyType: type }))
+        const apiType = mapPropertyTypeToApi(type, locale)
+        setLeadData(prev => ({ ...prev, propertyType: apiType }))
         setCurrentStep('budget')
         setTimeout(() => {
             addBotMessage(`${t.leadQualification.budget}\n\n💡 ${t.leadQualification.budgetNote}`, 'quick-replies', {
-                replies: t.allBudgets
+                replies: t.budgetRanges.map(b => b.label)
             })
         }, 300)
     }
@@ -550,15 +601,21 @@ export function RealEstateWidget({
     const handleBudgetSelect = (budget: string) => {
         addUserMessage(budget)
 
-        // Determine budget level
+        const budgetRange = t.budgetRanges.find(b => b.label === budget)
         let budgetLevel: 'low' | 'medium' | 'high' | 'premium' = 'medium'
-        const budgetIndex = t.allBudgets.indexOf(budget)
+        const budgetIndex = t.budgetRanges.findIndex(b => b.label === budget)
         if (budgetIndex === 0) budgetLevel = 'low'
         else if (budgetIndex === 1) budgetLevel = 'medium'
         else if (budgetIndex === 2) budgetLevel = 'high'
         else budgetLevel = 'premium'
 
-        setLeadData(prev => ({ ...prev, budget, budgetLevel }))
+        setLeadData(prev => ({
+            ...prev,
+            budget,
+            budgetLevel,
+            budgetMin: budgetRange?.min,
+            budgetMax: budgetRange?.max
+        }))
         setCurrentStep('timeline')
 
         setTimeout(() => {
@@ -571,7 +628,6 @@ export function RealEstateWidget({
     const handleTimelineSelect = (timeline: string) => {
         addUserMessage(timeline)
 
-        // Determine urgency
         let timelineUrgency: 'immediate' | 'soon' | 'later' | 'browsing' = 'later'
         const timelineIndex = t.timelines.indexOf(timeline)
         if (timelineIndex === 0) timelineUrgency = 'immediate'
@@ -581,13 +637,10 @@ export function RealEstateWidget({
 
         setLeadData(prev => ({ ...prev, timeline, timelineUrgency }))
 
-        // If just browsing, handle differently
         if (timelineUrgency === 'browsing') {
             setCurrentStep('coldLead')
             setTimeout(() => {
-                addBotMessage(t.messages.coldLeadResponse, 'form', {
-                    type: 'email-only'
-                })
+                addBotMessage(t.messages.coldLeadResponse, 'form', { type: 'email-only' })
             }, 300)
             return
         }
@@ -600,42 +653,82 @@ export function RealEstateWidget({
         }, 300)
     }
 
-    const handlePreApprovalSelect = (answer: string) => {
+    const handlePreApprovalSelect = async (answer: string) => {
         addUserMessage(answer)
         const hasPreApproval = answer === t.yesNo[0]
         const updatedLead = { ...leadData, hasPreApproval }
         setLeadData(updatedLead)
 
-        // Calculate lead score
         const { score, category } = calculateLeadScore(updatedLead)
         updatedLead.leadScore = score
         updatedLead.leadCategory = category
 
-        // Show appropriate properties based on purpose
-        const properties = updatedLead.purpose === 'investment' ? investmentProperties : residenceProperties
-        const propertiesTitle = updatedLead.purpose === 'investment' ? t.investmentProperties : t.residenceProperties
-        const matchMessage = updatedLead.purpose === 'investment' ? t.messages.investmentMatch : t.messages.residenceMatch
+        const matchMessage = updatedLead.purpose === 'investment'
+            ? t.messages.investmentMatch
+            : t.messages.residenceMatch
 
-        setCurrentStep('showProperties')
-        setTimeout(() => {
-            addBotMessage(matchMessage)
-        }, 300)
+        setCurrentStep('searchingProperties')
+        addBotMessage(matchMessage)
 
-        setTimeout(() => {
-            addBotMessage(propertiesTitle, 'cards', { properties })
-        }, 1200)
+        // Fetch real properties from API
+        setLoadingProperties(true)
+        setTimeout(async () => {
+            const properties = await fetchProperties(
+                updatedLead.purpose || 'residence',
+                updatedLead.budgetMax,
+                updatedLead.propertyType
+            )
+            setLoadingProperties(false)
 
-        // Then ask for contact
-        setTimeout(() => {
-            setCurrentStep('contact')
-            addBotMessage(t.leadQualification.contact, 'form', {
-                type: 'contact',
-                leadCategory: category
-            })
-        }, 2500)
+            if (properties.length > 0) {
+                addBotMessage(t.messages.propertiesFound, 'cards', { properties })
+
+                setTimeout(() => {
+                    setCurrentStep('contact')
+                    addBotMessage(t.leadQualification.contact, 'form', {
+                        type: 'contact',
+                        leadCategory: category
+                    })
+                }, 2000)
+            } else {
+                // No exact matches - try to find alternatives (upsell)
+                const alternatives = await fetchAlternativeProperties(
+                    updatedLead.purpose || 'residence',
+                    updatedLead.budgetMax,
+                    updatedLead.propertyType
+                )
+
+                if (alternatives.properties.length > 0) {
+                    // Show upsell message based on reason
+                    const upsellMessage = alternatives.reason === 'higher-budget'
+                        ? t.messages.upsellHigherBudget
+                        : alternatives.reason === 'different-type'
+                            ? t.messages.upsellDifferentType
+                            : t.messages.upsellNearby
+
+                    addBotMessage(upsellMessage, 'cards', { properties: alternatives.properties })
+
+                    setTimeout(() => {
+                        addBotMessage(t.messages.alternativeQuestion, 'quick-replies', {
+                            replies: locale === 'tr'
+                                ? ['Evet, ilgileniyorum', 'Hayır, başka arayın']
+                                : ['Yes, interested', 'No, keep searching']
+                        })
+                        setCurrentStep('upsellResponse')
+                    }, 2500)
+                } else {
+                    // No alternatives found either
+                    addBotMessage(t.messages.noPropertiesFound, 'form', {
+                        type: 'contact',
+                        leadCategory: category
+                    })
+                    setCurrentStep('contact')
+                }
+            }
+        }, 1000)
     }
 
-    const handleContactSubmit = (contactData: { name: string; phone: string; email: string }) => {
+    const handleContactSubmit = async (contactData: { name: string; phone: string; email: string }) => {
         const finalLeadData: LeadData = {
             ...leadData,
             contactName: contactData.name,
@@ -643,21 +736,21 @@ export function RealEstateWidget({
             contactEmail: contactData.email
         }
 
-        // Recalculate score with contact info
         const { score, category } = calculateLeadScore(finalLeadData)
         finalLeadData.leadScore = score
         finalLeadData.leadCategory = category
 
         setLeadData(finalLeadData)
 
+        // Save to API
+        await saveLead(finalLeadData)
+
         // Trigger callbacks
         onLeadCapture?.(finalLeadData)
-
         if (category === 'hot') {
             onHotLead?.(finalLeadData)
         }
 
-        // Show appropriate response based on lead category
         let responseMessage = ''
         if (category === 'hot') {
             responseMessage = t.messages.hotLeadAlert
@@ -667,17 +760,11 @@ export function RealEstateWidget({
             responseMessage = t.thankYou
         }
 
-        // Show lead score indicator
         addBotMessage(responseMessage, 'lead-score', {
             score,
             category,
             labels: t.leadScore
         })
-
-        // Offer appointment
-        setTimeout(() => {
-            addBotMessage(t.appointmentSlots.title, 'appointment', { slots: appointmentSlots })
-        }, 1500)
 
         setCurrentStep('complete')
     }
@@ -685,7 +772,7 @@ export function RealEstateWidget({
     const handleTenantOption = (option: string) => {
         addUserMessage(option)
 
-        if (option === t.tenant.options[0]) { // Arıza Bildirimi
+        if (option === t.tenant.options[0]) {
             setCurrentStep('tenantIssueType')
             setTimeout(() => {
                 addBotMessage(
@@ -694,14 +781,14 @@ export function RealEstateWidget({
                     { replies: Object.values(t.tenant.issueTypes) }
                 )
             }, 300)
-        } else if (option === t.tenant.options[1]) { // Kira Ödeme
+        } else if (option === t.tenant.options[1]) {
             addBotMessage(t.tenant.rentInfo)
-        } else if (option === t.tenant.options[2]) { // Sözleşme
+        } else if (option === t.tenant.options[2]) {
             setCurrentStep('tenantContract')
             setTimeout(() => {
                 addBotMessage(t.tenant.contractInfo, 'form', { type: 'contact' })
             }, 300)
-        } else if (option === t.tenant.options[3]) { // Anahtar
+        } else if (option === t.tenant.options[3]) {
             addBotMessage(
                 locale === 'tr'
                     ? 'Anahtar teslimi için ofisimize hafta içi 09:00-18:00 arası gelebilirsiniz.\n\nAdres: [Ofis Adresi]\n\nYanınızda kimlik ve kira sözleşmesi getirmeyi unutmayın.'
@@ -737,7 +824,6 @@ export function RealEstateWidget({
         const updatedIssue = { ...tenantIssue, urgency: urgencyLevel }
         setTenantIssue(updatedIssue)
 
-        // For emergencies, show immediate action
         if (urgencyLevel === 'emergency') {
             addBotMessage(
                 locale === 'tr'
@@ -755,7 +841,6 @@ export function RealEstateWidget({
     }
 
     const handlePhotoUpload = () => {
-        // In real implementation, this would trigger file upload
         addBotMessage(
             locale === 'tr' ? 'Fotoğraf alındı. Şimdi iletişim bilgilerinizi paylaşır mısınız?' : 'Photo received. Please share your contact info.',
             'form',
@@ -775,12 +860,6 @@ export function RealEstateWidget({
         setCurrentStep('complete')
     }
 
-    const handleAppointmentSelect = (slot: any) => {
-        addUserMessage(`${slot.date} ${slot.time}`)
-        onAppointmentBooked?.(slot, leadData)
-        addBotMessage(t.messages.appointmentConfirmed)
-    }
-
     const handleSend = () => {
         if (!input.trim()) return
         addUserMessage(input.trim())
@@ -791,7 +870,7 @@ export function RealEstateWidget({
         setTimeout(() => {
             if (userInput.includes('fiyat') || userInput.includes('price') || userInput.includes('bütçe') || userInput.includes('budget')) {
                 addBotMessage(t.leadQualification.budget, 'quick-replies', {
-                    replies: t.allBudgets
+                    replies: t.budgetRanges.map(b => b.label)
                 })
                 setCurrentStep('budget')
             } else if (userInput.includes('daire') || userInput.includes('ev') || userInput.includes('villa') || userInput.includes('apartment')) {
@@ -799,10 +878,6 @@ export function RealEstateWidget({
                     replies: t.propertyTypes
                 })
                 setCurrentStep('propertyType')
-            } else if (userInput.includes('randevu') || userInput.includes('appointment') || userInput.includes('görüşme')) {
-                addBotMessage(t.appointmentSlots.title, 'appointment', {
-                    slots: appointmentSlots
-                })
             } else {
                 addBotMessage(
                     locale === 'tr'
@@ -815,7 +890,6 @@ export function RealEstateWidget({
         }, 300)
     }
 
-    // Render message content based on type
     const renderMessageContent = (message: Message) => {
         switch (message.type) {
             case 'quick-replies':
@@ -836,6 +910,28 @@ export function RealEstateWidget({
                                         else if (currentStep === 'tenant') handleTenantOption(reply)
                                         else if (currentStep === 'tenantIssueType') handleTenantIssueType(reply)
                                         else if (currentStep === 'tenantUrgency') handleTenantUrgency(reply)
+                                        else if (currentStep === 'upsellResponse') {
+                                            addUserMessage(reply)
+                                            const isInterested = reply.includes('Evet') || reply.includes('Yes')
+                                            if (isInterested) {
+                                                addBotMessage(
+                                                    locale === 'tr'
+                                                        ? 'Harika! Bu seçeneklerden biriyle ilgileniyorsunuz. Detaylar için bilgilerinizi bırakın, danışmanımız sizi arasın:'
+                                                        : 'Great! You\'re interested in one of these options. Leave your details and our advisor will call you:',
+                                                    'form',
+                                                    { type: 'contact', leadCategory: leadData.leadCategory }
+                                                )
+                                            } else {
+                                                addBotMessage(
+                                                    locale === 'tr'
+                                                        ? 'Anlıyorum. Danışmanımız sizin için özel arama yapabilir. İletişim bilgilerinizi bırakır mısınız?'
+                                                        : 'I understand. Our advisor can do a custom search for you. Would you leave your contact info?',
+                                                    'form',
+                                                    { type: 'contact', leadCategory: leadData.leadCategory }
+                                                )
+                                            }
+                                            setCurrentStep('contact')
+                                        }
                                     }}
                                     className="px-3 py-1.5 text-sm rounded-full border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-700 transition-colors"
                                 >
@@ -847,6 +943,10 @@ export function RealEstateWidget({
                 )
 
             case 'cards':
+                const properties = message.data?.properties || []
+                if (properties.length === 0) {
+                    return <p className="text-sm">{message.content}</p>
+                }
                 return (
                     <div className="space-y-2">
                         <p className="text-sm font-medium mb-3">{message.content}</p>
@@ -856,7 +956,7 @@ export function RealEstateWidget({
                                     className="flex transition-transform duration-300"
                                     style={{ transform: `translateX(-${carouselIndex * 100}%)` }}
                                 >
-                                    {message.data?.properties?.map((property: Property) => (
+                                    {properties.map((property: Property) => (
                                         <div key={property.id} className="min-w-full px-1">
                                             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
                                                 <div className="relative h-32">
@@ -888,7 +988,7 @@ export function RealEstateWidget({
                                                     </div>
                                                     <div className="flex gap-3 text-xs text-gray-500 mt-1">
                                                         <span>{property.rooms}</span>
-                                                        <span>{property.area}</span>
+                                                        {property.area && <span>{property.area}</span>}
                                                     </div>
                                                     <div className="flex gap-2 mt-2">
                                                         <button className="flex-1 px-2 py-1 text-xs bg-amber-600 text-white rounded hover:bg-amber-700 transition-colors">
@@ -904,7 +1004,7 @@ export function RealEstateWidget({
                                     ))}
                                 </div>
                             </div>
-                            {message.data?.properties?.length > 1 && (
+                            {properties.length > 1 && (
                                 <>
                                     <button
                                         onClick={() => setCarouselIndex(Math.max(0, carouselIndex - 1))}
@@ -914,22 +1014,24 @@ export function RealEstateWidget({
                                         <ChevronLeft className="w-4 h-4" />
                                     </button>
                                     <button
-                                        onClick={() => setCarouselIndex(Math.min(message.data.properties.length - 1, carouselIndex + 1))}
+                                        onClick={() => setCarouselIndex(Math.min(properties.length - 1, carouselIndex + 1))}
                                         className="absolute right-0 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/90 rounded-full shadow flex items-center justify-center hover:bg-white"
-                                        disabled={carouselIndex === message.data.properties.length - 1}
+                                        disabled={carouselIndex === properties.length - 1}
                                     >
                                         <ChevronRight className="w-4 h-4" />
                                     </button>
                                 </>
                             )}
-                            <div className="flex justify-center gap-1 mt-2">
-                                {message.data?.properties?.map((_: Property, i: number) => (
-                                    <div
-                                        key={i}
-                                        className={`w-1.5 h-1.5 rounded-full transition-colors ${i === carouselIndex ? 'bg-amber-600' : 'bg-gray-300'}`}
-                                    />
-                                ))}
-                            </div>
+                            {properties.length > 1 && (
+                                <div className="flex justify-center gap-1 mt-2">
+                                    {properties.map((_: Property, i: number) => (
+                                        <div
+                                            key={i}
+                                            className={`w-1.5 h-1.5 rounded-full transition-colors ${i === carouselIndex ? 'bg-amber-600' : 'bg-gray-300'}`}
+                                        />
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 )
@@ -937,11 +1039,11 @@ export function RealEstateWidget({
             case 'lead-score':
                 const scoreData = message.data
                 const ScoreIcon = scoreData.category === 'hot' ? Flame :
-                                 scoreData.category === 'warm' ? ThermometerSun : Snowflake
+                    scoreData.category === 'warm' ? ThermometerSun : Snowflake
                 const scoreColor = scoreData.category === 'hot' ? 'text-red-500' :
-                                  scoreData.category === 'warm' ? 'text-orange-500' : 'text-blue-500'
+                    scoreData.category === 'warm' ? 'text-orange-500' : 'text-blue-500'
                 const scoreBg = scoreData.category === 'hot' ? 'bg-red-50 border-red-200' :
-                               scoreData.category === 'warm' ? 'bg-orange-50 border-orange-200' : 'bg-blue-50 border-blue-200'
+                    scoreData.category === 'warm' ? 'bg-orange-50 border-orange-200' : 'bg-blue-50 border-blue-200'
 
                 return (
                     <div className="space-y-2">
@@ -993,6 +1095,23 @@ export function RealEstateWidget({
                 }
                 return <p className="text-sm">{message.content}</p>
 
+            case 'appointment':
+                return <AppointmentSlotPicker
+                    locale={locale}
+                    identifier={chatbotIdentifier || ''}
+                    leadData={leadData}
+                    onSlotSelected={(slot) => {
+                        addUserMessage(`${slot.date} - ${slot.time}`)
+                        addBotMessage(
+                            locale === 'tr'
+                                ? `Harika seçim! ${slot.date} tarihinde saat ${slot.time} için randevunuz alındı.\n\n${t.messages.appointmentConfirmed}`
+                                : `Great choice! Your appointment is booked for ${slot.date} at ${slot.time}.\n\n${t.messages.appointmentConfirmed}`
+                        )
+                        onAppointmentBooked?.(slot, leadData)
+                        setCurrentStep('complete')
+                    }}
+                />
+
             case 'photo-upload':
                 return (
                     <div className="space-y-2">
@@ -1029,36 +1148,6 @@ export function RealEstateWidget({
                     </div>
                 )
 
-            case 'appointment':
-                return (
-                    <div className="space-y-2">
-                        <p className="text-sm font-medium">{message.content}</p>
-                        <div className="grid grid-cols-2 gap-2">
-                            {message.data?.slots?.map((slot: any, i: number) => (
-                                <button
-                                    key={i}
-                                    disabled={!slot.available}
-                                    onClick={() => handleAppointmentSelect(slot)}
-                                    className={`flex items-center justify-between px-3 py-2 text-xs rounded-lg border transition-colors ${
-                                        slot.available
-                                            ? 'border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-700'
-                                            : 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
-                                    }`}
-                                >
-                                    <div className="flex items-center">
-                                        <Calendar className="w-3 h-3 mr-1" />
-                                        {slot.date}
-                                    </div>
-                                    <div className="flex items-center">
-                                        <Clock className="w-3 h-3 mr-1" />
-                                        {slot.time}
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )
-
             default:
                 return <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         }
@@ -1066,10 +1155,8 @@ export function RealEstateWidget({
 
     return (
         <>
-            {/* Floating Button */}
             {!isOpen && (
                 <div className={`fixed bottom-4 ${positionClass} z-50`}>
-                    {/* Notification Badge */}
                     {showNotification && (
                         <div className="absolute -top-2 -right-2 flex items-center justify-center">
                             <span className="relative flex h-4 w-4">
@@ -1079,7 +1166,6 @@ export function RealEstateWidget({
                         </div>
                     )}
 
-                    {/* WhatsApp-style bubble with message preview */}
                     <div className="flex items-end gap-2">
                         {showNotification && (
                             <div
@@ -1095,9 +1181,7 @@ export function RealEstateWidget({
                                         : 'Hello! Can I help you?'}
                                 </p>
                                 <p className="text-[10px] text-gray-500 mt-1">
-                                    {locale === 'tr'
-                                        ? 'Ön Büro Asistanınız'
-                                        : 'Your Front Desk Assistant'}
+                                    {locale === 'tr' ? 'Ön Büro Asistanınız' : 'Your Front Desk Assistant'}
                                 </p>
                                 <span className="text-[10px] text-gray-400 mt-1 block">
                                     {locale === 'tr' ? 'Az önce' : 'Just now'}
@@ -1123,10 +1207,8 @@ export function RealEstateWidget({
                 </div>
             )}
 
-            {/* Chat Window */}
             {isOpen && (
                 <div className={`fixed bottom-4 ${positionClass} z-50 w-[360px] h-[540px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-slide-up`}>
-                    {/* Header */}
                     <div
                         className="px-4 py-3 flex items-center justify-between"
                         style={{ backgroundColor: primaryColor }}
@@ -1158,7 +1240,6 @@ export function RealEstateWidget({
                         </button>
                     </div>
 
-                    {/* Messages */}
                     <div
                         className="flex-1 overflow-y-auto p-4 space-y-3"
                         style={{
@@ -1172,11 +1253,10 @@ export function RealEstateWidget({
                                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                             >
                                 <div
-                                    className={`max-w-[85%] rounded-2xl px-3 py-2 shadow-sm ${
-                                        message.role === 'user'
-                                            ? 'bg-amber-600 text-white rounded-br-sm'
-                                            : 'bg-white text-gray-800 rounded-bl-sm'
-                                    }`}
+                                    className={`max-w-[85%] rounded-2xl px-3 py-2 shadow-sm ${message.role === 'user'
+                                        ? 'bg-amber-600 text-white rounded-br-sm'
+                                        : 'bg-white text-gray-800 rounded-bl-sm'
+                                        }`}
                                 >
                                     {renderMessageContent(message)}
                                     <div className={`text-[10px] mt-1 flex items-center ${message.role === 'user' ? 'text-amber-200 justify-end' : 'text-gray-400'}`}>
@@ -1187,8 +1267,7 @@ export function RealEstateWidget({
                             </div>
                         ))}
 
-                        {/* Typing indicator */}
-                        {isTyping && (
+                        {(isTyping || loadingProperties) && (
                             <div className="flex justify-start">
                                 <div className="bg-white rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
                                     <div className="flex gap-1">
@@ -1203,7 +1282,6 @@ export function RealEstateWidget({
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Input */}
                     <div className="border-t bg-white p-3">
                         <div className="flex gap-2">
                             <input
@@ -1231,28 +1309,17 @@ export function RealEstateWidget({
                 </div>
             )}
 
-            {/* Animations */}
             <style jsx global>{`
                 @keyframes slide-up {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
                 }
                 @keyframes fade-in {
                     from { opacity: 0; }
                     to { opacity: 1; }
                 }
-                .animate-slide-up {
-                    animation: slide-up 0.3s ease-out;
-                }
-                .animate-fade-in {
-                    animation: fade-in 0.3s ease-out;
-                }
+                .animate-slide-up { animation: slide-up 0.3s ease-out; }
+                .animate-fade-in { animation: fade-in 0.3s ease-out; }
             `}</style>
         </>
     )
@@ -1332,7 +1399,7 @@ function ContactForm({
     )
 }
 
-// Email Only Form (for cold leads)
+// Email Only Form
 function EmailOnlyForm({
     locale,
     onSubmit
@@ -1455,5 +1522,173 @@ function ValuationForm({ locale, onSubmit }: { locale: 'tr' | 'en'; onSubmit: (d
                 {t.valuation.submit}
             </button>
         </form>
+    )
+}
+
+// Appointment Slot Picker Component
+function AppointmentSlotPicker({
+    locale,
+    identifier,
+    leadData,
+    onSlotSelected
+}: {
+    locale: 'tr' | 'en'
+    identifier: string
+    leadData: any
+    onSlotSelected: (slot: { date: string; time: string; type: string }) => void
+}) {
+    const [slots, setSlots] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
+    const [selectedSlot, setSelectedSlot] = useState<any>(null)
+    const [bookingName, setBookingName] = useState(leadData.contactName || '')
+    const [bookingPhone, setBookingPhone] = useState(leadData.contactPhone || '')
+    const [booking, setBooking] = useState(false)
+
+    useEffect(() => {
+        if (identifier) {
+            fetchSlots()
+        }
+    }, [identifier])
+
+    const fetchSlots = async () => {
+        try {
+            const response = await fetch(`/api/appointments?identifier=${identifier}`)
+            const data = await response.json()
+            setSlots(data.slots?.filter((s: any) => s.available) || generateLocalSlots())
+        } catch (error) {
+            console.error('Error fetching slots:', error)
+            setSlots(generateLocalSlots())
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const generateLocalSlots = () => {
+        const slots = []
+        const today = new Date()
+
+        for (let i = 1; i <= 5; i++) {
+            const date = new Date(today)
+            date.setDate(date.getDate() + i)
+            const dateStr = date.toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', {
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short'
+            })
+
+            if (date.getDay() !== 0) { // Skip Sunday
+                slots.push(
+                    { date: dateStr, time: '10:00', label: locale === 'tr' ? 'Sabah' : 'Morning', type: 'viewing', available: true },
+                    { date: dateStr, time: '14:00', label: locale === 'tr' ? 'Öğleden Sonra' : 'Afternoon', type: 'viewing', available: true }
+                )
+            }
+        }
+        return slots.slice(0, 6) // Limit to 6 slots
+    }
+
+    const handleBookSlot = async () => {
+        if (!selectedSlot || !bookingName || !bookingPhone) return
+
+        setBooking(true)
+        try {
+            const response = await fetch('/api/appointments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    identifier,
+                    date: selectedSlot.date,
+                    time: selectedSlot.time,
+                    name: bookingName,
+                    phone: bookingPhone,
+                    type: selectedSlot.type || 'viewing'
+                })
+            })
+
+            if (response.ok) {
+                onSlotSelected(selectedSlot)
+            }
+        } catch (error) {
+            console.error('Error booking appointment:', error)
+        } finally {
+            setBooking(false)
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {locale === 'tr' ? 'Müsait zamanlar yükleniyor...' : 'Loading available times...'}
+            </div>
+        )
+    }
+
+    return (
+        <div className="space-y-3">
+            <p className="text-sm font-medium flex items-center gap-1">
+                <Calendar className="w-4 h-4 text-amber-500" />
+                {locale === 'tr' ? 'Randevu Seçin' : 'Select Appointment'}
+            </p>
+
+            <div className="grid grid-cols-2 gap-2">
+                {slots.map((slot, index) => (
+                    <button
+                        key={index}
+                        onClick={() => setSelectedSlot(slot)}
+                        className={`p-2 text-left rounded-lg border text-xs transition-all ${selectedSlot === slot
+                            ? 'border-amber-500 bg-amber-50 ring-1 ring-amber-500'
+                            : 'border-gray-200 hover:border-amber-300 hover:bg-amber-50/50'
+                            }`}
+                    >
+                        <p className="font-medium text-gray-900">{slot.date}</p>
+                        <p className="text-gray-500 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {slot.time} - {slot.label}
+                        </p>
+                    </button>
+                ))}
+            </div>
+
+            {selectedSlot && (
+                <div className="space-y-2 pt-2 border-t">
+                    {!leadData.contactName && (
+                        <input
+                            type="text"
+                            value={bookingName}
+                            onChange={(e) => setBookingName(e.target.value)}
+                            placeholder={locale === 'tr' ? 'Ad Soyad *' : 'Full Name *'}
+                            className="w-full px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:border-amber-400"
+                        />
+                    )}
+                    {!leadData.contactPhone && (
+                        <input
+                            type="tel"
+                            value={bookingPhone}
+                            onChange={(e) => setBookingPhone(e.target.value)}
+                            placeholder={locale === 'tr' ? 'Telefon *' : 'Phone *'}
+                            className="w-full px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:border-amber-400"
+                        />
+                    )}
+                    <button
+                        onClick={handleBookSlot}
+                        disabled={booking || !bookingName || !bookingPhone}
+                        className="w-full py-2 text-sm text-white rounded-lg transition-colors hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                        style={{ backgroundColor: '#D97706' }}
+                    >
+                        {booking ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                {locale === 'tr' ? 'Randevu alınıyor...' : 'Booking...'}
+                            </>
+                        ) : (
+                            <>
+                                <CheckCircle className="w-4 h-4" />
+                                {locale === 'tr' ? 'Randevuyu Onayla' : 'Confirm Appointment'}
+                            </>
+                        )}
+                    </button>
+                </div>
+            )}
+        </div>
     )
 }
