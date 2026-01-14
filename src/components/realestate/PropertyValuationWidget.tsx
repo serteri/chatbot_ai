@@ -206,8 +206,6 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
         bedrooms: 3,
         bathrooms: 2,
         carSpaces: 1,
-        bathrooms: 2,
-        carSpaces: 1,
         landArea: 0
     })
 
@@ -283,7 +281,6 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
             propertyType: 'house',
             bedrooms: 3,
             bathrooms: 2,
-            carSpaces: 1,
             carSpaces: 1,
             landArea: 0
         })
@@ -492,6 +489,6 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                 )}
             </div>
         </DialogContent>
-    </Dialog>
+    </Dialog >
     )
 }
