@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
             messages: [
                 {
                     role: 'system',
-                    content: `You are an Australian real estate valuation expert. You provide property value estimates based on market knowledge as of 2024. Always respond in JSON format with the exact structure requested. Be conservative in your estimates and always include appropriate disclaimers.`
+                    content: `You are an expert Australian property valuer with profound knowledge of late 2024 and 2025 market trends. Your valuations must reflect the current high-demand market conditions, especially for inner-city suburbs. If a suburb is ambiguous (e.g., 'Albion'), prefer the major state capital version (e.g., QLD/Brisbane) unless context implies otherwise. Be accurate but bullish where appropriate for premium locations. Always respond in JSON format.`
                 },
                 {
                     role: 'user',
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         }
 
         const valuation = JSON.parse(responseText) as ValuationResponse
-        valuation.disclaimer = 'This is an AI-generated estimate for informational purposes only. Actual property values may vary significantly. We recommend consulting with a licensed valuer for accurate valuations.'
+        valuation.disclaimer = 'This is an AI-generated estimate based on 2025 market projections. Actual values may vary.'
         valuation.currency = 'AUD'
 
         return NextResponse.json(valuation)
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 }
 
 function buildValuationPrompt(data: ValuationRequest): string {
-    return `Provide a property valuation estimate in JSON format for:
+    return `Provide a property valuation estimate in JSON format based on 2025 market data for:
 
 Location: ${data.suburb}${data.state ? `, ${data.state}` : ''}, Australia
 Property Type: ${data.propertyType}

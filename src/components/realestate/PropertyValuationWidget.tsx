@@ -21,8 +21,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog'
-import { Calculator, TrendingUp, TrendingDown, Minus, Loader2, Sparkles, AlertTriangle } from 'lucide-react'
+DialogTrigger,
+} from '@/components/ui/dialog'
+import { Calculator, TrendingUp, TrendingDown, Minus, Loader2, Sparkles, AlertTriangle, Search } from 'lucide-react'
 import { toast } from 'sonner'
+import { AU_SUBURBS } from '@/data/suburbs'
 
 interface ValuationResult {
     estimatedValue: {
@@ -204,8 +207,14 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
         bedrooms: 3,
         bathrooms: 2,
         carSpaces: 1,
+        bathrooms: 2,
+        carSpaces: 1,
         landArea: 0
     })
+
+    // Autocomplete state
+    const [showSuggestions, setShowSuggestions] = useState(false)
+    const [filteredSuburbs, setFilteredSuburbs] = useState(AU_SUBURBS)
 
     const t = translations[locale as keyof typeof translations] || translations.en
 
@@ -276,8 +285,11 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
             bedrooms: 3,
             bathrooms: 2,
             carSpaces: 1,
+            carSpaces: 1,
             landArea: 0
         })
+        setFilteredSuburbs(AU_SUBURBS)
+        setShowSuggestions(false)
         setResult(null)
     }
 
@@ -315,142 +327,172 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                 <div className="space-y-4 py-4">
                     {/* Form */}
                     <div className="space-y-4">
-                        <div>
-                            <Label htmlFor="suburb">{t.suburb}</Label>
+                        <Label htmlFor="suburb">{t.suburb}</Label>
+                        <div className="relative">
+                            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                             <Input
                                 id="suburb"
-                                placeholder="e.g., Albion, Brisbane"
+                                placeholder="e.g., Albion, QLD"
                                 value={formData.suburb}
-                                onChange={(e) => setFormData(prev => ({ ...prev, suburb: e.target.value }))}
+                                onChange={(e) => {
+                                    const value = e.target.value
+                                    setFormData(prev => ({ ...prev, suburb: value }))
+                                    const filtered = AU_SUBURBS.filter(s =>
+                                        s.label.toLowerCase().includes(value.toLowerCase())
+                                    )
+                                    setFilteredSuburbs(filtered)
+                                    setShowSuggestions(true)
+                                }}
+                                onFocus={() => setShowSuggestions(true)}
+                                // Delay hiding to allow click event
+                                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                                className="mt-1 pl-10"
+                                autoComplete="off"
+                            />
+                            {showSuggestions && filteredSuburbs.length > 0 && (
+                                <ul className="absolute z-[99999] w-full bg-white border rounded-md mt-1 max-h-60 overflow-auto shadow-lg">
+                                    {filteredSuburbs.map((suburb) => (
+                                        <li
+                                            key={suburb.value}
+                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                            onClick={() => {
+                                                setFormData(prev => ({ ...prev, suburb: suburb.value }))
+                                                setShowSuggestions(false)
+                                            }}
+                                        >
+                                            {suburb.label}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    </div>
+                    <div>
+                        <Label htmlFor="propertyType">{t.propertyType}</Label>
+                        <Select
+                            value={formData.propertyType}
+                            onValueChange={(value) => setFormData(prev => ({ ...prev, propertyType: value }))}
+                        >
+                            <SelectTrigger className="mt-1">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="z-[9999] bg-white" position="popper" sideOffset={5}>
+                                <SelectItem value="house">{t.house}</SelectItem>
+                                <SelectItem value="apartment">{t.apartment}</SelectItem>
+                                <SelectItem value="townhouse">{t.townhouse}</SelectItem>
+                                <SelectItem value="unit">{t.unit}</SelectItem>
+                                <SelectItem value="land">{t.land}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                        <div>
+                            <Label htmlFor="bedrooms">{t.bedrooms}</Label>
+                            <Input
+                                id="bedrooms"
+                                type="number"
+                                min={1}
+                                max={10}
+                                value={formData.bedrooms}
+                                onChange={(e) => setFormData(prev => ({ ...prev, bedrooms: parseInt(e.target.value) || 1 }))}
                                 className="mt-1"
                             />
                         </div>
                         <div>
-                            <Label htmlFor="propertyType">{t.propertyType}</Label>
-                            <Select
-                                value={formData.propertyType}
-                                onValueChange={(value) => setFormData(prev => ({ ...prev, propertyType: value }))}
-                            >
-                                <SelectTrigger className="mt-1">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="z-[9999] bg-white" position="popper" sideOffset={5}>
-                                    <SelectItem value="house">{t.house}</SelectItem>
-                                    <SelectItem value="apartment">{t.apartment}</SelectItem>
-                                    <SelectItem value="townhouse">{t.townhouse}</SelectItem>
-                                    <SelectItem value="unit">{t.unit}</SelectItem>
-                                    <SelectItem value="land">{t.land}</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <Label htmlFor="bathrooms">{t.bathrooms}</Label>
+                            <Input
+                                id="bathrooms"
+                                type="number"
+                                min={1}
+                                max={10}
+                                value={formData.bathrooms}
+                                onChange={(e) => setFormData(prev => ({ ...prev, bathrooms: parseInt(e.target.value) || 1 }))}
+                                className="mt-1"
+                            />
                         </div>
-                        <div className="grid grid-cols-3 gap-3">
-                            <div>
-                                <Label htmlFor="bedrooms">{t.bedrooms}</Label>
-                                <Input
-                                    id="bedrooms"
-                                    type="number"
-                                    min={1}
-                                    max={10}
-                                    value={formData.bedrooms}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, bedrooms: parseInt(e.target.value) || 1 }))}
-                                    className="mt-1"
-                                />
-                            </div>
-                            <div>
-                                <Label htmlFor="bathrooms">{t.bathrooms}</Label>
-                                <Input
-                                    id="bathrooms"
-                                    type="number"
-                                    min={1}
-                                    max={10}
-                                    value={formData.bathrooms}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, bathrooms: parseInt(e.target.value) || 1 }))}
-                                    className="mt-1"
-                                />
-                            </div>
-                            <div>
-                                <Label htmlFor="carSpaces">{t.carSpaces}</Label>
-                                <Input
-                                    id="carSpaces"
-                                    type="number"
-                                    min={0}
-                                    max={10}
-                                    value={formData.carSpaces}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, carSpaces: parseInt(e.target.value) || 0 }))}
-                                    className="mt-1"
-                                />
-                            </div>
+                        <div>
+                            <Label htmlFor="carSpaces">{t.carSpaces}</Label>
+                            <Input
+                                id="carSpaces"
+                                type="number"
+                                min={0}
+                                max={10}
+                                value={formData.carSpaces}
+                                onChange={(e) => setFormData(prev => ({ ...prev, carSpaces: parseInt(e.target.value) || 0 }))}
+                                className="mt-1"
+                            />
                         </div>
                     </div>
+                </div>
 
-                    <Button onClick={handleSubmit} disabled={isLoading} className="bg-purple-600 hover:bg-purple-700">
-                        {isLoading ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Calculating...
-                            </>
-                        ) : (
-                            <>
-                                <Calculator className="mr-2 h-4 w-4" />
-                                {t.calculate}
-                            </>
-                        )}
-                    </Button>
+                <Button onClick={handleSubmit} disabled={isLoading} className="bg-purple-600 hover:bg-purple-700">
+                    {isLoading ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Calculating...
+                        </>
+                    ) : (
+                        <>
+                            <Calculator className="mr-2 h-4 w-4" />
+                            {t.calculate}
+                        </>
+                    )}
+                </Button>
 
-                    {/* Results */}
-                    {result && (
-                        <div className="space-y-4 border-t pt-4">
-                            {/* Estimated Value */}
-                            <div className="text-center p-6 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-xl">
-                                <p className="text-sm text-purple-700 mb-1">{t.estimatedValue}</p>
-                                <p className="text-3xl font-bold text-purple-900">
-                                    {formatCurrency(result.estimatedValue.median)}
-                                </p>
-                                <p className="text-sm text-purple-600 mt-1">
-                                    {formatCurrency(result.estimatedValue.min)} - {formatCurrency(result.estimatedValue.max)}
-                                </p>
-                                <Badge className={`mt-2 ${getConfidenceColor(result.confidence)}`}>
-                                    {t.confidence}: {t[result.confidence as keyof typeof t]}
-                                </Badge>
-                            </div>
+                {/* Results */}
+                {result && (
+                    <div className="space-y-4 border-t pt-4">
+                        {/* Estimated Value */}
+                        <div className="text-center p-6 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-xl">
+                            <p className="text-sm text-purple-700 mb-1">{t.estimatedValue}</p>
+                            <p className="text-3xl font-bold text-purple-900">
+                                {formatCurrency(result.estimatedValue.median)}
+                            </p>
+                            <p className="text-sm text-purple-600 mt-1">
+                                {formatCurrency(result.estimatedValue.min)} - {formatCurrency(result.estimatedValue.max)}
+                            </p>
+                            <Badge className={`mt-2 ${getConfidenceColor(result.confidence)}`}>
+                                {t.confidence}: {t[result.confidence as keyof typeof t]}
+                            </Badge>
+                        </div>
 
-                            {/* Reasoning */}
-                            <div className="p-4 bg-slate-50 rounded-lg">
-                                <h4 className="font-medium mb-2">{t.reasoning}</h4>
-                                <p className="text-sm text-muted-foreground">{result.reasoning}</p>
-                            </div>
+                        {/* Reasoning */}
+                        <div className="p-4 bg-slate-50 rounded-lg">
+                            <h4 className="font-medium mb-2">{t.reasoning}</h4>
+                            <p className="text-sm text-muted-foreground">{result.reasoning}</p>
+                        </div>
 
-                            {/* Factors */}
-                            <div>
-                                <h4 className="font-medium mb-2">{t.factors}</h4>
-                                <div className="space-y-2">
-                                    {result.factors.map((factor, index) => (
-                                        <div key={index} className="flex items-start gap-2 p-2 bg-slate-50 rounded">
-                                            {getImpactIcon(factor.impact)}
-                                            <div>
-                                                <span className="font-medium text-sm">{factor.factor}</span>
-                                                <p className="text-xs text-muted-foreground">{factor.description}</p>
-                                            </div>
+                        {/* Factors */}
+                        <div>
+                            <h4 className="font-medium mb-2">{t.factors}</h4>
+                            <div className="space-y-2">
+                                {result.factors.map((factor, index) => (
+                                    <div key={index} className="flex items-start gap-2 p-2 bg-slate-50 rounded">
+                                        {getImpactIcon(factor.impact)}
+                                        <div>
+                                            <span className="font-medium text-sm">{factor.factor}</span>
+                                            <p className="text-xs text-muted-foreground">{factor.description}</p>
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Market Insights */}
-                            <div className="p-4 bg-blue-50 rounded-lg">
-                                <h4 className="font-medium text-blue-800 mb-1">{t.marketInsights}</h4>
-                                <p className="text-sm text-blue-700">{result.marketInsights}</p>
-                            </div>
-
-                            {/* Disclaimer */}
-                            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg flex gap-2">
-                                <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                                <p className="text-xs text-amber-700">{result.disclaimer}</p>
+                                    </div>
+                                ))}
                             </div>
                         </div>
-                    )}
-                </div>
-            </DialogContent>
-        </Dialog>
+
+                        {/* Market Insights */}
+                        <div className="p-4 bg-blue-50 rounded-lg">
+                            <h4 className="font-medium text-blue-800 mb-1">{t.marketInsights}</h4>
+                            <p className="text-sm text-blue-700">{result.marketInsights}</p>
+                        </div>
+
+                        {/* Disclaimer */}
+                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg flex gap-2">
+                            <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                            <p className="text-xs text-amber-700">{result.disclaimer}</p>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </DialogContent>
+        </Dialog >
     )
 }
