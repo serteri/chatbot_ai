@@ -873,5 +873,6 @@ export default function PropertiesPage() {
                     </DialogContent>
                 </Dialog>
             </div>
-            )
+        </div>
+    )
 }
