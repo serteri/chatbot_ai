@@ -33,6 +33,108 @@ interface ValuationResponse {
     disclaimer: string
 }
 
+// Suburb baseline prices (3bed/2bath house, January 2025)
+const SUBURB_PRICES: Record<string, number> = {
+    // Brisbane
+    'new farm': 2800000, 'teneriffe': 2500000, 'ascot': 2600000, 'hamilton': 2300000,
+    'bulimba': 2000000, 'hawthorne': 1900000, 'clayfield': 1800000,
+    'paddington': 1700000, 'west end': 1500000, 'newstead': 1600000,
+    'albion': 1400000, 'fortitude valley': 1200000, 'kangaroo point': 1300000,
+    'windsor': 1500000, 'wilston': 1600000, 'red hill': 1700000,
+    'toowong': 1500000, 'indooroopilly': 1600000, 'st lucia': 1700000,
+    'coorparoo': 1400000, 'camp hill': 1500000, 'norman park': 1500000,
+    'morningside': 1350000, 'nundah': 1100000, 'chermside': 950000,
+    // Sydney
+    'vaucluse': 8000000, 'point piper': 15000000, 'double bay': 5500000, 'mosman': 5000000,
+    'paddington nsw': 3200000, 'woollahra': 4000000, 'bellevue hill': 5000000,
+    'surry hills': 2200000, 'newtown': 2000000, 'balmain': 2500000,
+    'bondi beach': 4000000, 'bondi': 3500000, 'manly': 4200000, 'coogee': 3500000,
+    // Melbourne
+    'toorak': 5500000, 'brighton': 3200000, 'south yarra': 2800000, 'armadale': 2500000,
+    'richmond': 1800000, 'fitzroy': 1900000, 'carlton': 1600000, 'st kilda': 1700000,
+    'brunswick': 1400000, 'northcote': 1600000, 'hawthorn': 2200000,
+    // Perth
+    'cottesloe': 3000000, 'dalkeith': 3500000, 'peppermint grove': 5000000, 'city beach': 2500000,
+    // Adelaide
+    'unley': 1600000, 'norwood': 1400000, 'north adelaide': 1500000,
+    // Gold Coast
+    'main beach': 2500000, 'surfers paradise': 1800000, 'burleigh heads': 1600000,
+}
+
+// City default prices
+const CITY_DEFAULTS: Record<string, number> = {
+    'brisbane': 1100000, 'qld': 1100000,
+    'sydney': 1600000, 'nsw': 1600000,
+    'melbourne': 1150000, 'vic': 1150000,
+    'perth': 850000, 'wa': 850000,
+    'adelaide': 850000, 'sa': 850000,
+    'gold coast': 1050000,
+    'canberra': 950000, 'act': 950000,
+    'hobart': 750000, 'tas': 750000,
+    'darwin': 550000, 'nt': 550000,
+}
+
+// Bedroom multipliers
+const BEDROOM_MULTIPLIERS: Record<number, number> = {
+    1: 0.45, 2: 0.70, 3: 1.00, 4: 1.15, 5: 1.30, 6: 1.45
+}
+
+// Bathroom multipliers
+const BATHROOM_MULTIPLIERS: Record<number, number> = {
+    1: 0.92, 2: 1.00, 3: 1.06, 4: 1.12
+}
+
+// Property type multipliers
+const TYPE_MULTIPLIERS: Record<string, number> = {
+    'house': 1.00,
+    'townhouse': 0.75,
+    'apartment': 0.50,
+    'unit': 0.50,
+    'land': 0.40
+}
+
+function calculateValuation(data: ValuationRequest): { min: number; max: number; median: number } {
+    // Step 1: Get baseline price for suburb
+    const suburbLower = data.suburb.toLowerCase()
+    let baseline = 1000000 // fallback
+
+    // Try exact suburb match
+    for (const [suburb, price] of Object.entries(SUBURB_PRICES)) {
+        if (suburbLower.includes(suburb)) {
+            baseline = price
+            break
+        }
+    }
+
+    // If no suburb match, try city/state default
+    if (baseline === 1000000) {
+        for (const [city, price] of Object.entries(CITY_DEFAULTS)) {
+            if (suburbLower.includes(city)) {
+                baseline = price
+                break
+            }
+        }
+    }
+
+    // Step 2: Apply bedroom multiplier
+    const bedrooms = Math.min(Math.max(data.bedrooms, 1), 6)
+    const bedroomMult = BEDROOM_MULTIPLIERS[bedrooms] || 1.00
+
+    // Step 3: Apply bathroom multiplier
+    const bathrooms = Math.min(Math.max(data.bathrooms, 1), 4)
+    const bathroomMult = BATHROOM_MULTIPLIERS[bathrooms] || 1.00
+
+    // Step 4: Apply property type multiplier
+    const typeMult = TYPE_MULTIPLIERS[data.propertyType.toLowerCase()] || 1.00
+
+    // Step 5: Calculate final values
+    const median = Math.round(baseline * bedroomMult * bathroomMult * typeMult)
+    const min = Math.round(median * 0.88)
+    const max = Math.round(median * 1.12)
+
+    return { min, max, median }
+}
+
 export async function POST(request: NextRequest) {
     try {
         const session = await auth()
@@ -49,86 +151,80 @@ export async function POST(request: NextRequest) {
             }, { status: 400 })
         }
 
-        // Check for OpenAI API key
+        // Calculate valuation using our formula (NOT OpenAI)
+        const calculatedValue = calculateValuation(body)
+
+        // Check for OpenAI API key - use for generating text only
         const openaiApiKey = process.env.OPENAI_API_KEY
         if (!openaiApiKey) {
-            // Return mock data if no API key
-            return NextResponse.json(getMockValuation(body))
+            return NextResponse.json(getMockValuation(body, calculatedValue))
         }
 
         const openai = new OpenAI({ apiKey: openaiApiKey })
 
-        const prompt = buildValuationPrompt(body)
-
+        // Only ask OpenAI for reasoning and insights, NOT the numbers
         const completion = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [
                 {
                     role: 'system',
-                    content: `You are a property valuation calculator. You MUST use the exact formula below.
-
-BASELINE PRICES (3bed/2bath HOUSE, January 2025):
-Brisbane: Albion=1400000, New Farm=2800000, Teneriffe=2500000, Ascot=2600000, Hamilton=2300000, Bulimba=2000000, Paddington=1700000, West End=1500000, Newstead=1600000, Windsor=1500000, Toowong=1500000, default=1100000
-Sydney: Vaucluse=8000000, Double Bay=5500000, Mosman=5000000, Bondi=4000000, Surry Hills=2200000, default=1600000
-Melbourne: Toorak=5500000, Brighton=3200000, South Yarra=2800000, Richmond=1800000, Fitzroy=1900000, default=1150000
-Perth: Cottesloe=3000000, Dalkeith=3500000, default=850000
-Adelaide: Unley=1600000, Norwood=1400000, default=850000
-Gold Coast: Surfers Paradise=1800000, Burleigh=1600000, default=1050000
-
-===== CALCULATION FORMULA (MUST FOLLOW) =====
-
-STEP 1 - Get baseline for suburb (or use city default)
-
-STEP 2 - Bedroom multiplier:
-1bed=0.45, 2bed=0.70, 3bed=1.00, 4bed=1.15, 5bed=1.30, 6+bed=1.45
-
-STEP 3 - Bathroom multiplier:
-1bath=0.92, 2bath=1.00, 3bath=1.06, 4+bath=1.12
-
-STEP 4 - Property type multiplier:
-house=1.00, townhouse=0.75, apartment=0.50, unit=0.50
-
-STEP 5 - Calculate:
-median = baseline × bedroom_mult × bathroom_mult × type_mult
-min = median × 0.88
-max = median × 1.12
-
-===== EXAMPLES =====
-
-Albion, 1bed, 1bath, apartment:
-1400000 × 0.45 × 0.92 × 0.50 = 289800
-Result: min=255000, median=290000, max=325000
-
-Albion, 3bed, 2bath, house:
-1400000 × 1.00 × 1.00 × 1.00 = 1400000
-Result: min=1232000, median=1400000, max=1568000
-
-Albion, 4bed, 2bath, house:
-1400000 × 1.15 × 1.00 × 1.00 = 1610000
-Result: min=1417000, median=1610000, max=1803000
-
-New Farm, 5bed, 3bath, house:
-2800000 × 1.30 × 1.06 × 1.00 = 3858400
-Result: min=3395000, median=3858000, max=4321000
-
-IMPORTANT: Return values as plain integers (1400000 not "$1.4M"). Show calculation in reasoning.`
+                    content: `You are an Australian property market expert. Provide market analysis and insights only. Do NOT calculate prices - those are provided separately apply.`
                 },
                 {
                     role: 'user',
-                    content: prompt
+                    content: `Provide market analysis for this property in JSON format:
+
+Location: ${body.suburb}, Australia
+Property Type: ${body.propertyType}
+Bedrooms: ${body.bedrooms}
+Bathrooms: ${body.bathrooms}
+Calculated Value: $${calculatedValue.median.toLocaleString()} (range: $${calculatedValue.min.toLocaleString()} - $${calculatedValue.max.toLocaleString()})
+
+Respond with this exact JSON structure:
+{
+  "confidence": "high" or "medium" or "low",
+  "reasoning": "2-3 sentences explaining why this valuation makes sense for this suburb and property type",
+  "factors": [
+    {"factor": "Location", "impact": "positive/negative/neutral", "description": "brief explanation"},
+    {"factor": "Property Size", "impact": "positive/negative/neutral", "description": "brief explanation"},
+    {"factor": "Market Demand", "impact": "positive/negative/neutral", "description": "brief explanation"}
+  ],
+  "marketInsights": "1-2 sentences about current market trends in this area"
+}`
                 }
             ],
             response_format: { type: 'json_object' }
         })
 
         const responseText = completion.choices[0]?.message?.content
-        if (!responseText) {
-            throw new Error('No response from AI')
+        let aiResponse = {
+            confidence: 'medium' as const,
+            reasoning: `Based on comparable ${body.bedrooms} bedroom ${body.propertyType} properties in ${body.suburb}.`,
+            factors: [
+                { factor: 'Location', impact: 'positive' as const, description: 'Desirable suburb' },
+                { factor: 'Property Size', impact: 'neutral' as const, description: `${body.bedrooms} bedrooms` },
+            ],
+            marketInsights: 'Market conditions are stable.'
         }
 
-        const valuation = JSON.parse(responseText) as ValuationResponse
-        valuation.disclaimer = 'This is an AI-generated estimate based on 2025 market projections. Actual values may vary.'
-        valuation.currency = 'AUD'
+        if (responseText) {
+            try {
+                aiResponse = JSON.parse(responseText)
+            } catch {
+                // Use default if parsing fails
+            }
+        }
+
+        // Combine calculated values with AI-generated text
+        const valuation: ValuationResponse = {
+            estimatedValue: calculatedValue,
+            confidence: aiResponse.confidence || 'medium',
+            currency: 'AUD',
+            reasoning: aiResponse.reasoning,
+            factors: aiResponse.factors || [],
+            marketInsights: aiResponse.marketInsights,
+            disclaimer: 'This is an AI-generated estimate based on 2025 market data. Actual values may vary. Consult a licensed valuer for accurate valuations.'
+        }
 
         return NextResponse.json(valuation)
 
@@ -141,58 +237,12 @@ IMPORTANT: Return values as plain integers (1400000 not "$1.4M"). Show calculati
     }
 }
 
-function buildValuationPrompt(data: ValuationRequest): string {
-    return `Provide a property valuation estimate in JSON format based on 2025 market data for:
-
-Location: ${data.suburb}${data.state ? `, ${data.state}` : ''}, Australia
-Property Type: ${data.propertyType}
-Bedrooms: ${data.bedrooms}
-Bathrooms: ${data.bathrooms}
-${data.carSpaces ? `Car Spaces: ${data.carSpaces}` : ''}
-${data.landArea ? `Land Area: ${data.landArea} sqm` : ''}
-${data.buildingArea ? `Building Area: ${data.buildingArea} sqm` : ''}
-${data.features?.length ? `Features: ${data.features.join(', ')}` : ''}
-${data.condition ? `Condition: ${data.condition}` : ''}
-
-IMPORTANT: All monetary values MUST be plain integers WITHOUT any formatting, symbols, or abbreviations.
-- CORRECT: 1400000
-- WRONG: "$1.4M", "1,400,000", "$1,400,000", "1.4M"
-
-Respond with this exact JSON structure:
-{
-  "estimatedValue": {
-    "min": 1232000,
-    "max": 1568000,
-    "median": 1400000
-  },
-  "confidence": "high",
-  "reasoning": "2-3 sentences explaining the valuation",
-  "factors": [
-    {
-      "factor": "factor name",
-      "impact": "positive|negative|neutral",
-      "description": "brief explanation"
-    }
-  ],
-  "marketInsights": "1-2 sentences about the local market"
-}`
-}
-
-function getMockValuation(data: ValuationRequest): ValuationResponse {
-    // Simple mock calculation for demo purposes
-    const basePrice = getBasePrice(data.propertyType, data.suburb)
-    const bedroomMultiplier = 1 + (data.bedrooms - 3) * 0.15
-    const bathroomMultiplier = 1 + (data.bathrooms - 1) * 0.05
-
-    const median = Math.round(basePrice * bedroomMultiplier * bathroomMultiplier)
-    const min = Math.round(median * 0.85)
-    const max = Math.round(median * 1.15)
-
+function getMockValuation(data: ValuationRequest, calculatedValue: { min: number; max: number; median: number }): ValuationResponse {
     return {
-        estimatedValue: { min, max, median },
+        estimatedValue: calculatedValue,
         confidence: 'medium',
         currency: 'AUD',
-        reasoning: `Based on comparable ${data.bedrooms} bedroom ${data.propertyType} properties in ${data.suburb}, the estimated value range reflects current market conditions. This estimate considers property type, size, and local market trends.`,
+        reasoning: `Based on comparable ${data.bedrooms} bedroom ${data.propertyType} properties in ${data.suburb}, the estimated value reflects current 2025 market conditions.`,
         factors: [
             {
                 factor: 'Location',
@@ -202,7 +252,7 @@ function getMockValuation(data: ValuationRequest): ValuationResponse {
             {
                 factor: 'Bedrooms',
                 impact: data.bedrooms >= 4 ? 'positive' : 'neutral',
-                description: `${data.bedrooms} bedrooms appeals to ${data.bedrooms >= 4 ? 'families' : 'small households'}`
+                description: `${data.bedrooms} bedrooms appeals to ${data.bedrooms >= 4 ? 'families' : 'various household sizes'}`
             },
             {
                 factor: 'Property Type',
@@ -210,46 +260,7 @@ function getMockValuation(data: ValuationRequest): ValuationResponse {
                 description: `${data.propertyType}s in this area have steady demand`
             }
         ],
-        marketInsights: `The ${data.suburb} property market shows moderate activity with steady demand for ${data.propertyType} properties.`,
-        disclaimer: 'This is an AI-generated estimate for informational purposes only. Actual property values may vary significantly. We recommend consulting with a licensed valuer for accurate valuations.'
+        marketInsights: `The ${data.suburb} property market shows strong activity with steady demand for ${data.propertyType} properties.`,
+        disclaimer: 'This is an estimate based on 2025 market data. Actual values may vary. Consult a licensed valuer for accurate valuations.'
     }
-}
-
-function getBasePrice(propertyType: string, suburb: string): number {
-    // Realistic 2024 Brisbane metro base prices (AUD)
-    // Brisbane median house price is around $900k, inner-city suburbs much higher
-    const basePrices: Record<string, number> = {
-        house: 1100000,      // Brisbane metro average
-        apartment: 650000,
-        townhouse: 850000,
-        unit: 520000,
-        land: 550000
-    }
-
-    // Inner-city Brisbane suburbs - higher prices
-    const innerCitySuburbs = [
-        'albion', 'newstead', 'fortitude valley', 'new farm', 'teneriffe',
-        'bulimba', 'hawthorne', 'ascot', 'hamilton', 'paddington',
-        'red hill', 'kelvin grove', 'spring hill', 'west end', 'highgate hill'
-    ]
-
-    // Premium suburbs - highest prices
-    const premiumSuburbs = [
-        'ascot', 'hamilton', 'new farm', 'teneriffe', 'bulimba',
-        'mosman', 'toorak', 'cottesloe', 'double bay', 'vaucluse'
-    ]
-
-    const suburbLower = suburb.toLowerCase()
-    const isPremium = premiumSuburbs.some(s => suburbLower.includes(s))
-    const isInnerCity = innerCitySuburbs.some(s => suburbLower.includes(s))
-
-    const base = basePrices[propertyType.toLowerCase()] || 900000
-
-    if (isPremium) {
-        return base * 1.8  // Premium suburbs 80% higher
-    } else if (isInnerCity) {
-        return base * 1.4  // Inner-city 40% higher
-    }
-
-    return base
 }
