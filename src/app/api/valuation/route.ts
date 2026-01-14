@@ -162,23 +162,27 @@ ${data.buildingArea ? `Building Area: ${data.buildingArea} sqm` : ''}
 ${data.features?.length ? `Features: ${data.features.join(', ')}` : ''}
 ${data.condition ? `Condition: ${data.condition}` : ''}
 
+IMPORTANT: All monetary values MUST be plain integers WITHOUT any formatting, symbols, or abbreviations.
+- CORRECT: 1400000
+- WRONG: "$1.4M", "1,400,000", "$1,400,000", "1.4M"
+
 Respond with this exact JSON structure:
 {
   "estimatedValue": {
-    "min": <number - lowest reasonable estimate in AUD>,
-    "max": <number - highest reasonable estimate in AUD>,
-    "median": <number - most likely value in AUD>
+    "min": 1232000,
+    "max": 1568000,
+    "median": 1400000
   },
-  "confidence": "<high|medium|low>",
-  "reasoning": "<2-3 sentences explaining the valuation>",
+  "confidence": "high",
+  "reasoning": "2-3 sentences explaining the valuation",
   "factors": [
     {
-      "factor": "<factor name>",
-      "impact": "<positive|negative|neutral>",
-      "description": "<brief explanation>"
+      "factor": "factor name",
+      "impact": "positive|negative|neutral",
+      "description": "brief explanation"
     }
   ],
-  "marketInsights": "<1-2 sentences about the local market>"
+  "marketInsights": "1-2 sentences about the local market"
 }`
 }
 
