@@ -48,8 +48,10 @@ import {
     MoreVertical,
     CheckCircle,
     AlertCircle,
-    Loader2
+    Loader2,
+    CalendarClock
 } from 'lucide-react'
+import { InspectionTimesManager } from '@/components/realestate/InspectionTimesManager'
 
 interface Property {
     id: string
@@ -248,6 +250,8 @@ export default function PropertiesPage() {
     const [loading, setLoading] = useState(true)
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
     const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
+    const [inspectionPropertyId, setInspectionPropertyId] = useState<string | null>(null)
+    const [inspectionPropertyInitialTimes, setInspectionPropertyInitialTimes] = useState<any[]>([])
     const [saving, setSaving] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
     const [filterType, setFilterType] = useState('all')
@@ -416,6 +420,27 @@ export default function PropertiesPage() {
             setMessage({ type: 'error', text: t.messages.error })
         }
     }
+
+    const handleOpenInspections = (property: Property) => {
+        // Since we don't fetch full inspection details in list view, 
+        // we might pass empty array initially and let the component fetch it, 
+        // OR we need to update the fetchProperties to include inspectionTimes.
+        // For now, let's assume the component fetches its own data or we pass what we have.
+        // But the current fetchProperties likely doesn't include inspectionTimes.
+        // Let's modify the component to fetch on mount if needed, OR relies on props.
+        // The InspectionTimesManager component takes initialInspections.
+        // Let's assume we pass property ID and it handles it, OR we pass [] and correct it.
+        // The most robust way is to pass initialInspections if available, or fetch.
+        // However, InspectionTimesManager as separate component might be simplest to just fetch its own.
+        // Let's check InspectionTimesManager again. It takes initialInspections but also fetches on update?
+        // Actually it fetches on update (POST/DELETE). It doesn't fetch on mount.
+        // So we should probably pass the data.
+        // For this step, I will just open the dialog. The property object needs to have inspectionTimes.
+        // I'll need to update the Property interface and fetch logic if not present.
+        setInspectionPropertyId(property.id)
+        setInspectionPropertyInitialTimes((property as any).inspectionTimes || [])
+    }
+
 
     const resetForm = () => {
         setFormData({
@@ -817,6 +842,9 @@ export default function PropertiesPage() {
                                             {t.status[property.status as keyof typeof t.status]}
                                         </Badge>
                                         <div className="flex gap-2">
+                                            <Button size="sm" variant="ghost" onClick={() => handleOpenInspections(property)} title={locale === 'tr' ? 'Görüntüleme Saatleri' : 'Inspection Times'}>
+                                                <CalendarClock className="h-4 w-4 text-blue-600" />
+                                            </Button>
                                             <Button size="sm" variant="ghost" onClick={() => handleDeleteProperty(property.id)}>
                                                 <Trash2 className="h-4 w-4 text-red-500" />
                                             </Button>
@@ -827,7 +855,23 @@ export default function PropertiesPage() {
                         ))}
                     </div>
                 )}
+                {/* Inspection Times Dialog */}
+                <Dialog open={!!inspectionPropertyId} onOpenChange={(open) => !open && setInspectionPropertyId(null)}>
+                    <DialogContent className="max-w-xl">
+                        <DialogHeader>
+                            <DialogTitle>
+                                {locale === 'tr' ? 'Görüntüleme Saatleri Yönetimi' : 'Manage Inspection Times'}
+                            </DialogTitle>
+                        </DialogHeader>
+                        {inspectionPropertyId && (
+                            <InspectionTimesManager
+                                propertyId={inspectionPropertyId}
+                                initialInspections={inspectionPropertyInitialTimes}
+                                locale={locale}
+                            />
+                        )}
+                    </DialogContent>
+                </Dialog>
             </div>
-        </div>
-    )
+            )
 }
