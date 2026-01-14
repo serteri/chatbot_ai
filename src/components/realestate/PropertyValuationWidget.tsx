@@ -21,8 +21,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog'
-DialogTrigger,
-} from '@/components/ui/dialog'
+
 import { Calculator, TrendingUp, TrendingDown, Minus, Loader2, Sparkles, AlertTriangle, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { AU_SUBURBS } from '@/data/suburbs'
