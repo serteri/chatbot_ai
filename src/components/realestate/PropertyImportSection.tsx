@@ -15,6 +15,50 @@ import {
     Clock
 } from 'lucide-react'
 
+// Local translations for component-specific strings
+const localTranslations = {
+    tr: {
+        soon: 'Yakında',
+        connect: 'Bağlan',
+        howItWorks: 'Nasıl Çalışır?',
+        howItWorksDesc: 'realestate.com.au veya domain.com.au\'dan ilan URL\'si yapıştırın. Sistem otomatik olarak fotoğrafları, fiyatı, oda sayısını ve adresi çeker. Müşteri "Albion\'da 3 odalı ev istiyorum" dediğinde chatbot otomatik eşleşen ilanları carousel\'de gösterir.',
+        cardDescription: 'İlanlarınızı yükleyin, chatbot müşteri tercihlerine göre otomatik eşleştirme yapsın',
+        createChatbotFirst: 'Önce bir emlak chatbotu oluşturun'
+    },
+    en: {
+        soon: 'Soon',
+        connect: 'Connect',
+        howItWorks: 'How It Works?',
+        howItWorksDesc: 'Paste a listing URL from realestate.com.au or domain.com.au. The system automatically extracts photos, price, bedrooms, and address. When a customer asks "I want a 3-bedroom house in Albion", the chatbot shows matching listings in a carousel.',
+        cardDescription: 'Upload your listings, chatbot will automatically match based on customer preferences',
+        createChatbotFirst: 'Create a real estate chatbot first'
+    },
+    de: {
+        soon: 'Bald verfügbar',
+        connect: 'Verbinden',
+        howItWorks: 'Wie funktioniert es?',
+        howItWorksDesc: 'Fügen Sie eine Immobilien-URL von realestate.com.au oder domain.com.au ein. Das System extrahiert automatisch Fotos, Preis, Schlafzimmer und Adresse. Wenn ein Kunde fragt "Ich möchte ein 3-Zimmer-Haus in Albion", zeigt der Chatbot passende Angebote in einem Karussell.',
+        cardDescription: 'Laden Sie Ihre Angebote hoch, der Chatbot passt automatisch basierend auf Kundenpräferenzen an',
+        createChatbotFirst: 'Erstellen Sie zuerst einen Immobilien-Chatbot'
+    },
+    fr: {
+        soon: 'Bientôt',
+        connect: 'Connecter',
+        howItWorks: 'Comment ça marche ?',
+        howItWorksDesc: 'Collez une URL d\'annonce de realestate.com.au ou domain.com.au. Le système extrait automatiquement les photos, le prix, les chambres et l\'adresse. Quand un client demande "Je veux une maison de 3 chambres à Albion", le chatbot affiche les annonces correspondantes dans un carrousel.',
+        cardDescription: 'Téléchargez vos annonces, le chatbot associera automatiquement selon les préférences des clients',
+        createChatbotFirst: 'Créez d\'abord un chatbot immobilier'
+    },
+    es: {
+        soon: 'Próximamente',
+        connect: 'Conectar',
+        howItWorks: '¿Cómo funciona?',
+        howItWorksDesc: 'Pegue una URL de anuncio de realestate.com.au o domain.com.au. El sistema extrae automáticamente fotos, precio, habitaciones y dirección. Cuando un cliente pregunta "Quiero una casa de 3 habitaciones en Albion", el chatbot muestra los anuncios coincidentes en un carrusel.',
+        cardDescription: 'Suba sus anuncios, el chatbot asociará automáticamente según las preferencias del cliente',
+        createChatbotFirst: 'Primero cree un chatbot inmobiliario'
+    }
+}
+
 interface PropertyImportSectionProps {
     locale: string
     chatbots: Array<{
@@ -38,6 +82,7 @@ interface PropertyImportSectionProps {
 
 export function PropertyImportSection({ locale, chatbots, translations: rt }: PropertyImportSectionProps) {
     const [selectedChatbotId, setSelectedChatbotId] = useState<string>(chatbots[0]?.id || '')
+    const lt = localTranslations[locale as keyof typeof localTranslations] || localTranslations.en
 
     const hasNoChatbots = chatbots.length === 0
 
@@ -63,21 +108,13 @@ export function PropertyImportSection({ locale, chatbots, translations: rt }: Pr
                         </select>
                     )}
                 </div>
-                <CardDescription>
-                    {locale === 'tr'
-                        ? 'İlanlarınızı yükleyin, chatbot müşteri tercihlerine göre otomatik eşleştirme yapsın'
-                        : 'Upload your listings, chatbot will automatically match based on customer preferences'}
-                </CardDescription>
+                <CardDescription>{lt.cardDescription}</CardDescription>
             </CardHeader>
             <CardContent>
                 {hasNoChatbots ? (
                     <div className="text-center py-8 text-muted-foreground">
                         <Home className="h-12 w-12 mx-auto mb-3 text-slate-200" />
-                        <p className="text-sm mb-2">
-                            {locale === 'tr'
-                                ? 'Önce bir emlak chatbotu oluşturun'
-                                : 'Create a real estate chatbot first'}
-                        </p>
+                        <p className="text-sm mb-2">{lt.createChatbotFirst}</p>
                     </div>
                 ) : (
                     <>
@@ -116,7 +153,7 @@ export function PropertyImportSection({ locale, chatbots, translations: rt }: Pr
                                             {rt.importOptions.xml}
                                             <Badge variant="secondary" className="text-xs">
                                                 <Clock className="h-3 w-3 mr-1" />
-                                                {locale === 'tr' ? 'Yakında' : 'Soon'}
+                                                {lt.soon}
                                             </Badge>
                                         </h4>
                                         <p className="text-xs text-muted-foreground">{rt.importOptions.xmlDesc}</p>
@@ -139,7 +176,7 @@ export function PropertyImportSection({ locale, chatbots, translations: rt }: Pr
                                             {rt.importOptions.api}
                                             <Badge variant="secondary" className="text-xs">
                                                 <Clock className="h-3 w-3 mr-1" />
-                                                {locale === 'tr' ? 'Yakında' : 'Soon'}
+                                                {lt.soon}
                                             </Badge>
                                         </h4>
                                         <p className="text-xs text-muted-foreground">{rt.importOptions.apiDesc}</p>
@@ -147,7 +184,7 @@ export function PropertyImportSection({ locale, chatbots, translations: rt }: Pr
                                 </div>
                                 <Button variant="outline" className="w-full" disabled>
                                     <Link2 className="mr-2 h-4 w-4" />
-                                    {locale === 'tr' ? 'Bağlan' : 'Connect'}
+                                    {lt.connect}
                                 </Button>
                             </div>
                         </div>
@@ -156,13 +193,9 @@ export function PropertyImportSection({ locale, chatbots, translations: rt }: Pr
                         <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                             <h4 className="font-semibold text-amber-800 mb-2 flex items-center gap-2">
                                 <TrendingUp className="h-4 w-4" />
-                                {locale === 'tr' ? 'Nasıl Çalışır?' : 'How It Works?'}
+                                {lt.howItWorks}
                             </h4>
-                            <p className="text-sm text-amber-700">
-                                {locale === 'tr'
-                                    ? 'realestate.com.au veya domain.com.au\'dan ilan URL\'si yapıştırın. Sistem otomatik olarak fotoğrafları, fiyatı, oda sayısını ve adresi çeker. Müşteri "Albion\'da 3 odalı ev istiyorum" dediğinde chatbot otomatik eşleşen ilanları carousel\'de gösterir.'
-                                    : 'Paste a listing URL from realestate.com.au or domain.com.au. The system automatically extracts photos, price, bedrooms, and address. When a customer asks "I want a 3-bedroom house in Albion", the chatbot shows matching listings in a carousel.'}
-                            </p>
+                            <p className="text-sm text-amber-700">{lt.howItWorksDesc}</p>
                         </div>
                     </>
                 )}
