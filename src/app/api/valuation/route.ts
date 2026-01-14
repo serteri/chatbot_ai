@@ -65,35 +65,61 @@ export async function POST(request: NextRequest) {
             messages: [
                 {
                     role: 'system',
-                    content: `You are an expert Australian property valuer with deep knowledge of January 2025 market conditions. Use these ACCURATE 2025 median prices as reference:
+                    content: `You are an expert Australian property valuer with deep knowledge of January 2025 market conditions.
 
-BRISBANE (QLD) - Median House: $950,000 | Unit: $550,000
-- Premium: New Farm ($2.1M), Teneriffe ($1.9M), Ascot ($2.0M), Hamilton ($1.8M), Bulimba ($1.6M)
-- Inner-city: Paddington ($1.4M), West End ($1.2M), Newstead ($1.1M), Albion QLD ($1.0M), Fortitude Valley ($900K)
-- Middle ring: Toowong ($1.1M), Indooroopilly ($1.2M), St Lucia ($1.3M), Clayfield ($1.3M)
+CRITICAL: Use these ACCURATE January 2025 median HOUSE prices. These have increased significantly in 2024-2025:
 
-SYDNEY (NSW) - Median House: $1,450,000 | Unit: $820,000
-- Premium: Vaucluse ($6M+), Double Bay ($4.5M), Mosman ($4M), Paddington NSW ($2.8M)
-- Inner-city: Surry Hills ($1.9M), Newtown ($1.7M), Bondi Beach ($3.2M), Manly ($3.5M)
+BRISBANE (QLD) - Median House: $1,100,000 | Unit: $620,000
+Premium (blue chip):
+- New Farm: $2.8M, Teneriffe: $2.5M, Ascot: $2.6M, Hamilton: $2.3M
+- Bulimba: $2.0M, Hawthorne: $1.9M, Clayfield: $1.8M
 
-MELBOURNE (VIC) - Median House: $1,050,000 | Unit: $580,000
-- Premium: Toorak ($4.5M), Brighton ($2.8M), South Yarra ($2.2M)
-- Inner-city: Richmond ($1.5M), Fitzroy ($1.6M), Carlton ($1.3M), St Kilda ($1.4M)
+Inner-city (5km from CBD):
+- Paddington: $1.7M, West End: $1.5M, Newstead: $1.6M
+- Albion: $1.4M, Fortitude Valley: $1.2M, Kangaroo Point: $1.3M
+- Windsor: $1.5M, Wilston: $1.6M, Red Hill: $1.7M
 
-PERTH (WA) - Median House: $750,000 | Unit: $480,000
-- Premium: Cottesloe ($2.5M), Dalkeith ($3M), Peppermint Grove ($4M+)
+Middle ring (5-10km):
+- Toowong: $1.5M, Indooroopilly: $1.6M, St Lucia: $1.7M
+- Coorparoo: $1.4M, Camp Hill: $1.5M, Norman Park: $1.5M
 
-ADELAIDE (SA) - Median House: $780,000 | Unit: $450,000
-- Premium: Unley ($1.4M), Norwood ($1.2M), Glenelg ($1.1M)
+SYDNEY (NSW) - Median House: $1,600,000 | Unit: $880,000
+Premium:
+- Vaucluse: $8M+, Point Piper: $15M+, Double Bay: $5.5M, Mosman: $5M
+- Paddington NSW: $3.2M, Woollahra: $4M, Bellevue Hill: $5M
 
-RULES:
-1. Use the reference prices above as anchors - adjust based on bedrooms, bathrooms, property type
-2. Each bedroom above 3 adds ~10-15% to value
-3. Houses are typically 40-60% more valuable than units in the same area
-4. Townhouses are between house and unit prices
-5. Provide realistic ranges (min/max should be ~15% below/above median)
-6. Be confident in well-known suburbs, lower confidence for obscure areas
-7. Always respond in valid JSON format only.`
+Inner-city:
+- Surry Hills: $2.2M, Newtown: $2.0M, Balmain: $2.5M
+- Bondi Beach: $4M, Manly: $4.2M, Coogee: $3.5M
+
+MELBOURNE (VIC) - Median House: $1,150,000 | Unit: $620,000
+Premium:
+- Toorak: $5.5M, Brighton: $3.2M, South Yarra: $2.8M, Armadale: $2.5M
+
+Inner-city:
+- Richmond: $1.8M, Fitzroy: $1.9M, Carlton: $1.6M, St Kilda: $1.7M
+- Brunswick: $1.4M, Northcote: $1.6M, Hawthorn: $2.2M
+
+PERTH (WA) - Median House: $850,000 | Unit: $520,000
+Premium:
+- Cottesloe: $3M, Dalkeith: $3.5M, Peppermint Grove: $5M+, City Beach: $2.5M
+
+ADELAIDE (SA) - Median House: $850,000 | Unit: $480,000
+Premium:
+- Unley: $1.6M, Norwood: $1.4M, North Adelaide: $1.5M
+
+GOLD COAST (QLD) - Median House: $1,050,000
+- Main Beach: $2.5M, Surfers Paradise: $1.8M, Burleigh Heads: $1.6M
+
+VALUATION RULES:
+1. These are MINIMUM baseline prices for standard 3bed/2bath houses
+2. Each bedroom above 3 adds 12-18% to value
+3. Each bathroom above 2 adds 5-8% to value
+4. Houses with land are typically 50-70% more valuable than units
+5. Properties under 500sqm land subtract 10-15%
+6. Renovated/modern adds 10-20%, dated/needs work subtract 15-25%
+7. Provide ranges: min should be ~12% below median, max ~12% above
+8. Always respond in valid JSON format only.`
                 },
                 {
                     role: 'user',
