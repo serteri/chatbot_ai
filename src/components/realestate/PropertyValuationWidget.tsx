@@ -284,7 +284,7 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                     </CardContent>
                 </Card>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto bg-white">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Calculator className="h-5 w-5 text-purple-600" />
@@ -293,16 +293,17 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                     <DialogDescription>{t.description}</DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-4 py-4">
+                <div className="space-y-4 py-4">
                     {/* Form */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="col-span-2">
+                    <div className="space-y-4">
+                        <div>
                             <Label htmlFor="suburb">{t.suburb}</Label>
                             <Input
                                 id="suburb"
                                 placeholder="e.g., Albion, Brisbane"
                                 value={formData.suburb}
                                 onChange={(e) => setFormData(prev => ({ ...prev, suburb: e.target.value }))}
+                                className="mt-1"
                             />
                         </div>
                         <div>
@@ -311,7 +312,7 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                                 value={formData.propertyType}
                                 onValueChange={(value) => setFormData(prev => ({ ...prev, propertyType: value }))}
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="mt-1">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -323,38 +324,43 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div>
-                            <Label htmlFor="bedrooms">{t.bedrooms}</Label>
-                            <Input
-                                id="bedrooms"
-                                type="number"
-                                min={1}
-                                max={10}
-                                value={formData.bedrooms}
-                                onChange={(e) => setFormData(prev => ({ ...prev, bedrooms: parseInt(e.target.value) || 1 }))}
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="bathrooms">{t.bathrooms}</Label>
-                            <Input
-                                id="bathrooms"
-                                type="number"
-                                min={1}
-                                max={10}
-                                value={formData.bathrooms}
-                                onChange={(e) => setFormData(prev => ({ ...prev, bathrooms: parseInt(e.target.value) || 1 }))}
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="carSpaces">{t.carSpaces}</Label>
-                            <Input
-                                id="carSpaces"
-                                type="number"
-                                min={0}
-                                max={10}
-                                value={formData.carSpaces}
-                                onChange={(e) => setFormData(prev => ({ ...prev, carSpaces: parseInt(e.target.value) || 0 }))}
-                            />
+                        <div className="grid grid-cols-3 gap-3">
+                            <div>
+                                <Label htmlFor="bedrooms">{t.bedrooms}</Label>
+                                <Input
+                                    id="bedrooms"
+                                    type="number"
+                                    min={1}
+                                    max={10}
+                                    value={formData.bedrooms}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, bedrooms: parseInt(e.target.value) || 1 }))}
+                                    className="mt-1"
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor="bathrooms">{t.bathrooms}</Label>
+                                <Input
+                                    id="bathrooms"
+                                    type="number"
+                                    min={1}
+                                    max={10}
+                                    value={formData.bathrooms}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, bathrooms: parseInt(e.target.value) || 1 }))}
+                                    className="mt-1"
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor="carSpaces">{t.carSpaces}</Label>
+                                <Input
+                                    id="carSpaces"
+                                    type="number"
+                                    min={0}
+                                    max={10}
+                                    value={formData.carSpaces}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, carSpaces: parseInt(e.target.value) || 0 }))}
+                                    className="mt-1"
+                                />
+                            </div>
                         </div>
                     </div>
 
