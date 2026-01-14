@@ -487,8 +487,7 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                         </div>
                     </div>
                 )}
-            </div>
         </DialogContent>
     </Dialog>
-    )
+    );
 }
