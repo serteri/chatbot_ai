@@ -429,7 +429,7 @@ export default async function RealEstateDashboard({
                         </div>
 
                         <div className="flex items-center space-x-3">
-                            <Link href={`/${locale}/dashboard/realestate/analytics`}>
+                            <Link href={`/${locale}/dashboard/analytics`}>
                                 <Button variant="outline">
                                     <BarChart3 className="mr-2 h-4 w-4" />
                                     {rt.viewAnalytics}
