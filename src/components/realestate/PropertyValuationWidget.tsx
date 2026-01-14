@@ -24,7 +24,7 @@ import {
 
 import { Calculator, TrendingUp, TrendingDown, Minus, Loader2, Sparkles, AlertTriangle, Search } from 'lucide-react'
 import { toast } from 'sonner'
-import { AU_SUBURBS } from '@/data/suburbs'
+import { AU_SUBURBS, type Suburb } from '@/data/suburbs'
 
 interface ValuationResult {
     estimatedValue: {
@@ -211,9 +211,48 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
 
     // Autocomplete state
     const [showSuggestions, setShowSuggestions] = useState(false)
-    const [filteredSuburbs, setFilteredSuburbs] = useState(AU_SUBURBS)
+    const [filteredSuburbs, setFilteredSuburbs] = useState<Suburb[]>([])
+    const [inputValue, setInputValue] = useState('')
 
     const t = translations[locale as keyof typeof translations] || translations.en
+
+    // Smart filtering for autocomplete - prioritize starts-with matches
+    const filterSuburbs = (query: string): Suburb[] => {
+        if (!query || query.length < 2) return []
+
+        const lowerQuery = query.toLowerCase()
+
+        // Get suburb name without state/postcode for matching
+        const getSuburbName = (label: string) => label.split(',')[0].toLowerCase()
+
+        // Exact matches first
+        const exactMatches = AU_SUBURBS.filter(s =>
+            getSuburbName(s.label) === lowerQuery
+        )
+
+        // Starts-with matches
+        const startsWithMatches = AU_SUBURBS.filter(s =>
+            getSuburbName(s.label).startsWith(lowerQuery) &&
+            !exactMatches.includes(s)
+        )
+
+        // Contains matches
+        const containsMatches = AU_SUBURBS.filter(s =>
+            s.label.toLowerCase().includes(lowerQuery) &&
+            !exactMatches.includes(s) &&
+            !startsWithMatches.includes(s)
+        )
+
+        // Postcode matches
+        const postcodeMatches = AU_SUBURBS.filter(s =>
+            s.postcode.startsWith(lowerQuery) &&
+            !exactMatches.includes(s) &&
+            !startsWithMatches.includes(s) &&
+            !containsMatches.includes(s)
+        )
+
+        return [...exactMatches, ...startsWithMatches, ...containsMatches, ...postcodeMatches].slice(0, 10)
+    }
 
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('en-AU', {
@@ -284,7 +323,8 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
             carSpaces: 1,
             landArea: 0
         })
-        setFilteredSuburbs(AU_SUBURBS)
+        setInputValue('')
+        setFilteredSuburbs([])
         setShowSuggestions(false)
         setResult(null)
     }
@@ -322,46 +362,72 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
 
                 <div className="space-y-4 py-4">
                     {/* Form */}
-                    <div className="space-y-4">
+                    <div className="space-y-2">
                         <Label htmlFor="suburb">{t.suburb}</Label>
                         <div className="relative">
-                            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                             <Input
                                 id="suburb"
-                                placeholder="e.g., Albion, QLD"
-                                value={formData.suburb}
+                                placeholder="Start typing suburb or postcode..."
+                                value={inputValue}
                                 onChange={(e) => {
                                     const value = e.target.value
-                                    setFormData(prev => ({ ...prev, suburb: value }))
-                                    const filtered = AU_SUBURBS.filter(s =>
-                                        s.label.toLowerCase().includes(value.toLowerCase())
-                                    )
+                                    setInputValue(value)
+                                    const filtered = filterSuburbs(value)
                                     setFilteredSuburbs(filtered)
-                                    setShowSuggestions(true)
+                                    setShowSuggestions(value.length >= 2)
+                                    // Clear selected suburb when typing
+                                    if (formData.suburb && value !== formData.suburb) {
+                                        setFormData(prev => ({ ...prev, suburb: '' }))
+                                    }
                                 }}
-                                onFocus={() => setShowSuggestions(true)}
-                                // Delay hiding to allow click event
+                                onFocus={() => {
+                                    if (inputValue.length >= 2) {
+                                        setShowSuggestions(true)
+                                    }
+                                }}
                                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                                className="mt-1 pl-10"
+                                className="pl-10"
                                 autoComplete="off"
                             />
-                            {showSuggestions && filteredSuburbs.length > 0 && (
-                                <ul className="absolute z-[99999] w-full bg-white border rounded-md mt-1 max-h-60 overflow-auto shadow-lg">
-                                    {filteredSuburbs.map((suburb) => (
-                                        <li
-                                            key={suburb.value}
-                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                                            onClick={() => {
-                                                setFormData(prev => ({ ...prev, suburb: suburb.value }))
-                                                setShowSuggestions(false)
-                                            }}
-                                        >
-                                            {suburb.label}
-                                        </li>
-                                    ))}
-                                </ul>
+                            {showSuggestions && inputValue.length >= 2 && (
+                                <div className="absolute z-[99999] w-full bg-white border border-gray-200 rounded-lg mt-1 shadow-xl overflow-hidden">
+                                    {filteredSuburbs.length > 0 ? (
+                                        <ul className="max-h-64 overflow-auto">
+                                            {filteredSuburbs.map((suburb) => (
+                                                <li
+                                                    key={suburb.value}
+                                                    className="px-4 py-3 hover:bg-purple-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                                                    onClick={() => {
+                                                        setFormData(prev => ({ ...prev, suburb: suburb.value }))
+                                                        setInputValue(suburb.label)
+                                                        setShowSuggestions(false)
+                                                    }}
+                                                >
+                                                    <div className="flex items-center justify-between">
+                                                        <div>
+                                                            <span className="font-medium text-gray-900">{suburb.label.split(',')[0]}</span>
+                                                            <span className="text-gray-500 ml-1">{suburb.state} {suburb.postcode}</span>
+                                                        </div>
+                                                        <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">{suburb.city}</span>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <div className="px-4 py-3 text-gray-500 text-sm">
+                                            No suburbs found matching "{inputValue}"
+                                        </div>
+                                    )}
+                                </div>
                             )}
                         </div>
+                        {formData.suburb && (
+                            <div className="flex items-center gap-2 text-sm text-green-600">
+                                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                                Selected: {formData.suburb}
+                            </div>
+                        )}
                     </div>
                     <div>
                         <Label htmlFor="propertyType">{t.propertyType}</Label>
