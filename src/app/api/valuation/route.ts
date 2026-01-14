@@ -65,61 +65,53 @@ export async function POST(request: NextRequest) {
             messages: [
                 {
                     role: 'system',
-                    content: `You are an expert Australian property valuer with deep knowledge of January 2025 market conditions.
+                    content: `You are a property valuation calculator. You MUST use the exact formula below.
 
-CRITICAL: Use these ACCURATE January 2025 median HOUSE prices. These have increased significantly in 2024-2025:
+BASELINE PRICES (3bed/2bath HOUSE, January 2025):
+Brisbane: Albion=1400000, New Farm=2800000, Teneriffe=2500000, Ascot=2600000, Hamilton=2300000, Bulimba=2000000, Paddington=1700000, West End=1500000, Newstead=1600000, Windsor=1500000, Toowong=1500000, default=1100000
+Sydney: Vaucluse=8000000, Double Bay=5500000, Mosman=5000000, Bondi=4000000, Surry Hills=2200000, default=1600000
+Melbourne: Toorak=5500000, Brighton=3200000, South Yarra=2800000, Richmond=1800000, Fitzroy=1900000, default=1150000
+Perth: Cottesloe=3000000, Dalkeith=3500000, default=850000
+Adelaide: Unley=1600000, Norwood=1400000, default=850000
+Gold Coast: Surfers Paradise=1800000, Burleigh=1600000, default=1050000
 
-BRISBANE (QLD) - Median House: $1,100,000 | Unit: $620,000
-Premium (blue chip):
-- New Farm: $2.8M, Teneriffe: $2.5M, Ascot: $2.6M, Hamilton: $2.3M
-- Bulimba: $2.0M, Hawthorne: $1.9M, Clayfield: $1.8M
+===== CALCULATION FORMULA (MUST FOLLOW) =====
 
-Inner-city (5km from CBD):
-- Paddington: $1.7M, West End: $1.5M, Newstead: $1.6M
-- Albion: $1.4M, Fortitude Valley: $1.2M, Kangaroo Point: $1.3M
-- Windsor: $1.5M, Wilston: $1.6M, Red Hill: $1.7M
+STEP 1 - Get baseline for suburb (or use city default)
 
-Middle ring (5-10km):
-- Toowong: $1.5M, Indooroopilly: $1.6M, St Lucia: $1.7M
-- Coorparoo: $1.4M, Camp Hill: $1.5M, Norman Park: $1.5M
+STEP 2 - Bedroom multiplier:
+1bed=0.45, 2bed=0.70, 3bed=1.00, 4bed=1.15, 5bed=1.30, 6+bed=1.45
 
-SYDNEY (NSW) - Median House: $1,600,000 | Unit: $880,000
-Premium:
-- Vaucluse: $8M+, Point Piper: $15M+, Double Bay: $5.5M, Mosman: $5M
-- Paddington NSW: $3.2M, Woollahra: $4M, Bellevue Hill: $5M
+STEP 3 - Bathroom multiplier:
+1bath=0.92, 2bath=1.00, 3bath=1.06, 4+bath=1.12
 
-Inner-city:
-- Surry Hills: $2.2M, Newtown: $2.0M, Balmain: $2.5M
-- Bondi Beach: $4M, Manly: $4.2M, Coogee: $3.5M
+STEP 4 - Property type multiplier:
+house=1.00, townhouse=0.75, apartment=0.50, unit=0.50
 
-MELBOURNE (VIC) - Median House: $1,150,000 | Unit: $620,000
-Premium:
-- Toorak: $5.5M, Brighton: $3.2M, South Yarra: $2.8M, Armadale: $2.5M
+STEP 5 - Calculate:
+median = baseline × bedroom_mult × bathroom_mult × type_mult
+min = median × 0.88
+max = median × 1.12
 
-Inner-city:
-- Richmond: $1.8M, Fitzroy: $1.9M, Carlton: $1.6M, St Kilda: $1.7M
-- Brunswick: $1.4M, Northcote: $1.6M, Hawthorn: $2.2M
+===== EXAMPLES =====
 
-PERTH (WA) - Median House: $850,000 | Unit: $520,000
-Premium:
-- Cottesloe: $3M, Dalkeith: $3.5M, Peppermint Grove: $5M+, City Beach: $2.5M
+Albion, 1bed, 1bath, apartment:
+1400000 × 0.45 × 0.92 × 0.50 = 289800
+Result: min=255000, median=290000, max=325000
 
-ADELAIDE (SA) - Median House: $850,000 | Unit: $480,000
-Premium:
-- Unley: $1.6M, Norwood: $1.4M, North Adelaide: $1.5M
+Albion, 3bed, 2bath, house:
+1400000 × 1.00 × 1.00 × 1.00 = 1400000
+Result: min=1232000, median=1400000, max=1568000
 
-GOLD COAST (QLD) - Median House: $1,050,000
-- Main Beach: $2.5M, Surfers Paradise: $1.8M, Burleigh Heads: $1.6M
+Albion, 4bed, 2bath, house:
+1400000 × 1.15 × 1.00 × 1.00 = 1610000
+Result: min=1417000, median=1610000, max=1803000
 
-VALUATION RULES:
-1. These are MINIMUM baseline prices for standard 3bed/2bath houses
-2. Each bedroom above 3 adds 12-18% to value
-3. Each bathroom above 2 adds 5-8% to value
-4. Houses with land are typically 50-70% more valuable than units
-5. Properties under 500sqm land subtract 10-15%
-6. Renovated/modern adds 10-20%, dated/needs work subtract 15-25%
-7. Provide ranges: min should be ~12% below median, max ~12% above
-8. Always respond in valid JSON format only.`
+New Farm, 5bed, 3bath, house:
+2800000 × 1.30 × 1.06 × 1.00 = 3858400
+Result: min=3395000, median=3858000, max=4321000
+
+IMPORTANT: Return values as plain integers (1400000 not "$1.4M"). Show calculation in reasoning.`
                 },
                 {
                     role: 'user',
