@@ -1,0 +1,666 @@
+import { auth } from '@/lib/auth/auth'
+import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
+import { prisma } from '@/lib/db/prisma'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+    Bot,
+    MessageSquare,
+    BarChart3,
+    ArrowLeft,
+    Building2,
+    Home,
+    MapPin,
+    Calendar,
+    Users,
+    TrendingUp,
+    Star,
+    Plus,
+    Settings,
+    MessageCircle,
+    ChevronRight,
+    Flame,
+    ThermometerSun,
+    Snowflake,
+    Phone,
+    Clock,
+    FileSpreadsheet,
+    Upload,
+    Link2,
+    Filter,
+    DollarSign,
+    Key,
+    Wrench
+} from 'lucide-react'
+import Link from 'next/link'
+import { CreateChatbotDialog } from '@/components/chatbot/CreateChatbotDialog'
+
+// Translations
+const realEstateTranslations = {
+    tr: {
+        platformTitle: 'Emlak Asistanları',
+        platformSubtitle: 'Lead Eleme & Randevu Yönetimi',
+        backToMain: 'Ana Panel',
+        welcomeTitle: 'Dijital Ön Büro Asistanınız',
+        welcomeDescription: '7/24 çalışan, hiç uyumayan, maaş ve sigorta istemeyen, sadece ciddi alıcıları size getiren asistanınız.',
+        stats: {
+            activeBots: 'Aktif Asistan',
+            totalLeads: 'Toplam Lead',
+            hotLeads: 'Sıcak Lead',
+            appointments: 'Randevu'
+        },
+        features: {
+            leadQualification: 'Lead Eleme',
+            propertyManagement: 'İlan Yönetimi',
+            appointmentScheduling: 'Randevu Sistemi',
+            tenantSupport: 'Kiracı Desteği'
+        },
+        leadQualificationDesc: 'Bütçe, zamanlama, kredi ön onayı sorularıyla ciddi alıcıları eleyin',
+        propertyManagementDesc: 'İlanlarınızı yükleyin, chatbot otomatik eşleştirsin',
+        appointmentSchedulingDesc: 'Takvim entegrasyonu ile otomatik randevu',
+        tenantSupportDesc: 'Arıza bildirimi, kira ödeme, sözleşme soruları',
+        sections: {
+            leadAnalytics: 'Lead Analizi',
+            properties: 'İlan Portföyü',
+            chatbots: 'Emlak Asistanları'
+        },
+        leadCategories: {
+            hot: 'Sıcak',
+            warm: 'Ilık',
+            cold: 'Soğuk'
+        },
+        importOptions: {
+            title: 'İlan Yükleme Seçenekleri',
+            manual: 'Manuel Ekleme',
+            manualDesc: 'İlanları tek tek ekleyin',
+            xml: 'XML/Feed İçe Aktarma',
+            xmlDesc: 'Sahibinden, Hepsiemlak XML',
+            api: 'API Entegrasyonu',
+            apiDesc: 'CRM sisteminizle bağlayın'
+        },
+        manageChatbot: 'Yönet',
+        testWidget: 'Widget Test',
+        viewAnalytics: 'Analiz',
+        addProperty: 'İlan Ekle',
+        importProperties: 'İlanları İçe Aktar',
+        noProperties: 'Henüz ilan yüklenmemiş',
+        noPropertiesDesc: 'İlanlarınızı yükleyin, chatbot müşterilere otomatik öneriler sunsun',
+        learnMore: 'Nasıl Çalışır?'
+    },
+    en: {
+        platformTitle: 'Real Estate Assistants',
+        platformSubtitle: 'Lead Qualification & Appointment Management',
+        backToMain: 'Main Dashboard',
+        welcomeTitle: 'Your Digital Front Desk Assistant',
+        welcomeDescription: 'Works 24/7, never sleeps, needs no salary, only brings you serious buyers.',
+        stats: {
+            activeBots: 'Active Assistants',
+            totalLeads: 'Total Leads',
+            hotLeads: 'Hot Leads',
+            appointments: 'Appointments'
+        },
+        features: {
+            leadQualification: 'Lead Qualification',
+            propertyManagement: 'Property Management',
+            appointmentScheduling: 'Appointment System',
+            tenantSupport: 'Tenant Support'
+        },
+        leadQualificationDesc: 'Filter serious buyers with budget, timing, pre-approval questions',
+        propertyManagementDesc: 'Upload listings, chatbot matches automatically',
+        appointmentSchedulingDesc: 'Calendar integration for automatic scheduling',
+        tenantSupportDesc: 'Issue reporting, rent payment, contract questions',
+        sections: {
+            leadAnalytics: 'Lead Analytics',
+            properties: 'Property Portfolio',
+            chatbots: 'Real Estate Assistants'
+        },
+        leadCategories: {
+            hot: 'Hot',
+            warm: 'Warm',
+            cold: 'Cold'
+        },
+        importOptions: {
+            title: 'Property Import Options',
+            manual: 'Manual Entry',
+            manualDesc: 'Add listings one by one',
+            xml: 'XML/Feed Import',
+            xmlDesc: 'Import from listing portals',
+            api: 'API Integration',
+            apiDesc: 'Connect your CRM system'
+        },
+        manageChatbot: 'Manage',
+        testWidget: 'Test Widget',
+        viewAnalytics: 'Analytics',
+        addProperty: 'Add Property',
+        importProperties: 'Import Properties',
+        noProperties: 'No properties uploaded yet',
+        noPropertiesDesc: 'Upload your listings, chatbot will suggest them to customers automatically',
+        learnMore: 'How It Works?'
+    }
+}
+
+export default async function RealEstateDashboard({
+    params,
+}: {
+    params: Promise<{ locale: string }>
+}) {
+    const { locale } = await params
+    const t = await getTranslations({ locale })
+    const rt = realEstateTranslations[locale as 'tr' | 'en'] || realEstateTranslations.en
+    const session = await auth()
+
+    if (!session?.user?.id) {
+        redirect('/login')
+    }
+
+    // Fetch real estate chatbots
+    const realestateChatbots = await prisma.chatbot.findMany({
+        where: {
+            userId: session.user.id,
+            industry: 'realestate'
+        },
+        include: {
+            documents: {
+                where: { status: 'ready' },
+                orderBy: { createdAt: 'desc' }
+            },
+            _count: {
+                select: {
+                    documents: true,
+                    conversations: true,
+                }
+            }
+        },
+        orderBy: { createdAt: 'desc' }
+    })
+
+    // Calculate statistics
+    const totalConversations = realestateChatbots.reduce((sum, bot) => sum + bot._count.conversations, 0)
+    const totalDocuments = realestateChatbots.reduce((sum, bot) => sum + bot._count.documents, 0)
+    const activeBots = realestateChatbots.filter(bot => bot.isActive).length
+
+    // Simulated lead data (in production, this would come from a leads table)
+    const userIdSeed = session.user.id.charCodeAt(0) + session.user.id.charCodeAt(session.user.id.length - 1)
+    const hasData = totalConversations > 0
+
+    // Lead statistics (simulated - would be real data in production)
+    const hotLeads = hasData ? Math.floor(totalConversations * 0.15) : 0
+    const warmLeads = hasData ? Math.floor(totalConversations * 0.35) : 0
+    const coldLeads = hasData ? Math.floor(totalConversations * 0.50) : 0
+    const totalLeads = hotLeads + warmLeads + coldLeads
+
+    // Appointments (simulated)
+    const scheduledAppointments = hasData ? Math.floor(hotLeads * 0.7 + warmLeads * 0.2) : 0
+
+    // Property count (simulated based on documents)
+    const estimatedProperties = totalDocuments * 15
+
+    return (
+        <div className="min-h-screen bg-background">
+            {/* Header */}
+            <div className="border-b bg-white">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-16">
+                        <div className="flex items-center space-x-4">
+                            <Link href={`/${locale}/dashboard`} className="flex items-center text-muted-foreground hover:text-foreground">
+                                <ArrowLeft className="mr-2 h-4 w-4" />
+                                {rt.backToMain}
+                            </Link>
+                            <div className="h-6 border-l border-gray-300" />
+                            <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center text-white">
+                                    <Building2 className="h-6 w-6" />
+                                </div>
+                                <div>
+                                    <h1 className="text-lg font-semibold">{rt.platformTitle}</h1>
+                                    <p className="text-sm text-muted-foreground">
+                                        {rt.platformSubtitle}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center space-x-3">
+                            <Link href={`/${locale}/dashboard/realestate/analytics`}>
+                                <Button variant="outline">
+                                    <BarChart3 className="mr-2 h-4 w-4" />
+                                    {rt.viewAnalytics}
+                                </Button>
+                            </Link>
+                            <Link href={`/${locale}/demo/realestate`}>
+                                <Button className="bg-amber-600 hover:bg-amber-700">
+                                    <Building2 className="mr-2 h-4 w-4" />
+                                    {rt.testWidget}
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Hero Section */}
+            <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div className="text-center mb-8">
+                        <h2 className="text-3xl font-bold mb-4">{rt.welcomeTitle} 🏠</h2>
+                        <p className="text-xl text-amber-50 max-w-3xl mx-auto opacity-90">
+                            {rt.welcomeDescription}
+                        </p>
+                    </div>
+
+                    {/* Quick Stats */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                        <div className="bg-white/10 rounded-lg p-4 backdrop-blur text-center border border-white/20">
+                            <div className="text-3xl font-bold">{activeBots}</div>
+                            <div className="text-sm text-amber-50 font-medium">{rt.stats.activeBots}</div>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-4 backdrop-blur text-center border border-white/20">
+                            <div className="text-3xl font-bold">{totalLeads}</div>
+                            <div className="text-sm text-amber-50 font-medium">{rt.stats.totalLeads}</div>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-4 backdrop-blur text-center border border-white/20">
+                            <div className="text-3xl font-bold flex items-center justify-center gap-1">
+                                {hotLeads}
+                                {hotLeads > 0 && <Flame className="h-5 w-5 text-red-300" />}
+                            </div>
+                            <div className="text-sm text-amber-50 font-medium">{rt.stats.hotLeads}</div>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-4 backdrop-blur text-center border border-white/20">
+                            <div className="text-3xl font-bold flex items-center justify-center gap-1">
+                                {scheduledAppointments}
+                                {scheduledAppointments > 0 && <Calendar className="h-5 w-5" />}
+                            </div>
+                            <div className="text-sm text-amber-50 font-medium">{rt.stats.appointments}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+                {/* Features Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    {/* Lead Qualification */}
+                    <Card className="border-amber-100 shadow-sm hover:shadow-md transition-shadow">
+                        <CardHeader className="pb-2">
+                            <div className="flex items-center space-x-2">
+                                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                                    <Filter className="h-4 w-4 text-amber-600" />
+                                </div>
+                                <CardTitle className="text-amber-900 text-base">{rt.features.leadQualification}</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center gap-2 mb-2">
+                                <div className="flex items-center gap-1">
+                                    <Flame className="h-4 w-4 text-red-500" />
+                                    <span className="text-sm font-bold">{hotLeads}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <ThermometerSun className="h-4 w-4 text-orange-500" />
+                                    <span className="text-sm font-bold">{warmLeads}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <Snowflake className="h-4 w-4 text-blue-500" />
+                                    <span className="text-sm font-bold">{coldLeads}</span>
+                                </div>
+                            </div>
+                            <p className="text-xs text-muted-foreground mb-3">{rt.leadQualificationDesc}</p>
+                            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                                {hasData ? 'Aktif' : 'Beklemede'}
+                            </Badge>
+                        </CardContent>
+                    </Card>
+
+                    {/* Property Management */}
+                    <Card className="border-blue-100 shadow-sm hover:shadow-md transition-shadow">
+                        <CardHeader className="pb-2">
+                            <div className="flex items-center space-x-2">
+                                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <Home className="h-4 w-4 text-blue-600" />
+                                </div>
+                                <CardTitle className="text-blue-900 text-base">{rt.features.propertyManagement}</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-slate-800 mb-1">{estimatedProperties}</div>
+                            <p className="text-xs text-muted-foreground mb-3">{rt.propertyManagementDesc}</p>
+                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                                {estimatedProperties > 0 ? 'Aktif' : 'Boş'}
+                            </Badge>
+                        </CardContent>
+                    </Card>
+
+                    {/* Appointment Scheduling */}
+                    <Card className="border-green-100 shadow-sm hover:shadow-md transition-shadow">
+                        <CardHeader className="pb-2">
+                            <div className="flex items-center space-x-2">
+                                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <Calendar className="h-4 w-4 text-green-600" />
+                                </div>
+                                <CardTitle className="text-green-900 text-base">{rt.features.appointmentScheduling}</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-slate-800 mb-1">{scheduledAppointments}</div>
+                            <p className="text-xs text-muted-foreground mb-3">{rt.appointmentSchedulingDesc}</p>
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                Google Calendar
+                            </Badge>
+                        </CardContent>
+                    </Card>
+
+                    {/* Tenant Support */}
+                    <Card className="border-purple-100 shadow-sm hover:shadow-md transition-shadow">
+                        <CardHeader className="pb-2">
+                            <div className="flex items-center space-x-2">
+                                <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <Wrench className="h-4 w-4 text-purple-600" />
+                                </div>
+                                <CardTitle className="text-purple-900 text-base">{rt.features.tenantSupport}</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-slate-800 mb-1">7/24</div>
+                            <p className="text-xs text-muted-foreground mb-3">{rt.tenantSupportDesc}</p>
+                            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                                Otomatik
+                            </Badge>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Property Import Section */}
+                <Card className="mb-8 border-t-4 border-t-blue-500">
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                                <Home className="h-5 w-5 text-blue-600" />
+                                <CardTitle>{rt.importOptions.title}</CardTitle>
+                            </div>
+                        </div>
+                        <CardDescription>
+                            {locale === 'tr'
+                                ? 'İlanlarınızı yükleyin, chatbot müşteri tercihlerine göre otomatik eşleştirme yapsın'
+                                : 'Upload your listings, chatbot will automatically match based on customer preferences'}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Manual Entry */}
+                            <div className="p-4 border rounded-lg hover:border-blue-300 hover:bg-blue-50/50 transition-colors cursor-pointer">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <Plus className="h-5 w-5 text-blue-600" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold">{rt.importOptions.manual}</h4>
+                                        <p className="text-xs text-muted-foreground">{rt.importOptions.manualDesc}</p>
+                                    </div>
+                                </div>
+                                <Button variant="outline" className="w-full">
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    {rt.addProperty}
+                                </Button>
+                            </div>
+
+                            {/* XML Import */}
+                            <div className="p-4 border rounded-lg hover:border-green-300 hover:bg-green-50/50 transition-colors cursor-pointer">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <FileSpreadsheet className="h-5 w-5 text-green-600" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold">{rt.importOptions.xml}</h4>
+                                        <p className="text-xs text-muted-foreground">{rt.importOptions.xmlDesc}</p>
+                                    </div>
+                                </div>
+                                <Button variant="outline" className="w-full">
+                                    <Upload className="mr-2 h-4 w-4" />
+                                    {rt.importProperties}
+                                </Button>
+                            </div>
+
+                            {/* API Integration */}
+                            <div className="p-4 border rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-colors cursor-pointer">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <Link2 className="h-5 w-5 text-purple-600" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold">{rt.importOptions.api}</h4>
+                                        <p className="text-xs text-muted-foreground">{rt.importOptions.apiDesc}</p>
+                                    </div>
+                                </div>
+                                <Button variant="outline" className="w-full">
+                                    <Link2 className="mr-2 h-4 w-4" />
+                                    {locale === 'tr' ? 'Bağlan' : 'Connect'}
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* How it works note */}
+                        <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                            <h4 className="font-semibold text-amber-800 mb-2 flex items-center gap-2">
+                                <TrendingUp className="h-4 w-4" />
+                                {locale === 'tr' ? 'Nasıl Çalışır?' : 'How It Works?'}
+                            </h4>
+                            <p className="text-sm text-amber-700">
+                                {locale === 'tr'
+                                    ? 'Müşteri "3+1 daire, Kadıköy, 5 milyon TL bütçe" dediğinde, chatbot otomatik olarak portföyünüzdeki uygun ilanları filtreler ve carousel şeklinde sunar. Yatırım/oturum tercihine göre de farklı öneriler yapar.'
+                                    : 'When customer says "3-bedroom apartment, downtown, $500K budget", chatbot automatically filters matching listings from your portfolio and shows them in a carousel. It also makes different suggestions based on investment/residence preference.'}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Lead Analytics & Chatbots */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    {/* Lead Analytics */}
+                    <Card className="flex flex-col h-full">
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                    <TrendingUp className="h-5 w-5 text-amber-600" />
+                                    <CardTitle>{rt.sections.leadAnalytics}</CardTitle>
+                                </div>
+                                {hasData && <Badge variant="secondary" className="bg-amber-100 text-amber-800">Canlı</Badge>}
+                            </div>
+                            <CardDescription>
+                                {locale === 'tr'
+                                    ? 'Lead eleme performansı ve dönüşüm oranları'
+                                    : 'Lead qualification performance and conversion rates'}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1 flex flex-col">
+                            {!hasData ? (
+                                <div className="flex-1 flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+                                    <BarChart3 className="h-12 w-12 mb-3 text-slate-200" />
+                                    <p className="text-sm">
+                                        {locale === 'tr'
+                                            ? 'Lead verileri konuşmalar başladığında burada görünecek.'
+                                            : 'Lead data will appear here once conversations start.'}
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {/* Lead Distribution */}
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm text-slate-600 flex items-center gap-2">
+                                                <Flame className="h-4 w-4 text-red-500" />
+                                                {rt.leadCategories.hot}
+                                            </span>
+                                            <span className="font-bold text-red-600">{hotLeads} ({Math.round((hotLeads / totalLeads) * 100)}%)</span>
+                                        </div>
+                                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                            <div className="h-full bg-red-500 rounded-full" style={{ width: `${(hotLeads / totalLeads) * 100}%` }} />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm text-slate-600 flex items-center gap-2">
+                                                <ThermometerSun className="h-4 w-4 text-orange-500" />
+                                                {rt.leadCategories.warm}
+                                            </span>
+                                            <span className="font-bold text-orange-600">{warmLeads} ({Math.round((warmLeads / totalLeads) * 100)}%)</span>
+                                        </div>
+                                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                            <div className="h-full bg-orange-500 rounded-full" style={{ width: `${(warmLeads / totalLeads) * 100}%` }} />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm text-slate-600 flex items-center gap-2">
+                                                <Snowflake className="h-4 w-4 text-blue-500" />
+                                                {rt.leadCategories.cold}
+                                            </span>
+                                            <span className="font-bold text-blue-600">{coldLeads} ({Math.round((coldLeads / totalLeads) * 100)}%)</span>
+                                        </div>
+                                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                            <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(coldLeads / totalLeads) * 100}%` }} />
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-4 border-t">
+                                        <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                            <span className="text-sm text-green-800">
+                                                {locale === 'tr' ? 'Randevuya Dönüşüm' : 'Appointment Conversion'}
+                                            </span>
+                                            <span className="font-bold text-green-700">
+                                                {totalLeads > 0 ? Math.round((scheduledAppointments / totalLeads) * 100) : 0}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Chatbots Section */}
+                    <Card className="flex flex-col h-full">
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                    <Bot className="h-5 w-5 text-amber-600" />
+                                    <CardTitle>{rt.sections.chatbots}</CardTitle>
+                                </div>
+                                <CreateChatbotDialog industry="realestate">
+                                    <Button size="sm" className="bg-amber-600 hover:bg-amber-700">
+                                        <Plus className="mr-1 h-4 w-4" />
+                                        {locale === 'tr' ? 'Yeni Asistan' : 'New Assistant'}
+                                    </Button>
+                                </CreateChatbotDialog>
+                            </div>
+                            <CardDescription>
+                                {locale === 'tr'
+                                    ? 'Emlak web sitenize entegre edilecek chatbot asistanları'
+                                    : 'Chatbot assistants to integrate with your real estate website'}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                            {realestateChatbots.length === 0 ? (
+                                <div className="flex-1 flex flex-col items-center justify-center py-8 text-center">
+                                    <Bot className="h-12 w-12 mb-3 text-slate-200" />
+                                    <p className="text-sm text-muted-foreground mb-4">
+                                        {locale === 'tr'
+                                            ? 'Henüz emlak asistanı oluşturmadınız'
+                                            : 'You haven\'t created a real estate assistant yet'}
+                                    </p>
+                                    <CreateChatbotDialog industry="realestate">
+                                        <Button className="bg-amber-600 hover:bg-amber-700">
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            {locale === 'tr' ? 'İlk Asistanı Oluştur' : 'Create First Assistant'}
+                                        </Button>
+                                    </CreateChatbotDialog>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {realestateChatbots.slice(0, 3).map(bot => (
+                                        <div key={bot.id} className="flex items-center justify-between p-3 border rounded-lg bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                                            <div className="flex items-center space-x-3">
+                                                <div className={`w-2 h-2 rounded-full ${bot.isActive ? 'bg-green-500' : 'bg-gray-300'}`} />
+                                                <div>
+                                                    <div className="font-medium text-sm">{bot.name}</div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                        {bot._count.conversations} {locale === 'tr' ? 'konuşma' : 'conversations'}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <Link href={`/${locale}/dashboard/chatbots/${bot.id}`}>
+                                                <Button size="sm" variant="outline">
+                                                    {rt.manageChatbot}
+                                                    <ChevronRight className="ml-1 h-3 w-3" />
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    ))}
+
+                                    {realestateChatbots.length > 3 && (
+                                        <Link href={`/${locale}/dashboard/realestate/chatbots`}>
+                                            <Button variant="ghost" className="w-full text-amber-700 hover:text-amber-800 hover:bg-amber-50">
+                                                {locale === 'tr' ? 'Tümünü Gör' : 'View All'} ({realestateChatbots.length})
+                                            </Button>
+                                        </Link>
+                                    )}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Link href={`/${locale}/demo/realestate`}>
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50">
+                            <CardContent className="p-6 flex items-center gap-4">
+                                <div className="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center text-white">
+                                    <MessageCircle className="h-6 w-6" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold">{locale === 'tr' ? 'Widget Demo' : 'Widget Demo'}</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        {locale === 'tr' ? 'Canlı demo\'yu deneyin' : 'Try the live demo'}
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Link>
+
+                    <Link href={`/${locale}/dashboard/conversations`}>
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                            <CardContent className="p-6 flex items-center gap-4">
+                                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+                                    <MessageSquare className="h-6 w-6" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold">{locale === 'tr' ? 'Konuşmalar' : 'Conversations'}</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        {totalConversations} {locale === 'tr' ? 'toplam' : 'total'}
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Link>
+
+                    <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                        <CardContent className="p-6 flex items-center gap-4">
+                            <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center text-white">
+                                <Phone className="h-6 w-6" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold">{locale === 'tr' ? 'Destek' : 'Support'}</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    {locale === 'tr' ? 'Yardıma mı ihtiyacınız var?' : 'Need help?'}
+                                </p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
+    )
+}

@@ -258,6 +258,9 @@ model Chatbot {
   liveSupportRequest LiveSupportRequest[]
   templatePurchases  TemplatePurchase[]
   apiKeys            ApiKey[]
+  properties         Property[]
+  leads              Lead[]
+  tenantRequests     TenantRequest[]
 
   @@index([userId])
   @@index([identifier])
@@ -322,6 +325,7 @@ model Conversation {
   chatbot            Chatbot               @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
   messages           ConversationMessage[]
   liveSupportRequest LiveSupportRequest[]
+  leads              Lead[]
 
   @@index([chatbotId])
   @@index([visitorId])
@@ -676,7 +680,7 @@ model ApiKey {
   lastUsed    DateTime?
   expiresAt   DateTime?
   isActive    Boolean   @default(true)
-  
+
   // Enterprise Security Features
   allowedIps  String[]  @default([]) // Empty means all IPs allowed
   scopes      String[]  @default(["chat:read", "chat:write"]) // Default scopes
@@ -685,4 +689,180 @@ model ApiKey {
   chatbot     Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
 
   @@index([chatbotId])
+}
+
+// ========================================
+// REAL ESTATE MODULE
+// ========================================
+
+model Property {
+  id              String    @id @default(cuid())
+  chatbotId       String
+  externalId      String?   // ID from external system (XML, API)
+
+  // Basic Info
+  title           String
+  description     String?
+  propertyType    String    // apartment, villa, house, land, commercial
+  listingType     String    // sale, rent
+
+  // Pricing
+  price           Float
+  currency        String    @default("TRY")
+  pricePerSqm     Float?
+  monthlyRent     Float?    // For rental properties
+
+  // Location
+  address         String?
+  district        String?
+  city            String
+  country         String    @default("Turkey")
+  latitude        Float?
+  longitude       Float?
+
+  // Property Details
+  rooms           String?   // 1+1, 2+1, 3+1, etc.
+  bedrooms        Int?
+  bathrooms       Int?
+  area            Float?    // Square meters
+  floorNumber     Int?
+  totalFloors     Int?
+  buildingAge     Int?
+
+  // Features
+  hasGarage       Boolean   @default(false)
+  hasPool         Boolean   @default(false)
+  hasGarden       Boolean   @default(false)
+  hasBalcony      Boolean   @default(false)
+  hasElevator     Boolean   @default(false)
+  hasSecurity     Boolean   @default(false)
+  isFurnished     Boolean   @default(false)
+  heatingType     String?   // natural gas, central, electric
+
+  // Investment Info
+  estimatedRoi    Float?    // Annual ROI percentage
+  rentalYield     Float?    // Annual rental yield
+
+  // Media
+  images          String[]  // Array of image URLs
+  videoUrl        String?
+  virtualTourUrl  String?
+
+  // Status
+  status          String    @default("active") // active, sold, rented, inactive
+  isFeatured      Boolean   @default(false)
+  viewCount       Int       @default(0)
+
+  // Source
+  source          String    @default("manual") // manual, xml, api
+  sourceUrl       String?
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  chatbot         Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  leads           Lead[]
+
+  @@index([chatbotId])
+  @@index([city])
+  @@index([propertyType])
+  @@index([listingType])
+  @@index([price])
+  @@index([status])
+}
+
+model Lead {
+  id              String    @id @default(cuid())
+  chatbotId       String
+  conversationId  String?
+  propertyId      String?   // If interested in specific property
+
+  // Contact Info
+  name            String
+  email           String?
+  phone           String
+
+  // Qualification Data
+  intent          String?   // buy, rent, sell, value, tenant
+  propertyType    String?   // What type they're looking for
+  purpose         String?   // investment, residence
+  budget          String?   // Budget range
+  budgetMin       Float?
+  budgetMax       Float?
+  location        String?   // Preferred location
+  timeline        String?   // immediate, 1-3months, 3-6months, browsing
+  hasPreApproval  Boolean?  // Mortgage pre-approval
+
+  // Scoring
+  score           Int       @default(0)
+  category        String    @default("cold") // hot, warm, cold
+
+  // Notes
+  notes           String?
+  requirements    Json?     // Detailed requirements
+
+  // Status
+  status          String    @default("new") // new, contacted, qualified, appointment, converted, lost
+
+  // Appointments
+  appointmentDate DateTime?
+  appointmentTime String?
+  appointmentNote String?
+
+  // Source
+  source          String    @default("chatbot") // chatbot, website, referral
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  contactedAt     DateTime?
+  convertedAt     DateTime?
+
+  chatbot         Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  conversation    Conversation? @relation(fields: [conversationId], references: [id])
+  property        Property? @relation(fields: [propertyId], references: [id])
+
+  @@index([chatbotId])
+  @@index([category])
+  @@index([status])
+  @@index([conversationId])
+}
+
+model TenantRequest {
+  id              String    @id @default(cuid())
+  chatbotId       String
+
+  // Tenant Info
+  name            String
+  email           String?
+  phone           String
+  unitNumber      String?
+
+  // Request Details
+  requestType     String    // maintenance, rent_payment, contract, key_handover, other
+  issueType       String?   // plumbing, electrical, heating, structural, other
+  description     String?
+  urgency         String    @default("normal") // emergency, normal, low
+
+  // Media
+  photos          String[]  // Issue photos
+
+  // Status
+  status          String    @default("pending") // pending, in_progress, resolved, cancelled
+  assignedTo      String?   // Service provider or staff
+
+  // Resolution
+  resolution      String?
+  resolvedAt      DateTime?
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  chatbot         Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+
+  @@index([chatbotId])
+  @@index([status])
+  @@index([requestType])
 }
