@@ -757,6 +757,10 @@ model Property {
   source          String    @default("manual") // manual, xml, api
   sourceUrl       String?
 
+  // Inspection Times (Australia - Open House)
+  inspectionTimes   Json?     // Array of { date: string, startTime: string, endTime: string, notes?: string }
+  nextInspection    DateTime? // Cached next inspection date for quick queries
+
   // Timestamps
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt

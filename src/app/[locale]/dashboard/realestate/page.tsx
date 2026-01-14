@@ -37,6 +37,7 @@ import {
 import Link from 'next/link'
 import { CreateChatbotDialog } from '@/components/chatbot/CreateChatbotDialog'
 import { PropertyImportSection } from '@/components/realestate/PropertyImportSection'
+import { PropertyValuationWidget } from '@/components/realestate/PropertyValuationWidget'
 
 // Translations
 const realEstateTranslations = {
@@ -741,7 +742,10 @@ export default async function RealEstateDashboard({
                 </div>
 
                 {/* Quick Actions */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {/* AI Valuation Widget */}
+                    <PropertyValuationWidget locale={locale} />
+
                     <Link href={`/${locale}/demo/realestate`}>
                         <Card className="hover:shadow-md transition-shadow cursor-pointer border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50">
                             <CardContent className="p-6 flex items-center gap-4">
