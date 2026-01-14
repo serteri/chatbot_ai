@@ -315,7 +315,7 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                                 <SelectTrigger className="mt-1">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="z-[9999] bg-white" position="popper" sideOffset={5}>
                                     <SelectItem value="house">{t.house}</SelectItem>
                                     <SelectItem value="apartment">{t.apartment}</SelectItem>
                                     <SelectItem value="townhouse">{t.townhouse}</SelectItem>

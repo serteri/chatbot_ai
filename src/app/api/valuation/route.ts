@@ -166,19 +166,40 @@ function getMockValuation(data: ValuationRequest): ValuationResponse {
 }
 
 function getBasePrice(propertyType: string, suburb: string): number {
-    // Simple base prices for different property types (AUD)
+    // Realistic 2024 Brisbane metro base prices (AUD)
+    // Brisbane median house price is around $900k, inner-city suburbs much higher
     const basePrices: Record<string, number> = {
-        house: 850000,
-        apartment: 550000,
-        townhouse: 700000,
-        unit: 450000,
-        land: 400000
+        house: 1100000,      // Brisbane metro average
+        apartment: 650000,
+        townhouse: 850000,
+        unit: 520000,
+        land: 550000
     }
 
-    // Premium suburbs get higher base
-    const premiumSuburbs = ['mosman', 'toorak', 'cottesloe', 'ascot', 'albion']
-    const isPremium = premiumSuburbs.some(s => suburb.toLowerCase().includes(s))
+    // Inner-city Brisbane suburbs - higher prices
+    const innerCitySuburbs = [
+        'albion', 'newstead', 'fortitude valley', 'new farm', 'teneriffe',
+        'bulimba', 'hawthorne', 'ascot', 'hamilton', 'paddington',
+        'red hill', 'kelvin grove', 'spring hill', 'west end', 'highgate hill'
+    ]
 
-    const base = basePrices[propertyType.toLowerCase()] || 650000
-    return isPremium ? base * 1.5 : base
+    // Premium suburbs - highest prices
+    const premiumSuburbs = [
+        'ascot', 'hamilton', 'new farm', 'teneriffe', 'bulimba',
+        'mosman', 'toorak', 'cottesloe', 'double bay', 'vaucluse'
+    ]
+
+    const suburbLower = suburb.toLowerCase()
+    const isPremium = premiumSuburbs.some(s => suburbLower.includes(s))
+    const isInnerCity = innerCitySuburbs.some(s => suburbLower.includes(s))
+
+    const base = basePrices[propertyType.toLowerCase()] || 900000
+
+    if (isPremium) {
+        return base * 1.8  // Premium suburbs 80% higher
+    } else if (isInnerCity) {
+        return base * 1.4  // Inner-city 40% higher
+    }
+
+    return base
 }
