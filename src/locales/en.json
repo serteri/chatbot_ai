@@ -678,6 +678,7 @@
     "type": {
       "education": "Education Chatbot",
       "ecommerce": "E-commerce Chatbot",
+      "realestate": "Real Estate Chatbot",
       "general": "General Purpose Bot"
     },
     "title": "Chatbots",

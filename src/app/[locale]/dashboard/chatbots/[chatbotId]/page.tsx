@@ -81,7 +81,8 @@ export default async function ChatbotDetailPage({
         const getIndustryBadge = (industry: string | null) => {
             const typeKey = industry === 'education' ? 'education' :
                 industry === 'ecommerce' ? 'ecommerce' :
-                    'general';
+                    industry === 'realestate' ? 'realestate' :
+                        'general';
 
             const text = t(`chatbots.type.${typeKey}`);
             let colorClass = 'bg-gray-500 hover:bg-gray-600';
@@ -90,6 +91,8 @@ export default async function ChatbotDetailPage({
                 colorClass = 'bg-blue-600 hover:bg-blue-700';
             } else if (industry === 'ecommerce') {
                 colorClass = 'bg-green-600 hover:bg-green-700';
+            } else if (industry === 'realestate') {
+                colorClass = 'bg-amber-600 hover:bg-amber-700';
             }
 
             return <Badge className={`text-white ${colorClass}`}>{text}</Badge>;

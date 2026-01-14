@@ -689,6 +689,7 @@
     "type": {
       "education": "Eğitim Chatbotu",
       "ecommerce": "E-ticaret Chatbotu",
+      "realestate": "Emlak Chatbotu",
       "general": "Genel Amaçlı Bot"
     },
     "title": "Chatbotlar",
