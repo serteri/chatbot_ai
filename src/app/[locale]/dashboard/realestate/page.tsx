@@ -138,6 +138,156 @@ const realEstateTranslations = {
         noProperties: 'No properties uploaded yet',
         noPropertiesDesc: 'Upload your listings, chatbot will suggest them to customers automatically',
         learnMore: 'How It Works?'
+    },
+    de: {
+        platformTitle: 'Immobilien-Assistenten',
+        platformSubtitle: 'Lead-Qualifizierung & Terminverwaltung',
+        backToMain: 'Haupt-Dashboard',
+        welcomeTitle: 'Ihr digitaler Empfangs-Assistent',
+        welcomeDescription: 'Arbeitet 24/7, schläft nie, braucht kein Gehalt, bringt Ihnen nur seriöse Käufer.',
+        stats: {
+            activeBots: 'Aktive Assistenten',
+            totalLeads: 'Gesamt-Leads',
+            hotLeads: 'Heiße Leads',
+            appointments: 'Termine'
+        },
+        features: {
+            leadQualification: 'Lead-Qualifizierung',
+            propertyManagement: 'Immobilienverwaltung',
+            appointmentScheduling: 'Terminsystem',
+            tenantSupport: 'Mieterbetreuung'
+        },
+        leadQualificationDesc: 'Filtern Sie seriöse Käufer mit Budget-, Timing- und Vorabgenehmigungsfragen',
+        propertyManagementDesc: 'Laden Sie Angebote hoch, Chatbot gleicht automatisch ab',
+        appointmentSchedulingDesc: 'Kalenderintegration für automatische Terminplanung',
+        tenantSupportDesc: 'Problemmeldung, Mietzahlung, Vertragsfragen',
+        sections: {
+            leadAnalytics: 'Lead-Analytik',
+            properties: 'Immobilienportfolio',
+            chatbots: 'Immobilien-Assistenten'
+        },
+        leadCategories: {
+            hot: 'Heiß',
+            warm: 'Warm',
+            cold: 'Kalt'
+        },
+        importOptions: {
+            title: 'Immobilien-Importoptionen',
+            manual: 'Manuelle Eingabe',
+            manualDesc: 'Angebote einzeln hinzufügen',
+            xml: 'XML/Feed-Import',
+            xmlDesc: 'Import von Immobilienportalen',
+            api: 'API-Integration',
+            apiDesc: 'CRM-System verbinden'
+        },
+        manageChatbot: 'Verwalten',
+        testWidget: 'Widget testen',
+        viewAnalytics: 'Analytik',
+        addProperty: 'Immobilie hinzufügen',
+        importProperties: 'Immobilien importieren',
+        noProperties: 'Noch keine Immobilien hochgeladen',
+        noPropertiesDesc: 'Laden Sie Angebote hoch, Chatbot schlägt sie Kunden automatisch vor',
+        learnMore: 'Wie funktioniert es?'
+    },
+    fr: {
+        platformTitle: 'Assistants Immobiliers',
+        platformSubtitle: 'Qualification de leads & Gestion des rendez-vous',
+        backToMain: 'Tableau de bord principal',
+        welcomeTitle: 'Votre assistant de réception numérique',
+        welcomeDescription: 'Travaille 24/7, ne dort jamais, ne demande pas de salaire, ne vous amène que des acheteurs sérieux.',
+        stats: {
+            activeBots: 'Assistants actifs',
+            totalLeads: 'Total des leads',
+            hotLeads: 'Leads chauds',
+            appointments: 'Rendez-vous'
+        },
+        features: {
+            leadQualification: 'Qualification de leads',
+            propertyManagement: 'Gestion immobilière',
+            appointmentScheduling: 'Système de rendez-vous',
+            tenantSupport: 'Support locataire'
+        },
+        leadQualificationDesc: 'Filtrez les acheteurs sérieux avec des questions sur le budget, le timing, la pré-approbation',
+        propertyManagementDesc: 'Téléchargez vos annonces, le chatbot fait la correspondance automatiquement',
+        appointmentSchedulingDesc: 'Intégration calendrier pour planification automatique',
+        tenantSupportDesc: 'Signalement de problèmes, paiement du loyer, questions contractuelles',
+        sections: {
+            leadAnalytics: 'Analytique des leads',
+            properties: 'Portefeuille immobilier',
+            chatbots: 'Assistants immobiliers'
+        },
+        leadCategories: {
+            hot: 'Chaud',
+            warm: 'Tiède',
+            cold: 'Froid'
+        },
+        importOptions: {
+            title: 'Options d\'import immobilier',
+            manual: 'Entrée manuelle',
+            manualDesc: 'Ajouter les annonces une par une',
+            xml: 'Import XML/Feed',
+            xmlDesc: 'Import depuis les portails immobiliers',
+            api: 'Intégration API',
+            apiDesc: 'Connecter votre système CRM'
+        },
+        manageChatbot: 'Gérer',
+        testWidget: 'Tester Widget',
+        viewAnalytics: 'Analytique',
+        addProperty: 'Ajouter propriété',
+        importProperties: 'Importer propriétés',
+        noProperties: 'Aucune propriété téléchargée',
+        noPropertiesDesc: 'Téléchargez vos annonces, le chatbot les suggérera automatiquement aux clients',
+        learnMore: 'Comment ça marche?'
+    },
+    es: {
+        platformTitle: 'Asistentes Inmobiliarios',
+        platformSubtitle: 'Calificación de leads y Gestión de citas',
+        backToMain: 'Panel principal',
+        welcomeTitle: 'Su asistente de recepción digital',
+        welcomeDescription: 'Trabaja 24/7, nunca duerme, no necesita salario, solo le trae compradores serios.',
+        stats: {
+            activeBots: 'Asistentes activos',
+            totalLeads: 'Total de leads',
+            hotLeads: 'Leads calientes',
+            appointments: 'Citas'
+        },
+        features: {
+            leadQualification: 'Calificación de leads',
+            propertyManagement: 'Gestión de propiedades',
+            appointmentScheduling: 'Sistema de citas',
+            tenantSupport: 'Soporte al inquilino'
+        },
+        leadQualificationDesc: 'Filtre compradores serios con preguntas de presupuesto, tiempo, pre-aprobación',
+        propertyManagementDesc: 'Suba listados, el chatbot hace coincidencias automáticamente',
+        appointmentSchedulingDesc: 'Integración de calendario para programación automática',
+        tenantSupportDesc: 'Reporte de problemas, pago de alquiler, preguntas contractuales',
+        sections: {
+            leadAnalytics: 'Analítica de leads',
+            properties: 'Portafolio inmobiliario',
+            chatbots: 'Asistentes inmobiliarios'
+        },
+        leadCategories: {
+            hot: 'Caliente',
+            warm: 'Tibio',
+            cold: 'Frío'
+        },
+        importOptions: {
+            title: 'Opciones de importación',
+            manual: 'Entrada manual',
+            manualDesc: 'Agregar listados uno por uno',
+            xml: 'Importar XML/Feed',
+            xmlDesc: 'Importar desde portales inmobiliarios',
+            api: 'Integración API',
+            apiDesc: 'Conectar su sistema CRM'
+        },
+        manageChatbot: 'Gestionar',
+        testWidget: 'Probar Widget',
+        viewAnalytics: 'Analítica',
+        addProperty: 'Agregar propiedad',
+        importProperties: 'Importar propiedades',
+        noProperties: 'Sin propiedades cargadas aún',
+        noPropertiesDesc: 'Suba sus listados, el chatbot los sugerirá automáticamente a los clientes',
+        learnMore: '¿Cómo funciona?'
     }
 }
 
@@ -148,7 +298,7 @@ export default async function RealEstateDashboard({
 }) {
     const { locale } = await params
     const t = await getTranslations({ locale })
-    const rt = realEstateTranslations[locale as 'tr' | 'en'] || realEstateTranslations.en
+    const rt = realEstateTranslations[locale as keyof typeof realEstateTranslations] || realEstateTranslations.en
     const session = await auth()
 
     if (!session?.user?.id) {

@@ -696,6 +696,7 @@
     "generalType": "Allgemein",
     "educationType": "Bildung",
     "ecommerceType": "E-Commerce",
+    "realestateType": "Immobilien",
     "creating": "Erstellen...",
     "nameRequired": "Name ist erforderlich",
     "nameTooShort": "Name muss mindestens 2 Zeichen lang sein",

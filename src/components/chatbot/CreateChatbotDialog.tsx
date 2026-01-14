@@ -199,6 +199,12 @@ export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDia
                                             <span className="font-medium text-slate-900">{t('ecommerceType')}</span>
                                         </div>
                                     </SelectItem>
+                                    <SelectItem value="realestate" className="cursor-pointer hover:bg-amber-50 focus:bg-amber-50 py-2.5">
+                                        <div className="flex items-center gap-2">
+                                            <Briefcase className="h-4 w-4 text-amber-500" />
+                                            <span className="font-medium text-slate-900">{t('realestateType')}</span>
+                                        </div>
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

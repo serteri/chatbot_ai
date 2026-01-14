@@ -731,6 +731,7 @@
     "generalType": "Genel",
     "educationType": "Eğitim",
     "ecommerceType": "E-ticaret",
+    "realestateType": "Emlak",
     "creating": "Oluşturuluyor...",
     "nameRequired": "İsim gerekli",
     "nameTooShort": "İsim en az 2 karakter olmalı",

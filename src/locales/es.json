@@ -692,6 +692,7 @@
     "generalType": "General",
     "educationType": "Educación",
     "ecommerceType": "E-commerce",
+    "realestateType": "Inmobiliaria",
     "creating": "Creando...",
     "nameRequired": "El nombre es obligatorio",
     "nameTooShort": "El nombre debe tener al menos 2 caracteres",

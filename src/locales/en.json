@@ -720,6 +720,7 @@
     "generalType": "General",
     "educationType": "Education",
     "ecommerceType": "E-commerce",
+    "realestateType": "Real Estate",
     "creating": "Creating...",
     "nameRequired": "Name is required",
     "nameTooShort": "Name must be at least 2 characters",
