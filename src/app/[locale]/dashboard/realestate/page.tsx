@@ -88,7 +88,18 @@ const realEstateTranslations = {
         importProperties: 'İlanları İçe Aktar',
         noProperties: 'Henüz ilan yüklenmemiş',
         noPropertiesDesc: 'İlanlarınızı yükleyin, chatbot müşterilere otomatik öneriler sunsun',
-        learnMore: 'Nasıl Çalışır?'
+        learnMore: 'Nasıl Çalışır?',
+        leadQualifyPerformance: 'Lead eleme performansı ve dönüşüm oranları',
+        leadDataEmpty: 'Lead verileri konuşmalar başladığında burada görünecek.',
+        appointmentConversion: 'Randevuya Dönüşüm',
+        newAssistant: 'Yeni Asistan',
+        chatbotsDesc: 'Emlak web sitenize entegre edilecek chatbot asistanları',
+        widgetDemo: 'Widget Demo',
+        tryLiveDemo: 'Canlı demo\'yu deneyin',
+        conversations: 'Konuşmalar',
+        total: 'toplam',
+        support: 'Destek',
+        needHelp: 'Yardıma mı ihtiyacınız var?'
     },
     en: {
         platformTitle: 'Real Estate Assistants',
@@ -138,7 +149,18 @@ const realEstateTranslations = {
         importProperties: 'Import Properties',
         noProperties: 'No properties uploaded yet',
         noPropertiesDesc: 'Upload your listings, chatbot will suggest them to customers automatically',
-        learnMore: 'How It Works?'
+        learnMore: 'How It Works?',
+        leadQualifyPerformance: 'Lead qualification performance and conversion rates',
+        leadDataEmpty: 'Lead data will appear here once conversations start.',
+        appointmentConversion: 'Appointment Conversion',
+        newAssistant: 'New Assistant',
+        chatbotsDesc: 'Chatbot assistants to integrate with your real estate website',
+        widgetDemo: 'Widget Demo',
+        tryLiveDemo: 'Try the live demo',
+        conversations: 'Conversations',
+        total: 'total',
+        support: 'Support',
+        needHelp: 'Need help?'
     },
     de: {
         platformTitle: 'Immobilien-Assistenten',
@@ -188,7 +210,18 @@ const realEstateTranslations = {
         importProperties: 'Immobilien importieren',
         noProperties: 'Noch keine Immobilien hochgeladen',
         noPropertiesDesc: 'Laden Sie Angebote hoch, Chatbot schlägt sie Kunden automatisch vor',
-        learnMore: 'Wie funktioniert es?'
+        learnMore: 'Wie funktioniert es?',
+        leadQualifyPerformance: 'Lead-Qualifizierungsleistung und Konversionsraten',
+        leadDataEmpty: 'Lead-Daten werden hier erscheinen, sobald Gespräche beginnen.',
+        appointmentConversion: 'Terminkonversion',
+        newAssistant: 'Neuer Assistent',
+        chatbotsDesc: 'Chatbot-Assistenten zur Integration in Ihre Immobilien-Website',
+        widgetDemo: 'Widget Demo',
+        tryLiveDemo: 'Live-Demo ausprobieren',
+        conversations: 'Gespräche',
+        total: 'gesamt',
+        support: 'Support',
+        needHelp: 'Brauchen Sie Hilfe?'
     },
     fr: {
         platformTitle: 'Assistants Immobiliers',
@@ -238,7 +271,18 @@ const realEstateTranslations = {
         importProperties: 'Importer propriétés',
         noProperties: 'Aucune propriété téléchargée',
         noPropertiesDesc: 'Téléchargez vos annonces, le chatbot les suggérera automatiquement aux clients',
-        learnMore: 'Comment ça marche?'
+        learnMore: 'Comment ça marche?',
+        leadQualifyPerformance: 'Performance de qualification des leads et taux de conversion',
+        leadDataEmpty: 'Les données de leads apparaîtront ici une fois les conversations commencées.',
+        appointmentConversion: 'Conversion en rendez-vous',
+        newAssistant: 'Nouvel Assistant',
+        chatbotsDesc: 'Assistants chatbot à intégrer à votre site immobilier',
+        widgetDemo: 'Démo Widget',
+        tryLiveDemo: 'Essayer la démo en direct',
+        conversations: 'Conversations',
+        total: 'total',
+        support: 'Support',
+        needHelp: 'Besoin d\'aide?'
     },
     es: {
         platformTitle: 'Asistentes Inmobiliarios',
@@ -288,7 +332,18 @@ const realEstateTranslations = {
         importProperties: 'Importar propiedades',
         noProperties: 'Sin propiedades cargadas aún',
         noPropertiesDesc: 'Suba sus listados, el chatbot los sugerirá automáticamente a los clientes',
-        learnMore: '¿Cómo funciona?'
+        learnMore: '¿Cómo funciona?',
+        leadQualifyPerformance: 'Rendimiento de calificación de leads y tasas de conversión',
+        leadDataEmpty: 'Los datos de leads aparecerán aquí cuando comiencen las conversaciones.',
+        appointmentConversion: 'Conversión a cita',
+        newAssistant: 'Nuevo Asistente',
+        chatbotsDesc: 'Asistentes chatbot para integrar con su sitio web inmobiliario',
+        widgetDemo: 'Demo de Widget',
+        tryLiveDemo: 'Probar la demo en vivo',
+        conversations: 'Conversaciones',
+        total: 'total',
+        support: 'Soporte',
+        needHelp: '¿Necesita ayuda?'
     }
 }
 
@@ -549,9 +604,7 @@ export default async function RealEstateDashboard({
                                 {hasData && <Badge variant="secondary" className="bg-amber-100 text-amber-800">Canlı</Badge>}
                             </div>
                             <CardDescription>
-                                {locale === 'tr'
-                                    ? 'Lead eleme performansı ve dönüşüm oranları'
-                                    : 'Lead qualification performance and conversion rates'}
+                                {rt.leadQualifyPerformance}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="flex-1 flex flex-col">
@@ -559,9 +612,7 @@ export default async function RealEstateDashboard({
                                 <div className="flex-1 flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
                                     <BarChart3 className="h-12 w-12 mb-3 text-slate-200" />
                                     <p className="text-sm">
-                                        {locale === 'tr'
-                                            ? 'Lead verileri konuşmalar başladığında burada görünecek.'
-                                            : 'Lead data will appear here once conversations start.'}
+                                        {rt.leadDataEmpty}
                                     </p>
                                 </div>
                             ) : (
@@ -607,7 +658,7 @@ export default async function RealEstateDashboard({
                                     <div className="pt-4 border-t">
                                         <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
                                             <span className="text-sm text-green-800">
-                                                {locale === 'tr' ? 'Randevuya Dönüşüm' : 'Appointment Conversion'}
+                                                {rt.appointmentConversion}
                                             </span>
                                             <span className="font-bold text-green-700">
                                                 {totalLeads > 0 ? Math.round((scheduledAppointments / totalLeads) * 100) : 0}%
@@ -630,14 +681,12 @@ export default async function RealEstateDashboard({
                                 <CreateChatbotDialog industry="realestate">
                                     <Button size="sm" className="bg-amber-600 hover:bg-amber-700">
                                         <Plus className="mr-1 h-4 w-4" />
-                                        {locale === 'tr' ? 'Yeni Asistan' : 'New Assistant'}
+                                        {rt.newAssistant}
                                     </Button>
                                 </CreateChatbotDialog>
                             </div>
                             <CardDescription>
-                                {locale === 'tr'
-                                    ? 'Emlak web sitenize entegre edilecek chatbot asistanları'
-                                    : 'Chatbot assistants to integrate with your real estate website'}
+                                {rt.chatbotsDesc}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="flex-1">
@@ -700,9 +749,9 @@ export default async function RealEstateDashboard({
                                     <MessageCircle className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold">{locale === 'tr' ? 'Widget Demo' : 'Widget Demo'}</h3>
+                                    <h3 className="font-semibold">{rt.widgetDemo}</h3>
                                     <p className="text-sm text-muted-foreground">
-                                        {locale === 'tr' ? 'Canlı demo\'yu deneyin' : 'Try the live demo'}
+                                        {rt.tryLiveDemo}
                                     </p>
                                 </div>
                             </CardContent>
@@ -716,9 +765,9 @@ export default async function RealEstateDashboard({
                                     <MessageSquare className="h-6 w-6" />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold">{locale === 'tr' ? 'Konuşmalar' : 'Conversations'}</h3>
+                                    <h3 className="font-semibold">{rt.conversations}</h3>
                                     <p className="text-sm text-muted-foreground">
-                                        {totalConversations} {locale === 'tr' ? 'toplam' : 'total'}
+                                        {totalConversations} {rt.total}
                                     </p>
                                 </div>
                             </CardContent>
@@ -731,9 +780,9 @@ export default async function RealEstateDashboard({
                                 <Phone className="h-6 w-6" />
                             </div>
                             <div>
-                                <h3 className="font-semibold">{locale === 'tr' ? 'Destek' : 'Support'}</h3>
+                                <h3 className="font-semibold">{rt.support}</h3>
                                 <p className="text-sm text-muted-foreground">
-                                    {locale === 'tr' ? 'Yardıma mı ihtiyacınız var?' : 'Need help?'}
+                                    {rt.needHelp}
                                 </p>
                             </div>
                         </CardContent>
