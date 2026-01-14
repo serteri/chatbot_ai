@@ -269,8 +269,27 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
         }
     }
 
+    const resetForm = () => {
+        setFormData({
+            suburb: '',
+            propertyType: 'house',
+            bedrooms: 3,
+            bathrooms: 2,
+            carSpaces: 1,
+            landArea: 0
+        })
+        setResult(null)
+    }
+
+    const handleOpenChange = (open: boolean) => {
+        setIsOpen(open)
+        if (!open) {
+            resetForm()
+        }
+    }
+
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 <Card className="hover:shadow-md transition-shadow cursor-pointer border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50">
                     <CardContent className="p-6 flex items-center gap-4">
