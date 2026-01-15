@@ -109,7 +109,8 @@ export default function PricingPage() {
                 t('pricing.plans.free.features.0'),
                 t('pricing.plans.free.features.1'),
                 t('pricing.plans.free.features.2'),
-                t('pricing.plans.free.features.3')
+                t('pricing.plans.free.features.3'),
+                t('pricing.plans.free.features.4')
             ],
             popular: false,
             gradient: 'from-gray-500 to-gray-600',
@@ -127,7 +128,8 @@ export default function PricingPage() {
                 t('pricing.plans.pro.features.2'),
                 t('pricing.plans.pro.features.3'),
                 t('pricing.plans.pro.features.4'),
-                t('pricing.plans.pro.features.5')
+                t('pricing.plans.pro.features.5'),
+                t('pricing.plans.pro.features.6')
             ],
             popular: true,
             gradient: 'from-blue-500 to-indigo-600',
@@ -146,7 +148,8 @@ export default function PricingPage() {
                 t('pricing.plans.business.features.3'),
                 t('pricing.plans.business.features.4'),
                 t('pricing.plans.business.features.5'),
-                t('pricing.plans.business.features.6')
+                t('pricing.plans.business.features.6'),
+                t('pricing.plans.business.features.7')
             ],
             popular: false,
             gradient: 'from-purple-500 to-pink-600',
@@ -164,7 +167,8 @@ export default function PricingPage() {
                 t('pricing.plans.enterprise.features.2'),
                 t('pricing.plans.enterprise.features.3'),
                 t('pricing.plans.enterprise.features.4'),
-                t('pricing.plans.enterprise.features.5')
+                t('pricing.plans.enterprise.features.5'),
+                t('pricing.plans.enterprise.features.6')
             ],
             popular: false,
             gradient: 'from-emerald-500 to-teal-600',
@@ -209,8 +213,8 @@ export default function PricingPage() {
                             <button
                                 onClick={() => setBillingPeriod('monthly')}
                                 className={`px-4 py-2 rounded-lg font-medium transition-all ${billingPeriod === 'monthly'
-                                        ? 'bg-white text-blue-600'
-                                        : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
+                                    ? 'bg-white text-blue-600'
+                                    : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
                                     }`}
                             >
                                 {t('pricing.monthly')}
@@ -218,8 +222,8 @@ export default function PricingPage() {
                             <button
                                 onClick={() => setBillingPeriod('yearly')}
                                 className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 ${billingPeriod === 'yearly'
-                                        ? 'bg-white text-blue-600'
-                                        : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
+                                    ? 'bg-white text-blue-600'
+                                    : 'bg-blue-500/30 text-blue-100 hover:bg-blue-500/40'
                                     }`}
                             >
                                 <span>{t('pricing.yearly')}</span>
@@ -319,6 +323,93 @@ export default function PricingPage() {
                     </div>
                 </div>
 
+                {/* Plan Comparison Table */}
+                <div className="py-20 bg-white">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+                            {t('pricing.comparison')}
+                        </h2>
+                        <div className="overflow-x-auto">
+                            <table className="w-full max-w-5xl mx-auto border-collapse bg-white rounded-xl shadow-lg">
+                                <thead>
+                                    <tr className="bg-gray-50 border-b">
+                                        <th className="text-left p-4 font-semibold text-gray-900">{t('pricing.feature')}</th>
+                                        <th className="text-center p-4 font-semibold text-gray-900">{t('pricing.plans.free.name')}</th>
+                                        <th className="text-center p-4 font-semibold text-blue-600">{t('pricing.plans.pro.name')}</th>
+                                        <th className="text-center p-4 font-semibold text-gray-900">{t('pricing.plans.business.name')}</th>
+                                        <th className="text-center p-4 font-semibold text-gray-900">{t('pricing.plans.enterprise.name')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr className="border-b hover:bg-gray-50">
+                                        <td className="p-4 text-gray-700">{t('pricing.chatbotCount')}</td>
+                                        <td className="text-center p-4">1</td>
+                                        <td className="text-center p-4 bg-blue-50/50">5</td>
+                                        <td className="text-center p-4">10</td>
+                                        <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                                    </tr>
+                                    <tr className="border-b hover:bg-gray-50">
+                                        <td className="p-4 text-gray-700">{t('pricing.documentCount')}</td>
+                                        <td className="text-center p-4">3</td>
+                                        <td className="text-center p-4 bg-blue-50/50">50</td>
+                                        <td className="text-center p-4">100</td>
+                                        <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                                    </tr>
+                                    <tr className="border-b hover:bg-gray-50">
+                                        <td className="p-4 text-gray-700">{t('pricing.monthlyConversations')}</td>
+                                        <td className="text-center p-4">50</td>
+                                        <td className="text-center p-4 bg-blue-50/50">1,000</td>
+                                        <td className="text-center p-4">5,000</td>
+                                        <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                                    </tr>
+                                    <tr className="border-b hover:bg-gray-50">
+                                        <td className="p-4 text-gray-700">{t('pricing.aiValuation')}</td>
+                                        <td className="text-center p-4">5/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
+                                        <td className="text-center p-4 bg-blue-50/50">50/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
+                                        <td className="text-center p-4">200/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
+                                        <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                                    </tr>
+                                    <tr className="border-b hover:bg-gray-50">
+                                        <td className="p-4 text-gray-700">{t('pricing.analytics')}</td>
+                                        <td className="text-center p-4">❌</td>
+                                        <td className="text-center p-4 bg-blue-50/50">✅</td>
+                                        <td className="text-center p-4">✅</td>
+                                        <td className="text-center p-4">✅</td>
+                                    </tr>
+                                    <tr className="border-b hover:bg-gray-50">
+                                        <td className="p-4 text-gray-700">{t('pricing.customBranding')}</td>
+                                        <td className="text-center p-4">❌</td>
+                                        <td className="text-center p-4 bg-blue-50/50">✅</td>
+                                        <td className="text-center p-4">✅</td>
+                                        <td className="text-center p-4">✅</td>
+                                    </tr>
+                                    <tr className="border-b hover:bg-gray-50">
+                                        <td className="p-4 text-gray-700">{t('pricing.teamCollaboration')}</td>
+                                        <td className="text-center p-4">❌</td>
+                                        <td className="text-center p-4 bg-blue-50/50">❌</td>
+                                        <td className="text-center p-4">✅</td>
+                                        <td className="text-center p-4">✅</td>
+                                    </tr>
+                                    <tr className="border-b hover:bg-gray-50">
+                                        <td className="p-4 text-gray-700">{t('pricing.apiAccess')}</td>
+                                        <td className="text-center p-4">❌</td>
+                                        <td className="text-center p-4 bg-blue-50/50">❌</td>
+                                        <td className="text-center p-4">❌</td>
+                                        <td className="text-center p-4">✅</td>
+                                    </tr>
+                                    <tr className="hover:bg-gray-50">
+                                        <td className="p-4 text-gray-700">{t('pricing.support')}</td>
+                                        <td className="text-center p-4">{t('pricing.emailSupport')}</td>
+                                        <td className="text-center p-4 bg-blue-50/50">{t('pricing.prioritySupport')}</td>
+                                        <td className="text-center p-4">{t('pricing.prioritySupport')}</td>
+                                        <td className="text-center p-4">{t('pricing.support247')}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 {/* FAQ Section - Accordion Style */}
                 <div className="py-20 bg-gray-50">
                     <div className="container mx-auto px-4">
@@ -350,8 +441,8 @@ export default function PricingPage() {
                                         </button>
                                         <div
                                             className={`transition-all duration-300 ease-in-out ${openFaqIndex === index
-                                                    ? 'max-h-96 opacity-100'
-                                                    : 'max-h-0 opacity-0 overflow-hidden'
+                                                ? 'max-h-96 opacity-100'
+                                                : 'max-h-0 opacity-0 overflow-hidden'
                                                 }`}
                                         >
                                             <div className="px-5 pb-5 text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
