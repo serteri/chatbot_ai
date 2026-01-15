@@ -393,7 +393,12 @@ export default async function ChatbotDetailPage({
                                 language: chatbot.language,
                                 enableLiveChat: chatbot.enableLiveChat,
                                 liveSupportUrl: chatbot.liveSupportUrl,
-                                whatsappNumber: chatbot.whatsappNumber
+                                liveSupportUrl: chatbot.liveSupportUrl,
+                                whatsappNumber: chatbot.whatsappNumber,
+                                calendlyUrl: chatbot.calendlyUrl,
+                                agentName: chatbot.agentName,
+                                agentPhone: chatbot.agentPhone,
+                                agentEmail: chatbot.agentEmail
                             }}
                         />
 

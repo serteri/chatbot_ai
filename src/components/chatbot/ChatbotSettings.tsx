@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Loader2, Save, Headset } from 'lucide-react'
+import { Loader2, Save, Headset, Calendar } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Switch } from '@/components/ui/switch'
 import toast from 'react-hot-toast'
@@ -27,6 +27,10 @@ interface ChatbotSettingsProps {
         enableLiveChat?: boolean
         liveSupportUrl?: string | null
         whatsappNumber?: string | null
+        calendlyUrl?: string | null
+        agentName?: string | null
+        agentPhone?: string | null
+        agentEmail?: string | null
     }
 }
 
@@ -148,6 +152,65 @@ export function ChatbotSettings({ chatbotId, hasLiveSupport, initialSettings }: 
                             </div>
                         </div>
                     )}
+                </CardContent>
+            </Card>
+
+            {/* Calendly & Agent Settings (Randevu & Danışman) */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Calendar className="h-5 w-5" />
+                        Randevu ve Danışman Ayarları
+                    </CardTitle>
+                    <CardDescription>Calendly entegrasyonu ve emlak danışmanı bilgileri.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div>
+                        <Label htmlFor="calendlyUrl">Calendly Link</Label>
+                        <Input
+                            id="calendlyUrl"
+                            value={settings.calendlyUrl || ''}
+                            onChange={(e) => setSettings({ ...settings, calendlyUrl: e.target.value })}
+                            placeholder="https://calendly.com/username/event"
+                            className="mt-2"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                            Müşterilerin randevu alabilmesi için Calendly etkinlik linkinizi girin.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <Label htmlFor="agentName">Danışman Adı</Label>
+                            <Input
+                                id="agentName"
+                                value={settings.agentName || ''}
+                                onChange={(e) => setSettings({ ...settings, agentName: e.target.value })}
+                                placeholder="Ad Soyad"
+                                className="mt-2"
+                            />
+                        </div>
+                        <div>
+                            <Label htmlFor="agentPhone">Danışman Telefon</Label>
+                            <Input
+                                id="agentPhone"
+                                value={settings.agentPhone || ''}
+                                onChange={(e) => setSettings({ ...settings, agentPhone: e.target.value })}
+                                placeholder="+90 555 ..."
+                                className="mt-2"
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <Label htmlFor="agentEmail">Danışman Email</Label>
+                        <Input
+                            id="agentEmail"
+                            value={settings.agentEmail || ''}
+                            onChange={(e) => setSettings({ ...settings, agentEmail: e.target.value })}
+                            placeholder="email@example.com"
+                            className="mt-2"
+                        />
+                    </div>
                 </CardContent>
             </Card>
 

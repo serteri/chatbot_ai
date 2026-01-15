@@ -17,7 +17,8 @@
       "WebSearch",
       "WebFetch(domain:developer.domain.com.au)",
       "WebFetch(domain:medium.com)",
-      "WebFetch(domain:proptechdata.com.au)"
+      "WebFetch(domain:proptechdata.com.au)",
+      "Bash(npx prisma db push:*)"
     ]
   }
 }

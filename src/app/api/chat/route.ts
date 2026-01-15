@@ -177,7 +177,18 @@ export async function POST(req: NextRequest) {
 
         const chatbot = await prisma.chatbot.findFirst({
             where: { OR: [{ id: chatbotId }, { identifier: chatbotId }] },
-            select: { id: true, name: true, welcomeMessage: true, userId: true }
+            select: {
+                id: true,
+                name: true,
+                welcomeMessage: true,
+                userId: true,
+                industry: true,
+                agentName: true,
+                agentPhone: true,
+                agentEmail: true,
+                calendlyUrl: true,
+                whatsappNumber: true
+            }
         });
 
         if (!chatbot) {
@@ -245,14 +256,46 @@ export async function POST(req: NextRequest) {
             dataSourcesUsed.push('documents');
         }
 
-        // --- SYSTEM PROMPT ---
-        const systemPrompt = `Sen "${chatbot.name}" adında profesyonel bir eğitim asistanısın.
+        // --- SYSTEM PROMPT GENERATION ---
+        let systemPrompt = "";
+
+        if (chatbot.industry === 'realestate') {
+            const agentInfo = [
+                chatbot.agentName ? `Ad: ${chatbot.agentName}` : null,
+                chatbot.agentPhone ? `Tel: ${chatbot.agentPhone}` : null,
+                chatbot.agentEmail ? `Email: ${chatbot.agentEmail}` : null,
+                chatbot.whatsappNumber ? `WhatsApp: ${chatbot.whatsappNumber}` : null,
+                chatbot.calendlyUrl ? `Randevu Linki: ${chatbot.calendlyUrl}` : null
+            ].filter(Boolean).join('\n');
+
+            systemPrompt = `Sen "${chatbot.agentName || 'Emlak Asistanı'}" adına çalışan profesyonel bir gayrimenkul asistanısın.
+            
+GÖREV:
+Potansiyel alıcıları (lead) karşılamak, sorularını yanıtlamak ve ciddi alıcıları randevuya yönlendirmek.
+
+DANISMAN BILGILERI:
+${agentInfo}
+
+TALİMATLAR:
+1. Kullanıcıya nazik ve profesyonel davran.
+2. Sorulara net cevaplar ver.
+3. Eğer kullanıcı ciddi bir alıcı sinyali verirse (fiyat sorma, yer sorma, randevu isteme), iletişim bilgilerini veya randevu linkini paylaş.
+4. [DOKÜMAN BİLGİSİ] kısmındaki verileri kullanarak cevap ver. Veri yoksa genel emlak bilginle yardımcı ol ama spesifik portföy uydurma.
+5. Randevu almak isterse: "${chatbot.calendlyUrl || 'İletişim bilgilerimden bana ulaşabilirsiniz.'}" linkini/bilgisini ver.
+
+[DOKÜMAN BİLGİSİ]
+${ragContext || "Şu an için ilgili bir portföy/doküman parçası bulunamadı."}
+[DOKÜMAN BİLGİSİ SONU]
+`;
+        } else {
+            // Default / Education Mode
+            systemPrompt = `Sen "${chatbot.name}" adında profesyonel bir asistanısın.
         
 TALİMATLAR:
 1. Kullanıcının sorusunu ÖNCELİKLE aşağıdaki [DOKÜMAN BİLGİSİ] kısmını kullanarak yanıtla.
 2. [DOKÜMAN BİLGİSİ] içinde sorunun cevabı varsa, net ve anlaşılır bir şekilde açıkla.
 3. Cevaplarını kullanıcının sorduğu dilde ver (Soru İngilizce ise İngilizce, Türkçe ise Türkçe cevapla).
-4. Eğer dokümanda bilgi yoksa ve soru genel bir eğitim sorusuysa (örn: "merhaba"), nazikçe cevap ver.
+4. Eğer dokümanda bilgi yoksa ve soru genel bir konuysa nazikçe cevap ver.
 5. Dokümanda olmayan spesifik bir bilgi sorulursa, "Yüklenen dokümanlarda bu bilgiye rastlayamadım." diye belirt.
 6. Asla uydurma bilgi verme.
 
@@ -260,6 +303,7 @@ TALİMATLAR:
 ${ragContext || "Şu an için ilgili bir doküman parçası bulunamadı."}
 [DOKÜMAN BİLGİSİ SONU]
 `;
+        }
 
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',

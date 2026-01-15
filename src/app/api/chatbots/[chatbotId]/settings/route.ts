@@ -45,7 +45,12 @@ export async function POST(
                 // Live Support fields
                 enableLiveChat: data.enableLiveChat,
                 liveSupportUrl: data.liveSupportUrl,
-                whatsappNumber: data.whatsappNumber
+                whatsappNumber: data.whatsappNumber,
+                // Calendly & Agent Settings
+                calendlyUrl: data.calendlyUrl,
+                agentName: data.agentName,
+                agentPhone: data.agentPhone,
+                agentEmail: data.agentEmail
             }
         })
 

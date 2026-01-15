@@ -1004,7 +1004,7 @@ export function RealEstateWidget({
         const userInput = input.toLowerCase()
         setInput('')
 
-        setTimeout(() => {
+        setTimeout(async () => {
             if (userInput.includes('fiyat') || userInput.includes('price') || userInput.includes('bütçe') || userInput.includes('budget')) {
                 addBotMessage(t.leadQualification.budget, 'quick-replies', {
                     replies: t.budgetRanges.map(b => b.label)
@@ -1015,14 +1015,62 @@ export function RealEstateWidget({
                     replies: t.propertyTypes
                 })
                 setCurrentStep('propertyType')
+                setCurrentStep('propertyType')
             } else {
-                addBotMessage(
-                    locale === 'tr'
-                        ? 'Size yardımcı olmak için aşağıdaki seçeneklerden birini seçin:'
-                        : 'Please select one of the options below:',
-                    'quick-replies',
-                    { replies: Object.values(t.quickReplies) }
-                )
+                // FALLBACK: Use AI for general questions
+                if (!chatbotIdentifier) {
+                    addBotMessage(
+                        locale === 'tr'
+                            ? 'Size yardımcı olmak için aşağıdaki seçeneklerden birini seçin:'
+                            : 'Please select one of the options below:',
+                        'quick-replies',
+                        { replies: Object.values(t.quickReplies) }
+                    )
+                    return
+                }
+
+                setIsTyping(true)
+                try {
+                    // Sanitize messages for API
+                    const apiMessages = messages.map(m => ({
+                        role: m.role,
+                        content: m.content
+                    }))
+
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            messages: [...apiMessages, { role: 'user', content: userInput }],
+                            chatbotId: chatbotIdentifier,
+                            mode: 'realestate'
+                        })
+                    })
+
+                    if (response.ok) {
+                        const data = await response.json()
+                        addBotMessage(data.response)
+                    } else {
+                        addBotMessage(
+                            locale === 'tr'
+                                ? 'Şu anda size cevap veremiyorum. Lütfen aşağıdaki seçeneklerden birini deneyin:'
+                                : 'I cannot answer right now. Please try options below:',
+                            'quick-replies',
+                            { replies: Object.values(t.quickReplies) }
+                        )
+                    }
+                } catch (error) {
+                    console.error('AI Chat Error:', error)
+                    addBotMessage(
+                        locale === 'tr'
+                            ? 'Bir bağlantı hatası oluştu.'
+                            : 'Connection error occurred.',
+                        'quick-replies',
+                        { replies: Object.values(t.quickReplies) }
+                    )
+                } finally {
+                    setIsTyping(false)
+                }
             }
         }, 300)
     }
