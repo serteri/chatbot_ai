@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { Lock } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations, useLocale } from 'next-intl'
 
 // Demo chat limit constants
 const DEMO_CHAT_STORAGE_KEY = 'pylonchat_widget_demo'
@@ -96,213 +97,6 @@ interface RealEstateWidgetProps {
     onAppointmentBooked?: (slot: any, lead: LeadData) => void
 }
 
-// Translations
-const translations = {
-    tr: {
-        title: 'Emlak Asistanı',
-        subtitle: 'Ön Büro Asistanınız',
-        online: 'Çevrimiçi',
-        placeholder: 'Mesajınızı yazın...',
-        welcome: `Merhaba! Ben dijital ön büro asistanınız. Size en uygun portföyü sunmak için birkaç hızlı soru soracağım.`,
-        quickReplies: {
-            buy: 'Ev almak istiyorum',
-            rent: 'Kiralık arıyorum',
-            sell: 'Evimi satmak istiyorum',
-            value: 'Evimin değerini öğreneyim',
-            tenant: 'Kiracı desteği'
-        },
-        leadQualification: {
-            propertyType: 'Ne tür bir gayrimenkul arıyorsunuz?',
-            purpose: 'Yatırım için mi yoksa oturum için mi bakıyorsunuz?',
-            purposeOptions: ['Yatırım', 'Oturum', 'Her ikisi de olabilir'],
-            budget: 'Bütçe aralığınız nedir?',
-            budgetNote: 'Size en uygun portföyü sunmak için bütçenizi bilmem gerekiyor.',
-            location: 'Hangi bölgeleri tercih edersiniz?',
-            timeline: 'Ne zaman taşınmayı planlıyorsunuz?',
-            timelineNote: 'Bu bilgi, size öncelik vermemizi sağlar.',
-            preApproval: 'Kredi ön onayınız var mı?',
-            preApprovalNote: 'Ön onay, işlemleri çok hızlandırır.',
-            contact: 'Sizinle iletişime geçebilmemiz için bilgilerinizi paylaşır mısınız?'
-        },
-        propertyTypes: ['Daire', 'Villa', 'Müstakil Ev', 'Arsa', 'Ticari'],
-        budgetRanges: [
-            { label: '1-3 Milyon TL', min: 1000000, max: 3000000 },
-            { label: '3-5 Milyon TL', min: 3000000, max: 5000000 },
-            { label: '5-10 Milyon TL', min: 5000000, max: 10000000 },
-            { label: '10-20 Milyon TL', min: 10000000, max: 20000000 },
-            { label: '20+ Milyon TL', min: 20000000, max: 100000000 }
-        ],
-        timelines: ['Hemen (Bu ay)', '1-3 ay içinde', '3-6 ay içinde', 'Sadece piyasayı araştırıyorum'],
-        yesNo: ['Evet, var', 'Hayır, yok', 'Başvuracağım'],
-        appointmentSlots: {
-            title: 'Danışmanımız bu saatlerde müsait:',
-            select: 'Randevu Seç'
-        },
-        valuation: {
-            title: 'Ücretsiz Değerleme',
-            subtitle: 'Yapay zeka destekli tahmini değer',
-            address: 'Adres (İlçe, Mahalle)',
-            area: 'Metrekare (m²)',
-            rooms: 'Oda Sayısı',
-            buildingAge: 'Bina Yaşı',
-            submit: 'Değerleme Al',
-            result: 'Tahmini Değer Aralığı'
-        },
-        tenant: {
-            title: 'Kiracı Destek',
-            greeting: 'Size nasıl yardımcı olabilirim?',
-            options: ['Arıza Bildirimi', 'Kira Ödeme Bilgisi', 'Sözleşme Sorusu', 'Anahtar Teslimi', 'Diğer'],
-            issueTypes: {
-                plumbing: 'Su Tesisatı',
-                electrical: 'Elektrik',
-                heating: 'Isıtma/Kombi',
-                structural: 'Yapısal Sorun',
-                other: 'Diğer'
-            },
-            urgency: {
-                emergency: 'Acil (Su baskını, gaz kaçağı vb.)',
-                normal: 'Normal',
-                low: 'Acil değil'
-            },
-            photoPrompt: 'Sorunu daha iyi anlamamız için fotoğraf ekleyebilirsiniz:',
-            photoButton: 'Fotoğraf Yükle',
-            submitted: 'Talebiniz alındı! Anlaşmalı servisimiz en kısa sürede sizinle iletişime geçecek.',
-            rentInfo: 'Kira Ödeme Bilgileri:\n\nIBAN: TR00 0000 0000 0000 0000 0000 00\nAlıcı: Emlak Yönetimi A.Ş.\n\nÖdeme açıklamasına daire numaranızı yazmayı unutmayın.',
-            contractInfo: 'Sözleşme sorularınız için lütfen iletişim bilgilerinizi bırakın, müşteri temsilcimiz sizi arasın.'
-        },
-        leadScore: {
-            hot: 'Sıcak Lead',
-            warm: 'Ilık Lead',
-            cold: 'Soğuk Lead',
-            hotDesc: 'Hemen alıma hazır!',
-            warmDesc: 'Potansiyel alıcı',
-            coldDesc: 'Araştırma aşamasında'
-        },
-        messages: {
-            hotLeadAlert: 'Bilgileriniz alındı.\n\nUzman danışmanımız başvurunuzu öncelikli olarak değerlendirip en kısa sürede size dönüş yapacaktır.',
-            warmLeadAlert: 'Teşekkürler, bilgileriniz alındı.\n\nDanışmanımız sizinle iletişime geçecektir.',
-            coldLeadResponse: 'Anlıyorum, henüz araştırma aşamasındasınız.\n\nSize yardımcı olabilecek bazı kaynaklarımız var:\n• Bölge fiyat rehberi\n• Yatırım analiz raporu\n• Piyasa trend raporu\n\nE-posta adresinizi bırakırsanız bu raporları size gönderelim.',
-            searchingProperties: 'Kriterlerinize uygun ilanları arıyorum...',
-            propertiesFound: 'Size uygun ilanlarımız:',
-            noPropertiesFound: 'Şu an kriterlerinize uygun aktif ilanımız bulunmuyor.\n\nAncak danışmanımız sizin için özel arama yapabilir. İletişim bilgilerinizi bırakır mısınız?',
-            investmentMatch: 'Yatırım için mükemmel seçim!\n\nYüksek kira getirisi olan lokasyonları arıyorum...',
-            residenceMatch: 'Oturum için en iyi seçeneklerimizi getiriyorum!\n\nSosyal olanaklar ve ulaşım kriterlerine göre arıyorum...',
-            appointmentConfirmed: 'Randevunuz onaylandı!\n\nAdres ve hatırlatma SMS olarak gönderilecektir.\n\n📍 Konum bilgisi randevudan 1 saat önce iletilecek.',
-            valuationResult: 'Yapay zeka değerleme sonucunuz hazır!',
-            upsellHigherBudget: '💡 Bütçenizi biraz esnetirseniz şu harika seçeneklere bakabilirsiniz:',
-            upsellDifferentType: '🏠 Farklı emlak türlerinde alternatiflerimiz var:',
-            upsellNearby: '📍 Size yakın popüler ilanlarımız:',
-            alternativeQuestion: 'Bu seçeneklerden biri ilginizi çekti mi?'
-        },
-        thankYou: 'Teşekkür ederiz!',
-        viewDetails: 'Detayları Gör',
-        schedule: 'Randevu Al',
-        showMore: 'Daha Fazla Göster',
-        loading: 'Yükleniyor...'
-    },
-    en: {
-        title: 'Real Estate Assistant',
-        subtitle: 'Your Front Desk Assistant',
-        online: 'Online',
-        placeholder: 'Type your message...',
-        welcome: `Hello! I'm your digital front desk assistant. I'll ask you a few quick questions to find the best properties for you.`,
-        quickReplies: {
-            buy: 'I want to buy',
-            rent: 'Looking to rent',
-            sell: 'I want to sell my property',
-            value: 'Get property valuation',
-            tenant: 'Tenant support'
-        },
-        leadQualification: {
-            propertyType: 'What type of property are you looking for?',
-            purpose: 'Are you looking for investment or residence?',
-            purposeOptions: ['Investment', 'Residence', 'Could be either'],
-            budget: 'What is your budget range?',
-            budgetNote: 'I need to know your budget to show you the best options.',
-            location: 'Which areas do you prefer?',
-            timeline: 'When are you planning to move?',
-            timelineNote: 'This helps us prioritize your search.',
-            preApproval: 'Do you have mortgage pre-approval?',
-            preApprovalNote: 'Pre-approval speeds up the process significantly.',
-            contact: 'Please share your contact info so we can reach you.'
-        },
-        propertyTypes: ['Apartment', 'Villa', 'House', 'Land', 'Commercial'],
-        budgetRanges: [
-            { label: '$100K-$300K', min: 100000, max: 300000 },
-            { label: '$300K-$500K', min: 300000, max: 500000 },
-            { label: '$500K-$800K', min: 500000, max: 800000 },
-            { label: '$800K-$1.5M', min: 800000, max: 1500000 },
-            { label: '$1.5M+', min: 1500000, max: 50000000 }
-        ],
-        timelines: ['Immediately (This month)', 'Within 1-3 months', 'Within 3-6 months', 'Just browsing the market'],
-        yesNo: ['Yes, I have it', 'No, not yet', 'Will apply soon'],
-        appointmentSlots: {
-            title: 'Our advisor is available at these times:',
-            select: 'Select Slot'
-        },
-        valuation: {
-            title: 'Free Valuation',
-            subtitle: 'AI-powered estimate',
-            address: 'Address (District, Neighborhood)',
-            area: 'Square footage',
-            rooms: 'Bedrooms',
-            buildingAge: 'Building Age',
-            submit: 'Get Valuation',
-            result: 'Estimated Value Range'
-        },
-        tenant: {
-            title: 'Tenant Support',
-            greeting: 'How can I help you?',
-            options: ['Report Issue', 'Rent Payment Info', 'Contract Question', 'Key Handover', 'Other'],
-            issueTypes: {
-                plumbing: 'Plumbing',
-                electrical: 'Electrical',
-                heating: 'Heating/HVAC',
-                structural: 'Structural Issue',
-                other: 'Other'
-            },
-            urgency: {
-                emergency: 'Emergency (Flooding, gas leak, etc.)',
-                normal: 'Normal',
-                low: 'Not urgent'
-            },
-            photoPrompt: 'You can add photos to help us understand the issue:',
-            photoButton: 'Upload Photo',
-            submitted: 'Your request has been received! Our service team will contact you shortly.',
-            rentInfo: 'Rent Payment Information:\n\nBank: Example Bank\nAccount: 1234567890\nRouting: 123456789\n\nPlease include your unit number in the memo.',
-            contractInfo: 'For contract questions, please leave your contact info and our representative will call you.'
-        },
-        leadScore: {
-            hot: 'Hot Lead',
-            warm: 'Warm Lead',
-            cold: 'Cold Lead',
-            hotDesc: 'Ready to buy now!',
-            warmDesc: 'Potential buyer',
-            coldDesc: 'Research phase'
-        },
-        messages: {
-            hotLeadAlert: 'Information received.\n\nOur expert advisor will prioritize your request and contact you shortly.',
-            warmLeadAlert: 'Thank you, information received.\n\nOur advisor will contact you soon.',
-            coldLeadResponse: 'I understand you\'re still in the research phase.\n\nWe have some helpful resources:\n• Area price guide\n• Investment analysis report\n• Market trend report\n\nLeave your email and we\'ll send these to you.',
-            searchingProperties: 'Searching for properties matching your criteria...',
-            propertiesFound: 'Here are properties matching your criteria:',
-            noPropertiesFound: 'We don\'t have active listings matching your criteria at the moment.\n\nHowever, our advisor can do a custom search for you. Would you like to leave your contact info?',
-            investmentMatch: 'Great choice for investment!\n\nSearching for high rental yield locations...',
-            residenceMatch: 'Getting the best options for your new home!\n\nSearching based on amenities and transportation...',
-            appointmentConfirmed: 'Your appointment is confirmed!\n\nAddress and reminder will be sent via SMS.\n\n📍 Location details will be shared 1 hour before.',
-            valuationResult: 'Your AI valuation is ready!',
-            upsellHigherBudget: '💡 If you stretch your budget a bit, check out these great options:',
-            upsellDifferentType: '🏠 We have alternatives in different property types:',
-            upsellNearby: '📍 Popular listings near your preferred area:',
-            alternativeQuestion: 'Interested in any of these options?'
-        },
-        thankYou: 'Thank you!',
-        viewDetails: 'View Details',
-        schedule: 'Schedule Viewing',
-        showMore: 'Show More',
-        loading: 'Loading...'
-    }
-}
 
 // Lead scoring function
 function calculateLeadScore(lead: LeadData): { score: number; category: 'hot' | 'warm' | 'cold' } {
@@ -382,7 +176,147 @@ export function RealEstateWidget({
     const inputRef = useRef<HTMLInputElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const t = translations[locale]
+    const tRaw = useTranslations('widget.realestate')
+    const currentLocale = useLocale()
+    // Use the hook locale if available, otherwise fallback to prop (logic mostly relies on next-intl context now)
+
+    const t = {
+        title: tRaw('title'),
+        subtitle: tRaw('subtitle'),
+        online: tRaw('online'),
+        placeholder: tRaw('placeholder'),
+        welcome: tRaw('welcome'),
+        quickReplies: {
+            buy: tRaw('quickReplies.buy'),
+            rent: tRaw('quickReplies.rent'),
+            sell: tRaw('quickReplies.sell'),
+            value: tRaw('quickReplies.value'),
+            tenant: tRaw('quickReplies.tenant')
+        },
+        leadQualification: {
+            propertyType: tRaw('leadQualification.propertyType'),
+            purpose: tRaw('leadQualification.purpose'),
+            purposeOptions: [
+                tRaw('leadQualification.purposeOptions.investment'),
+                tRaw('leadQualification.purposeOptions.residence'),
+                tRaw('leadQualification.purposeOptions.both')
+            ],
+            budget: tRaw('leadQualification.budget'),
+            budgetNote: tRaw('leadQualification.budgetNote'),
+            location: tRaw('leadQualification.location'),
+            timeline: tRaw('leadQualification.timeline'),
+            timelineNote: tRaw('leadQualification.timelineNote'),
+            preApproval: tRaw('leadQualification.preApproval'),
+            preApprovalNote: tRaw('leadQualification.preApprovalNote'),
+            contact: tRaw('leadQualification.contact')
+        },
+        propertyTypes: [
+            tRaw('propertyTypes.apartment'),
+            tRaw('propertyTypes.villa'),
+            tRaw('propertyTypes.house'),
+            tRaw('propertyTypes.land'),
+            tRaw('propertyTypes.commercial')
+        ],
+        budgetRanges: [
+            { label: tRaw('budgetRanges.label1'), min: 1000000, max: 3000000 },
+            { label: tRaw('budgetRanges.label2'), min: 3000000, max: 5000000 },
+            { label: tRaw('budgetRanges.label3'), min: 5000000, max: 10000000 },
+            { label: tRaw('budgetRanges.label4'), min: 10000000, max: 20000000 },
+            { label: tRaw('budgetRanges.label5'), min: 20000000, max: 100000000 }
+        ],
+        rentBudgetRanges: [
+            { label: tRaw('rentBudgetRanges.label1'), min: 10000, max: 20000 },
+            { label: tRaw('rentBudgetRanges.label2'), min: 20000, max: 35000 },
+            { label: tRaw('rentBudgetRanges.label3'), min: 35000, max: 50000 },
+            { label: tRaw('rentBudgetRanges.label4'), min: 50000, max: 75000 },
+            { label: tRaw('rentBudgetRanges.label5'), min: 75000, max: 200000 }
+        ],
+        timelines: [
+            tRaw('timelines.immediate'),
+            tRaw('timelines.soon'),
+            tRaw('timelines.later'),
+            tRaw('timelines.browsing')
+        ],
+        yesNo: [
+            tRaw('yesNo.yes'),
+            tRaw('yesNo.no'),
+            tRaw('yesNo.apply')
+        ],
+        appointmentSlots: {
+            title: tRaw('appointmentSlots.title'),
+            select: tRaw('appointmentSlots.select')
+        },
+        valuation: {
+            title: tRaw('valuation.title'),
+            subtitle: tRaw('valuation.subtitle'),
+            address: tRaw('valuation.address'),
+            area: tRaw('valuation.area'),
+            rooms: tRaw('valuation.rooms'),
+            buildingAge: tRaw('valuation.buildingAge'),
+            submit: tRaw('valuation.submit'),
+            result: tRaw('valuation.result')
+        },
+        tenant: {
+            title: tRaw('tenant.title'),
+            greeting: tRaw('tenant.greeting'),
+            options: [
+                tRaw('tenant.options.issue'),
+                tRaw('tenant.options.payment'),
+                tRaw('tenant.options.contract'),
+                tRaw('tenant.options.key'),
+                tRaw('tenant.options.other')
+            ],
+            issueTypes: {
+                plumbing: tRaw('tenant.issueTypes.plumbing'),
+                electrical: tRaw('tenant.issueTypes.electrical'),
+                heating: tRaw('tenant.issueTypes.heating'),
+                structural: tRaw('tenant.issueTypes.structural'),
+                other: tRaw('tenant.issueTypes.other')
+            },
+            urgency: {
+                emergency: tRaw('tenant.urgency.emergency'),
+                normal: tRaw('tenant.urgency.normal'),
+                low: tRaw('tenant.urgency.low')
+            },
+            photoPrompt: tRaw('tenant.photoPrompt'),
+            photoButton: tRaw('tenant.photoButton'),
+            submitted: tRaw('tenant.submitted'),
+            rentInfo: tRaw('tenant.rentInfo'),
+            contractInfo: tRaw('tenant.contractInfo')
+        },
+        leadScore: {
+            hot: tRaw('leadScore.hot'),
+            warm: tRaw('leadScore.warm'),
+            cold: tRaw('leadScore.cold'),
+            hotDesc: tRaw('leadScore.hotDesc'),
+            warmDesc: tRaw('leadScore.warmDesc'),
+            coldDesc: tRaw('leadScore.coldDesc')
+        },
+        messages: {
+            hotLeadAlert: tRaw('messages.hotLeadAlert'),
+            warmLeadAlert: tRaw('messages.warmLeadAlert'),
+            coldLeadResponse: tRaw('messages.coldLeadResponse'),
+            searchingProperties: tRaw('messages.searchingProperties'),
+            propertiesFound: tRaw('messages.propertiesFound'),
+            noPropertiesFound: tRaw('messages.noPropertiesFound'),
+            investmentMatch: tRaw('messages.investmentMatch'),
+            residenceMatch: tRaw('messages.residenceMatch'),
+            appointmentConfirmed: tRaw('messages.appointmentConfirmed'),
+            valuationResult: tRaw('messages.valuationResult'),
+            upsellHigherBudget: tRaw('messages.upsellHigherBudget'),
+            upsellDifferentType: tRaw('messages.upsellDifferentType'),
+            upsellNearby: tRaw('messages.upsellNearby'),
+            alternativeQuestion: tRaw('messages.alternativeQuestion'),
+            schedulePrompt: tRaw('messages.schedulePrompt'),
+            scheduleYes: tRaw('messages.scheduleYes'),
+            scheduleNo: tRaw('messages.scheduleNo')
+        },
+        thankYou: tRaw('thankYou'),
+        viewDetails: tRaw('viewDetails'),
+        schedule: tRaw('schedule'),
+        showMore: tRaw('showMore'),
+        loading: tRaw('loading')
+    }
     const positionClass = position === 'bottom-left' ? 'left-4' : 'right-4'
     const remainingMessages = demoChatLimit === -1 ? -1 : Math.max(0, demoChatLimit - demoChatUsed)
 
