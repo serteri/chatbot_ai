@@ -101,6 +101,13 @@ export default async function PricingPage({
                                 <td className="text-center p-4">✅</td>
                             </tr>
                             <tr className="border-b">
+                                <td className="p-4">{t('pricing.aiValuation')}</td>
+                                <td className="text-center p-4">5/{t('pricing.perMonth').replace('/', '')}</td>
+                                <td className="text-center p-4">50/{t('pricing.perMonth').replace('/', '')}</td>
+                                <td className="text-center p-4">200/{t('pricing.perMonth').replace('/', '')}</td>
+                                <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                            </tr>
+                            <tr className="border-b">
                                 <td className="p-4">{t('pricing.support')}</td>
                                 <td className="text-center p-4">{t('pricing.emailSupport')}</td>
                                 <td className="text-center p-4">{t('pricing.prioritySupport')}</td>

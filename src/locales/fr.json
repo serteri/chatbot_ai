@@ -1071,6 +1071,7 @@
     "upgradeError": "Échec de la mise à niveau. Veuillez réessayer.",
     "portalError": "Impossible d'ouvrir le portail d'abonnement.",
     "perMonth": "/mois",
+    "aiValuation": "Évaluation AI",
     "contact": "Nous contacter",
     "getStarted": "Commencer",
     "choosePlan": "Choisir le plan",
@@ -1123,22 +1124,57 @@
       "free": {
         "name": "Gratuit",
         "price": "0€",
-        "description": "Parfait pour commencer"
+        "description": "Parfait pour commencer",
+        "features": [
+          "1 Chatbot",
+          "3 Documents",
+          "50 Messages/mois",
+          "Support par email",
+          "5 Évaluations AI/mois"
+        ]
       },
       "pro": {
         "name": "Pro",
         "price": "29€",
-        "description": "Idéal pour les petites entreprises"
+        "description": "Idéal pour les petites entreprises",
+        "features": [
+          "5 Chatbots",
+          "50 Documents",
+          "1.000 Messages/mois",
+          "Support prioritaire",
+          "Marque personnalisée",
+          "Tableau de bord analytique",
+          "50 Évaluations AI/mois"
+        ]
       },
       "business": {
         "name": "Business",
         "price": "69€",
-        "description": "Pour les équipes en croissance"
+        "description": "Pour les équipes en croissance",
+        "features": [
+          "10 Chatbots",
+          "100 Documents",
+          "5.000 Messages/mois",
+          "Support prioritaire",
+          "Marque personnalisée",
+          "Tableau de bord analytique",
+          "Collaboration d'équipe",
+          "200 Évaluations AI/mois"
+        ]
       },
       "enterprise": {
         "name": "Enterprise",
         "price": "99€",
-        "description": "Pour les grandes organisations"
+        "description": "Pour les grandes organisations",
+        "features": [
+          "Chatbots illimités",
+          "Documents illimités",
+          "Messages illimités",
+          "Support 24/7",
+          "Domaine personnalisé",
+          "Accès API",
+          "Évaluations AI illimitées"
+        ]
       }
     },
     "faq": {

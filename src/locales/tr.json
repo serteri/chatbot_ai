@@ -1158,6 +1158,7 @@
     "bizFeat8": "200 AI Değerleme/ay",
     "downgradeUnavailable": "Düşürme Mevcut Değil",
     "includedInCurrentPlan": "Planınıza dahil",
+    "aiValuation": "AI Değerleme",
     "manageSub": "Aboneliği Yönet",
     "upgrade": "Yükselt",
     "startFree": "Ücretsiz Başla",
@@ -1172,7 +1173,8 @@
           "1 Chatbot",
           "3 Doküman",
           "50 Konuşma/ay",
-          "Email Destek"
+          "Email Destek",
+          "5 AI Değerleme/ay"
         ]
       },
       "pro": {
@@ -1185,7 +1187,8 @@
           "1,000 Konuşma/ay",
           "Öncelikli Destek",
           "Özel Branding",
-          "Analitik Dashboard"
+          "Analitik Dashboard",
+          "50 AI Değerleme/ay"
         ]
       },
       "business": {
@@ -1199,7 +1202,8 @@
           "Öncelikli Destek",
           "Özel Branding",
           "Analitik Dashboard",
-          "Takım İşbirliği"
+          "Takım İşbirliği",
+          "200 AI Değerleme/ay"
         ]
       },
       "enterprise": {
@@ -1213,7 +1217,8 @@
           "7/24 Destek",
           "Özel Domain",
           "API Erişimi",
-          "Gelişmiş Analitik"
+          "Gelişmiş Analitik",
+          "Sınırsız AI Değerleme"
         ]
       }
     },

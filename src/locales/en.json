@@ -1153,6 +1153,7 @@
     "manageSub": "Manage Subscription",
     "upgrade": "Upgrade",
     "startFree": "Start Free",
+    "aiValuation": "AI Valuation",
     "upgradeError": "Upgrade failed. Please try again.",
     "portalError": "Unable to open subscription portal. Please try again.",
     "plans": {
@@ -1164,7 +1165,8 @@
           "1 Chatbot",
           "3 Documents",
           "50 Conversations/month",
-          "Email Support"
+          "Email Support",
+          "5 AI Valuations/month"
         ]
       },
       "pro": {
@@ -1177,7 +1179,8 @@
           "1,000 Conversations/month",
           "Priority Support",
           "Custom Branding",
-          "Analytics Dashboard"
+          "Analytics Dashboard",
+          "50 AI Valuations/month"
         ]
       },
       "business": {
@@ -1191,7 +1194,8 @@
           "Priority Support",
           "Custom Branding",
           "Analytics Dashboard",
-          "Team Collaboration"
+          "Team Collaboration",
+          "200 AI Valuations/month"
         ]
       },
       "enterprise": {
@@ -1204,7 +1208,8 @@
           "Unlimited Conversations",
           "24/7 Support",
           "Custom Domain",
-          "API Access"
+          "API Access",
+          "Unlimited AI Valuations"
         ]
       }
     },

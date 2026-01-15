@@ -1174,6 +1174,7 @@
     "upgradeError": "Upgrade fehlgeschlagen. Bitte versuchen Sie es erneut.",
     "portalError": "Abonnement-Portal konnte nicht geöffnet werden.",
     "perMonth": "/Monat",
+    "aiValuation": "AI-Bewertung",
     "contact": "Kontakt aufnehmen",
     "getStarted": "Loslegen",
     "choosePlan": "Plan Wählen",
@@ -1234,7 +1235,8 @@
           "1 Chatbot",
           "3 Dokumente",
           "50 Gespräche/Monat",
-          "E-Mail-Support"
+          "E-Mail-Support",
+          "5 AI-Bewertungen/Monat"
         ]
       },
       "pro": {
@@ -1247,7 +1249,8 @@
           "1.000 Gespräche/Monat",
           "Prioritäts-Support",
           "Benutzerdefiniertes Branding",
-          "Analytik-Dashboard"
+          "Analytik-Dashboard",
+          "50 AI-Bewertungen/Monat"
         ]
       },
       "business": {
@@ -1261,7 +1264,8 @@
           "Prioritäts-Support",
           "Benutzerdefiniertes Branding",
           "Analytik-Dashboard",
-          "Team-Zusammenarbeit"
+          "Team-Zusammenarbeit",
+          "200 AI-Bewertungen/Monat"
         ]
       },
       "enterprise": {
@@ -1274,7 +1278,8 @@
           "Unbegrenzte Gespräche",
           "24/7 Support",
           "Benutzerdefinierte Domain",
-          "API-Zugriff"
+          "API-Zugriff",
+          "Unbegrenzte AI-Bewertungen"
         ]
       }
     },

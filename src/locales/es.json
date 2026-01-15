@@ -1110,6 +1110,7 @@
     "upgradeError": "Error al actualizar. Por favor, inténtalo de nuevo.",
     "portalError": "No se pudo abrir el portal de suscripción.",
     "perMonth": "/mes",
+    "aiValuation": "Valoración AI",
     "contact": "Contactar",
     "getStarted": "Comenzar",
     "choosePlan": "Elegir plan",
@@ -1162,22 +1163,57 @@
       "free": {
         "name": "Gratis",
         "price": "0€",
-        "description": "Perfecto para empezar"
+        "description": "Perfecto para empezar",
+        "features": [
+          "1 Chatbot",
+          "3 Documentos",
+          "50 Mensajes/mes",
+          "Soporte por email",
+          "5 Valoraciones AI/mes"
+        ]
       },
       "pro": {
         "name": "Pro",
         "price": "29€",
-        "description": "Ideal para pequeñas empresas"
+        "description": "Ideal para pequeñas empresas",
+        "features": [
+          "5 Chatbots",
+          "50 Documentos",
+          "1.000 Mensajes/mes",
+          "Soporte prioritario",
+          "Marca personalizada",
+          "Panel de analítica",
+          "50 Valoraciones AI/mes"
+        ]
       },
       "business": {
         "name": "Business",
         "price": "69€",
-        "description": "Para equipos en crecimiento"
+        "description": "Para equipos en crecimiento",
+        "features": [
+          "10 Chatbots",
+          "100 Documentos",
+          "5.000 Mensajes/mes",
+          "Soporte prioritario",
+          "Marca personalizada",
+          "Panel de analítica",
+          "Colaboración de equipo",
+          "200 Valoraciones AI/mes"
+        ]
       },
       "enterprise": {
         "name": "Enterprise",
         "price": "99€",
-        "description": "Para grandes organizaciones"
+        "description": "Para grandes organizaciones",
+        "features": [
+          "Chatbots ilimitados",
+          "Documentos ilimitados",
+          "Mensajes ilimitados",
+          "Soporte 24/7",
+          "Dominio personalizado",
+          "Acceso API",
+          "Valoraciones AI ilimitadas"
+        ]
       }
     },
     "faq": {
