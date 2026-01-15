@@ -31,126 +31,15 @@ interface ValuationResponse {
     }[]
     marketInsights: string
     disclaimer: string
+    dataSource?: string
 }
 
-// Suburb baseline prices by property type (3bed/2bath, January 2025)
-// Sources: realestate.com.au, domain.com.au, propertyvalue.com.au
-interface SuburbPrices {
-    house: number
-    apartment: number
-    townhouse: number
-}
-
-const SUBURB_PRICES: Record<string, SuburbPrices> = {
-    // Brisbane Inner - Premium
-    'new farm': { house: 2800000, apartment: 1200000, townhouse: 1800000 },
-    'teneriffe': { house: 2500000, apartment: 1100000, townhouse: 1600000 },
-    'ascot': { house: 2600000, apartment: 950000, townhouse: 1700000 },
-    'hamilton': { house: 2300000, apartment: 900000, townhouse: 1500000 },
-    'bulimba': { house: 2000000, apartment: 850000, townhouse: 1400000 },
-    'hawthorne': { house: 1900000, apartment: 800000, townhouse: 1300000 },
-    'clayfield': { house: 1800000, apartment: 750000, townhouse: 1200000 },
-
-    // Brisbane Inner - Mid
-    'paddington': { house: 1700000, apartment: 700000, townhouse: 1100000 },
-    'west end': { house: 1500000, apartment: 750000, townhouse: 1000000 },
-    'newstead': { house: 1600000, apartment: 850000, townhouse: 1100000 },
-    'albion': { house: 1150000, apartment: 700000, townhouse: 950000 },
-    'fortitude valley': { house: 1200000, apartment: 650000, townhouse: 900000 },
-    'kangaroo point': { house: 1300000, apartment: 700000, townhouse: 950000 },
-    'windsor': { house: 1400000, apartment: 650000, townhouse: 950000 },
-    'wilston': { house: 1600000, apartment: 650000, townhouse: 1000000 },
-    'red hill': { house: 1700000, apartment: 700000, townhouse: 1100000 },
-    'kelvin grove': { house: 1200000, apartment: 550000, townhouse: 850000 },
-    'spring hill': { house: 1100000, apartment: 550000, townhouse: 800000 },
-
-    // Brisbane Middle Ring
-    'toowong': { house: 1500000, apartment: 600000, townhouse: 950000 },
-    'indooroopilly': { house: 1600000, apartment: 550000, townhouse: 1000000 },
-    'st lucia': { house: 1700000, apartment: 600000, townhouse: 1100000 },
-    'coorparoo': { house: 1400000, apartment: 600000, townhouse: 900000 },
-    'camp hill': { house: 1500000, apartment: 600000, townhouse: 950000 },
-    'norman park': { house: 1500000, apartment: 650000, townhouse: 950000 },
-    'morningside': { house: 1350000, apartment: 600000, townhouse: 900000 },
-    'nundah': { house: 1100000, apartment: 550000, townhouse: 800000 },
-    'chermside': { house: 950000, apartment: 500000, townhouse: 700000 },
-    'woolloongabba': { house: 1200000, apartment: 600000, townhouse: 850000 },
-    'annerley': { house: 1100000, apartment: 500000, townhouse: 750000 },
-    'greenslopes': { house: 1150000, apartment: 550000, townhouse: 800000 },
-
-    // Sydney - Premium
-    'vaucluse': { house: 8000000, apartment: 2500000, townhouse: 4500000 },
-    'point piper': { house: 15000000, apartment: 4000000, townhouse: 8000000 },
-    'double bay': { house: 5500000, apartment: 1800000, townhouse: 3500000 },
-    'mosman': { house: 5000000, apartment: 1500000, townhouse: 3000000 },
-    'paddington nsw': { house: 3200000, apartment: 1200000, townhouse: 2200000 },
-    'woollahra': { house: 4000000, apartment: 1400000, townhouse: 2800000 },
-    'bellevue hill': { house: 5000000, apartment: 1600000, townhouse: 3200000 },
-
-    // Sydney - Inner
-    'surry hills': { house: 2200000, apartment: 1100000, townhouse: 1700000 },
-    'newtown': { house: 2000000, apartment: 900000, townhouse: 1500000 },
-    'balmain': { house: 2500000, apartment: 1100000, townhouse: 1800000 },
-    'bondi beach': { house: 4000000, apartment: 1400000, townhouse: 2500000 },
-    'bondi': { house: 3500000, apartment: 1200000, townhouse: 2200000 },
-    'manly': { house: 4200000, apartment: 1500000, townhouse: 2800000 },
-    'coogee': { house: 3500000, apartment: 1200000, townhouse: 2300000 },
-
-    // Melbourne - Premium
-    'toorak': { house: 5500000, apartment: 1200000, townhouse: 2800000 },
-    'brighton': { house: 3200000, apartment: 950000, townhouse: 1800000 },
-    'south yarra': { house: 2800000, apartment: 850000, townhouse: 1600000 },
-    'armadale': { house: 2500000, apartment: 800000, townhouse: 1500000 },
-
-    // Melbourne - Inner
-    'richmond': { house: 1800000, apartment: 650000, townhouse: 1100000 },
-    'fitzroy': { house: 1900000, apartment: 700000, townhouse: 1200000 },
-    'carlton': { house: 1600000, apartment: 600000, townhouse: 1000000 },
-    'st kilda': { house: 1700000, apartment: 650000, townhouse: 1100000 },
-    'brunswick': { house: 1400000, apartment: 550000, townhouse: 900000 },
-    'northcote': { house: 1600000, apartment: 600000, townhouse: 1000000 },
-    'hawthorn': { house: 2200000, apartment: 700000, townhouse: 1400000 },
-
-    // Perth
-    'cottesloe': { house: 3000000, apartment: 900000, townhouse: 1600000 },
-    'dalkeith': { house: 3500000, apartment: 950000, townhouse: 1800000 },
-    'peppermint grove': { house: 5000000, apartment: 1200000, townhouse: 2500000 },
-    'city beach': { house: 2500000, apartment: 800000, townhouse: 1400000 },
-    'subiaco': { house: 1800000, apartment: 650000, townhouse: 1100000 },
-    'fremantle': { house: 1400000, apartment: 600000, townhouse: 950000 },
-
-    // Adelaide
-    'unley': { house: 1600000, apartment: 550000, townhouse: 950000 },
-    'norwood': { house: 1400000, apartment: 500000, townhouse: 850000 },
-    'north adelaide': { house: 1500000, apartment: 550000, townhouse: 900000 },
-    'glenelg': { house: 1300000, apartment: 550000, townhouse: 850000 },
-
-    // Gold Coast
-    'main beach': { house: 2500000, apartment: 1100000, townhouse: 1600000 },
-    'surfers paradise': { house: 1800000, apartment: 850000, townhouse: 1200000 },
-    'burleigh heads': { house: 1600000, apartment: 900000, townhouse: 1100000 },
-    'broadbeach': { house: 1500000, apartment: 800000, townhouse: 1000000 },
-}
-
-// City default prices by property type
-const CITY_DEFAULTS: Record<string, SuburbPrices> = {
-    'brisbane': { house: 950000, apartment: 550000, townhouse: 700000 },
-    'qld': { house: 850000, apartment: 500000, townhouse: 650000 },
-    'sydney': { house: 1500000, apartment: 850000, townhouse: 1100000 },
-    'nsw': { house: 1200000, apartment: 700000, townhouse: 900000 },
-    'melbourne': { house: 1100000, apartment: 600000, townhouse: 800000 },
-    'vic': { house: 900000, apartment: 500000, townhouse: 650000 },
-    'perth': { house: 750000, apartment: 450000, townhouse: 550000 },
-    'wa': { house: 650000, apartment: 400000, townhouse: 500000 },
-    'adelaide': { house: 800000, apartment: 450000, townhouse: 550000 },
-    'sa': { house: 700000, apartment: 400000, townhouse: 500000 },
-    'gold coast': { house: 1000000, apartment: 650000, townhouse: 800000 },
-    'canberra': { house: 950000, apartment: 550000, townhouse: 700000 },
-    'act': { house: 950000, apartment: 550000, townhouse: 700000 },
-    'hobart': { house: 700000, apartment: 450000, townhouse: 550000 },
-    'tas': { house: 600000, apartment: 400000, townhouse: 480000 },
-    'darwin': { house: 550000, apartment: 350000, townhouse: 450000 },
-    'nt': { house: 500000, apartment: 320000, townhouse: 400000 },
+interface SuburbData {
+    medianHouse: number
+    medianUnit: number
+    medianTownhouse?: number
+    source: string
+    lastUpdated: string
 }
 
 // Bedroom multipliers (baseline is 3 bed)
@@ -163,48 +52,107 @@ const BATHROOM_MULTIPLIERS: Record<number, number> = {
     1: 0.94, 2: 1.00, 3: 1.05, 4: 1.10
 }
 
-function getPropertyTypeKey(propertyType: string): keyof SuburbPrices {
-    const type = propertyType.toLowerCase()
-    if (type === 'house' || type === 'land') return 'house'
-    if (type === 'townhouse') return 'townhouse'
-    return 'apartment' // apartment, unit, etc.
+// Try to fetch from Proptech Data API (if configured)
+async function fetchFromProptechAPI(suburb: string, state: string): Promise<SuburbData | null> {
+    const apiKey = process.env.PROPTECH_API_KEY
+    if (!apiKey) return null
+
+    try {
+        const response = await fetch(
+            `https://api.proptechdata.com.au/v1/suburbs/statistics?suburb=${encodeURIComponent(suburb)}&state=${encodeURIComponent(state)}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+
+        if (!response.ok) return null
+
+        const data = await response.json()
+        return {
+            medianHouse: data.house?.medianPrice || 0,
+            medianUnit: data.unit?.medianPrice || 0,
+            medianTownhouse: data.townhouse?.medianPrice,
+            source: 'Proptech Data API',
+            lastUpdated: new Date().toISOString()
+        }
+    } catch {
+        return null
+    }
 }
 
-function calculateValuation(data: ValuationRequest): { min: number; max: number; median: number } {
-    const suburbLower = data.suburb.toLowerCase()
-    const propertyTypeKey = getPropertyTypeKey(data.propertyType)
+// Use OpenAI to get current market prices
+async function fetchFromOpenAI(openai: OpenAI, suburb: string, propertyType: string): Promise<SuburbData | null> {
+    try {
+        const completion = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [
+                {
+                    role: 'system',
+                    content: `You are an Australian property market data expert. Provide current median property prices based on the latest available market data. Return ONLY valid JSON, no other text.`
+                },
+                {
+                    role: 'user',
+                    content: `What are the current median property prices in ${suburb}, Australia?
 
-    // Default fallback prices
-    let suburbPrices: SuburbPrices = { house: 900000, apartment: 550000, townhouse: 700000 }
+Return JSON in this exact format (prices in AUD as integers):
+{
+  "medianHouse": 1200000,
+  "medianUnit": 650000,
+  "medianTownhouse": 850000,
+  "dataDate": "January 2025",
+  "confidence": "high"
+}
 
-    // Try exact suburb match
-    for (const [suburb, prices] of Object.entries(SUBURB_PRICES)) {
-        if (suburbLower.includes(suburb)) {
-            suburbPrices = prices
-            break
+Base your estimates on recent sales data and market trends. Be realistic and accurate.`
+                }
+            ],
+            response_format: { type: 'json_object' }
+        })
+
+        const responseText = completion.choices[0]?.message?.content
+        if (!responseText) return null
+
+        const data = JSON.parse(responseText)
+        return {
+            medianHouse: data.medianHouse || 900000,
+            medianUnit: data.medianUnit || 500000,
+            medianTownhouse: data.medianTownhouse || 700000,
+            source: `AI Estimate (${data.dataDate || 'Current'})`,
+            lastUpdated: new Date().toISOString()
         }
+    } catch {
+        return null
     }
+}
 
-    // If still default, try city/state match
-    if (suburbPrices.house === 900000) {
-        for (const [city, prices] of Object.entries(CITY_DEFAULTS)) {
-            if (suburbLower.includes(city)) {
-                suburbPrices = prices
-                break
-            }
-        }
+function calculateValuation(
+    suburbData: SuburbData,
+    propertyType: string,
+    bedrooms: number,
+    bathrooms: number
+): { min: number; max: number; median: number } {
+    // Get baseline for property type
+    const type = propertyType.toLowerCase()
+    let baseline: number
+
+    if (type === 'house' || type === 'land') {
+        baseline = suburbData.medianHouse
+    } else if (type === 'townhouse') {
+        baseline = suburbData.medianTownhouse || Math.round(suburbData.medianHouse * 0.75)
+    } else {
+        baseline = suburbData.medianUnit
     }
-
-    // Get baseline for this property type (this is for 3bed/2bath)
-    const baseline = suburbPrices[propertyTypeKey]
 
     // Apply bedroom multiplier
-    const bedrooms = Math.min(Math.max(data.bedrooms, 1), 6)
-    const bedroomMult = BEDROOM_MULTIPLIERS[bedrooms] || 1.00
+    const bedroomCount = Math.min(Math.max(bedrooms, 1), 6)
+    const bedroomMult = BEDROOM_MULTIPLIERS[bedroomCount] || 1.00
 
     // Apply bathroom multiplier
-    const bathrooms = Math.min(Math.max(data.bathrooms, 1), 4)
-    const bathroomMult = BATHROOM_MULTIPLIERS[bathrooms] || 1.00
+    const bathroomCount = Math.min(Math.max(bathrooms, 1), 4)
+    const bathroomMult = BATHROOM_MULTIPLIERS[bathroomCount] || 1.00
 
     // Calculate final values
     const median = Math.round(baseline * bedroomMult * bathroomMult)
@@ -230,52 +178,44 @@ export async function POST(request: NextRequest) {
             }, { status: 400 })
         }
 
-        // Calculate valuation using our formula (NOT OpenAI)
-        const calculatedValue = calculateValuation(body)
+        // Extract state from suburb string if present (e.g., "Albion, QLD 4010" -> "QLD")
+        const stateMatch = body.suburb.match(/,?\s*(QLD|NSW|VIC|WA|SA|TAS|NT|ACT)/i)
+        const state = stateMatch ? stateMatch[1].toUpperCase() : body.state || 'QLD'
 
-        // Check for OpenAI API key - use for generating text only
         const openaiApiKey = process.env.OPENAI_API_KEY
-        if (!openaiApiKey) {
-            return NextResponse.json(getMockValuation(body, calculatedValue))
+        const openai = openaiApiKey ? new OpenAI({ apiKey: openaiApiKey }) : null
+
+        // Step 1: Try to get real-time suburb data
+        let suburbData: SuburbData | null = null
+
+        // First try Proptech API
+        suburbData = await fetchFromProptechAPI(body.suburb, state)
+
+        // If no Proptech data, try OpenAI
+        if (!suburbData && openai) {
+            suburbData = await fetchFromOpenAI(openai, body.suburb, body.propertyType)
         }
 
-        const openai = new OpenAI({ apiKey: openaiApiKey })
+        // Fallback to basic defaults if nothing works
+        if (!suburbData) {
+            suburbData = {
+                medianHouse: 900000,
+                medianUnit: 500000,
+                medianTownhouse: 700000,
+                source: 'Default estimates',
+                lastUpdated: new Date().toISOString()
+            }
+        }
 
-        // Only ask OpenAI for reasoning and insights, NOT the numbers
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
-            messages: [
-                {
-                    role: 'system',
-                    content: `You are an Australian property market expert. Provide market analysis and insights only. Do NOT calculate prices - those are provided separately apply.`
-                },
-                {
-                    role: 'user',
-                    content: `Provide market analysis for this property in JSON format:
+        // Step 2: Calculate valuation using fetched data
+        const calculatedValue = calculateValuation(
+            suburbData,
+            body.propertyType,
+            body.bedrooms,
+            body.bathrooms
+        )
 
-Location: ${body.suburb}, Australia
-Property Type: ${body.propertyType}
-Bedrooms: ${body.bedrooms}
-Bathrooms: ${body.bathrooms}
-Calculated Value: $${calculatedValue.median.toLocaleString()} (range: $${calculatedValue.min.toLocaleString()} - $${calculatedValue.max.toLocaleString()})
-
-Respond with this exact JSON structure:
-{
-  "confidence": "high" or "medium" or "low",
-  "reasoning": "2-3 sentences explaining why this valuation makes sense for this suburb and property type",
-  "factors": [
-    {"factor": "Location", "impact": "positive/negative/neutral", "description": "brief explanation"},
-    {"factor": "Property Size", "impact": "positive/negative/neutral", "description": "brief explanation"},
-    {"factor": "Market Demand", "impact": "positive/negative/neutral", "description": "brief explanation"}
-  ],
-  "marketInsights": "1-2 sentences about current market trends in this area"
-}`
-                }
-            ],
-            response_format: { type: 'json_object' }
-        })
-
-        const responseText = completion.choices[0]?.message?.content
+        // Step 3: Get AI-generated insights
         let aiResponse = {
             confidence: 'medium' as const,
             reasoning: `Based on comparable ${body.bedrooms} bedroom ${body.propertyType} properties in ${body.suburb}.`,
@@ -286,15 +226,52 @@ Respond with this exact JSON structure:
             marketInsights: 'Market conditions are stable.'
         }
 
-        if (responseText) {
+        if (openai) {
             try {
-                aiResponse = JSON.parse(responseText)
+                const completion = await openai.chat.completions.create({
+                    model: 'gpt-4o-mini',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: `You are an Australian property market expert. Analyze the property and provide insights.`
+                        },
+                        {
+                            role: 'user',
+                            content: `Provide market analysis for this property in JSON format:
+
+Location: ${body.suburb}, Australia
+Property Type: ${body.propertyType}
+Bedrooms: ${body.bedrooms}
+Bathrooms: ${body.bathrooms}
+Median ${body.propertyType} price in area: $${calculatedValue.median.toLocaleString()}
+Data Source: ${suburbData.source}
+
+Respond with JSON:
+{
+  "confidence": "high" or "medium" or "low",
+  "reasoning": "2-3 sentences explaining the valuation",
+  "factors": [
+    {"factor": "Location", "impact": "positive/negative/neutral", "description": "brief explanation"},
+    {"factor": "Property Type", "impact": "positive/negative/neutral", "description": "brief explanation"},
+    {"factor": "Market Conditions", "impact": "positive/negative/neutral", "description": "brief explanation"}
+  ],
+  "marketInsights": "1-2 sentences about current market trends"
+}`
+                        }
+                    ],
+                    response_format: { type: 'json_object' }
+                })
+
+                const responseText = completion.choices[0]?.message?.content
+                if (responseText) {
+                    aiResponse = JSON.parse(responseText)
+                }
             } catch {
-                // Use default if parsing fails
+                // Use default if AI call fails
             }
         }
 
-        // Combine calculated values with AI-generated text
+        // Combine everything into response
         const valuation: ValuationResponse = {
             estimatedValue: calculatedValue,
             confidence: aiResponse.confidence || 'medium',
@@ -302,7 +279,8 @@ Respond with this exact JSON structure:
             reasoning: aiResponse.reasoning,
             factors: aiResponse.factors || [],
             marketInsights: aiResponse.marketInsights,
-            disclaimer: 'This is an AI-generated estimate based on 2025 market data. Actual values may vary. Consult a licensed valuer for accurate valuations.'
+            disclaimer: `This is an AI-generated estimate. Data source: ${suburbData.source}. Actual values may vary. Consult a licensed valuer for accurate valuations.`,
+            dataSource: suburbData.source
         }
 
         return NextResponse.json(valuation)
