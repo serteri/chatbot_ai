@@ -8,8 +8,11 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Bot, GraduationCap, ShoppingCart, ArrowLeft, TestTube } from 'lucide-react'
+import { Bot, GraduationCap, ShoppingCart, ArrowLeft, TestTube, Building2 } from 'lucide-react'
 import ChatWidget from '@/components/ChatWidget'
+import { RealEstateWidget } from '@/components/widget/RealEstateWidget'
+import { EducationWidget } from '@/components/widget/EducationWidget'
+import { EcommerceWidget } from '@/components/widget/EcommerceWidget'
 
 // Tip tanımları
 type ChatbotMode = 'document' | 'education' | 'ecommerce' | 'hybrid' | 'general' | string;
@@ -207,6 +210,20 @@ export default function WidgetTestPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Floating WhatsApp-style Widget based on mode */}
+            {chatbotId && mode === 'realestate' && (
+                <RealEstateWidget
+                    locale={locale as 'tr' | 'en'}
+                    chatbotIdentifier={chatbotId}
+                />
+            )}
+            {chatbotId && (mode === 'education' || mode === 'university') && (
+                <EducationWidget locale={locale as 'tr' | 'en'} />
+            )}
+            {chatbotId && mode === 'ecommerce' && (
+                <EcommerceWidget locale={locale as 'tr' | 'en'} />
+            )}
         </div>
     )
 }

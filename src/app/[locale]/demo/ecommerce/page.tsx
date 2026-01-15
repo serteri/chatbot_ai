@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { EcommerceWidget } from '@/components/widget/EcommerceWidget'
 import {
     ShoppingCart,
     Send,
@@ -781,6 +782,9 @@ Let me know if you're looking for a specific product! 🛍️`
                     </Card>
                 </div>
             </div>
+
+            {/* Floating WhatsApp-style Widget */}
+            <EcommerceWidget locale={locale as 'tr' | 'en'} />
         </div>
     )
 }

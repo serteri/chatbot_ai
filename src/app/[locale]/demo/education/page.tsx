@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { EducationWidget } from '@/components/widget/EducationWidget'
 import {
     GraduationCap,
     Send,
@@ -1132,6 +1133,9 @@ Ask a specific question to get started! 😊
                     </Card>
                 </div>
             </div>
+
+            {/* Floating WhatsApp-style Widget */}
+            <EducationWidget locale={locale as 'tr' | 'en'} />
         </div>
     )
 }
