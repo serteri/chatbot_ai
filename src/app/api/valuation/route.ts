@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
+import { prisma } from '@/lib/db/prisma'
 import OpenAI from 'openai'
 
 interface ValuationRequest {
@@ -32,8 +33,11 @@ interface ValuationResponse {
     marketInsights: string
     disclaimer: string
     dataSource?: string
+    usage?: {
+        used: number
+        limit: number
+    }
 }
-
 
 
 // Use OpenAI to get current market prices for the SPECIFIC property configuration
@@ -110,6 +114,23 @@ export async function POST(request: NextRequest) {
         const session = await auth()
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        // Check subscription limits
+        const subscription = await prisma.subscription.findUnique({
+            where: { userId: session.user.id }
+        })
+
+        const valuationsUsed = subscription?.valuationsUsed ?? 0
+        const maxValuations = subscription?.maxValuations ?? 5
+
+        // Check if limit reached (maxValuations = -1 means unlimited)
+        if (maxValuations !== -1 && valuationsUsed >= maxValuations) {
+            return NextResponse.json({
+                error: 'Valuation limit reached',
+                message: 'Aylık değerleme limitinize ulaştınız. Daha fazla değerleme yapmak için planınızı yükseltin.',
+                usage: { used: valuationsUsed, limit: maxValuations }
+            }, { status: 403 })
         }
 
         const body = await request.json() as ValuationRequest
@@ -204,6 +225,14 @@ Respond with JSON:
             }
         }
 
+        // Increment usage counter
+        if (subscription) {
+            await prisma.subscription.update({
+                where: { userId: session.user.id },
+                data: { valuationsUsed: { increment: 1 } }
+            })
+        }
+
         // Combine everything into response
         const valuation: ValuationResponse = {
             estimatedValue: { min: valuationResult.min, max: valuationResult.max, median: valuationResult.median },
@@ -213,7 +242,8 @@ Respond with JSON:
             factors: aiResponse.factors || [],
             marketInsights: aiResponse.marketInsights,
             disclaimer: `This is an AI-generated estimate based on ${valuationResult.source}. Actual values may vary. Consult a licensed valuer for accurate valuations.`,
-            dataSource: valuationResult.source
+            dataSource: valuationResult.source,
+            usage: { used: valuationsUsed + 1, limit: maxValuations }
         }
 
         return NextResponse.json(valuation)

@@ -42,6 +42,10 @@ interface ValuationResult {
     }[]
     marketInsights: string
     disclaimer: string
+    usage?: {
+        used: number
+        limit: number
+    }
 }
 
 interface PropertyValuationWidgetProps {
@@ -285,13 +289,22 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                 })
             })
 
+            const data = await response.json()
+
+            if (response.status === 403) {
+                // Limit reached
+                toast.error(locale === 'tr'
+                    ? `Değerleme limitinize ulaştınız (${data.usage?.used || 0}/${data.usage?.limit || 5})`
+                    : `Valuation limit reached (${data.usage?.used || 0}/${data.usage?.limit || 5})`)
+                return
+            }
+
             if (!response.ok) throw new Error('Failed to get valuation')
 
-            const data = await response.json()
             setResult(data)
         } catch (error) {
             console.error(error)
-            toast.error('Failed to get valuation')
+            toast.error(locale === 'tr' ? 'Değerleme alınamadı' : 'Failed to get valuation')
         } finally {
             setIsLoading(false)
         }
@@ -553,7 +566,7 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                         </div>
                     </div>
                 )}
-        </DialogContent>
-    </Dialog>
+            </DialogContent>
+        </Dialog>
     );
 }

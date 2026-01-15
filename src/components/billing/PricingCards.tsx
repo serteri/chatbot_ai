@@ -29,7 +29,8 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                 t('freeFeat1'),
                 t('freeFeat2'),
                 t('freeFeat3'),
-                t('freeFeat4')
+                t('freeFeat4'),
+                t('freeFeat5')
             ],
             priceId: null,
             icon: Zap,
@@ -47,7 +48,8 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                 t('proFeat3'),
                 t('proFeat4'),
                 t('proFeat5'),
-                t('proFeat6')
+                t('proFeat6'),
+                t('proFeat7')
             ],
             priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
             icon: Star,
@@ -66,7 +68,8 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                 t('bizFeat4'),
                 t('bizFeat5'),
                 t('bizFeat6'),
-                t('bizFeat7')
+                t('bizFeat7'),
+                t('bizFeat8')
             ],
             priceId: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_PRICE_ID,
             icon: Shield,
@@ -85,7 +88,8 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                 t('entFeat4'),
                 t('entFeat5'),
                 t('entFeat6'),
-                t('entFeat7')
+                t('entFeat7'),
+                t('entFeat8')
             ],
             priceId: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID,
             icon: Shield,

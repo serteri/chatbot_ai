@@ -103,6 +103,8 @@ model Subscription {
   hasTeamCollaboration Boolean   @default(false)
   hasWhiteLabel        Boolean   @default(false)
   hasLiveSupport       Boolean   @default(false)
+  valuationsUsed       Int       @default(0)
+  maxValuations        Int       @default(5)
   user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
