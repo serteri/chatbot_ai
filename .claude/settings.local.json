@@ -10,7 +10,14 @@
       "Bash(git push:*)",
       "Bash(npx prisma generate)",
       "Bash(find:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(powershell -Command \"Get-Content ''src/components/realestate/PropertyValuationWidget.tsx'' -Encoding Byte | Select-Object -Skip 19000 -First 500 | Format-Hex\")",
+      "Bash(powershell -Command \"\\(Get-Content ''src/components/realestate/PropertyValuationWidget.tsx'' -Raw\\).Length\")",
+      "Bash(powershell -Command:*)",
+      "WebSearch",
+      "WebFetch(domain:developer.domain.com.au)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:proptechdata.com.au)"
     ]
   }
 }

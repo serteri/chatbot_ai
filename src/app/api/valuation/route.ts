@@ -34,56 +34,55 @@ interface ValuationResponse {
     dataSource?: string
 }
 
-interface SuburbData {
-    medianHouse: number
-    medianUnit: number
-    medianTownhouse?: number
-    source: string
-    lastUpdated: string
-}
 
-// Bedroom multipliers (baseline is 3 bed)
-const BEDROOM_MULTIPLIERS: Record<number, number> = {
-    1: 0.55, 2: 0.78, 3: 1.00, 4: 1.18, 5: 1.35, 6: 1.50
-}
 
-// Bathroom multipliers (baseline is 2 bath)
-const BATHROOM_MULTIPLIERS: Record<number, number> = {
-    1: 0.94, 2: 1.00, 3: 1.05, 4: 1.10
-}
-
-// Use OpenAI to get current market prices for 3-bedroom properties (baseline)
-async function fetchFromOpenAI(openai: OpenAI, suburb: string, propertyType: string): Promise<SuburbData | null> {
+// Use OpenAI to get current market prices for the SPECIFIC property configuration
+async function fetchPropertyValuation(
+    openai: OpenAI,
+    suburb: string,
+    propertyType: string,
+    bedrooms: number,
+    bathrooms: number
+): Promise<{ min: number; max: number; median: number; source: string; confidence: string } | null> {
     try {
         const completion = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [
                 {
                     role: 'system',
-                    content: `You are an Australian property market data expert with access to current 2025-2026 real estate data. Provide accurate median property prices based on recent sales data from realestate.com.au, domain.com.au, and CoreLogic. Return ONLY valid JSON, no other text.`
+                    content: `You are an Australian property market data expert with access to current 2025-2026 real estate data. 
+Provide accurate property price estimates based on recent sales data from realestate.com.au, domain.com.au, and CoreLogic.
+Return ONLY valid JSON, no other text.
+
+IMPORTANT GUIDELINES:
+- Use actual 2025-2026 market data for Australian suburbs
+- Consider the suburb's location relative to the CBD (inner suburbs are more expensive)
+- Account for the specific bedroom and bathroom configuration
+- Brisbane inner suburbs (like Albion, Ascot, Bulimba, Paddington) have median house prices well over $1 million
+- Sydney inner suburbs typically have even higher prices
+- Melbourne inner suburbs are similar to Brisbane or higher
+- Be accurate based on real market conditions`
                 },
                 {
                     role: 'user',
-                    content: `What are the current median property prices for 3-BEDROOM properties in ${suburb}, Australia?
-
-IMPORTANT: I need the median price specifically for 3-BEDROOM properties (not overall median).
+                    content: `What is the estimated market value for a ${bedrooms}-bedroom, ${bathrooms}-bathroom ${propertyType} in ${suburb}, Australia?
 
 Return JSON in this exact format (prices in AUD as integers, no decimals):
 {
-  "medianHouse": 1200000,
-  "medianUnit": 650000,
-  "medianTownhouse": 850000,
+  "medianPrice": 1300000,
+  "minPrice": 1150000,
+  "maxPrice": 1500000,
   "dataDate": "January 2026",
   "confidence": "high"
 }
 
 Guidelines:
-- medianHouse = median sale price for 3-bedroom HOUSES in this suburb
-- medianUnit = median sale price for 3-bedroom UNITS/APARTMENTS in this suburb
-- medianTownhouse = median sale price for 3-bedroom TOWNHOUSES in this suburb
-- Use recent sales data (2025-2026)
-- Inner city suburbs (within 10km of CBD) are typically more expensive
-- Be realistic based on actual market data`
+- medianPrice = most likely sale price for a ${bedrooms} bed / ${bathrooms} bath ${propertyType} in ${suburb}
+- minPrice = lower bound of the price range (typically 10-15% below median)
+- maxPrice = upper bound of the price range (typically 10-15% above median)
+- Use recent sales data (2025-2026) for comparable properties
+- Consider the suburb's desirability and proximity to the city center
+- ${bedrooms} bedroom ${propertyType}s with ${bathrooms} bathroom(s) - be specific to this configuration`
                 }
             ],
             response_format: { type: 'json_object' }
@@ -94,49 +93,16 @@ Guidelines:
 
         const data = JSON.parse(responseText)
         return {
-            medianHouse: data.medianHouse || 900000,
-            medianUnit: data.medianUnit || 500000,
-            medianTownhouse: data.medianTownhouse || 700000,
+            median: data.medianPrice || 900000,
+            min: data.minPrice || Math.round((data.medianPrice || 900000) * 0.88),
+            max: data.maxPrice || Math.round((data.medianPrice || 900000) * 1.12),
             source: `AI Estimate (${data.dataDate || 'Current'})`,
-            lastUpdated: new Date().toISOString()
+            confidence: data.confidence || 'medium'
         }
-    } catch {
+    } catch (error) {
+        console.error('OpenAI valuation error:', error)
         return null
     }
-}
-
-function calculateValuation(
-    suburbData: SuburbData,
-    propertyType: string,
-    bedrooms: number,
-    bathrooms: number
-): { min: number; max: number; median: number } {
-    // Get baseline for property type
-    const type = propertyType.toLowerCase()
-    let baseline: number
-
-    if (type === 'house' || type === 'land') {
-        baseline = suburbData.medianHouse
-    } else if (type === 'townhouse') {
-        baseline = suburbData.medianTownhouse || Math.round(suburbData.medianHouse * 0.75)
-    } else {
-        baseline = suburbData.medianUnit
-    }
-
-    // Apply bedroom multiplier
-    const bedroomCount = Math.min(Math.max(bedrooms, 1), 6)
-    const bedroomMult = BEDROOM_MULTIPLIERS[bedroomCount] || 1.00
-
-    // Apply bathroom multiplier
-    const bathroomCount = Math.min(Math.max(bathrooms, 1), 4)
-    const bathroomMult = BATHROOM_MULTIPLIERS[bathroomCount] || 1.00
-
-    // Calculate final values
-    const median = Math.round(baseline * bedroomMult * bathroomMult)
-    const min = Math.round(median * 0.88)
-    const max = Math.round(median * 1.12)
-
-    return { min, max, median }
 }
 
 export async function POST(request: NextRequest) {
@@ -158,39 +124,37 @@ export async function POST(request: NextRequest) {
         const openaiApiKey = process.env.OPENAI_API_KEY
         const openai = openaiApiKey ? new OpenAI({ apiKey: openaiApiKey }) : null
 
-        // Get real-time suburb data from OpenAI
-        let suburbData: SuburbData | null = null
+        // Get valuation directly from OpenAI for the specific property configuration
+        let valuationResult: { min: number; max: number; median: number; source: string; confidence: string } | null = null
 
         if (openai) {
-            suburbData = await fetchFromOpenAI(openai, body.suburb, body.propertyType)
+            valuationResult = await fetchPropertyValuation(
+                openai,
+                body.suburb,
+                body.propertyType,
+                body.bedrooms,
+                body.bathrooms
+            )
         }
 
-        // Fallback to basic defaults if nothing works
-        if (!suburbData) {
-            suburbData = {
-                medianHouse: 900000,
-                medianUnit: 500000,
-                medianTownhouse: 700000,
+        // Fallback to basic defaults if OpenAI fails
+        if (!valuationResult) {
+            valuationResult = {
+                min: 800000,
+                max: 1100000,
+                median: 950000,
                 source: 'Default estimates',
-                lastUpdated: new Date().toISOString()
+                confidence: 'low'
             }
         }
 
-        // Step 2: Calculate valuation using fetched data
-        const calculatedValue = calculateValuation(
-            suburbData,
-            body.propertyType,
-            body.bedrooms,
-            body.bathrooms
-        )
-
-        // Step 3: Get AI-generated insights
+        // Get AI-generated insights
         let aiResponse = {
-            confidence: 'medium' as const,
-            reasoning: `Based on comparable ${body.bedrooms} bedroom ${body.propertyType} properties in ${body.suburb}.`,
+            confidence: valuationResult.confidence as 'high' | 'medium' | 'low',
+            reasoning: `Based on comparable ${body.bedrooms} bedroom, ${body.bathrooms} bathroom ${body.propertyType} properties in ${body.suburb}.`,
             factors: [
-                { factor: 'Location', impact: 'positive' as const, description: 'Desirable suburb' },
-                { factor: 'Property Size', impact: 'neutral' as const, description: `${body.bedrooms} bedrooms` },
+                { factor: 'Location', impact: 'positive' as const, description: `${body.suburb} suburb characteristics` },
+                { factor: 'Property Size', impact: 'neutral' as const, description: `${body.bedrooms} bedrooms, ${body.bathrooms} bathrooms` },
             ],
             marketInsights: 'Market conditions are stable.'
         }
@@ -202,7 +166,7 @@ export async function POST(request: NextRequest) {
                     messages: [
                         {
                             role: 'system',
-                            content: `You are an Australian property market expert. Analyze the property and provide insights.`
+                            content: `You are an Australian property market expert. Analyze the property and provide detailed insights.`
                         },
                         {
                             role: 'user',
@@ -212,19 +176,19 @@ Location: ${body.suburb}, Australia
 Property Type: ${body.propertyType}
 Bedrooms: ${body.bedrooms}
 Bathrooms: ${body.bathrooms}
-Median ${body.propertyType} price in area: $${calculatedValue.median.toLocaleString()}
-Data Source: ${suburbData.source}
+Estimated Value: $${valuationResult.median.toLocaleString()} (range: $${valuationResult.min.toLocaleString()} - $${valuationResult.max.toLocaleString()})
+Data Source: ${valuationResult.source}
 
 Respond with JSON:
 {
   "confidence": "high" or "medium" or "low",
-  "reasoning": "2-3 sentences explaining the valuation",
+  "reasoning": "2-3 sentences explaining why this valuation is appropriate for this specific ${body.bedrooms} bed / ${body.bathrooms} bath ${body.propertyType} in ${body.suburb}",
   "factors": [
-    {"factor": "Location", "impact": "positive/negative/neutral", "description": "brief explanation"},
-    {"factor": "Property Type", "impact": "positive/negative/neutral", "description": "brief explanation"},
-    {"factor": "Market Conditions", "impact": "positive/negative/neutral", "description": "brief explanation"}
+    {"factor": "Location", "impact": "positive/negative/neutral", "description": "brief explanation about ${body.suburb}"},
+    {"factor": "Property Configuration", "impact": "positive/negative/neutral", "description": "analysis of ${body.bedrooms} bed / ${body.bathrooms} bath layout"},
+    {"factor": "Market Conditions", "impact": "positive/negative/neutral", "description": "current 2025-2026 market trends"}
   ],
-  "marketInsights": "1-2 sentences about current market trends"
+  "marketInsights": "1-2 sentences about current market trends for ${body.propertyType}s in this area"
 }`
                         }
                     ],
@@ -242,14 +206,14 @@ Respond with JSON:
 
         // Combine everything into response
         const valuation: ValuationResponse = {
-            estimatedValue: calculatedValue,
+            estimatedValue: { min: valuationResult.min, max: valuationResult.max, median: valuationResult.median },
             confidence: aiResponse.confidence || 'medium',
             currency: 'AUD',
             reasoning: aiResponse.reasoning,
             factors: aiResponse.factors || [],
             marketInsights: aiResponse.marketInsights,
-            disclaimer: `This is an AI-generated estimate. Data source: ${suburbData.source}. Actual values may vary. Consult a licensed valuer for accurate valuations.`,
-            dataSource: suburbData.source
+            disclaimer: `This is an AI-generated estimate based on ${valuationResult.source}. Actual values may vary. Consult a licensed valuer for accurate valuations.`,
+            dataSource: valuationResult.source
         }
 
         return NextResponse.json(valuation)
@@ -263,30 +227,4 @@ Respond with JSON:
     }
 }
 
-function getMockValuation(data: ValuationRequest, calculatedValue: { min: number; max: number; median: number }): ValuationResponse {
-    return {
-        estimatedValue: calculatedValue,
-        confidence: 'medium',
-        currency: 'AUD',
-        reasoning: `Based on comparable ${data.bedrooms} bedroom ${data.propertyType} properties in ${data.suburb}, the estimated value reflects current 2025 market conditions.`,
-        factors: [
-            {
-                factor: 'Location',
-                impact: 'positive',
-                description: `${data.suburb} is a desirable suburb with good amenities`
-            },
-            {
-                factor: 'Bedrooms',
-                impact: data.bedrooms >= 4 ? 'positive' : 'neutral',
-                description: `${data.bedrooms} bedrooms appeals to ${data.bedrooms >= 4 ? 'families' : 'various household sizes'}`
-            },
-            {
-                factor: 'Property Type',
-                impact: data.propertyType === 'house' ? 'positive' : 'neutral',
-                description: `${data.propertyType}s in this area have steady demand`
-            }
-        ],
-        marketInsights: `The ${data.suburb} property market shows strong activity with steady demand for ${data.propertyType} properties.`,
-        disclaimer: 'This is an estimate based on 2025 market data. Actual values may vary. Consult a licensed valuer for accurate valuations.'
-    }
-}
+
