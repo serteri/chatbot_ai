@@ -219,10 +219,10 @@ export default function WidgetTestPage() {
                 />
             )}
             {chatbotId && (mode === 'education' || mode === 'university') && (
-                <EducationWidget locale={locale as 'tr' | 'en'} />
+                <EducationWidget locale={locale as 'tr' | 'en'} chatbotId={chatbotId} />
             )}
             {chatbotId && mode === 'ecommerce' && (
-                <EcommerceWidget locale={locale as 'tr' | 'en'} />
+                <EcommerceWidget locale={locale as 'tr' | 'en'} chatbotId={chatbotId} />
             )}
         </div>
     )

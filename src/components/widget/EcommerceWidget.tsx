@@ -32,6 +32,7 @@ interface EcommerceWidgetProps {
     locale?: 'tr' | 'en'
     primaryColor?: string
     position?: 'bottom-right' | 'bottom-left'
+    chatbotId?: string
 }
 
 const translations = {
@@ -196,7 +197,8 @@ Type the product name or code!`
 export function EcommerceWidget({
     locale = 'tr',
     primaryColor = '#F97316',
-    position = 'bottom-right'
+    position = 'bottom-right',
+    chatbotId
 }: EcommerceWidgetProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState<Message[]>([])
@@ -217,10 +219,13 @@ export function EcommerceWidget({
     useEffect(() => {
         const checkUsage = async () => {
             try {
-                const response = await fetch('/api/demo-chat')
+                const url = chatbotId
+                    ? `/api/demo-chat?chatbotId=${chatbotId}`
+                    : '/api/demo-chat'
+                const response = await fetch(url)
                 if (response.ok) {
                     const data = await response.json()
-                    if (data.authenticated) {
+                    if (chatbotId || data.authenticated) {
                         setDemoChatUsed(data.used)
                         setDemoChatLimit(data.limit)
                         setLimitReached(data.limit !== -1 && data.used >= data.limit)
@@ -246,14 +251,18 @@ export function EcommerceWidget({
             }
         }
         checkUsage()
-    }, [])
+    }, [chatbotId])
 
     const incrementUsage = async (): Promise<boolean> => {
         if (limitReached) return false
         try {
-            const response = await fetch('/api/demo-chat', { method: 'POST' })
+            const response = await fetch('/api/demo-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chatbotId })
+            })
             const data = await response.json()
-            if (data.authenticated) {
+            if (chatbotId || data.authenticated) {
                 if (!data.success) {
                     setLimitReached(true)
                     return false
@@ -456,8 +465,8 @@ export function EcommerceWidget({
                         {messages.map((message) => (
                             <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-[85%] rounded-2xl px-3 py-2 shadow-sm ${message.role === 'user' ? 'bg-orange-500 text-white rounded-br-sm' :
-                                        message.role === 'system' ? 'bg-red-100 text-red-800 rounded-bl-sm' :
-                                            'bg-white text-gray-800 rounded-bl-sm'
+                                    message.role === 'system' ? 'bg-red-100 text-red-800 rounded-bl-sm' :
+                                        'bg-white text-gray-800 rounded-bl-sm'
                                     }`}>
                                     {renderMessageContent(message)}
                                 </div>

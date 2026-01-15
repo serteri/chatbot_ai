@@ -387,16 +387,21 @@ export function RealEstateWidget({
     useEffect(() => {
         const checkUsage = async () => {
             try {
-                const response = await fetch('/api/demo-chat')
+                // If chatbotIdentifier provided, use chatbot owner's limits
+                const url = chatbotIdentifier
+                    ? `/api/demo-chat?chatbotId=${chatbotIdentifier}`
+                    : '/api/demo-chat'
+                const response = await fetch(url)
                 if (response.ok) {
                     const data = await response.json()
                     setIsAuthenticated(data.authenticated)
-                    if (data.authenticated) {
+                    // If chatbotId was provided, always use API data
+                    if (chatbotIdentifier || data.authenticated) {
                         setDemoChatUsed(data.used)
                         setDemoChatLimit(data.limit)
                         setLimitReached(data.limit !== -1 && data.used >= data.limit)
                     } else {
-                        // Use localStorage for non-authenticated users
+                        // Use localStorage for non-authenticated users without chatbotId
                         const stored = localStorage.getItem(DEMO_CHAT_STORAGE_KEY)
                         if (stored) {
                             try {
@@ -430,17 +435,22 @@ export function RealEstateWidget({
             }
         }
         checkUsage()
-    }, [])
+    }, [chatbotIdentifier])
 
     // Increment demo chat usage
     const incrementUsage = async (): Promise<boolean> => {
         if (limitReached) return false
 
         try {
-            const response = await fetch('/api/demo-chat', { method: 'POST' })
+            const response = await fetch('/api/demo-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chatbotId: chatbotIdentifier })
+            })
             const data = await response.json()
 
-            if (data.authenticated) {
+            // If chatbotId was provided or user is authenticated, use API response
+            if (chatbotIdentifier || data.authenticated) {
                 if (!data.success) {
                     setLimitReached(true)
                     return false
@@ -449,7 +459,7 @@ export function RealEstateWidget({
                 setLimitReached(data.remaining === 0)
                 return true
             } else {
-                // Use localStorage for non-authenticated users
+                // Use localStorage for non-authenticated users without chatbotId
                 const newCount = demoChatUsed + 1
                 if (newCount > DEMO_CHAT_MAX_MESSAGES) {
                     setLimitReached(true)

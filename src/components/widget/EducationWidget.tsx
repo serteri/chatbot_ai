@@ -46,6 +46,7 @@ interface EducationWidgetProps {
     primaryColor?: string
     position?: 'bottom-right' | 'bottom-left'
     agentName?: string
+    chatbotId?: string
 }
 
 const translations = {
@@ -101,7 +102,8 @@ export function EducationWidget({
     locale = 'tr',
     primaryColor = '#2563EB',
     position = 'bottom-right',
-    agentName = 'Eğitim Danışmanı'
+    agentName = 'Eğitim Danışmanı',
+    chatbotId
 }: EducationWidgetProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState<Message[]>([])
@@ -124,10 +126,13 @@ export function EducationWidget({
     useEffect(() => {
         const checkUsage = async () => {
             try {
-                const response = await fetch('/api/demo-chat')
+                const url = chatbotId
+                    ? `/api/demo-chat?chatbotId=${chatbotId}`
+                    : '/api/demo-chat'
+                const response = await fetch(url)
                 if (response.ok) {
                     const data = await response.json()
-                    if (data.authenticated) {
+                    if (chatbotId || data.authenticated) {
                         setDemoChatUsed(data.used)
                         setDemoChatLimit(data.limit)
                         setLimitReached(data.limit !== -1 && data.used >= data.limit)
@@ -153,14 +158,18 @@ export function EducationWidget({
             }
         }
         checkUsage()
-    }, [])
+    }, [chatbotId])
 
     const incrementUsage = async (): Promise<boolean> => {
         if (limitReached) return false
         try {
-            const response = await fetch('/api/demo-chat', { method: 'POST' })
+            const response = await fetch('/api/demo-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chatbotId })
+            })
             const data = await response.json()
-            if (data.authenticated) {
+            if (chatbotId || data.authenticated) {
                 if (!data.success) {
                     setLimitReached(true)
                     return false
@@ -437,8 +446,8 @@ export function EducationWidget({
                         {messages.map((message) => (
                             <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-[85%] rounded-2xl px-3 py-2 shadow-sm ${message.role === 'user' ? 'bg-blue-600 text-white rounded-br-sm' :
-                                        message.role === 'system' ? 'bg-orange-100 text-orange-800 rounded-bl-sm' :
-                                            'bg-white text-gray-800 rounded-bl-sm'
+                                    message.role === 'system' ? 'bg-orange-100 text-orange-800 rounded-bl-sm' :
+                                        'bg-white text-gray-800 rounded-bl-sm'
                                     }`}>
                                     {renderMessageContent(message)}
                                 </div>
