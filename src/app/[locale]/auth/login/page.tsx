@@ -298,18 +298,24 @@ export default function LoginPage() {
                                 <Sparkles className="h-4 w-4" />
                                 Demo chatbot'ları deneyin
                             </p>
-                            <div className="flex gap-3">
+                            <div className="flex gap-2">
                                 <Link
                                     href={`/${locale}/demo/education`}
-                                    className="flex-1 text-center py-2 px-3 bg-white rounded-lg text-blue-600 text-sm font-medium hover:bg-blue-50 border border-blue-200 transition-all"
+                                    className="flex-1 text-center py-2 px-2 bg-white rounded-lg text-blue-600 text-sm font-medium hover:bg-blue-50 border border-blue-200 transition-all"
                                 >
                                     🎓 Eğitim
                                 </Link>
                                 <Link
                                     href={`/${locale}/demo/ecommerce`}
-                                    className="flex-1 text-center py-2 px-3 bg-white rounded-lg text-blue-600 text-sm font-medium hover:bg-blue-50 border border-blue-200 transition-all"
+                                    className="flex-1 text-center py-2 px-2 bg-white rounded-lg text-blue-600 text-sm font-medium hover:bg-blue-50 border border-blue-200 transition-all"
                                 >
                                     🛒 E-ticaret
+                                </Link>
+                                <Link
+                                    href={`/${locale}/demo/realestate`}
+                                    className="flex-1 text-center py-2 px-2 bg-white rounded-lg text-blue-600 text-sm font-medium hover:bg-blue-50 border border-blue-200 transition-all"
+                                >
+                                    🏠 Emlak
                                 </Link>
                             </div>
                         </div>
