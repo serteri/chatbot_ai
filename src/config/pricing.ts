@@ -152,6 +152,13 @@ export const FEATURE_COMPARISON = [
         professional: '2 GB',
         enterprise: 'Sınırsız',
       },
+      {
+        name: 'AI Değerleme',
+        free: '5/ay',
+        starter: '50/ay',
+        professional: '200/ay',
+        enterprise: 'Sınırsız',
+      },
     ],
   },
   {
