@@ -500,6 +500,11 @@ export function RealEstateWidget({
     }, [isOpen])
 
     const addBotMessage = useCallback((content: string, type: Message['type'] = 'text', data?: any) => {
+        // Don't add bot messages if limit is reached (except for system messages)
+        if (limitReached && currentStep !== 'limitReached') {
+            return
+        }
+
         setIsTyping(true)
         setTimeout(() => {
             setMessages(prev => [...prev, {
@@ -512,13 +517,14 @@ export function RealEstateWidget({
             }])
             setIsTyping(false)
         }, 600 + Math.random() * 400)
-    }, [])
+    }, [limitReached, currentStep])
 
     const addUserMessage = useCallback(async (content: string) => {
         // Check and increment usage before allowing message
         const canSend = await incrementUsage()
         if (!canSend) {
-            // Show limit reached message
+            // Show limit reached message and block further interaction
+            setCurrentStep('limitReached')
             setMessages(prev => [...prev, {
                 id: Date.now().toString(),
                 role: 'system',
@@ -667,8 +673,11 @@ export function RealEstateWidget({
         }
     }
 
-    const handleQuickReply = (reply: string) => {
-        addUserMessage(reply)
+    const handleQuickReply = async (reply: string) => {
+        await addUserMessage(reply)
+
+        // If limit reached, don't continue the flow
+        if (limitReached) return
 
         if (reply === t.quickReplies.buy) {
             setLeadData(prev => ({ ...prev, intent: 'buy' }))
@@ -701,8 +710,10 @@ export function RealEstateWidget({
         }
     }
 
-    const handlePurposeSelect = (purpose: string) => {
-        addUserMessage(purpose)
+    const handlePurposeSelect = async (purpose: string) => {
+        await addUserMessage(purpose)
+        if (limitReached) return
+
         const purposeValue = purpose === t.leadQualification.purposeOptions[0] ? 'investment' :
             purpose === t.leadQualification.purposeOptions[1] ? 'residence' : 'investment'
         setLeadData(prev => ({ ...prev, purpose: purposeValue }))
@@ -712,8 +723,10 @@ export function RealEstateWidget({
         }, 300)
     }
 
-    const handlePropertyTypeSelect = (type: string) => {
-        addUserMessage(type)
+    const handlePropertyTypeSelect = async (type: string) => {
+        await addUserMessage(type)
+        if (limitReached) return
+
         const apiType = mapPropertyTypeToApi(type, locale)
         setLeadData(prev => ({ ...prev, propertyType: apiType }))
         setCurrentStep('budget')
@@ -724,8 +737,9 @@ export function RealEstateWidget({
         }, 300)
     }
 
-    const handleBudgetSelect = (budget: string) => {
-        addUserMessage(budget)
+    const handleBudgetSelect = async (budget: string) => {
+        await addUserMessage(budget)
+        if (limitReached) return
 
         const budgetRange = t.budgetRanges.find(b => b.label === budget)
         let budgetLevel: 'low' | 'medium' | 'high' | 'premium' = 'medium'
@@ -751,8 +765,9 @@ export function RealEstateWidget({
         }, 300)
     }
 
-    const handleTimelineSelect = (timeline: string) => {
-        addUserMessage(timeline)
+    const handleTimelineSelect = async (timeline: string) => {
+        await addUserMessage(timeline)
+        if (limitReached) return
 
         let timelineUrgency: 'immediate' | 'soon' | 'later' | 'browsing' = 'later'
         const timelineIndex = t.timelines.indexOf(timeline)
@@ -780,7 +795,9 @@ export function RealEstateWidget({
     }
 
     const handlePreApprovalSelect = async (answer: string) => {
-        addUserMessage(answer)
+        await addUserMessage(answer)
+        if (limitReached) return
+
         const hasPreApproval = answer === t.yesNo[0]
         const updatedLead = { ...leadData, hasPreApproval }
         setLeadData(updatedLead)
