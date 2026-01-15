@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 import OpenAI from 'openai'
+import {
+    getValuationUsageStatus,
+    canPerformValuation,
+    getMaxValuationsForPlan,
+    type ValuationUsageStatus,
+    type WarningLevel
+} from '@/lib/plans/valuation-limits'
 
 interface ValuationRequest {
     suburb: string
@@ -33,10 +40,38 @@ interface ValuationResponse {
     marketInsights: string
     disclaimer: string
     dataSource?: string
-    usage?: {
-        used: number
-        limit: number
+    usage?: ValuationUsageStatus
+}
+
+/**
+ * Check if we need to reset the monthly valuation counter
+ * Resets on the 1st of each month
+ */
+async function checkAndResetMonthlyCounter(
+    userId: string,
+    subscription: { valuationsUsed: number; lastResetDate: Date | null; planType: string }
+): Promise<{ valuationsUsed: number; wasReset: boolean }> {
+    const now = new Date()
+    const lastReset = subscription.lastResetDate
+
+    // Check if we need to reset (first day of new month or never reset)
+    const needsReset = !lastReset ||
+        (now.getMonth() !== lastReset.getMonth()) ||
+        (now.getFullYear() !== lastReset.getFullYear())
+
+    if (needsReset) {
+        // Reset the counter
+        await prisma.subscription.update({
+            where: { userId },
+            data: {
+                valuationsUsed: 0,
+                lastResetDate: now
+            }
+        })
+        return { valuationsUsed: 0, wasReset: true }
     }
+
+    return { valuationsUsed: subscription.valuationsUsed, wasReset: false }
 }
 
 
@@ -116,20 +151,38 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        // Check subscription limits
+        // Get subscription with all needed fields
         const subscription = await prisma.subscription.findUnique({
             where: { userId: session.user.id }
         })
 
-        const valuationsUsed = subscription?.valuationsUsed ?? 0
-        const maxValuations = subscription?.maxValuations ?? 5
+        const planType = subscription?.planType ?? 'free'
+        const maxValuations = subscription?.maxValuations ?? getMaxValuationsForPlan(planType)
 
-        // Check if limit reached (maxValuations = -1 means unlimited)
-        if (maxValuations !== -1 && valuationsUsed >= maxValuations) {
+        // Check and reset monthly counter if needed
+        let currentValuationsUsed = subscription?.valuationsUsed ?? 0
+        if (subscription) {
+            const resetResult = await checkAndResetMonthlyCounter(
+                session.user.id,
+                {
+                    valuationsUsed: subscription.valuationsUsed,
+                    lastResetDate: subscription.lastResetDate,
+                    planType: subscription.planType
+                }
+            )
+            currentValuationsUsed = resetResult.valuationsUsed
+        }
+
+        // Get current usage status with warnings
+        const usageStatus = getValuationUsageStatus(currentValuationsUsed, maxValuations, planType)
+
+        // Check if limit reached - BLOCK AI valuation
+        if (!canPerformValuation(currentValuationsUsed, maxValuations)) {
             return NextResponse.json({
                 error: 'Valuation limit reached',
-                message: 'Aylık değerleme limitinize ulaştınız. Daha fazla değerleme yapmak için planınızı yükseltin.',
-                usage: { used: valuationsUsed, limit: maxValuations }
+                code: 'LIMIT_EXCEEDED',
+                message: usageStatus.message,
+                usage: usageStatus
             }, { status: 403 })
         }
 
@@ -233,6 +286,13 @@ Respond with JSON:
             })
         }
 
+        // Get updated usage status after increment (for response)
+        const updatedUsageStatus = getValuationUsageStatus(
+            currentValuationsUsed + 1,
+            maxValuations,
+            planType
+        )
+
         // Combine everything into response
         const valuation: ValuationResponse = {
             estimatedValue: { min: valuationResult.min, max: valuationResult.max, median: valuationResult.median },
@@ -243,7 +303,7 @@ Respond with JSON:
             marketInsights: aiResponse.marketInsights,
             disclaimer: `This is an AI-generated estimate based on ${valuationResult.source}. Actual values may vary. Consult a licensed valuer for accurate valuations.`,
             dataSource: valuationResult.source,
-            usage: { used: valuationsUsed + 1, limit: maxValuations }
+            usage: updatedUsageStatus
         }
 
         return NextResponse.json(valuation)

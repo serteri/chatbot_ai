@@ -22,9 +22,22 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog'
 
-import { Calculator, TrendingUp, TrendingDown, Minus, Loader2, Sparkles, AlertTriangle, Search } from 'lucide-react'
+import { Calculator, TrendingUp, TrendingDown, Minus, Loader2, Sparkles, AlertTriangle, Search, AlertCircle, Info, Crown } from 'lucide-react'
 import { toast } from 'sonner'
 import { AU_SUBURBS, type Suburb } from '@/data/suburbs'
+
+type WarningLevel = 'none' | 'warning' | 'critical' | 'blocked'
+
+interface ValuationUsageStatus {
+    used: number
+    limit: number
+    remaining: number
+    percentage: number
+    warningLevel: WarningLevel
+    planType: string
+    isUnlimited: boolean
+    message?: string
+}
 
 interface ValuationResult {
     estimatedValue: {
@@ -42,10 +55,7 @@ interface ValuationResult {
     }[]
     marketInsights: string
     disclaimer: string
-    usage?: {
-        used: number
-        limit: number
-    }
+    usage?: ValuationUsageStatus
 }
 
 interface PropertyValuationWidgetProps {
@@ -80,7 +90,17 @@ const translations = {
         positive: 'Olumlu',
         negative: 'Olumsuz',
         neutral: 'Nötr',
-        reasoning: 'Değerlendirme'
+        reasoning: 'Değerlendirme',
+        // Usage translations
+        monthlyUsage: 'Aylık Kullanım',
+        valuationsUsed: 'değerleme kullanıldı',
+        remaining: 'kalan',
+        unlimited: 'Sınırsız',
+        upgradeForMore: 'Daha fazla değerleme için planınızı yükseltin',
+        warningLow: 'Değerleme hakkınız azalıyor!',
+        warningCritical: 'Kritik: Çok az değerleme hakkınız kaldı!',
+        warningBlocked: 'Aylık değerleme limitinize ulaştınız',
+        plan: 'Plan'
     },
     en: {
         title: 'AI Valuation',
@@ -109,7 +129,17 @@ const translations = {
         positive: 'Positive',
         negative: 'Negative',
         neutral: 'Neutral',
-        reasoning: 'Analysis'
+        reasoning: 'Analysis',
+        // Usage translations
+        monthlyUsage: 'Monthly Usage',
+        valuationsUsed: 'valuations used',
+        remaining: 'remaining',
+        unlimited: 'Unlimited',
+        upgradeForMore: 'Upgrade your plan for more valuations',
+        warningLow: 'Running low on valuations!',
+        warningCritical: 'Critical: Very few valuations remaining!',
+        warningBlocked: 'Monthly valuation limit reached',
+        plan: 'Plan'
     },
     de: {
         title: 'KI-Bewertung',
@@ -138,7 +168,17 @@ const translations = {
         positive: 'Positiv',
         negative: 'Negativ',
         neutral: 'Neutral',
-        reasoning: 'Analyse'
+        reasoning: 'Analyse',
+        // Usage translations
+        monthlyUsage: 'Monatliche Nutzung',
+        valuationsUsed: 'Bewertungen verwendet',
+        remaining: 'verbleibend',
+        unlimited: 'Unbegrenzt',
+        upgradeForMore: 'Upgrade für mehr Bewertungen',
+        warningLow: 'Bewertungen werden knapp!',
+        warningCritical: 'Kritisch: Sehr wenige Bewertungen übrig!',
+        warningBlocked: 'Monatliches Bewertungslimit erreicht',
+        plan: 'Plan'
     },
     fr: {
         title: 'Évaluation IA',
@@ -167,7 +207,17 @@ const translations = {
         positive: 'Positif',
         negative: 'Négatif',
         neutral: 'Neutre',
-        reasoning: 'Analyse'
+        reasoning: 'Analyse',
+        // Usage translations
+        monthlyUsage: 'Utilisation mensuelle',
+        valuationsUsed: 'évaluations utilisées',
+        remaining: 'restantes',
+        unlimited: 'Illimité',
+        upgradeForMore: 'Passez à un plan supérieur pour plus d\'évaluations',
+        warningLow: 'Évaluations limitées restantes!',
+        warningCritical: 'Critique: Très peu d\'évaluations restantes!',
+        warningBlocked: 'Limite mensuelle d\'évaluations atteinte',
+        plan: 'Plan'
     },
     es: {
         title: 'Valoración IA',
@@ -196,7 +246,17 @@ const translations = {
         positive: 'Positivo',
         negative: 'Negativo',
         neutral: 'Neutral',
-        reasoning: 'Análisis'
+        reasoning: 'Análisis',
+        // Usage translations
+        monthlyUsage: 'Uso mensual',
+        valuationsUsed: 'valoraciones usadas',
+        remaining: 'restantes',
+        unlimited: 'Ilimitado',
+        upgradeForMore: 'Actualice su plan para más valoraciones',
+        warningLow: '¡Pocas valoraciones restantes!',
+        warningCritical: '¡Crítico: Muy pocas valoraciones restantes!',
+        warningBlocked: 'Límite mensual de valoraciones alcanzado',
+        plan: 'Plan'
     }
 }
 
@@ -564,6 +624,104 @@ export function PropertyValuationWidget({ locale }: PropertyValuationWidgetProps
                             <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                             <p className="text-xs text-amber-700">{result.disclaimer}</p>
                         </div>
+
+                        {/* Usage Counter */}
+                        {result.usage && (
+                            <div className={`p-4 rounded-lg border ${
+                                result.usage.warningLevel === 'critical'
+                                    ? 'bg-red-50 border-red-200'
+                                    : result.usage.warningLevel === 'warning'
+                                        ? 'bg-orange-50 border-orange-200'
+                                        : 'bg-gray-50 border-gray-200'
+                            }`}>
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                        {result.usage.warningLevel === 'critical' ? (
+                                            <AlertCircle className="h-4 w-4 text-red-500" />
+                                        ) : result.usage.warningLevel === 'warning' ? (
+                                            <AlertTriangle className="h-4 w-4 text-orange-500" />
+                                        ) : result.usage.isUnlimited ? (
+                                            <Crown className="h-4 w-4 text-purple-500" />
+                                        ) : (
+                                            <Info className="h-4 w-4 text-gray-500" />
+                                        )}
+                                        <span className="text-sm font-medium">{t.monthlyUsage}</span>
+                                    </div>
+                                    <Badge variant="outline" className="text-xs capitalize">
+                                        {t.plan}: {result.usage.planType}
+                                    </Badge>
+                                </div>
+
+                                {result.usage.isUnlimited ? (
+                                    <div className="flex items-center gap-2 text-purple-700">
+                                        <Crown className="h-4 w-4" />
+                                        <span className="text-sm font-medium">{t.unlimited}</span>
+                                        <span className="text-xs text-gray-500">({result.usage.used} {t.valuationsUsed})</span>
+                                    </div>
+                                ) : (
+                                    <>
+                                        {/* Progress Bar */}
+                                        <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                            <div
+                                                className={`h-2 rounded-full transition-all ${
+                                                    result.usage.warningLevel === 'critical' || result.usage.warningLevel === 'blocked'
+                                                        ? 'bg-red-500'
+                                                        : result.usage.warningLevel === 'warning'
+                                                            ? 'bg-orange-500'
+                                                            : 'bg-green-500'
+                                                }`}
+                                                style={{ width: `${Math.min(result.usage.percentage, 100)}%` }}
+                                            />
+                                        </div>
+
+                                        {/* Usage Text */}
+                                        <div className="flex items-center justify-between text-sm">
+                                            <span className={`font-medium ${
+                                                result.usage.warningLevel === 'critical' ? 'text-red-700' :
+                                                result.usage.warningLevel === 'warning' ? 'text-orange-700' :
+                                                'text-gray-700'
+                                            }`}>
+                                                {result.usage.used} / {result.usage.limit} {t.valuationsUsed}
+                                            </span>
+                                            <span className={`text-xs ${
+                                                result.usage.warningLevel === 'critical' ? 'text-red-600' :
+                                                result.usage.warningLevel === 'warning' ? 'text-orange-600' :
+                                                'text-gray-500'
+                                            }`}>
+                                                {result.usage.remaining} {t.remaining}
+                                            </span>
+                                        </div>
+
+                                        {/* Warning Messages */}
+                                        {result.usage.warningLevel === 'warning' && (
+                                            <div className="mt-2 text-xs text-orange-600 flex items-center gap-1">
+                                                <AlertTriangle className="h-3 w-3" />
+                                                {t.warningLow}
+                                            </div>
+                                        )}
+                                        {result.usage.warningLevel === 'critical' && (
+                                            <div className="mt-2 text-xs text-red-600 flex items-center gap-1">
+                                                <AlertCircle className="h-3 w-3" />
+                                                {t.warningCritical}
+                                            </div>
+                                        )}
+
+                                        {/* Upgrade prompt for non-enterprise users */}
+                                        {result.usage.planType !== 'enterprise' && result.usage.percentage >= 50 && (
+                                            <div className="mt-2 pt-2 border-t border-gray-200">
+                                                <a
+                                                    href={`/${locale}/pricing`}
+                                                    className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1"
+                                                >
+                                                    <Crown className="h-3 w-3" />
+                                                    {t.upgradeForMore}
+                                                </a>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        )}
                     </div>
                 )}
             </DialogContent>
