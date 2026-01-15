@@ -89,6 +89,7 @@ interface RealEstateWidgetProps {
     agentPhoto?: string
     companyLogo?: string
     chatbotIdentifier?: string // Required for API calls
+    calendlyUrl?: string // Calendly booking URL (e.g., https://calendly.com/username/event)
     onLeadCapture?: (lead: LeadData) => void
     onHotLead?: (lead: LeadData) => void
     onTenantIssue?: (issue: TenantIssue) => void
@@ -356,12 +357,14 @@ export function RealEstateWidget({
     agentPhoto,
     companyLogo,
     chatbotIdentifier,
+    calendlyUrl,
     onLeadCapture,
     onHotLead,
     onTenantIssue,
     onAppointmentBooked
 }: RealEstateWidgetProps) {
     const [isOpen, setIsOpen] = useState(false)
+    const [showCalendly, setShowCalendly] = useState(false)
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [isTyping, setIsTyping] = useState(false)
@@ -1193,6 +1196,27 @@ export function RealEstateWidget({
                                 </p>
                             </div>
                         </div>
+                        {/* Calendly Booking Button for Hot/Warm Leads */}
+                        {calendlyUrl && (scoreData.category === 'hot' || scoreData.category === 'warm') && (
+                            <button
+                                onClick={() => {
+                                    // Open Calendly in popup or new tab
+                                    const width = 600
+                                    const height = 700
+                                    const left = (window.innerWidth - width) / 2
+                                    const top = (window.innerHeight - height) / 2
+                                    window.open(
+                                        calendlyUrl,
+                                        'calendly',
+                                        `width=${width},height=${height},left=${left},top=${top}`
+                                    )
+                                }}
+                                className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
+                            >
+                                <Calendar className="w-4 h-4" />
+                                {locale === 'tr' ? 'Hemen Randevu Al' : 'Book Appointment Now'}
+                            </button>
+                        )}
                     </div>
                 )
 

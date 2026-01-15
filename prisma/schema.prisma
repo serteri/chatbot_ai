@@ -252,6 +252,10 @@ model Chatbot {
   supportEmail       String?
   liveSupport        Boolean              @default(false)
   liveSupportUrl     String?
+  calendlyUrl        String?              // Calendly booking link for appointments
+  agentName          String?              // Agent/Realtor name for display
+  agentPhone         String?              // Agent phone number
+  agentEmail         String?              // Agent email address
   industry           String               @default("general")
   customSettings     Json?
   model              String?
