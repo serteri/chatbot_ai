@@ -14,8 +14,13 @@ export async function GET(request: NextRequest) {
 
         // If chatbotId provided, use chatbot owner's subscription
         if (chatbotId) {
-            const chatbot = await prisma.chatbot.findUnique({
-                where: { id: chatbotId },
+            const chatbot = await prisma.chatbot.findFirst({
+                where: {
+                    OR: [
+                        { id: chatbotId },
+                        { identifier: chatbotId }
+                    ]
+                },
                 select: {
                     userId: true,
                     user: {
@@ -124,8 +129,13 @@ export async function POST(request: NextRequest) {
 
         // If chatbotId provided, increment chatbot owner's usage
         if (chatbotId) {
-            const chatbot = await prisma.chatbot.findUnique({
-                where: { id: chatbotId },
+            const chatbot = await prisma.chatbot.findFirst({
+                where: {
+                    OR: [
+                        { id: chatbotId },
+                        { identifier: chatbotId }
+                    ]
+                },
                 select: {
                     userId: true,
                     user: {

@@ -421,9 +421,9 @@ export function RealEstateWidget({
                     setIsAuthenticated(data.authenticated)
 
                     if (data.authenticated || chatbotIdentifier) {
-                        setDemoChatUsed(data.used)
-                        setDemoChatLimit(data.limit)
-                        setLimitReached(data.limit !== -1 && data.used >= data.limit)
+                        setDemoChatUsed(typeof data.used === 'number' ? data.used : 0)
+                        setDemoChatLimit(typeof data.limit === 'number' ? data.limit : 5)
+                        setLimitReached(data.limit !== -1 && (data.used || 0) >= data.limit)
                     }
                 }
             } catch (error) {
