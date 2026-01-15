@@ -280,7 +280,17 @@
       },
       "termsAndPrivacy": "Durch die Registrierung stimmen Sie unseren {terms} und {privacy} zu.",
       "terms": "Nutzungsbedingungen",
-      "privacy": "Datenschutzrichtlinie"
+      "privacy": "Datenschutzrichtlinie",
+      "errors": {
+        "nameRequired": "Name ist erforderlich",
+        "nameLength": "Der Name muss mindestens 2 Zeichen lang sein",
+        "emailRequired": "E-Mail ist erforderlich",
+        "emailInvalid": "Bitte geben Sie eine gültige E-Mail ein",
+        "passwordRequired": "Passwort ist erforderlich",
+        "passwordRequirements": "Passwortanforderungen nicht erfüllt",
+        "generic": "Ein Fehler ist aufgetreten",
+        "providerError": "Fehler bei der Anmeldung mit {provider}"
+      }
     },
     "branding": {
       "welcomeBack": "Willkommen zurück! 👋",

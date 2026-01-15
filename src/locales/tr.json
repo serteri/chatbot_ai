@@ -311,7 +311,17 @@
       },
       "termsAndPrivacy": "Kayıt olarak {terms} ve {privacy} kabul etmiş olursunuz.",
       "terms": "Kullanım Şartları",
-      "privacy": "Gizlilik Politikası"
+      "privacy": "Gizlilik Politikası",
+      "errors": {
+        "nameRequired": "İsim gerekli",
+        "nameLength": "İsim en az 2 karakter olmalı",
+        "emailRequired": "Email gerekli",
+        "emailInvalid": "Geçerli bir email giriniz",
+        "passwordRequired": "Şifre gerekli",
+        "passwordRequirements": "Şifre gereksinimleri karşılanmıyor",
+        "generic": "Bir hata oluştu",
+        "providerError": "{provider} ile giriş yapılamadı"
+      }
     },
     "demo": {
       "tryDemo": "Demo chatbot'ları deneyin",

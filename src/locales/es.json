@@ -278,7 +278,17 @@
       },
       "termsAndPrivacy": "Al registrarse, acepta nuestros {terms} y {privacy}.",
       "terms": "Términos de Servicio",
-      "privacy": "Política de Privacidad"
+      "privacy": "Política de Privacidad",
+      "errors": {
+        "nameRequired": "Nombre requerido",
+        "nameLength": "El nombre debe tener al menos 2 caracteres",
+        "emailRequired": "Email requerido",
+        "emailInvalid": "Por favor, introduzca un email válido",
+        "passwordRequired": "Contraseña requerida",
+        "passwordRequirements": "No se cumplen los requisitos de contraseña",
+        "generic": "Se produjo un error",
+        "providerError": "Error al iniciar sesión con {provider}"
+      }
     },
     "branding": {
       "welcomeBack": "¡Bienvenido de nuevo! 👋",

@@ -278,7 +278,17 @@
       },
       "termsAndPrivacy": "En vous inscrivant, vous acceptez nos {terms} et {privacy}.",
       "terms": "Conditions d'Utilisation",
-      "privacy": "Politique de Confidentialité"
+      "privacy": "Politique de Confidentialité",
+      "errors": {
+        "nameRequired": "Nom requis",
+        "nameLength": "Le nom doit comporter au moins 2 caractères",
+        "emailRequired": "Email requis",
+        "emailInvalid": "Veuillez entrer une adresse email valide",
+        "passwordRequired": "Mot de passe requis",
+        "passwordRequirements": "Les exigences de mot de passe ne sont pas remplies",
+        "generic": "Une erreur s'est produite",
+        "providerError": "Erreur de connexion avec {provider}"
+      }
     },
     "branding": {
       "welcomeBack": "Bon retour ! 👋",

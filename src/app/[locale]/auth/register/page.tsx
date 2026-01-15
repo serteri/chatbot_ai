@@ -41,21 +41,21 @@ export default function RegisterPage() {
         const newErrors: typeof errors = {}
 
         if (!formData.name.trim()) {
-            newErrors.name = 'Ad Soyad gerekli'
+            newErrors.name = t('register.errors.nameRequired')
         } else if (formData.name.trim().length < 2) {
-            newErrors.name = 'Ad Soyad en az 2 karakter olmalı'
+            newErrors.name = t('register.errors.nameLength')
         }
 
         if (!formData.email.trim()) {
-            newErrors.email = 'E-posta gerekli'
+            newErrors.email = t('register.errors.emailRequired')
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'Geçerli bir e-posta adresi girin'
+            newErrors.email = t('register.errors.emailInvalid')
         }
 
         if (!formData.password) {
-            newErrors.password = 'Şifre gerekli'
+            newErrors.password = t('register.errors.passwordRequired')
         } else if (!allReqsMet) {
-            newErrors.password = 'Şifre tüm gereksinimleri karşılamalı'
+            newErrors.password = t('register.errors.passwordRequirements')
         }
 
         setErrors(newErrors)
@@ -139,21 +139,37 @@ export default function RegisterPage() {
                     </Link>
 
                     <h1 className="text-4xl font-bold text-white mb-6">
-                        AI destekli chatbot'lar ile müşteri deneyimini dönüştürün
+                        {t('branding.registerTitle')}
                     </h1>
                     <p className="text-blue-100 text-lg mb-12">
-                        Ücretsiz hesap oluşturun ve hemen başlayın.
+                        {t('branding.registerSubtitle')}
                     </p>
 
                     <div className="space-y-4">
-                        {features.map((feature, index) => (
-                            <div key={index} className="flex items-center gap-3 text-white">
-                                <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center">
-                                    <Check className="h-4 w-4 text-white" />
-                                </div>
-                                <span className="text-lg">{feature}</span>
+                        <div className="flex items-center gap-3 text-white">
+                            <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center">
+                                <Check className="h-4 w-4 text-white" />
                             </div>
-                        ))}
+                            <span className="text-lg">{t('branding.feature1')}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-white">
+                            <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center">
+                                <Check className="h-4 w-4 text-white" />
+                            </div>
+                            <span className="text-lg">{t('branding.feature2')}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-white">
+                            <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center">
+                                <Check className="h-4 w-4 text-white" />
+                            </div>
+                            <span className="text-lg">{t('branding.feature3')}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-white">
+                            <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center">
+                                <Check className="h-4 w-4 text-white" />
+                            </div>
+                            <span className="text-lg">{t('branding.feature4')}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -175,8 +191,8 @@ export default function RegisterPage() {
 
                     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                         <div className="text-center mb-8">
-                            <h2 className="text-2xl font-bold text-gray-900">Hesap Oluştur</h2>
-                            <p className="text-gray-500 mt-2">Ücretsiz hesabınızı hemen oluşturun</p>
+                            <h2 className="text-2xl font-bold text-gray-900">{t('register.title')}</h2>
+                            <p className="text-gray-500 mt-2">{t('register.subtitle')}</p>
                         </div>
 
                         {/* OAuth Buttons */}

@@ -309,7 +309,17 @@
       },
       "termsAndPrivacy": "By signing up, you agree to our {terms} and {privacy}.",
       "terms": "Terms of Service",
-      "privacy": "Privacy Policy"
+      "privacy": "Privacy Policy",
+      "errors": {
+        "nameRequired": "Name is required",
+        "nameLength": "Name must be at least 2 characters",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email",
+        "passwordRequired": "Password is required",
+        "passwordRequirements": "Password requirements not met",
+        "generic": "An error occurred",
+        "providerError": "Error logging in with {provider}"
+      }
     },
     "demo": {
       "tryDemo": "Try demo chatbots",
