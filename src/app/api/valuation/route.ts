@@ -33,102 +33,181 @@ interface ValuationResponse {
     disclaimer: string
 }
 
-// Suburb baseline prices (3bed/2bath house, January 2025)
-const SUBURB_PRICES: Record<string, number> = {
-    // Brisbane
-    'new farm': 2800000, 'teneriffe': 2500000, 'ascot': 2600000, 'hamilton': 2300000,
-    'bulimba': 2000000, 'hawthorne': 1900000, 'clayfield': 1800000,
-    'paddington': 1700000, 'west end': 1500000, 'newstead': 1600000,
-    'albion': 1400000, 'fortitude valley': 1200000, 'kangaroo point': 1300000,
-    'windsor': 1500000, 'wilston': 1600000, 'red hill': 1700000,
-    'toowong': 1500000, 'indooroopilly': 1600000, 'st lucia': 1700000,
-    'coorparoo': 1400000, 'camp hill': 1500000, 'norman park': 1500000,
-    'morningside': 1350000, 'nundah': 1100000, 'chermside': 950000,
-    // Sydney
-    'vaucluse': 8000000, 'point piper': 15000000, 'double bay': 5500000, 'mosman': 5000000,
-    'paddington nsw': 3200000, 'woollahra': 4000000, 'bellevue hill': 5000000,
-    'surry hills': 2200000, 'newtown': 2000000, 'balmain': 2500000,
-    'bondi beach': 4000000, 'bondi': 3500000, 'manly': 4200000, 'coogee': 3500000,
-    // Melbourne
-    'toorak': 5500000, 'brighton': 3200000, 'south yarra': 2800000, 'armadale': 2500000,
-    'richmond': 1800000, 'fitzroy': 1900000, 'carlton': 1600000, 'st kilda': 1700000,
-    'brunswick': 1400000, 'northcote': 1600000, 'hawthorn': 2200000,
+// Suburb baseline prices by property type (3bed/2bath, January 2025)
+// Sources: realestate.com.au, domain.com.au, propertyvalue.com.au
+interface SuburbPrices {
+    house: number
+    apartment: number
+    townhouse: number
+}
+
+const SUBURB_PRICES: Record<string, SuburbPrices> = {
+    // Brisbane Inner - Premium
+    'new farm': { house: 2800000, apartment: 1200000, townhouse: 1800000 },
+    'teneriffe': { house: 2500000, apartment: 1100000, townhouse: 1600000 },
+    'ascot': { house: 2600000, apartment: 950000, townhouse: 1700000 },
+    'hamilton': { house: 2300000, apartment: 900000, townhouse: 1500000 },
+    'bulimba': { house: 2000000, apartment: 850000, townhouse: 1400000 },
+    'hawthorne': { house: 1900000, apartment: 800000, townhouse: 1300000 },
+    'clayfield': { house: 1800000, apartment: 750000, townhouse: 1200000 },
+
+    // Brisbane Inner - Mid
+    'paddington': { house: 1700000, apartment: 700000, townhouse: 1100000 },
+    'west end': { house: 1500000, apartment: 750000, townhouse: 1000000 },
+    'newstead': { house: 1600000, apartment: 850000, townhouse: 1100000 },
+    'albion': { house: 1150000, apartment: 700000, townhouse: 950000 },
+    'fortitude valley': { house: 1200000, apartment: 650000, townhouse: 900000 },
+    'kangaroo point': { house: 1300000, apartment: 700000, townhouse: 950000 },
+    'windsor': { house: 1400000, apartment: 650000, townhouse: 950000 },
+    'wilston': { house: 1600000, apartment: 650000, townhouse: 1000000 },
+    'red hill': { house: 1700000, apartment: 700000, townhouse: 1100000 },
+    'kelvin grove': { house: 1200000, apartment: 550000, townhouse: 850000 },
+    'spring hill': { house: 1100000, apartment: 550000, townhouse: 800000 },
+
+    // Brisbane Middle Ring
+    'toowong': { house: 1500000, apartment: 600000, townhouse: 950000 },
+    'indooroopilly': { house: 1600000, apartment: 550000, townhouse: 1000000 },
+    'st lucia': { house: 1700000, apartment: 600000, townhouse: 1100000 },
+    'coorparoo': { house: 1400000, apartment: 600000, townhouse: 900000 },
+    'camp hill': { house: 1500000, apartment: 600000, townhouse: 950000 },
+    'norman park': { house: 1500000, apartment: 650000, townhouse: 950000 },
+    'morningside': { house: 1350000, apartment: 600000, townhouse: 900000 },
+    'nundah': { house: 1100000, apartment: 550000, townhouse: 800000 },
+    'chermside': { house: 950000, apartment: 500000, townhouse: 700000 },
+    'woolloongabba': { house: 1200000, apartment: 600000, townhouse: 850000 },
+    'annerley': { house: 1100000, apartment: 500000, townhouse: 750000 },
+    'greenslopes': { house: 1150000, apartment: 550000, townhouse: 800000 },
+
+    // Sydney - Premium
+    'vaucluse': { house: 8000000, apartment: 2500000, townhouse: 4500000 },
+    'point piper': { house: 15000000, apartment: 4000000, townhouse: 8000000 },
+    'double bay': { house: 5500000, apartment: 1800000, townhouse: 3500000 },
+    'mosman': { house: 5000000, apartment: 1500000, townhouse: 3000000 },
+    'paddington nsw': { house: 3200000, apartment: 1200000, townhouse: 2200000 },
+    'woollahra': { house: 4000000, apartment: 1400000, townhouse: 2800000 },
+    'bellevue hill': { house: 5000000, apartment: 1600000, townhouse: 3200000 },
+
+    // Sydney - Inner
+    'surry hills': { house: 2200000, apartment: 1100000, townhouse: 1700000 },
+    'newtown': { house: 2000000, apartment: 900000, townhouse: 1500000 },
+    'balmain': { house: 2500000, apartment: 1100000, townhouse: 1800000 },
+    'bondi beach': { house: 4000000, apartment: 1400000, townhouse: 2500000 },
+    'bondi': { house: 3500000, apartment: 1200000, townhouse: 2200000 },
+    'manly': { house: 4200000, apartment: 1500000, townhouse: 2800000 },
+    'coogee': { house: 3500000, apartment: 1200000, townhouse: 2300000 },
+
+    // Melbourne - Premium
+    'toorak': { house: 5500000, apartment: 1200000, townhouse: 2800000 },
+    'brighton': { house: 3200000, apartment: 950000, townhouse: 1800000 },
+    'south yarra': { house: 2800000, apartment: 850000, townhouse: 1600000 },
+    'armadale': { house: 2500000, apartment: 800000, townhouse: 1500000 },
+
+    // Melbourne - Inner
+    'richmond': { house: 1800000, apartment: 650000, townhouse: 1100000 },
+    'fitzroy': { house: 1900000, apartment: 700000, townhouse: 1200000 },
+    'carlton': { house: 1600000, apartment: 600000, townhouse: 1000000 },
+    'st kilda': { house: 1700000, apartment: 650000, townhouse: 1100000 },
+    'brunswick': { house: 1400000, apartment: 550000, townhouse: 900000 },
+    'northcote': { house: 1600000, apartment: 600000, townhouse: 1000000 },
+    'hawthorn': { house: 2200000, apartment: 700000, townhouse: 1400000 },
+
     // Perth
-    'cottesloe': 3000000, 'dalkeith': 3500000, 'peppermint grove': 5000000, 'city beach': 2500000,
+    'cottesloe': { house: 3000000, apartment: 900000, townhouse: 1600000 },
+    'dalkeith': { house: 3500000, apartment: 950000, townhouse: 1800000 },
+    'peppermint grove': { house: 5000000, apartment: 1200000, townhouse: 2500000 },
+    'city beach': { house: 2500000, apartment: 800000, townhouse: 1400000 },
+    'subiaco': { house: 1800000, apartment: 650000, townhouse: 1100000 },
+    'fremantle': { house: 1400000, apartment: 600000, townhouse: 950000 },
+
     // Adelaide
-    'unley': 1600000, 'norwood': 1400000, 'north adelaide': 1500000,
+    'unley': { house: 1600000, apartment: 550000, townhouse: 950000 },
+    'norwood': { house: 1400000, apartment: 500000, townhouse: 850000 },
+    'north adelaide': { house: 1500000, apartment: 550000, townhouse: 900000 },
+    'glenelg': { house: 1300000, apartment: 550000, townhouse: 850000 },
+
     // Gold Coast
-    'main beach': 2500000, 'surfers paradise': 1800000, 'burleigh heads': 1600000,
+    'main beach': { house: 2500000, apartment: 1100000, townhouse: 1600000 },
+    'surfers paradise': { house: 1800000, apartment: 850000, townhouse: 1200000 },
+    'burleigh heads': { house: 1600000, apartment: 900000, townhouse: 1100000 },
+    'broadbeach': { house: 1500000, apartment: 800000, townhouse: 1000000 },
 }
 
-// City default prices
-const CITY_DEFAULTS: Record<string, number> = {
-    'brisbane': 1100000, 'qld': 1100000,
-    'sydney': 1600000, 'nsw': 1600000,
-    'melbourne': 1150000, 'vic': 1150000,
-    'perth': 850000, 'wa': 850000,
-    'adelaide': 850000, 'sa': 850000,
-    'gold coast': 1050000,
-    'canberra': 950000, 'act': 950000,
-    'hobart': 750000, 'tas': 750000,
-    'darwin': 550000, 'nt': 550000,
+// City default prices by property type
+const CITY_DEFAULTS: Record<string, SuburbPrices> = {
+    'brisbane': { house: 950000, apartment: 550000, townhouse: 700000 },
+    'qld': { house: 850000, apartment: 500000, townhouse: 650000 },
+    'sydney': { house: 1500000, apartment: 850000, townhouse: 1100000 },
+    'nsw': { house: 1200000, apartment: 700000, townhouse: 900000 },
+    'melbourne': { house: 1100000, apartment: 600000, townhouse: 800000 },
+    'vic': { house: 900000, apartment: 500000, townhouse: 650000 },
+    'perth': { house: 750000, apartment: 450000, townhouse: 550000 },
+    'wa': { house: 650000, apartment: 400000, townhouse: 500000 },
+    'adelaide': { house: 800000, apartment: 450000, townhouse: 550000 },
+    'sa': { house: 700000, apartment: 400000, townhouse: 500000 },
+    'gold coast': { house: 1000000, apartment: 650000, townhouse: 800000 },
+    'canberra': { house: 950000, apartment: 550000, townhouse: 700000 },
+    'act': { house: 950000, apartment: 550000, townhouse: 700000 },
+    'hobart': { house: 700000, apartment: 450000, townhouse: 550000 },
+    'tas': { house: 600000, apartment: 400000, townhouse: 480000 },
+    'darwin': { house: 550000, apartment: 350000, townhouse: 450000 },
+    'nt': { house: 500000, apartment: 320000, townhouse: 400000 },
 }
 
-// Bedroom multipliers
+// Bedroom multipliers (baseline is 3 bed)
 const BEDROOM_MULTIPLIERS: Record<number, number> = {
-    1: 0.45, 2: 0.70, 3: 1.00, 4: 1.15, 5: 1.30, 6: 1.45
+    1: 0.55, 2: 0.78, 3: 1.00, 4: 1.18, 5: 1.35, 6: 1.50
 }
 
-// Bathroom multipliers
+// Bathroom multipliers (baseline is 2 bath)
 const BATHROOM_MULTIPLIERS: Record<number, number> = {
-    1: 0.92, 2: 1.00, 3: 1.06, 4: 1.12
+    1: 0.94, 2: 1.00, 3: 1.05, 4: 1.10
 }
 
-// Property type multipliers
-const TYPE_MULTIPLIERS: Record<string, number> = {
-    'house': 1.00,
-    'townhouse': 0.75,
-    'apartment': 0.50,
-    'unit': 0.50,
-    'land': 0.40
+function getPropertyTypeKey(propertyType: string): keyof SuburbPrices {
+    const type = propertyType.toLowerCase()
+    if (type === 'house' || type === 'land') return 'house'
+    if (type === 'townhouse') return 'townhouse'
+    return 'apartment' // apartment, unit, etc.
 }
 
 function calculateValuation(data: ValuationRequest): { min: number; max: number; median: number } {
-    // Step 1: Get baseline price for suburb
     const suburbLower = data.suburb.toLowerCase()
-    let baseline = 1000000 // fallback
+    const propertyTypeKey = getPropertyTypeKey(data.propertyType)
+
+    // Default fallback prices
+    let suburbPrices: SuburbPrices = { house: 900000, apartment: 550000, townhouse: 700000 }
 
     // Try exact suburb match
-    for (const [suburb, price] of Object.entries(SUBURB_PRICES)) {
+    for (const [suburb, prices] of Object.entries(SUBURB_PRICES)) {
         if (suburbLower.includes(suburb)) {
-            baseline = price
+            suburbPrices = prices
             break
         }
     }
 
-    // If no suburb match, try city/state default
-    if (baseline === 1000000) {
-        for (const [city, price] of Object.entries(CITY_DEFAULTS)) {
+    // If still default, try city/state match
+    if (suburbPrices.house === 900000) {
+        for (const [city, prices] of Object.entries(CITY_DEFAULTS)) {
             if (suburbLower.includes(city)) {
-                baseline = price
+                suburbPrices = prices
                 break
             }
         }
     }
 
-    // Step 2: Apply bedroom multiplier
+    // Get baseline for this property type (this is for 3bed/2bath)
+    const baseline = suburbPrices[propertyTypeKey]
+
+    // Apply bedroom multiplier
     const bedrooms = Math.min(Math.max(data.bedrooms, 1), 6)
     const bedroomMult = BEDROOM_MULTIPLIERS[bedrooms] || 1.00
 
-    // Step 3: Apply bathroom multiplier
+    // Apply bathroom multiplier
     const bathrooms = Math.min(Math.max(data.bathrooms, 1), 4)
     const bathroomMult = BATHROOM_MULTIPLIERS[bathrooms] || 1.00
 
-    // Step 4: Apply property type multiplier
-    const typeMult = TYPE_MULTIPLIERS[data.propertyType.toLowerCase()] || 1.00
-
-    // Step 5: Calculate final values
-    const median = Math.round(baseline * bedroomMult * bathroomMult * typeMult)
+    // Calculate final values
+    const median = Math.round(baseline * bedroomMult * bathroomMult)
     const min = Math.round(median * 0.88)
     const max = Math.round(median * 1.12)
 
