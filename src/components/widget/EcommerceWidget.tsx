@@ -216,12 +216,32 @@ export function EcommerceWidget({
     const positionClass = position === 'bottom-left' ? 'left-4' : 'right-4'
     const remainingMessages = demoChatLimit === -1 ? -1 : Math.max(0, demoChatLimit - demoChatUsed)
 
+    // Check demo chat usage on mount
     useEffect(() => {
         const checkUsage = async () => {
+            // For public demos (no chatbotId), use localStorage exclusively
+            if (!chatbotId) {
+                const stored = localStorage.getItem(DEMO_CHAT_STORAGE_KEY)
+                if (stored) {
+                    try {
+                        const parsed = JSON.parse(stored)
+                        if (parsed.expiry && Date.now() < parsed.expiry) {
+                            setDemoChatUsed(parsed.count || 0)
+                            setLimitReached((parsed.count || 0) >= DEMO_CHAT_MAX_MESSAGES)
+                        } else {
+                            localStorage.removeItem(DEMO_CHAT_STORAGE_KEY)
+                            setDemoChatUsed(0)
+                        }
+                    } catch {
+                        localStorage.removeItem(DEMO_CHAT_STORAGE_KEY)
+                        setDemoChatUsed(0)
+                    }
+                }
+                return
+            }
+
             try {
-                const url = chatbotId
-                    ? `/api/demo-chat?chatbotId=${chatbotId}`
-                    : '/api/demo-chat'
+                const url = `/api/demo-chat?chatbotId=${chatbotId}`
                 const response = await fetch(url)
                 if (response.ok) {
                     const data = await response.json()
@@ -229,21 +249,6 @@ export function EcommerceWidget({
                         setDemoChatUsed(data.used)
                         setDemoChatLimit(data.limit)
                         setLimitReached(data.limit !== -1 && data.used >= data.limit)
-                    } else {
-                        const stored = localStorage.getItem(DEMO_CHAT_STORAGE_KEY)
-                        if (stored) {
-                            try {
-                                const parsed = JSON.parse(stored)
-                                if (parsed.expiry && Date.now() < parsed.expiry) {
-                                    setDemoChatUsed(parsed.count || 0)
-                                    setLimitReached((parsed.count || 0) >= DEMO_CHAT_MAX_MESSAGES)
-                                } else {
-                                    localStorage.removeItem(DEMO_CHAT_STORAGE_KEY)
-                                }
-                            } catch {
-                                localStorage.removeItem(DEMO_CHAT_STORAGE_KEY)
-                            }
-                        }
                     }
                 }
             } catch (error) {
@@ -255,6 +260,23 @@ export function EcommerceWidget({
 
     const incrementUsage = async (): Promise<boolean> => {
         if (limitReached) return false
+
+        // Public demo: LocalStorage only
+        if (!chatbotId) {
+            const newCount = demoChatUsed + 1
+            if (newCount > DEMO_CHAT_MAX_MESSAGES) {
+                setLimitReached(true)
+                return false
+            }
+            setDemoChatUsed(newCount)
+            localStorage.setItem(DEMO_CHAT_STORAGE_KEY, JSON.stringify({
+                count: newCount,
+                expiry: Date.now() + (DEMO_CHAT_EXPIRY_HOURS * 60 * 60 * 1000)
+            }))
+            setLimitReached(newCount >= DEMO_CHAT_MAX_MESSAGES)
+            return true
+        }
+
         try {
             const response = await fetch('/api/demo-chat', {
                 method: 'POST',
@@ -270,29 +292,10 @@ export function EcommerceWidget({
                 setDemoChatUsed(data.used)
                 setLimitReached(data.remaining === 0)
                 return true
-            } else {
-                const newCount = demoChatUsed + 1
-                if (newCount > DEMO_CHAT_MAX_MESSAGES) {
-                    setLimitReached(true)
-                    return false
-                }
-                setDemoChatUsed(newCount)
-                localStorage.setItem(DEMO_CHAT_STORAGE_KEY, JSON.stringify({
-                    count: newCount,
-                    expiry: Date.now() + (DEMO_CHAT_EXPIRY_HOURS * 60 * 60 * 1000)
-                }))
-                setLimitReached(newCount >= DEMO_CHAT_MAX_MESSAGES)
-                return true
             }
+            return false
         } catch {
-            const newCount = demoChatUsed + 1
-            if (newCount > DEMO_CHAT_MAX_MESSAGES) {
-                setLimitReached(true)
-                return false
-            }
-            setDemoChatUsed(newCount)
-            setLimitReached(newCount >= DEMO_CHAT_MAX_MESSAGES)
-            return true
+            return false
         }
     }
 

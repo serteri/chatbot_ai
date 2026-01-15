@@ -384,98 +384,59 @@ export function RealEstateWidget({
     const remainingMessages = demoChatLimit === -1 ? -1 : Math.max(0, demoChatLimit - demoChatUsed)
 
     // Check demo chat usage on mount
+    // Check demo chat usage on mount
     useEffect(() => {
         const checkUsage = async () => {
-            try {
-                // If chatbotIdentifier provided, use chatbot owner's limits
-                const url = chatbotIdentifier
-                    ? `/api/demo-chat?chatbotId=${chatbotIdentifier}`
-                    : '/api/demo-chat'
-                const response = await fetch(url)
-                if (response.ok) {
-                    const data = await response.json()
-                    setIsAuthenticated(data.authenticated)
-                    // If chatbotId was provided, always use API data
-                    if (chatbotIdentifier || data.authenticated) {
-                        setDemoChatUsed(data.used)
-                        setDemoChatLimit(data.limit)
-                        setLimitReached(data.limit !== -1 && data.used >= data.limit)
-                    } else {
-                        // Use localStorage for non-authenticated users without chatbotId
-                        const stored = localStorage.getItem(DEMO_CHAT_STORAGE_KEY)
-                        if (stored) {
-                            try {
-                                const parsed = JSON.parse(stored)
-                                const now = Date.now()
-                                if (parsed.expiry && now < parsed.expiry) {
-                                    setDemoChatUsed(parsed.count || 0)
-                                    setLimitReached((parsed.count || 0) >= DEMO_CHAT_MAX_MESSAGES)
-                                } else {
-                                    localStorage.removeItem(DEMO_CHAT_STORAGE_KEY)
-                                }
-                            } catch {
-                                localStorage.removeItem(DEMO_CHAT_STORAGE_KEY)
-                            }
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Error checking demo chat usage:', error)
-                // Fallback to localStorage
+            // For public demos (no chatbotIdentifier), use localStorage exclusively
+            if (!chatbotIdentifier) {
                 const stored = localStorage.getItem(DEMO_CHAT_STORAGE_KEY)
                 if (stored) {
                     try {
                         const parsed = JSON.parse(stored)
-                        if (parsed.expiry && Date.now() < parsed.expiry) {
+                        const now = Date.now()
+                        if (parsed.expiry && now < parsed.expiry) {
                             setDemoChatUsed(parsed.count || 0)
                             setLimitReached((parsed.count || 0) >= DEMO_CHAT_MAX_MESSAGES)
+                        } else {
+                            localStorage.removeItem(DEMO_CHAT_STORAGE_KEY)
+                            setDemoChatUsed(0)
                         }
-                    } catch { }
+                    } catch {
+                        localStorage.removeItem(DEMO_CHAT_STORAGE_KEY)
+                        setDemoChatUsed(0)
+                    }
                 }
+                return
+            }
+
+            try {
+                // Use chatbot owner's limits via API
+                const url = `/api/demo-chat?chatbotId=${chatbotIdentifier}`
+                const response = await fetch(url)
+                if (response.ok) {
+                    const data = await response.json()
+                    setIsAuthenticated(data.authenticated)
+
+                    if (data.authenticated || chatbotIdentifier) {
+                        setDemoChatUsed(data.used)
+                        setDemoChatLimit(data.limit)
+                        setLimitReached(data.limit !== -1 && data.used >= data.limit)
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking demo chat usage:', error)
             }
         }
         checkUsage()
     }, [chatbotIdentifier])
 
     // Increment demo chat usage
+    // Increment demo chat usage
     const incrementUsage = async (): Promise<boolean> => {
         if (limitReached) return false
 
-        try {
-            const response = await fetch('/api/demo-chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chatbotId: chatbotIdentifier })
-            })
-            const data = await response.json()
-
-            // If chatbotId was provided or user is authenticated, use API response
-            if (chatbotIdentifier || data.authenticated) {
-                if (!data.success) {
-                    setLimitReached(true)
-                    return false
-                }
-                setDemoChatUsed(data.used)
-                setLimitReached(data.remaining === 0)
-                return true
-            } else {
-                // Use localStorage for non-authenticated users without chatbotId
-                const newCount = demoChatUsed + 1
-                if (newCount > DEMO_CHAT_MAX_MESSAGES) {
-                    setLimitReached(true)
-                    return false
-                }
-                setDemoChatUsed(newCount)
-                localStorage.setItem(DEMO_CHAT_STORAGE_KEY, JSON.stringify({
-                    count: newCount,
-                    expiry: Date.now() + (DEMO_CHAT_EXPIRY_HOURS * 60 * 60 * 1000)
-                }))
-                setLimitReached(newCount >= DEMO_CHAT_MAX_MESSAGES)
-                return true
-            }
-        } catch (error) {
-            console.error('Error incrementing demo chat usage:', error)
-            // Fallback to localStorage
+        // Public demo: LocalStorage only
+        if (!chatbotIdentifier) {
             const newCount = demoChatUsed + 1
             if (newCount > DEMO_CHAT_MAX_MESSAGES) {
                 setLimitReached(true)
@@ -488,6 +449,26 @@ export function RealEstateWidget({
             }))
             setLimitReached(newCount >= DEMO_CHAT_MAX_MESSAGES)
             return true
+        }
+
+        try {
+            const response = await fetch('/api/demo-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chatbotId: chatbotIdentifier })
+            })
+            const data = await response.json()
+
+            if (!data.success) {
+                setLimitReached(true)
+                return false
+            }
+            setDemoChatUsed(data.used)
+            setLimitReached(data.remaining === 0)
+            return true
+        } catch (error) {
+            console.error('Error incrementing demo chat usage:', error)
+            return false
         }
     }
 
