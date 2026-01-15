@@ -250,11 +250,26 @@
       "googleLogin": "Google ile Giriş Yap",
       "githubLogin": "GitHub ile Giriş Yap",
       "microsoftLogin": "Microsoft ile Giriş Yap",
-      "or": "Veya",
+      "or": "Veya e-posta ile",
       "emailPlaceholder": "ornek@email.com",
       "loggingIn": "Giriş yapılıyor...",
       "invalidCredentials": "Email veya şifre hatalı",
       "oauthError": "Giriş yapılırken bir hata oluştu"
+    },
+    "branding": {
+      "welcomeBack": "Tekrar hoş geldiniz! 👋",
+      "continueManaging": "AI chatbot'larınızı yönetmeye devam edin.",
+      "whatsNew": "Yenilikler",
+      "newFeature1": "✨ Gelişmiş AI yanıt kalitesi",
+      "newFeature2": "📊 Yeni analytics dashboard",
+      "newFeature3": "🎨 Widget özelleştirme seçenekleri",
+      "footer": "© 2024 PylonChat. Tüm hakları saklıdır.",
+      "registerTitle": "AI destekli chatbot'lar ile müşteri deneyimini dönüştürün",
+      "registerSubtitle": "Ücretsiz hesap oluşturun ve hemen başlayın.",
+      "feature1": "Sınırsız AI sohbet deneyimi",
+      "feature2": "Özel chatbot oluşturma",
+      "feature3": "Gerçek zamanlı analytics",
+      "feature4": "7/24 destek"
     },
     "register": {
       "title": "Kayıt Ol",
@@ -286,7 +301,17 @@
       "registrationError": "Bir hata oluştu. Lütfen tekrar deneyin.",
       "oauthError": "Kayıt olurken bir hata oluştu",
       "successTitle": "Kayıt Başarılı! 🎉",
-      "successMessage": "Hesabınız oluşturuldu. Dashboard'a yönlendiriliyorsunuz..."
+      "successMessage": "Hesabınız oluşturuldu. Dashboard'a yönlendiriliyorsunuz...",
+      "passwordReqs": {
+        "title": "Şifre gereksinimleri:",
+        "length": "En az 8 karakter",
+        "uppercase": "En az 1 büyük harf (A-Z)",
+        "number": "En az 1 rakam (0-9)",
+        "special": "En az 1 özel karakter (!@#$%...)"
+      },
+      "termsAndPrivacy": "Kayıt olarak {terms} ve {privacy} kabul etmiş olursunuz.",
+      "terms": "Kullanım Şartları",
+      "privacy": "Gizlilik Politikası"
     }
   },
   "dashboard": {

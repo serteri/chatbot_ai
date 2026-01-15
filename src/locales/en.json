@@ -248,11 +248,26 @@
       "googleLogin": "Log In with Google",
       "githubLogin": "Log In with GitHub",
       "microsoftLogin": "Log In with Microsoft",
-      "or": "Or",
+      "or": "Or sign in with email",
       "emailPlaceholder": "example@email.com",
       "loggingIn": "Logging in...",
       "invalidCredentials": "Email or password incorrect",
       "oauthError": "An error occurred during login"
+    },
+    "branding": {
+      "welcomeBack": "Welcome Back! 👋",
+      "continueManaging": "Continue managing your AI chatbots.",
+      "whatsNew": "What's New",
+      "newFeature1": "✨ Enhanced AI response quality",
+      "newFeature2": "📊 New analytics dashboard",
+      "newFeature3": "🎨 Widget customization options",
+      "footer": "© 2024 PylonChat. All rights reserved.",
+      "registerTitle": "Transform customer experience with AI-powered chatbots",
+      "registerSubtitle": "Create a free account and start immediately.",
+      "feature1": "Unlimited AI chat experience",
+      "feature2": "Create custom chatbots",
+      "feature3": "Real-time analytics",
+      "feature4": "24/7 support"
     },
     "register": {
       "title": "Register",
@@ -284,7 +299,17 @@
       "registrationError": "An error occurred. Please try again.",
       "oauthError": "An error occurred during registration",
       "successTitle": "Registration Successful! 🎉",
-      "successMessage": "Your account has been created. Redirecting to Dashboard..."
+      "successMessage": "Your account has been created. Redirecting to Dashboard...",
+      "passwordReqs": {
+        "title": "Password requirements:",
+        "length": "At least 8 characters",
+        "uppercase": "At least 1 uppercase letter (A-Z)",
+        "number": "At least 1 number (0-9)",
+        "special": "At least 1 special character (!@#$%...)"
+      },
+      "termsAndPrivacy": "By signing up, you agree to our {terms} and {privacy}.",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy"
     }
   },
   "dashboard": {

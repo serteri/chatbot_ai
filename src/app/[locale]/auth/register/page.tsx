@@ -319,12 +319,12 @@ export default function RegisterPage() {
                                 {/* Password Requirements */}
                                 {showPasswordReqs && (
                                     <div className="mt-3 p-4 bg-gradient-to-br from-gray-50 to-blue-50/50 border border-gray-200 rounded-xl animate-in slide-in-from-top-2 duration-300">
-                                        <p className="text-sm font-medium text-gray-700 mb-3">Şifre gereksinimleri:</p>
+                                        <p className="text-sm font-medium text-gray-700 mb-3">{t('register.passwordReqs.title')}</p>
                                         <div className="space-y-2">
-                                            <PasswordReq met={passwordReqs.length} text="En az 8 karakter" />
-                                            <PasswordReq met={passwordReqs.uppercase} text="En az 1 büyük harf (A-Z)" />
-                                            <PasswordReq met={passwordReqs.number} text="En az 1 rakam (0-9)" />
-                                            <PasswordReq met={passwordReqs.special} text="En az 1 özel karakter (!@#$%...)" />
+                                            <PasswordReq met={passwordReqs.length} text={t('register.passwordReqs.length')} />
+                                            <PasswordReq met={passwordReqs.uppercase} text={t('register.passwordReqs.uppercase')} />
+                                            <PasswordReq met={passwordReqs.number} text={t('register.passwordReqs.number')} />
+                                            <PasswordReq met={passwordReqs.special} text={t('register.passwordReqs.special')} />
                                         </div>
                                     </div>
                                 )}
@@ -345,28 +345,27 @@ export default function RegisterPage() {
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="h-5 w-5 animate-spin" />
-                                        Hesap oluşturuluyor...
+                                        {t('register.signingUp')}
                                     </>
                                 ) : (
-                                    'Hesap Oluştur'
+                                    t('register.button')
                                 )}
                             </button>
                         </form>
 
                         <p className="mt-6 text-center text-gray-500">
-                            Zaten hesabınız var mı?{' '}
+                            {t('register.haveAccount')}{' '}
                             <Link href={`/${locale}/auth/login`} className="text-blue-600 hover:text-blue-700 font-medium">
-                                Giriş yapın
+                                {t('register.login')}
                             </Link>
                         </p>
                     </div>
 
                     <p className="mt-6 text-center text-xs text-gray-400">
-                        Kayıt olarak{' '}
-                        <Link href={`/${locale}/terms`} className="underline hover:text-gray-600">Kullanım Şartları</Link>
-                        {' '}ve{' '}
-                        <Link href={`/${locale}/privacy`} className="underline hover:text-gray-600">Gizlilik Politikası</Link>
-                        'nı kabul etmiş olursunuz.
+                        {t.rich('register.termsAndPrivacy', {
+                            terms: (chunks) => <Link href={`/${locale}/terms`} className="underline hover:text-gray-600">{chunks}</Link>,
+                            privacy: (chunks) => <Link href={`/${locale}/privacy`} className="underline hover:text-gray-600">{chunks}</Link>
+                        })}
                     </p>
                 </div>
             </div>
