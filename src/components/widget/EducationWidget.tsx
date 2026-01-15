@@ -64,7 +64,7 @@ const translations = {
         },
         countries: ['Almanya', 'ABD', 'İngiltere', 'Kanada', 'Avustralya'],
         budgets: ['Burs ile', '€500-1000/ay', '€1000-2000/ay', '€2000+/ay'],
-        timelines: ['Bu yıl (2024)', '2025', '2026+', 'Sadece araştırıyorum'],
+        timelines: ['Bu yıl (2026)', '2027', '2028+', 'Sadece araştırıyorum'],
         messages: {
             countryQuestion: 'Hangi ülkede eğitim almayı düşünüyorsunuz?',
             budgetQuestion: 'Aylık bütçeniz ne olabilir?',
@@ -87,7 +87,7 @@ const translations = {
         },
         countries: ['Germany', 'USA', 'UK', 'Canada', 'Australia'],
         budgets: ['With scholarship', '$500-1000/mo', '$1000-2000/mo', '$2000+/mo'],
-        timelines: ['This year (2024)', '2025', '2026+', 'Just researching'],
+        timelines: ['This year (2026)', '2027', '2028+', 'Just researching'],
         messages: {
             countryQuestion: 'Which country are you considering for your studies?',
             budgetQuestion: 'What would be your monthly budget?',
