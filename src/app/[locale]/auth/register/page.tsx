@@ -8,11 +8,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { MessageSquare, Check, Eye, EyeOff, Loader2, AlertCircle, User, Mail, Lock, X } from 'lucide-react'
 import { signIn } from 'next-auth/react'
+import { useTranslations } from 'next-intl'
 
 export default function RegisterPage() {
     const router = useRouter()
     const params = useParams()
+
     const locale = (params?.locale as string) || 'tr'
+    const t = useTranslations('auth')
 
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
