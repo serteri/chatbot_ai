@@ -270,7 +270,38 @@
       "registrationError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
       "oauthError": "Bei der Registrierung ist ein Fehler aufgetreten",
       "successTitle": "Registrierung erfolgreich! 🎉",
-      "successMessage": "Ihr Konto wurde erstellt. Sie werden zum Dashboard weitergeleitet..."
+      "successMessage": "Ihr Konto wurde erstellt. Sie werden zum Dashboard weitergeleitet...",
+      "passwordReqs": {
+        "title": "Passwortanforderungen:",
+        "length": "Mindestens 8 Zeichen",
+        "uppercase": "Mindestens 1 Großbuchstabe (A-Z)",
+        "number": "Mindestens 1 Zahl (0-9)",
+        "special": "Mindestens 1 Sonderzeichen (!@#$%...)"
+      },
+      "termsAndPrivacy": "Durch die Registrierung stimmen Sie unseren {terms} und {privacy} zu.",
+      "terms": "Nutzungsbedingungen",
+      "privacy": "Datenschutzrichtlinie"
+    },
+    "branding": {
+      "welcomeBack": "Willkommen zurück! 👋",
+      "continueManaging": "Verwalten Sie Ihre KI-Chatbots weiter.",
+      "whatsNew": "Was gibt's Neues",
+      "newFeature1": "✨ Verbesserte KI-Antwortqualität",
+      "newFeature2": "📊 Neues Analyse-Dashboard",
+      "newFeature3": "🎨 Widget-Anpassungsoptionen",
+      "footer": "© 2024 PylonChat. Alle Rechte vorbehalten.",
+      "registerTitle": "Transformieren Sie das Kundenerlebnis mit KI-gestützten Chatbots",
+      "registerSubtitle": "Erstellen Sie ein kostenloses Konto und starten Sie sofort.",
+      "feature1": "Unbegrenztes KI-Chat-Erlebnis",
+      "feature2": "Eigene Chatbots erstellen",
+      "feature3": "Echtzeit-Analytik",
+      "feature4": "24/7 Support"
+    },
+    "demo": {
+      "tryDemo": "Demo-Chatbots testen",
+      "education": "🎓 Bildung",
+      "ecommerce": "🛒 E-Commerce",
+      "realestate": "🏠 Immobilien"
     }
   },
   "dashboard": {

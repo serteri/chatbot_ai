@@ -214,6 +214,8 @@ export default function LoginPage() {
                             </div>
                         </div>
 
+
+
                         {/* Email/Password Form */}
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div>
@@ -302,30 +304,34 @@ export default function LoginPage() {
                         <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                             <p className="text-blue-800 font-medium text-sm mb-3 flex items-center gap-2">
                                 <Sparkles className="h-4 w-4" />
-                                Demo chatbot'ları deneyin
+                                {t('demo.tryDemo')}
                             </p>
                             <div className="flex gap-2">
                                 <Link
                                     href={`/${locale}/demo/education`}
                                     className="flex-1 text-center py-2 px-2 bg-white rounded-lg text-blue-600 text-sm font-medium hover:bg-blue-50 border border-blue-200 transition-all"
                                 >
-                                    🎓 Eğitim
+                                    {t('demo.education')}
                                 </Link>
                                 <Link
                                     href={`/${locale}/demo/ecommerce`}
                                     className="flex-1 text-center py-2 px-2 bg-white rounded-lg text-blue-600 text-sm font-medium hover:bg-blue-50 border border-blue-200 transition-all"
                                 >
-                                    🛒 E-ticaret
+                                    {t('demo.ecommerce')}
                                 </Link>
                                 <Link
-                                    href={`/${locale}/demo/realestate`}
+                                    href={`/${locale}/demo/real-estate`}
                                     className="flex-1 text-center py-2 px-2 bg-white rounded-lg text-blue-600 text-sm font-medium hover:bg-blue-50 border border-blue-200 transition-all"
                                 >
-                                    🏠 Emlak
+                                    {t('demo.realestate')}
                                 </Link>
                             </div>
                         </div>
                     </div>
+
+                    <p className="mt-6 text-center text-xs text-gray-400">
+                        &copy; 2024 PylonChat. All rights reserved.
+                    </p>
                 </div>
             </div>
         </div>

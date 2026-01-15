@@ -310,6 +310,12 @@
       "termsAndPrivacy": "By signing up, you agree to our {terms} and {privacy}.",
       "terms": "Terms of Service",
       "privacy": "Privacy Policy"
+    },
+    "demo": {
+      "tryDemo": "Try demo chatbots",
+      "education": "🎓 Education",
+      "ecommerce": "🛒 E-commerce",
+      "realestate": "🏠 Real Estate"
     }
   },
   "dashboard": {

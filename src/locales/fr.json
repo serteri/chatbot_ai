@@ -268,7 +268,38 @@
       "registrationError": "Une erreur s'est produite. Veuillez réessayer.",
       "oauthError": "Une erreur s'est produite lors de l'inscription",
       "successTitle": "Inscription Réussie ! 🎉",
-      "successMessage": "Votre compte a été créé. Redirection vers le tableau de bord..."
+      "successMessage": "Votre compte a été créé. Redirection vers le tableau de bord...",
+      "passwordReqs": {
+        "title": "Exigences du mot de passe :",
+        "length": "Au moins 8 caractères",
+        "uppercase": "Au moins 1 majuscule (A-Z)",
+        "number": "Au moins 1 chiffre (0-9)",
+        "special": "Au moins 1 caractère spécial (!@#$%...)"
+      },
+      "termsAndPrivacy": "En vous inscrivant, vous acceptez nos {terms} et {privacy}.",
+      "terms": "Conditions d'Utilisation",
+      "privacy": "Politique de Confidentialité"
+    },
+    "branding": {
+      "welcomeBack": "Bon retour ! 👋",
+      "continueManaging": "Continuez à gérer vos chatbots IA.",
+      "whatsNew": "Quoi de neuf",
+      "newFeature1": "✨ Qualité de réponse IA améliorée",
+      "newFeature2": "📊 Nouveau tableau de bord analytique",
+      "newFeature3": "🎨 Options de personnalisation de widget",
+      "footer": "© 2024 PylonChat. Tous droits réservés.",
+      "registerTitle": "Transformez l'expérience client avec des chatbots IA",
+      "registerSubtitle": "Créez un compte gratuit et commencez immédiatement.",
+      "feature1": "Expérience de chat IA illimitée",
+      "feature2": "Création de chatbot personnalisé",
+      "feature3": "Analytique en temps réel",
+      "feature4": "Support 24/7"
+    },
+    "demo": {
+      "tryDemo": "Essayer les chatbots démo",
+      "education": "🎓 Éducation",
+      "ecommerce": "🛒 E-commerce",
+      "realestate": "🏠 Immobilier"
     }
   },
   "dashboard": {

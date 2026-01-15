@@ -312,6 +312,12 @@
       "termsAndPrivacy": "Kayıt olarak {terms} ve {privacy} kabul etmiş olursunuz.",
       "terms": "Kullanım Şartları",
       "privacy": "Gizlilik Politikası"
+    },
+    "demo": {
+      "tryDemo": "Demo chatbot'ları deneyin",
+      "education": "🎓 Eğitim",
+      "ecommerce": "🛒 E-ticaret",
+      "realestate": "🏠 Emlak"
     }
   },
   "dashboard": {
