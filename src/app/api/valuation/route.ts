@@ -52,7 +52,7 @@ const BATHROOM_MULTIPLIERS: Record<number, number> = {
     1: 0.94, 2: 1.00, 3: 1.05, 4: 1.10
 }
 
-// Use OpenAI to get current market prices
+// Use OpenAI to get current market prices for 3-bedroom properties (baseline)
 async function fetchFromOpenAI(openai: OpenAI, suburb: string, propertyType: string): Promise<SuburbData | null> {
     try {
         const completion = await openai.chat.completions.create({
@@ -60,22 +60,30 @@ async function fetchFromOpenAI(openai: OpenAI, suburb: string, propertyType: str
             messages: [
                 {
                     role: 'system',
-                    content: `You are an Australian property market data expert. Provide current median property prices based on the latest available market data. Return ONLY valid JSON, no other text.`
+                    content: `You are an Australian property market data expert with access to current 2025-2026 real estate data. Provide accurate median property prices based on recent sales data from realestate.com.au, domain.com.au, and CoreLogic. Return ONLY valid JSON, no other text.`
                 },
                 {
                     role: 'user',
-                    content: `What are the current median property prices in ${suburb}, Australia?
+                    content: `What are the current median property prices for 3-BEDROOM properties in ${suburb}, Australia?
 
-Return JSON in this exact format (prices in AUD as integers):
+IMPORTANT: I need the median price specifically for 3-BEDROOM properties (not overall median).
+
+Return JSON in this exact format (prices in AUD as integers, no decimals):
 {
   "medianHouse": 1200000,
   "medianUnit": 650000,
   "medianTownhouse": 850000,
-  "dataDate": "January 2025",
+  "dataDate": "January 2026",
   "confidence": "high"
 }
 
-Base your estimates on recent sales data and market trends. Be realistic and accurate.`
+Guidelines:
+- medianHouse = median sale price for 3-bedroom HOUSES in this suburb
+- medianUnit = median sale price for 3-bedroom UNITS/APARTMENTS in this suburb
+- medianTownhouse = median sale price for 3-bedroom TOWNHOUSES in this suburb
+- Use recent sales data (2025-2026)
+- Inner city suburbs (within 10km of CBD) are typically more expensive
+- Be realistic based on actual market data`
                 }
             ],
             response_format: { type: 'json_object' }
