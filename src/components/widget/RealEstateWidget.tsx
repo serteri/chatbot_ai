@@ -179,8 +179,8 @@ const translations = {
             coldDesc: 'Araştırma aşamasında'
         },
         messages: {
-            hotLeadAlert: '🔥 Sıcak Lead Tespit Edildi!\n\nDanışmanımız en kısa sürede sizi arayacak. Ortalama yanıt süresi: 5 dakika.',
-            warmLeadAlert: '👍 Bilgileriniz alındı!\n\nDanışmanımız 24 saat içinde sizinle iletişime geçecek.',
+            hotLeadAlert: 'Bilgileriniz alındı.\n\nUzman danışmanımız başvurunuzu öncelikli olarak değerlendirip en kısa sürede size dönüş yapacaktır.',
+            warmLeadAlert: 'Teşekkürler, bilgileriniz alındı.\n\nDanışmanımız sizinle iletişime geçecektir.',
             coldLeadResponse: 'Anlıyorum, henüz araştırma aşamasındasınız.\n\nSize yardımcı olabilecek bazı kaynaklarımız var:\n• Bölge fiyat rehberi\n• Yatırım analiz raporu\n• Piyasa trend raporu\n\nE-posta adresinizi bırakırsanız bu raporları size gönderelim.',
             searchingProperties: 'Kriterlerinize uygun ilanları arıyorum...',
             propertiesFound: 'Size uygun ilanlarımız:',
@@ -281,8 +281,8 @@ const translations = {
             coldDesc: 'Research phase'
         },
         messages: {
-            hotLeadAlert: '🔥 Hot Lead Detected!\n\nOur advisor will call you shortly. Average response time: 5 minutes.',
-            warmLeadAlert: '👍 Your information has been received!\n\nOur advisor will contact you within 24 hours.',
+            hotLeadAlert: 'Information received.\n\nOur expert advisor will prioritize your request and contact you shortly.',
+            warmLeadAlert: 'Thank you, information received.\n\nOur advisor will contact you soon.',
             coldLeadResponse: 'I understand you\'re still in the research phase.\n\nWe have some helpful resources:\n• Area price guide\n• Investment analysis report\n• Market trend report\n\nLeave your email and we\'ll send these to you.',
             searchingProperties: 'Searching for properties matching your criteria...',
             propertiesFound: 'Here are properties matching your criteria:',
@@ -1552,62 +1552,68 @@ function ContactForm({
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
     const [email, setEmail] = useState('')
+    const [error, setError] = useState('')
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        if (name && phone) {
-            onSubmit({ name, phone, email })
+        if (!name || !phone) {
+            setError(locale === 'tr' ? 'Lütfen ad ve telefon bilgilerini giriniz.' : 'Please enter your name and phone number.')
+            return
         }
+        onSubmit({ name, phone, email })
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-2">
-            {leadCategory === 'hot' && (
-                <div className="flex items-center gap-2 px-2 py-1 bg-red-50 rounded-lg mb-2">
-                    <Flame className="w-4 h-4 text-red-500" />
-                    <span className="text-xs text-red-600 font-medium">
-                        {locale === 'tr' ? 'Öncelikli işlem yapılacak' : 'Priority processing'}
-                    </span>
+        <form onSubmit={handleSubmit} className="space-y-3">
+            <p className="text-sm font-medium text-gray-700">
+                {locale === 'tr' ? 'İletişim Bilgileri' : 'Contact Information'}
+            </p>
+            <div className="space-y-2">
+                <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-amber-400">
+                    <User className="w-4 h-4 text-gray-400" />
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => {
+                            setName(e.target.value)
+                            setError('')
+                        }}
+                        placeholder={locale === 'tr' ? 'Ad Soyad *' : 'Full Name *'}
+                        className="flex-1 text-sm outline-none bg-transparent"
+                    />
                 </div>
-            )}
-            <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-gray-400" />
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder={locale === 'tr' ? 'Ad Soyad *' : 'Full Name *'}
-                    className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:border-amber-400"
-                    required
-                />
+                <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-amber-400">
+                    <Phone className="w-4 h-4 text-gray-400" />
+                    <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => {
+                            setPhone(e.target.value)
+                            setError('')
+                        }}
+                        placeholder={locale === 'tr' ? 'Telefon *' : 'Phone *'}
+                        className="flex-1 text-sm outline-none bg-transparent"
+                    />
+                </div>
+                <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-amber-400">
+                    <Mail className="w-4 h-4 text-gray-400" />
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email"
+                        className="flex-1 text-sm outline-none bg-transparent"
+                    />
+                </div>
             </div>
-            <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-gray-400" />
-                <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder={locale === 'tr' ? 'Telefon *' : 'Phone *'}
-                    className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:border-amber-400"
-                    required
-                />
-            </div>
-            <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-gray-400" />
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={locale === 'tr' ? 'E-posta' : 'Email'}
-                    className="flex-1 px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:border-amber-400"
-                />
-            </div>
+            {error && <p className="text-xs text-red-500">{error}</p>}
             <button
                 type="submit"
-                className="w-full py-2 text-sm text-white rounded-lg transition-colors hover:opacity-90"
+                className="w-full py-2.5 text-sm text-white rounded-lg transition-colors hover:opacity-90 flex items-center justify-center gap-2 font-medium shadow-sm"
                 style={{ backgroundColor: '#D97706' }}
             >
-                {locale === 'tr' ? 'Gönder' : 'Submit'}
+                {locale === 'tr' ? 'Devam Et' : 'Continue'}
+                <CheckCircle className="w-4 h-4" />
             </button>
         </form>
     )
