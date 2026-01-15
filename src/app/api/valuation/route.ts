@@ -52,37 +52,6 @@ const BATHROOM_MULTIPLIERS: Record<number, number> = {
     1: 0.94, 2: 1.00, 3: 1.05, 4: 1.10
 }
 
-// Try to fetch from Proptech Data API (if configured)
-async function fetchFromProptechAPI(suburb: string, state: string): Promise<SuburbData | null> {
-    const apiKey = process.env.PROPTECH_API_KEY
-    if (!apiKey) return null
-
-    try {
-        const response = await fetch(
-            `https://api.proptechdata.com.au/v1/suburbs/statistics?suburb=${encodeURIComponent(suburb)}&state=${encodeURIComponent(state)}`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json'
-                }
-            }
-        )
-
-        if (!response.ok) return null
-
-        const data = await response.json()
-        return {
-            medianHouse: data.house?.medianPrice || 0,
-            medianUnit: data.unit?.medianPrice || 0,
-            medianTownhouse: data.townhouse?.medianPrice,
-            source: 'Proptech Data API',
-            lastUpdated: new Date().toISOString()
-        }
-    } catch {
-        return null
-    }
-}
-
 // Use OpenAI to get current market prices
 async function fetchFromOpenAI(openai: OpenAI, suburb: string, propertyType: string): Promise<SuburbData | null> {
     try {
@@ -178,21 +147,13 @@ export async function POST(request: NextRequest) {
             }, { status: 400 })
         }
 
-        // Extract state from suburb string if present (e.g., "Albion, QLD 4010" -> "QLD")
-        const stateMatch = body.suburb.match(/,?\s*(QLD|NSW|VIC|WA|SA|TAS|NT|ACT)/i)
-        const state = stateMatch ? stateMatch[1].toUpperCase() : body.state || 'QLD'
-
         const openaiApiKey = process.env.OPENAI_API_KEY
         const openai = openaiApiKey ? new OpenAI({ apiKey: openaiApiKey }) : null
 
-        // Step 1: Try to get real-time suburb data
+        // Get real-time suburb data from OpenAI
         let suburbData: SuburbData | null = null
 
-        // First try Proptech API
-        suburbData = await fetchFromProptechAPI(body.suburb, state)
-
-        // If no Proptech data, try OpenAI
-        if (!suburbData && openai) {
+        if (openai) {
             suburbData = await fetchFromOpenAI(openai, body.suburb, body.propertyType)
         }
 
