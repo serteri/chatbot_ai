@@ -725,8 +725,11 @@ export function RealEstateWidget({
         setLeadData(prev => ({ ...prev, propertyType: apiType }))
         setCurrentStep('budget')
         setTimeout(() => {
+            const isRent = leadData.intent === 'rent'
+            const budgetOptions = isRent ? (t.rentBudgetRanges || []) : t.budgetRanges
+
             addBotMessage(`${t.leadQualification.budget}\n\n💡 ${t.leadQualification.budgetNote}`, 'quick-replies', {
-                replies: t.budgetRanges.map(b => b.label)
+                replies: budgetOptions.map((b: any) => b.label)
             })
         }, 300)
     }
@@ -735,9 +738,13 @@ export function RealEstateWidget({
         await addUserMessage(budget)
         if (limitReached) return
 
-        const budgetRange = t.budgetRanges.find(b => b.label === budget)
+        const isRent = leadData.intent === 'rent'
+        const budgetRanges = isRent ? (t.rentBudgetRanges || []) : t.budgetRanges
+        const budgetRange = budgetRanges.find((b: any) => b.label === budget)
+
+        // Calculate budget level logic
         let budgetLevel: 'low' | 'medium' | 'high' | 'premium' = 'medium'
-        const budgetIndex = t.budgetRanges.findIndex(b => b.label === budget)
+        const budgetIndex = budgetRanges.findIndex((b: any) => b.label === budget)
         if (budgetIndex === 0) budgetLevel = 'low'
         else if (budgetIndex === 1) budgetLevel = 'medium'
         else if (budgetIndex === 2) budgetLevel = 'high'
@@ -777,6 +784,48 @@ export function RealEstateWidget({
             setTimeout(() => {
                 addBotMessage(t.messages.coldLeadResponse, 'form', { type: 'email-only' })
             }, 300)
+            return
+        }
+
+        // If Rental, skip Pre-approval and go to contact flow
+        if (leadData.intent === 'rent') {
+            // For rentals, we can calculate score now and proceed to matching
+            // Assuming default preApproval false for rent
+            const updatedLead = { ...leadData, timeline, timelineUrgency, hasPreApproval: false }
+            setLeadData(updatedLead)
+
+            const { score, category } = calculateLeadScore(updatedLead)
+            updatedLead.leadScore = score
+            updatedLead.leadCategory = category
+
+            // Proceed to matching similar to handleContactSubmit or handlePreApprovalSelect end
+            const matchMessage = t.messages.residenceMatch // Rentals are usually residence
+
+            setCurrentStep('searchingProperties')
+            addBotMessage(matchMessage)
+
+            // Trigger property search
+            setLoadingProperties(true)
+            setTimeout(async () => {
+                const properties = await fetchProperties(
+                    'residence',
+                    updatedLead.budgetMax,
+                    updatedLead.propertyType
+                )
+                setLoadingProperties(false)
+
+                if (properties.length > 0) {
+                    addBotMessage(t.messages.propertiesFound, 'cards', { properties })
+                    setTimeout(() => {
+                        setCurrentStep('contact')
+                        addBotMessage(t.leadQualification.contact, 'form', { type: 'contact', leadCategory: category })
+                    }, 2000)
+                } else {
+                    // No properties found for rental, go straight to contact
+                    addBotMessage(t.messages.noPropertiesFound, 'form', { type: 'contact', leadCategory: category })
+                    setCurrentStep('contact')
+                }
+            }, 1000)
             return
         }
 
@@ -902,6 +951,26 @@ export function RealEstateWidget({
             category,
             labels: t.leadScore
         })
+
+        // If Hot Lead, automatically offer Appointment
+        if (category === 'hot') {
+            setTimeout(() => {
+                addBotMessage(
+                    locale === 'tr'
+                        ? 'Danışmanımız şu an müsait. Hemen bir online görüşme veya ofis randevusu planlamak ister misiniz?'
+                        : 'Our advisor is available. Would you like to schedule an online meeting or office visit now?',
+                    'quick-replies',
+                    {
+                        replies: locale === 'tr'
+                            ? ['📅 Randevu Oluştur', 'Hayır, teşekkürler']
+                            : ['📅 Schedule Meeting', 'No, thanks']
+                    }
+                )
+                setCurrentStep('schedule-prompt')
+            }, 1000)
+        } else {
+            setCurrentStep('complete')
+        }
 
         setCurrentStep('complete')
     }
@@ -1116,6 +1185,15 @@ export function RealEstateWidget({
                                                 )
                                             }
                                             setCurrentStep('contact')
+                                        } else if (currentStep === 'schedule-prompt') {
+                                            addUserMessage(reply)
+                                            const isYes = reply.includes('Randevu') || reply.includes('Schedule')
+                                            if (isYes) {
+                                                addBotMessage(t.appointmentSlots.title, 'appointment', {})
+                                            } else {
+                                                addBotMessage(t.thankYou)
+                                                setCurrentStep('complete')
+                                            }
                                         }
                                     }}
                                     className="px-3 py-1.5 text-sm rounded-full border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-700 transition-colors"
