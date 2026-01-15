@@ -64,7 +64,7 @@ const translations = {
         },
         countries: ['Almanya', 'ABD', 'İngiltere', 'Kanada', 'Avustralya'],
         budgets: ['Burs ile', '€500-1000/ay', '€1000-2000/ay', '€2000+/ay'],
-        timelines: ['Bu yıl (2026)', '2027', '2028+', 'Sadece araştırıyorum'],
+        // timelines: dynamic now
         messages: {
             countryQuestion: 'Hangi ülkede eğitim almayı düşünüyorsunuz?',
             budgetQuestion: 'Aylık bütçeniz ne olabilir?',
@@ -87,7 +87,7 @@ const translations = {
         },
         countries: ['Germany', 'USA', 'UK', 'Canada', 'Australia'],
         budgets: ['With scholarship', '$500-1000/mo', '$1000-2000/mo', '$2000+/mo'],
-        timelines: ['This year (2026)', '2027', '2028+', 'Just researching'],
+        // timelines: dynamic now
         messages: {
             countryQuestion: 'Which country are you considering for your studies?',
             budgetQuestion: 'What would be your monthly budget?',
@@ -121,6 +121,12 @@ export function EducationWidget({
     const t = translations[locale]
     const positionClass = position === 'bottom-left' ? 'left-4' : 'right-4'
     const remainingMessages = demoChatLimit === -1 ? -1 : Math.max(0, demoChatLimit - demoChatUsed)
+
+    // Dynamic timelines
+    const currentYear = new Date().getFullYear()
+    const timelines = locale === 'tr'
+        ? [`Bu yıl (${currentYear})`, `${currentYear + 1}`, `${currentYear + 2}+`, 'Sadece araştırıyorum']
+        : [`This year (${currentYear})`, `${currentYear + 1}`, `${currentYear + 2}+`, 'Just researching']
 
     // Check demo chat usage on mount
     useEffect(() => {
@@ -307,7 +313,7 @@ export function EducationWidget({
         setLeadData(prev => ({ ...prev, budget }))
         setCurrentStep('timeline')
         setTimeout(() => {
-            addBotMessage(t.messages.timelineQuestion, 'quick-replies', { replies: t.timelines })
+            addBotMessage(t.messages.timelineQuestion, 'quick-replies', { replies: timelines })
         }, 300)
     }
 
