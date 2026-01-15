@@ -2244,5 +2244,151 @@
     "email": "Correo electrónico",
     "role_admin": "Administrador",
     "role_member": "Miembro"
+  },
+  "widget": {
+    "realestate": {
+      "title": "Asistente Inmobiliario",
+      "subtitle": "Su Asistente de Recepción",
+      "online": "En línea",
+      "placeholder": "Escriba su mensaje...",
+      "welcome": "¡Hola! Soy su asistente de recepción digital. Le haré algunas preguntas rápidas para encontrar las mejores propiedades para usted.",
+      "quickReplies": {
+        "buy": "Quiero comprar",
+        "rent": "Busco alquilar",
+        "sell": "Quiero vender mi propiedad",
+        "value": "Obtener valoración",
+        "tenant": "Soporte al inquilino"
+      },
+      "leadQualification": {
+        "propertyType": "¿Qué tipo de propiedad está buscando?",
+        "purpose": "¿Busca inversión o residencia?",
+        "purposeOptions": {
+          "investment": "Inversión",
+          "residence": "Residencia",
+          "both": "Ambas opciones"
+        },
+        "budget": "¿Cuál es su rango de presupuesto?",
+        "budgetNote": "Necesito conocer su presupuesto para mostrarle las mejores opciones.",
+        "location": "¿Qué zonas prefiere?",
+        "timeline": "¿Cuándo planea mudarse?",
+        "timelineNote": "Esto nos ayuda a priorizar su búsqueda.",
+        "preApproval": "¿Tiene pre-aprobación hipotecaria?",
+        "preApprovalNote": "La pre-aprobación acelera significativamente el proceso.",
+        "contact": "Por favor comparta su información de contacto para que podamos comunicarnos con usted."
+      },
+      "propertyTypes": {
+        "apartment": "Apartamento",
+        "villa": "Villa",
+        "house": "Casa",
+        "land": "Terreno",
+        "commercial": "Comercial"
+      },
+      "budgetRanges": {
+        "label1": "100.000€ - 300.000€",
+        "label2": "300.000€ - 500.000€",
+        "label3": "500.000€ - 800.000€",
+        "label4": "800.000€ - 1,5M€",
+        "label5": "1,5M€+"
+      },
+      "rentBudgetRanges": {
+        "label1": "500€ - 1.000€",
+        "label2": "1.000€ - 2.000€",
+        "label3": "2.000€ - 3.500€",
+        "label4": "3.500€ - 5.000€",
+        "label5": "5.000€+"
+      },
+      "timelines": {
+        "immediate": "Inmediatamente (Este mes)",
+        "soon": "Dentro de 1-3 meses",
+        "later": "Dentro de 3-6 meses",
+        "browsing": "Solo estoy mirando el mercado"
+      },
+      "yesNo": {
+        "yes": "Sí, la tengo",
+        "no": "No, aún no",
+        "apply": "Solicitaré pronto"
+      },
+      "appointmentSlots": {
+        "title": "Nuestro asesor está disponible en estos horarios:",
+        "select": "Seleccionar horario"
+      },
+      "valuation": {
+        "title": "Valoración Gratuita",
+        "subtitle": "Estimación con IA",
+        "address": "Dirección (Distrito, Barrio)",
+        "area": "Metros cuadrados",
+        "rooms": "Habitaciones",
+        "buildingAge": "Antigüedad del edificio",
+        "submit": "Obtener valoración",
+        "result": "Rango de valor estimado"
+      },
+      "tenant": {
+        "title": "Soporte al Inquilino",
+        "greeting": "¿Cómo puedo ayudarle?",
+        "options": {
+          "issue": "Reportar problema",
+          "payment": "Info pago alquiler",
+          "contract": "Pregunta contrato",
+          "key": "Entrega de llaves",
+          "other": "Otro"
+        },
+        "issueTypes": {
+          "plumbing": "Fontanería",
+          "electrical": "Electricidad",
+          "heating": "Calefacción/HVAC",
+          "structural": "Problema estructural",
+          "other": "Otro"
+        },
+        "urgency": {
+          "emergency": "Emergencia (Inundación, fuga de gas, etc.)",
+          "normal": "Normal",
+          "low": "No urgente"
+        },
+        "photoPrompt": "Puede agregar fotos para ayudarnos a entender el problema:",
+        "photoButton": "Subir foto",
+        "submitted": "¡Su solicitud ha sido recibida! Nuestro equipo de servicio se comunicará con usted en breve.",
+        "rentInfo": "Información de pago del alquiler:\\n\\nBanco: Banco Ejemplo\\nCuenta: 1234567890\\nCódigo: 123456789\\n\\nPor favor incluya su número de apartamento en el memo.",
+        "contractInfo": "Para preguntas sobre el contrato, deje su información de contacto y nuestro representante le llamará."
+      },
+      "leadScore": {
+        "hot": "Cita disponible",
+        "warm": "Coincidencia potencial",
+        "cold": "Fase de investigación",
+        "hotDesc": "Usted es elegible para una consulta.",
+        "warmDesc": "Buscaremos propiedades que coincidan con sus criterios.",
+        "coldDesc": "Podemos compartir informes de mercado con usted."
+      },
+      "messages": {
+        "hotLeadAlert": "Información recibida.\\n\\nNuestro asesor experto priorizará su solicitud y se comunicará con usted en breve.",
+        "warmLeadAlert": "Gracias, información recibida.\\n\\nNuestro asesor se comunicará con usted pronto.",
+        "coldLeadResponse": "Entiendo que todavía está en la fase de investigación.\\n\\nTenemos algunos recursos útiles:\\n• Guía de precios por zona\\n• Informe de análisis de inversión\\n• Informe de tendencias del mercado\\n\\nDeje su email y se los enviaremos.",
+        "searchingProperties": "Buscando propiedades que coincidan con sus criterios...",
+        "propertiesFound": "Aquí hay propiedades que coinciden con sus criterios:",
+        "noPropertiesFound": "No tenemos listados activos que coincidan con sus criterios en este momento.\\n\\nSin embargo, nuestro asesor puede hacer una búsqueda personalizada para usted. ¿Le gustaría dejar su información de contacto?",
+        "investmentMatch": "¡Excelente elección para inversión!\\n\\nBuscando ubicaciones con alto rendimiento de alquiler...",
+        "residenceMatch": "¡Obteniendo las mejores opciones para su nuevo hogar!\\n\\nBuscando basado en comodidades y transporte...",
+        "appointmentConfirmed": "¡Su cita está confirmada!\\n\\nLa dirección y el recordatorio se enviarán por SMS.\\n\\n📍 Los detalles de ubicación se compartirán 1 hora antes.",
+        "valuationResult": "¡Su valoración con IA está lista!",
+        "upsellHigherBudget": "💡 Si estira un poco su presupuesto, vea estas excelentes opciones:",
+        "upsellDifferentType": "🏠 Tenemos alternativas en diferentes tipos de propiedades:",
+        "upsellNearby": "📍 Listados populares cerca de su zona preferida:",
+        "alternativeQuestion": "¿Interesado en alguna de estas opciones?",
+        "schedulePrompt": "Nuestro asesor está disponible. ¿Le gustaría programar una reunión en línea o una visita a la oficina ahora?",
+        "scheduleYes": "📅 Programar reunión",
+        "scheduleNo": "No, gracias"
+      },
+      "thankYou": "¡Gracias!",
+      "viewDetails": "Ver detalles",
+      "schedule": "Programar visita",
+      "showMore": "Ver más",
+      "loading": "Cargando...",
+      "contactForm": {
+        "title": "Información de contacto",
+        "namePlaceholder": "Nombre completo *",
+        "phonePlaceholder": "Teléfono *",
+        "emailPlaceholder": "Email",
+        "error": "Por favor ingrese su nombre y número de teléfono."
+      }
+    }
   }
 }
