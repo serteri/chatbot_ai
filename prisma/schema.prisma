@@ -105,6 +105,8 @@ model Subscription {
   hasLiveSupport       Boolean   @default(false)
   valuationsUsed       Int       @default(0)
   maxValuations        Int       @default(5)
+  demoChatUsed         Int       @default(0)
+  maxDemoChat          Int       @default(5)
   user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])

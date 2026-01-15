@@ -397,6 +397,13 @@ export default function PricingPage() {
                                         <td className="text-center p-4">❌</td>
                                         <td className="text-center p-4">✅</td>
                                     </tr>
+                                    <tr className="border-b hover:bg-gray-50">
+                                        <td className="p-4 text-gray-700">{t('pricing.demoChat')}</td>
+                                        <td className="text-center p-4">5/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
+                                        <td className="text-center p-4 bg-blue-50/50">50/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
+                                        <td className="text-center p-4">200/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
+                                        <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                                    </tr>
                                     <tr className="hover:bg-gray-50">
                                         <td className="p-4 text-gray-700">{t('pricing.support')}</td>
                                         <td className="text-center p-4">{t('pricing.emailSupport')}</td>

@@ -1154,6 +1154,7 @@
     "upgrade": "Upgrade",
     "startFree": "Start Free",
     "aiValuation": "AI Valuation",
+    "demoChat": "Demo Chat Widget",
     "upgradeError": "Upgrade failed. Please try again.",
     "portalError": "Unable to open subscription portal. Please try again.",
     "plans": {

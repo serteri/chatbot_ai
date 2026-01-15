@@ -24,6 +24,13 @@ import {
     Camera,
     Loader2
 } from 'lucide-react'
+import { Lock } from 'lucide-react'
+import Link from 'next/link'
+
+// Demo chat limit constants
+const DEMO_CHAT_STORAGE_KEY = 'pylonchat_widget_demo'
+const DEMO_CHAT_MAX_MESSAGES = 5
+const DEMO_CHAT_EXPIRY_HOURS = 24
 
 // Types
 interface Message {
@@ -364,12 +371,115 @@ export function RealEstateWidget({
     const [showNotification, setShowNotification] = useState(true)
     const [tenantIssue, setTenantIssue] = useState<TenantIssue>({ type: '' })
     const [loadingProperties, setLoadingProperties] = useState(false)
+    const [demoChatUsed, setDemoChatUsed] = useState(0)
+    const [demoChatLimit, setDemoChatLimit] = useState(DEMO_CHAT_MAX_MESSAGES)
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [limitReached, setLimitReached] = useState(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const t = translations[locale]
     const positionClass = position === 'bottom-left' ? 'left-4' : 'right-4'
+    const remainingMessages = demoChatLimit === -1 ? -1 : Math.max(0, demoChatLimit - demoChatUsed)
+
+    // Check demo chat usage on mount
+    useEffect(() => {
+        const checkUsage = async () => {
+            try {
+                const response = await fetch('/api/demo-chat')
+                if (response.ok) {
+                    const data = await response.json()
+                    setIsAuthenticated(data.authenticated)
+                    if (data.authenticated) {
+                        setDemoChatUsed(data.used)
+                        setDemoChatLimit(data.limit)
+                        setLimitReached(data.limit !== -1 && data.used >= data.limit)
+                    } else {
+                        // Use localStorage for non-authenticated users
+                        const stored = localStorage.getItem(DEMO_CHAT_STORAGE_KEY)
+                        if (stored) {
+                            try {
+                                const parsed = JSON.parse(stored)
+                                const now = Date.now()
+                                if (parsed.expiry && now < parsed.expiry) {
+                                    setDemoChatUsed(parsed.count || 0)
+                                    setLimitReached((parsed.count || 0) >= DEMO_CHAT_MAX_MESSAGES)
+                                } else {
+                                    localStorage.removeItem(DEMO_CHAT_STORAGE_KEY)
+                                }
+                            } catch {
+                                localStorage.removeItem(DEMO_CHAT_STORAGE_KEY)
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking demo chat usage:', error)
+                // Fallback to localStorage
+                const stored = localStorage.getItem(DEMO_CHAT_STORAGE_KEY)
+                if (stored) {
+                    try {
+                        const parsed = JSON.parse(stored)
+                        if (parsed.expiry && Date.now() < parsed.expiry) {
+                            setDemoChatUsed(parsed.count || 0)
+                            setLimitReached((parsed.count || 0) >= DEMO_CHAT_MAX_MESSAGES)
+                        }
+                    } catch { }
+                }
+            }
+        }
+        checkUsage()
+    }, [])
+
+    // Increment demo chat usage
+    const incrementUsage = async (): Promise<boolean> => {
+        if (limitReached) return false
+
+        try {
+            const response = await fetch('/api/demo-chat', { method: 'POST' })
+            const data = await response.json()
+
+            if (data.authenticated) {
+                if (!data.success) {
+                    setLimitReached(true)
+                    return false
+                }
+                setDemoChatUsed(data.used)
+                setLimitReached(data.remaining === 0)
+                return true
+            } else {
+                // Use localStorage for non-authenticated users
+                const newCount = demoChatUsed + 1
+                if (newCount > DEMO_CHAT_MAX_MESSAGES) {
+                    setLimitReached(true)
+                    return false
+                }
+                setDemoChatUsed(newCount)
+                localStorage.setItem(DEMO_CHAT_STORAGE_KEY, JSON.stringify({
+                    count: newCount,
+                    expiry: Date.now() + (DEMO_CHAT_EXPIRY_HOURS * 60 * 60 * 1000)
+                }))
+                setLimitReached(newCount >= DEMO_CHAT_MAX_MESSAGES)
+                return true
+            }
+        } catch (error) {
+            console.error('Error incrementing demo chat usage:', error)
+            // Fallback to localStorage
+            const newCount = demoChatUsed + 1
+            if (newCount > DEMO_CHAT_MAX_MESSAGES) {
+                setLimitReached(true)
+                return false
+            }
+            setDemoChatUsed(newCount)
+            localStorage.setItem(DEMO_CHAT_STORAGE_KEY, JSON.stringify({
+                count: newCount,
+                expiry: Date.now() + (DEMO_CHAT_EXPIRY_HOURS * 60 * 60 * 1000)
+            }))
+            setLimitReached(newCount >= DEMO_CHAT_MAX_MESSAGES)
+            return true
+        }
+    }
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -404,7 +514,23 @@ export function RealEstateWidget({
         }, 600 + Math.random() * 400)
     }, [])
 
-    const addUserMessage = useCallback((content: string) => {
+    const addUserMessage = useCallback(async (content: string) => {
+        // Check and increment usage before allowing message
+        const canSend = await incrementUsage()
+        if (!canSend) {
+            // Show limit reached message
+            setMessages(prev => [...prev, {
+                id: Date.now().toString(),
+                role: 'system',
+                content: locale === 'tr'
+                    ? '⚠️ Demo chat limitinize ulaştınız. Daha fazla mesaj göndermek için lütfen kayıt olun veya planınızı yükseltin.'
+                    : '⚠️ You have reached your demo chat limit. Please register or upgrade your plan to send more messages.',
+                timestamp: new Date(),
+                type: 'text'
+            }])
+            return
+        }
+
         setMessages(prev => [...prev, {
             id: Date.now().toString(),
             role: 'user',
@@ -412,7 +538,7 @@ export function RealEstateWidget({
             timestamp: new Date(),
             type: 'text'
         }])
-    }, [])
+    }, [locale, incrementUsage])
 
     // Fetch properties from API
     const fetchProperties = async (purpose: string, budgetMax?: number, propertyType?: string): Promise<Property[]> => {
@@ -1232,12 +1358,20 @@ export function RealEstateWidget({
                                 </p>
                             </div>
                         </div>
-                        <button
-                            onClick={() => setIsOpen(false)}
-                            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-                        >
-                            <X className="w-5 h-5 text-white" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                            {/* Demo usage badge */}
+                            {remainingMessages !== -1 && (
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${remainingMessages > 2 ? 'bg-white/20' : remainingMessages > 0 ? 'bg-orange-500' : 'bg-red-500'} text-white`}>
+                                    {remainingMessages}/{demoChatLimit}
+                                </span>
+                            )}
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                            >
+                                <X className="w-5 h-5 text-white" />
+                            </button>
+                        </div>
                     </div>
 
                     <div
