@@ -925,7 +925,13 @@
     "calendarDisconnected": "Google Agenda déconnecté",
     "calendarDescription": "Une fois connecté, les clients peuvent réserver selon vos disponibilités réelles.",
     "appointmentSettings": "Paramètres de Rendez-vous et Agent",
-    "appointmentSettingsDesc": "Intégration Google Agenda et informations de l'agent"
+    "appointmentSettingsDesc": "Intégration Google Agenda et informations de l'agent",
+    "calendlyUrl": "Lien Calendly",
+    "calendlyFallback": "Utilisé si Google Agenda n'est pas connecté.",
+    "agentName": "Nom de l'Agent",
+    "agentPhone": "Téléphone de l'Agent",
+    "agentEmail": "Email de l'Agent",
+    "agentNamePlaceholder": "Nom Complet"
   },
   "WidgetTest": {
     "backToDetail": "Retour à la Page de Détails du Bot",

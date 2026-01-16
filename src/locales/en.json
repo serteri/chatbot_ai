@@ -955,7 +955,13 @@
     "calendarDisconnected": "Google Calendar disconnected",
     "calendarDescription": "When connected, customers can book based on your real availability.",
     "appointmentSettings": "Appointment & Agent Settings",
-    "appointmentSettingsDesc": "Google Calendar integration and agent information"
+    "appointmentSettingsDesc": "Google Calendar integration and agent information",
+    "calendlyUrl": "Calendly Link",
+    "calendlyFallback": "Used if Google Calendar is not connected.",
+    "agentName": "Agent Name",
+    "agentPhone": "Agent Phone",
+    "agentEmail": "Agent Email",
+    "agentNamePlaceholder": "Full Name"
   },
   "WidgetTest": {
     "backToDetail": "Back to Bot Detail Page",

@@ -296,7 +296,7 @@ export function ChatbotSettings({ chatbotId, hasLiveSupport, initialSettings }: 
                     </div>
 
                     <div className="pt-2">
-                        <Label htmlFor="calendlyUrl">Calendly Link (Opsiyonel)</Label>
+                        <Label htmlFor="calendlyUrl">{t('settings.calendlyUrl') || 'Calendly Link'} ({t('common.optional') || 'Optional'})</Label>
                         <Input
                             id="calendlyUrl"
                             value={settings.calendlyUrl || ''}
@@ -305,34 +305,34 @@ export function ChatbotSettings({ chatbotId, hasLiveSupport, initialSettings }: 
                             className="mt-2"
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Google Takvim bağlı değilse Calendly linki kullanılır.
+                            {t('settings.calendlyFallback') || 'Used if Google Calendar is not connected.'}
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <Label htmlFor="agentName">Danışman Adı</Label>
+                            <Label htmlFor="agentName">{t('settings.agentName') || 'Agent Name'}</Label>
                             <Input
                                 id="agentName"
                                 value={settings.agentName || ''}
                                 onChange={(e) => setSettings({ ...settings, agentName: e.target.value })}
-                                placeholder="Ad Soyad"
+                                placeholder={t('settings.agentNamePlaceholder') || 'Full Name'}
                                 className="mt-2"
                             />
                         </div>
                         <div>
-                            <Label htmlFor="agentPhone">Danışman Telefon</Label>
+                            <Label htmlFor="agentPhone">{t('settings.agentPhone') || 'Agent Phone'}</Label>
                             <Input
                                 id="agentPhone"
                                 value={settings.agentPhone || ''}
                                 onChange={(e) => setSettings({ ...settings, agentPhone: e.target.value })}
-                                placeholder="+90 555 ..."
+                                placeholder="+1 555 ..."
                                 className="mt-2"
                             />
                         </div>
                     </div>
                     <div>
-                        <Label htmlFor="agentEmail">Danışman Email</Label>
+                        <Label htmlFor="agentEmail">{t('settings.agentEmail') || 'Agent Email'}</Label>
                         <Input
                             id="agentEmail"
                             value={settings.agentEmail || ''}

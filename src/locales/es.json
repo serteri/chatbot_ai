@@ -925,7 +925,13 @@
     "calendarDisconnected": "Google Calendar desconectado",
     "calendarDescription": "Cuando está conectado, los clientes pueden reservar según su disponibilidad real.",
     "appointmentSettings": "Configuración de Citas y Agente",
-    "appointmentSettingsDesc": "Integración de Google Calendar e información del agente"
+    "appointmentSettingsDesc": "Integración de Google Calendar e información del agente",
+    "calendlyUrl": "Enlace de Calendly",
+    "calendlyFallback": "Se usa si Google Calendar no está conectado.",
+    "agentName": "Nombre del Agente",
+    "agentPhone": "Teléfono del Agente",
+    "agentEmail": "Email del Agente",
+    "agentNamePlaceholder": "Nombre Completo"
   },
   "WidgetTest": {
     "backToDetail": "Volver a la Página de Detalles del Bot",

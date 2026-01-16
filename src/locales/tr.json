@@ -966,7 +966,13 @@
     "calendarDisconnected": "Google Takvim bağlantısı kesildi",
     "calendarDescription": "Bağlandığında, müşteriler gerçek müsaitliğinize göre randevu alabilir.",
     "appointmentSettings": "Randevu ve Danışman Ayarları",
-    "appointmentSettingsDesc": "Google Takvim entegrasyonu ve emlak danışmanı bilgileri"
+    "appointmentSettingsDesc": "Google Takvim entegrasyonu ve emlak danışmanı bilgileri",
+    "calendlyUrl": "Calendly Link",
+    "calendlyFallback": "Google Takvim bağlı değilse Calendly linki kullanılır.",
+    "agentName": "Danışman Adı",
+    "agentPhone": "Danışman Telefon",
+    "agentEmail": "Danışman Email",
+    "agentNamePlaceholder": "Ad Soyad"
   },
   "WidgetTest": {
     "backToDetail": "Bot Detay Sayfasına Geri Dön",

@@ -930,7 +930,13 @@
     "calendarDisconnected": "Google Kalender getrennt",
     "calendarDescription": "Wenn verbunden, können Kunden basierend auf Ihrer echten Verfügbarkeit buchen.",
     "appointmentSettings": "Termin- und Beratereinstellungen",
-    "appointmentSettingsDesc": "Google Kalender-Integration und Beraterinformationen"
+    "appointmentSettingsDesc": "Google Kalender-Integration und Beraterinformationen",
+    "calendlyUrl": "Calendly Link",
+    "calendlyFallback": "Wird verwendet, wenn Google Kalender nicht verbunden ist.",
+    "agentName": "Beratername",
+    "agentPhone": "Beratertelefon",
+    "agentEmail": "Berater-E-Mail",
+    "agentNamePlaceholder": "Vollständiger Name"
   },
   "WidgetTest": {
     "backToDetail": "Zurück zur Bot-Detailseite",
