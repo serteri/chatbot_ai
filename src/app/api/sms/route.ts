@@ -44,14 +44,18 @@ export async function POST(request: NextRequest) {
     try {
         // Check if this is an internal server call or authenticated request
         const internalKey = request.headers.get('x-internal-key')
-        const isInternalCall = internalKey === process.env.INTERNAL_API_KEY
+        // Allow internal calls if key matches OR if no key is configured (development mode)
+        const isInternalCall = internalKey && (internalKey === process.env.INTERNAL_API_KEY || !process.env.INTERNAL_API_KEY)
 
         if (!isInternalCall) {
             const session = await auth()
             if (!session?.user?.id) {
+                console.log('❌ SMS API: Unauthorized - no session and not internal call')
                 return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
             }
         }
+
+        console.log('📱 SMS API called:', { to: (await request.clone().json()).to, isInternalCall })
 
         const body: SendSmsRequest = await request.json()
         const { to, message, type, leadId, chatbotId } = body

@@ -186,6 +186,7 @@ export async function POST(request: NextRequest) {
         const agentName = settings.agentName || chatbot.user?.name || 'Danışmanımız'
 
         // Send SMS confirmation to customer
+        console.log('📱 Sending SMS to customer:', { phone, name })
         await sendAppointmentConfirmation(
             phone,
             name,
@@ -193,7 +194,8 @@ export async function POST(request: NextRequest) {
             time,
             agentName,
             chatbot.id
-        ).catch(err => console.error('Failed to send SMS:', err))
+        ).then(() => console.log('✅ SMS sent to customer:', phone))
+        .catch(err => console.error('❌ Failed to send SMS:', err))
 
         // Prepare appointment email data
         const appointmentEmailData = {
@@ -210,14 +212,21 @@ export async function POST(request: NextRequest) {
         // Send email notification to agent
         if (chatbot.user?.email && chatbot.user?.emailNotifications !== false) {
             const agentEmail = settings.notificationEmail || chatbot.user.email
+            console.log('📧 Sending appointment email to agent:', agentEmail)
             sendAppointmentEmailToAgent(appointmentEmailData, agentEmail)
-                .catch(err => console.error('Failed to send appointment email to agent:', err))
+                .then(() => console.log('✅ Appointment email sent to agent'))
+                .catch(err => console.error('❌ Failed to send appointment email to agent:', err))
         }
 
         // Send email confirmation to customer (if they provided email)
+        console.log('📧 Customer email provided:', email ? email : 'NO EMAIL PROVIDED')
         if (email) {
+            console.log('📧 Sending appointment email to customer:', email)
             sendAppointmentEmailToCustomer(appointmentEmailData, email)
-                .catch(err => console.error('Failed to send appointment email to customer:', err))
+                .then(() => console.log('✅ Appointment email sent to customer:', email))
+                .catch(err => console.error('❌ Failed to send appointment email to customer:', err))
+        } else {
+            console.log('⚠️ No customer email provided, skipping customer email notification')
         }
 
         return NextResponse.json({

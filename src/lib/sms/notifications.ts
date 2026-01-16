@@ -177,18 +177,18 @@ export async function sendAppointmentConfirmation(
     agentName: string,
     chatbotId: string
 ): Promise<void> {
-    const message = `✅ Randevu Onayı
+    const message = `Appointment Confirmed!
 
-${leadName} Bey/Hanım,
+Hi ${leadName},
 
-Randevunuz onaylandı:
-📅 ${appointmentDate}
-🕐 ${appointmentTime}
-👤 Danışman: ${agentName}
+Your appointment is confirmed:
+Date: ${appointmentDate}
+Time: ${appointmentTime}
+Agent: ${agentName}
 
-Adres ve detaylar randevudan 1 saat önce SMS ile gönderilecektir.
+Address details will be sent 1 hour before your appointment.
 
-Sorularınız için bizi arayabilirsiniz.`
+Contact us if you have any questions.`
 
     await sendSmsNotification({
         to: leadPhone,
