@@ -957,7 +957,16 @@
     "whatsappNumber": "WhatsApp Numarası",
     "whatsappDesc": "Uluslararası format (örn. +905551234567)",
     "customSupportUrl": "Özel Destek URL'si",
-    "customSupportDesc": "Destek sisteminize doğrudan bağlantı (örn. Tawk.to, Intercom)"
+    "customSupportDesc": "Destek sisteminize doğrudan bağlantı (örn. Tawk.to, Intercom)",
+    "googleCalendar": "Google Takvim",
+    "calendarConnected": "Bağlı - Gerçek müsaitlik gösteriliyor",
+    "calendarNotConnected": "Gerçek takvim müsaitliğinizi gösterin",
+    "connectCalendar": "Google Takvim Bağla",
+    "disconnectCalendar": "Bağlantıyı Kes",
+    "calendarDisconnected": "Google Takvim bağlantısı kesildi",
+    "calendarDescription": "Bağlandığında, müşteriler gerçek müsaitliğinize göre randevu alabilir.",
+    "appointmentSettings": "Randevu ve Danışman Ayarları",
+    "appointmentSettingsDesc": "Google Takvim entegrasyonu ve emlak danışmanı bilgileri"
   },
   "WidgetTest": {
     "backToDetail": "Bot Detay Sayfasına Geri Dön",

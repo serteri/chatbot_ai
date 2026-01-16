@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -39,6 +39,26 @@ export function ChatbotSettings({ chatbotId, hasLiveSupport, initialSettings }: 
     const t = useTranslations()
     const [saving, setSaving] = useState(false)
     const [settings, setSettings] = useState(initialSettings)
+    const [calendarConnected, setCalendarConnected] = useState(false)
+    const [calendarLoading, setCalendarLoading] = useState(true)
+
+    // Fetch calendar connection status on mount
+    useEffect(() => {
+        const fetchCalendarStatus = async () => {
+            try {
+                const response = await fetch(`/api/calendar/connect?chatbotId=${chatbotId}`)
+                if (response.ok) {
+                    const data = await response.json()
+                    setCalendarConnected(data.connected || false)
+                }
+            } catch (error) {
+                console.error('Error fetching calendar status:', error)
+            } finally {
+                setCalendarLoading(false)
+            }
+        }
+        fetchCalendarStatus()
+    }, [chatbotId])
 
     const handleSave = async () => {
         // ... (save logic remains same)
@@ -176,36 +196,44 @@ export function ChatbotSettings({ chatbotId, hasLiveSupport, initialSettings }: 
                                     </svg>
                                 </div>
                                 <div>
-                                    <h4 className="font-medium text-sm">Google Takvim</h4>
+                                    <h4 className="font-medium text-sm">{t('settings.googleCalendar') || 'Google Calendar'}</h4>
                                     <p className="text-xs text-muted-foreground">
-                                        {(settings as any).calendarConnected
-                                            ? '✅ Bağlı - Gerçek müsaitlik gösteriliyor'
-                                            : 'Gerçek takvim müsaitliğinizi gösterin'}
+                                        {calendarLoading
+                                            ? (t('common.loading') || 'Loading...')
+                                            : calendarConnected
+                                                ? `✅ ${t('settings.calendarConnected') || 'Connected - Showing real availability'}`
+                                                : (t('settings.calendarNotConnected') || 'Show your real calendar availability')}
                                     </p>
                                 </div>
                             </div>
-                            {(settings as any).calendarConnected ? (
+                            {calendarLoading ? (
+                                <Button variant="outline" size="sm" disabled>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                </Button>
+                            ) : calendarConnected ? (
                                 <Button
                                     variant="outline"
                                     size="sm"
+                                    className="border-red-200 text-red-600 hover:bg-red-50"
                                     onClick={async () => {
                                         try {
                                             await fetch(`/api/calendar/connect?chatbotId=${chatbotId}`, {
                                                 method: 'DELETE'
                                             })
-                                            setSettings({ ...settings, calendarConnected: false } as any)
-                                            toast.success('Google Takvim bağlantısı kesildi')
+                                            setCalendarConnected(false)
+                                            toast.success(t('settings.calendarDisconnected') || 'Google Calendar disconnected')
                                             router.refresh()
                                         } catch (error) {
-                                            toast.error('Bağlantı kesilemedi')
+                                            toast.error(t('common.error') || 'Failed to disconnect')
                                         }
                                     }}
                                 >
-                                    Bağlantıyı Kes
+                                    {t('settings.disconnectCalendar') || 'Disconnect'}
                                 </Button>
                             ) : (
                                 <Button
                                     size="sm"
+                                    className="bg-blue-600 hover:bg-blue-700 text-white"
                                     onClick={async () => {
                                         try {
                                             const response = await fetch(`/api/calendar/connect?chatbotId=${chatbotId}`)
@@ -214,16 +242,16 @@ export function ChatbotSettings({ chatbotId, hasLiveSupport, initialSettings }: 
                                                 window.location.href = data.authUrl
                                             }
                                         } catch (error) {
-                                            toast.error('Bağlantı başlatılamadı')
+                                            toast.error(t('common.error') || 'Failed to connect')
                                         }
                                     }}
                                 >
-                                    🔗 Google Takvim Bağla
+                                    🔗 {t('settings.connectCalendar') || 'Connect Google Calendar'}
                                 </Button>
                             )}
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Bağlandığında, müşteriler gerçek müsaitliğinize göre randevu alabilir.
+                            {t('settings.calendarDescription') || 'When connected, customers can book based on your real availability.'}
                         </p>
                     </div>
 

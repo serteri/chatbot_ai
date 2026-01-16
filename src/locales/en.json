@@ -946,7 +946,16 @@
     "whatsappNumber": "WhatsApp Number",
     "whatsappDesc": "International format (e.g., +15551234567)",
     "customSupportUrl": "Custom Support URL",
-    "customSupportDesc": "Direct link to your support system (e.g., Tawk.to, Intercom)"
+    "customSupportDesc": "Direct link to your support system (e.g., Tawk.to, Intercom)",
+    "googleCalendar": "Google Calendar",
+    "calendarConnected": "Connected - Showing real availability",
+    "calendarNotConnected": "Show your real calendar availability",
+    "connectCalendar": "Connect Google Calendar",
+    "disconnectCalendar": "Disconnect",
+    "calendarDisconnected": "Google Calendar disconnected",
+    "calendarDescription": "When connected, customers can book based on your real availability.",
+    "appointmentSettings": "Appointment & Agent Settings",
+    "appointmentSettingsDesc": "Google Calendar integration and agent information"
   },
   "WidgetTest": {
     "backToDetail": "Back to Bot Detail Page",

@@ -921,7 +921,16 @@
     "whatsappNumber": "WhatsApp-Nummer",
     "whatsappDesc": "Internationales Format (z.B. +491511234567)",
     "customSupportUrl": "Benutzerdefinierte Support-URL",
-    "customSupportDesc": "Direkter Link zu Ihrem Support-System (z.B. Tawk.to, Intercom)"
+    "customSupportDesc": "Direkter Link zu Ihrem Support-System (z.B. Tawk.to, Intercom)",
+    "googleCalendar": "Google Kalender",
+    "calendarConnected": "Verbunden - Zeigt echte Verfügbarkeit",
+    "calendarNotConnected": "Zeigen Sie Ihre echte Kalenderverfügbarkeit",
+    "connectCalendar": "Google Kalender verbinden",
+    "disconnectCalendar": "Trennen",
+    "calendarDisconnected": "Google Kalender getrennt",
+    "calendarDescription": "Wenn verbunden, können Kunden basierend auf Ihrer echten Verfügbarkeit buchen.",
+    "appointmentSettings": "Termin- und Beratereinstellungen",
+    "appointmentSettingsDesc": "Google Kalender-Integration und Beraterinformationen"
   },
   "WidgetTest": {
     "backToDetail": "Zurück zur Bot-Detailseite",

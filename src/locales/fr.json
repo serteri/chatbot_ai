@@ -916,7 +916,16 @@
     "whatsappNumber": "Numéro WhatsApp",
     "whatsappDesc": "Format international (ex. +33612345678)",
     "customSupportUrl": "URL de support personnalisée",
-    "customSupportDesc": "Lien direct vers votre système de support (ex. Tawk.to, Intercom)"
+    "customSupportDesc": "Lien direct vers votre système de support (ex. Tawk.to, Intercom)",
+    "googleCalendar": "Google Agenda",
+    "calendarConnected": "Connecté - Affichage des disponibilités réelles",
+    "calendarNotConnected": "Affichez vos disponibilités réelles",
+    "connectCalendar": "Connecter Google Agenda",
+    "disconnectCalendar": "Déconnecter",
+    "calendarDisconnected": "Google Agenda déconnecté",
+    "calendarDescription": "Une fois connecté, les clients peuvent réserver selon vos disponibilités réelles.",
+    "appointmentSettings": "Paramètres de Rendez-vous et Agent",
+    "appointmentSettingsDesc": "Intégration Google Agenda et informations de l'agent"
   },
   "WidgetTest": {
     "backToDetail": "Retour à la Page de Détails du Bot",
