@@ -1559,9 +1559,23 @@ function ContactForm({
     leadCategory?: string
 }) {
     const [name, setName] = useState('')
+    const [countryCode, setCountryCode] = useState('+61')
     const [phone, setPhone] = useState('')
     const [email, setEmail] = useState('')
     const [error, setError] = useState('')
+
+    const countryCodes = [
+        { code: '+61', country: '🇦🇺 AU', name: 'Australia' },
+        { code: '+90', country: '🇹🇷 TR', name: 'Turkey' },
+        { code: '+1', country: '🇺🇸 US', name: 'USA/Canada' },
+        { code: '+44', country: '🇬🇧 UK', name: 'United Kingdom' },
+        { code: '+49', country: '🇩🇪 DE', name: 'Germany' },
+        { code: '+33', country: '🇫🇷 FR', name: 'France' },
+        { code: '+971', country: '🇦🇪 UAE', name: 'UAE' },
+        { code: '+966', country: '🇸🇦 SA', name: 'Saudi Arabia' },
+        { code: '+64', country: '🇳🇿 NZ', name: 'New Zealand' },
+        { code: '+65', country: '🇸🇬 SG', name: 'Singapore' },
+    ]
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -1569,7 +1583,9 @@ function ContactForm({
             setError(locale === 'tr' ? 'Lütfen ad ve telefon bilgilerini giriniz.' : 'Please enter your name and phone number.')
             return
         }
-        onSubmit({ name, phone, email })
+        // Combine country code with phone number
+        const fullPhone = `${countryCode}${phone.replace(/^0+/, '')}`
+        onSubmit({ name, phone: fullPhone, email })
     }
 
     return (
@@ -1591,8 +1607,19 @@ function ContactForm({
                         className="flex-1 text-sm outline-none bg-transparent"
                     />
                 </div>
-                <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-amber-400">
-                    <Phone className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 border rounded-lg px-2 py-2 bg-white focus-within:ring-2 focus-within:ring-amber-400">
+                    <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <select
+                        value={countryCode}
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        className="text-sm outline-none bg-transparent border-r border-gray-200 pr-1 cursor-pointer"
+                    >
+                        {countryCodes.map((c) => (
+                            <option key={c.code} value={c.code}>
+                                {c.country} {c.code}
+                            </option>
+                        ))}
+                    </select>
                     <input
                         type="tel"
                         value={phone}
@@ -1601,7 +1628,7 @@ function ContactForm({
                             setError('')
                         }}
                         placeholder={locale === 'tr' ? 'Telefon *' : 'Phone *'}
-                        className="flex-1 text-sm outline-none bg-transparent"
+                        className="flex-1 text-sm outline-none bg-transparent min-w-0"
                     />
                 </div>
                 <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-amber-400">

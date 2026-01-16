@@ -34,6 +34,8 @@ interface AppointmentEmailData {
  */
 export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<{ success: boolean; error?: string }> {
     try {
+        console.log('📧 sendLeadNotificationToAgent called with:', { chatbotId: data.chatbotId, name: data.name, category: data.category })
+
         // Get chatbot owner's email
         const chatbot = await prisma.chatbot.findUnique({
             where: { id: data.chatbotId },
@@ -50,14 +52,16 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
             }
         })
 
+        console.log('📧 Chatbot found:', chatbot ? { name: chatbot.name, userEmail: chatbot.user?.email, emailNotifications: chatbot.user?.emailNotifications } : 'NOT FOUND')
+
         if (!chatbot?.user?.email) {
-            console.log('No agent email found for chatbot:', data.chatbotId)
+            console.log('❌ No agent email found for chatbot:', data.chatbotId)
             return { success: false, error: 'No agent email configured' }
         }
 
         // Check if email notifications are explicitly disabled
         if (chatbot.user.emailNotifications === false) {
-            console.log('Email notifications disabled for user')
+            console.log('❌ Email notifications disabled for user')
             return { success: false, error: 'Email notifications disabled' }
         }
 
@@ -175,6 +179,8 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
 </html>
 `
 
+        console.log('📧 Sending email to:', notificationEmail)
+
         const result = await resend.emails.send({
             from: process.env.EMAIL_FROM || 'PylonChat <noreply@pylonchat.com>',
             to: notificationEmail,
@@ -182,7 +188,14 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
             html
         })
 
-        console.log(`Lead notification email sent to ${notificationEmail}`)
+        console.log('📧 Resend API result:', JSON.stringify(result))
+
+        if (result.error) {
+            console.error('❌ Resend API error:', result.error)
+            return { success: false, error: result.error.message }
+        }
+
+        console.log(`✅ Lead notification email sent successfully to ${notificationEmail}`)
         return { success: true }
 
     } catch (error: any) {
