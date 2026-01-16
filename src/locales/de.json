@@ -2503,7 +2503,9 @@
         "alternativeQuestion": "Interessiert an einer dieser Optionen?",
         "schedulePrompt": "Unser Berater ist verfügbar. Möchten Sie jetzt ein Online-Meeting oder einen Bürobesuch vereinbaren?",
         "scheduleYes": "📅 Meeting planen",
-        "scheduleNo": "Nein, danke"
+        "scheduleNo": "Nein, danke",
+        "upsellYes": "Ja, interessiert",
+        "upsellNo": "Nein, weiter suchen"
       },
       "thankYou": "Vielen Dank!",
       "viewDetails": "Details anzeigen",

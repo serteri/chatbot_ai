@@ -309,7 +309,9 @@ export function RealEstateWidget({
             alternativeQuestion: tRaw('messages.alternativeQuestion'),
             schedulePrompt: tRaw('messages.schedulePrompt'),
             scheduleYes: tRaw('messages.scheduleYes'),
-            scheduleNo: tRaw('messages.scheduleNo')
+            scheduleNo: tRaw('messages.scheduleNo'),
+            upsellYes: tRaw('messages.upsellYes'),
+            upsellNo: tRaw('messages.upsellNo')
         },
         thankYou: tRaw('thankYou'),
         viewDetails: tRaw('viewDetails'),
@@ -835,9 +837,7 @@ export function RealEstateWidget({
 
                     setTimeout(() => {
                         addBotMessage(t.messages.alternativeQuestion, 'quick-replies', {
-                            replies: locale === 'tr'
-                                ? ['Evet, ilgileniyorum', 'Hayır, başka arayın']
-                                : ['Yes, interested', 'No, keep searching']
+                            replies: [t.messages.upsellYes, t.messages.upsellNo]
                         })
                         setCurrentStep('upsellResponse')
                     }, 2500)
@@ -895,14 +895,10 @@ export function RealEstateWidget({
         if (category === 'hot') {
             setTimeout(() => {
                 addBotMessage(
-                    locale === 'tr'
-                        ? 'Danışmanımız şu an müsait. Hemen bir online görüşme veya ofis randevusu planlamak ister misiniz?'
-                        : 'Our advisor is available. Would you like to schedule an online meeting or office visit now?',
+                    t.messages.schedulePrompt,
                     'quick-replies',
                     {
-                        replies: locale === 'tr'
-                            ? ['📅 Randevu Oluştur', 'Hayır, teşekkürler']
-                            : ['📅 Schedule Meeting', 'No, thanks']
+                        replies: [t.messages.scheduleYes, t.messages.scheduleNo]
                     }
                 )
                 setCurrentStep('schedule-prompt')
@@ -910,8 +906,6 @@ export function RealEstateWidget({
         } else {
             setCurrentStep('complete')
         }
-
-        setCurrentStep('complete')
     }
 
     const handleTenantOption = (option: string) => {

@@ -2567,7 +2567,9 @@
         "alternativeQuestion": "Bu seçeneklerden biri ilginizi çekti mi?",
         "schedulePrompt": "Danışmanımız şu an müsait. Hemen bir online görüşme veya ofis randevusu planlamak ister misiniz?",
         "scheduleYes": "📅 Randevu Oluştur",
-        "scheduleNo": "Hayır, teşekkürler"
+        "scheduleNo": "Hayır, teşekkürler",
+        "upsellYes": "Evet, ilgileniyorum",
+        "upsellNo": "Hayır, başka arayın"
       },
       "thankYou": "Teşekkür ederiz!",
       "viewDetails": "Detayları Gör",

@@ -2375,7 +2375,9 @@
         "alternativeQuestion": "Intéressé par l'une de ces options ?",
         "schedulePrompt": "Notre conseiller est disponible. Souhaitez-vous planifier une réunion en ligne ou une visite au bureau maintenant ?",
         "scheduleYes": "📅 Planifier une réunion",
-        "scheduleNo": "Non, merci"
+        "scheduleNo": "Non, merci",
+        "upsellYes": "Oui, intéressé",
+        "upsellNo": "Non, continuer à chercher"
       },
       "thankYou": "Merci !",
       "viewDetails": "Voir les détails",

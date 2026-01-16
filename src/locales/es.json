@@ -2375,7 +2375,9 @@
         "alternativeQuestion": "¿Interesado en alguna de estas opciones?",
         "schedulePrompt": "Nuestro asesor está disponible. ¿Le gustaría programar una reunión en línea o una visita a la oficina ahora?",
         "scheduleYes": "📅 Programar reunión",
-        "scheduleNo": "No, gracias"
+        "scheduleNo": "No, gracias",
+        "upsellYes": "Sí, interesado",
+        "upsellNo": "No, seguir buscando"
       },
       "thankYou": "¡Gracias!",
       "viewDetails": "Ver detalles",

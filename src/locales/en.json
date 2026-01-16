@@ -2558,7 +2558,9 @@
         "alternativeQuestion": "Interested in any of these options?",
         "schedulePrompt": "Our advisor is available. Would you like to schedule an online meeting or office visit now?",
         "scheduleYes": "📅 Schedule Meeting",
-        "scheduleNo": "No, thanks"
+        "scheduleNo": "No, thanks",
+        "upsellYes": "Yes, interested",
+        "upsellNo": "No, keep searching"
       },
       "thankYou": "Thank you!",
       "viewDetails": "View Details",
