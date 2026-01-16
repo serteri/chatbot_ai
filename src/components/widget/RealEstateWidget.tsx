@@ -1811,6 +1811,7 @@ function AppointmentSlotPicker({
     const [selectedSlot, setSelectedSlot] = useState<any>(null)
     const [bookingName, setBookingName] = useState(leadData.contactName || '')
     const [bookingPhone, setBookingPhone] = useState(leadData.contactPhone || '')
+    const [bookingEmail, setBookingEmail] = useState(leadData.contactEmail || '')
     const [booking, setBooking] = useState(false)
 
     useEffect(() => {
@@ -1882,6 +1883,7 @@ function AppointmentSlotPicker({
                     time: selectedSlot.time,
                     name: bookingName,
                     phone: bookingPhone,
+                    email: bookingEmail || undefined,
                     type: selectedSlot.type || 'viewing'
                 })
             })
@@ -1948,6 +1950,15 @@ function AppointmentSlotPicker({
                             value={bookingPhone}
                             onChange={(e) => setBookingPhone(e.target.value)}
                             placeholder={locale === 'tr' ? 'Telefon *' : 'Phone *'}
+                            className="w-full px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:border-amber-400"
+                        />
+                    )}
+                    {!leadData.contactEmail && (
+                        <input
+                            type="email"
+                            value={bookingEmail}
+                            onChange={(e) => setBookingEmail(e.target.value)}
+                            placeholder={locale === 'tr' ? 'Email (isteğe bağlı)' : 'Email (optional)'}
                             className="w-full px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:border-amber-400"
                         />
                     )}
