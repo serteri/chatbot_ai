@@ -155,18 +155,80 @@ export function ChatbotSettings({ chatbotId, hasLiveSupport, initialSettings }: 
                 </CardContent>
             </Card>
 
-            {/* Calendly & Agent Settings (Randevu & Danışman) */}
+            {/* Google Calendar & Agent Settings (Randevu & Danışman) */}
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Calendar className="h-5 w-5" />
                         Randevu ve Danışman Ayarları
                     </CardTitle>
-                    <CardDescription>Calendly entegrasyonu ve emlak danışmanı bilgileri.</CardDescription>
+                    <CardDescription>Google Takvim entegrasyonu ve emlak danışmanı bilgileri.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <div>
-                        <Label htmlFor="calendlyUrl">Calendly Link</Label>
+                    {/* Google Calendar Connection */}
+                    <div className="p-4 border rounded-lg bg-slate-50 dark:bg-slate-900">
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm">
+                                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                                        <rect width="18" height="18" x="3" y="4" rx="2" fill="#4285F4" />
+                                        <path fill="#fff" d="M7 12h4v4H7zm5-4h4v4h-4z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 className="font-medium text-sm">Google Takvim</h4>
+                                    <p className="text-xs text-muted-foreground">
+                                        {(settings as any).calendarConnected
+                                            ? '✅ Bağlı - Gerçek müsaitlik gösteriliyor'
+                                            : 'Gerçek takvim müsaitliğinizi gösterin'}
+                                    </p>
+                                </div>
+                            </div>
+                            {(settings as any).calendarConnected ? (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={async () => {
+                                        try {
+                                            await fetch(`/api/calendar/connect?chatbotId=${chatbotId}`, {
+                                                method: 'DELETE'
+                                            })
+                                            setSettings({ ...settings, calendarConnected: false } as any)
+                                            toast.success('Google Takvim bağlantısı kesildi')
+                                            router.refresh()
+                                        } catch (error) {
+                                            toast.error('Bağlantı kesilemedi')
+                                        }
+                                    }}
+                                >
+                                    Bağlantıyı Kes
+                                </Button>
+                            ) : (
+                                <Button
+                                    size="sm"
+                                    onClick={async () => {
+                                        try {
+                                            const response = await fetch(`/api/calendar/connect?chatbotId=${chatbotId}`)
+                                            const data = await response.json()
+                                            if (data.authUrl) {
+                                                window.location.href = data.authUrl
+                                            }
+                                        } catch (error) {
+                                            toast.error('Bağlantı başlatılamadı')
+                                        }
+                                    }}
+                                >
+                                    🔗 Google Takvim Bağla
+                                </Button>
+                            )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            Bağlandığında, müşteriler gerçek müsaitliğinize göre randevu alabilir.
+                        </p>
+                    </div>
+
+                    <div className="pt-2">
+                        <Label htmlFor="calendlyUrl">Calendly Link (Opsiyonel)</Label>
                         <Input
                             id="calendlyUrl"
                             value={settings.calendlyUrl || ''}
@@ -175,7 +237,7 @@ export function ChatbotSettings({ chatbotId, hasLiveSupport, initialSettings }: 
                             className="mt-2"
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Müşterilerin randevu alabilmesi için Calendly etkinlik linkinizi girin.
+                            Google Takvim bağlı değilse Calendly linki kullanılır.
                         </p>
                     </div>
 

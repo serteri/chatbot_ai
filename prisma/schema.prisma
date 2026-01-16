@@ -257,6 +257,8 @@ model Chatbot {
   agentPhone         String?              // Agent phone number
   agentEmail         String?              // Agent email address
   industry           String               @default("general")
+  googleCalendarId   String?              // Connected Google Calendar ID
+  calendarConnected  Boolean              @default(false)
   customSettings     Json?
   model              String?
   user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)

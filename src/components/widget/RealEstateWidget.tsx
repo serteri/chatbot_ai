@@ -1794,7 +1794,8 @@ function AppointmentSlotPicker({
 
     const fetchSlots = async () => {
         try {
-            const response = await fetch(`/api/appointments?identifier=${identifier}`)
+            // Use new calendar availability API
+            const response = await fetch(`/api/calendar/availability?identifier=${identifier}`)
             const data = await response.json()
             setSlots(data.slots?.filter((s: any) => s.available) || generateLocalSlots())
         } catch (error) {
@@ -1812,11 +1813,12 @@ function AppointmentSlotPicker({
         for (let i = 1; i <= 5; i++) {
             const date = new Date(today)
             date.setDate(date.getDate() + i)
-            const dateStr = date.toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', {
-                weekday: 'short',
-                day: 'numeric',
-                month: 'short'
-            })
+
+            // Format as dd/mm/yyyy
+            const day = date.getDate().toString().padStart(2, '0')
+            const month = (date.getMonth() + 1).toString().padStart(2, '0')
+            const year = date.getFullYear()
+            const dateStr = `${day}/${month}/${year}`
 
             if (date.getDay() !== 0) { // Skip Sunday
                 slots.push(
@@ -1833,12 +1835,13 @@ function AppointmentSlotPicker({
 
         setBooking(true)
         try {
-            const response = await fetch('/api/appointments', {
+            // Use new calendar events API
+            const response = await fetch('/api/calendar/events', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     identifier,
-                    date: selectedSlot.date,
+                    date: selectedSlot.isoDate || selectedSlot.date,
                     time: selectedSlot.time,
                     name: bookingName,
                     phone: bookingPhone,
