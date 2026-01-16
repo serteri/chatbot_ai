@@ -1678,6 +1678,7 @@ function ValuationForm({ locale, onSubmit }: { locale: 'tr' | 'en'; onSubmit: (d
     const [area, setArea] = useState('')
     const [rooms, setRooms] = useState('')
     const [buildingAge, setBuildingAge] = useState('')
+    const tRaw = useTranslations('widget.realestate')
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -1686,7 +1687,19 @@ function ValuationForm({ locale, onSubmit }: { locale: 'tr' | 'en'; onSubmit: (d
         }
     }
 
-    const t = translations[locale]
+    const t = {
+        valuation: {
+            title: tRaw('valuation.title'),
+            subtitle: tRaw('valuation.subtitle'),
+            address: tRaw('valuation.address'),
+            area: tRaw('valuation.area'),
+            rooms: tRaw('valuation.rooms'),
+            buildingAge: tRaw('valuation.buildingAge'),
+            submit: tRaw('valuation.submit'),
+            result: tRaw('valuation.result')
+        }
+    }
+
 
     return (
         <form onSubmit={handleSubmit} className="space-y-2">
