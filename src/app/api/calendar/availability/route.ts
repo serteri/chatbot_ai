@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { google } from 'googleapis'
 
+// Multilingual time period labels
+const timeLabels: Record<string, { morning: string; afternoon: string; evening: string }> = {
+    en: { morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' },
+    tr: { morning: 'Sabah', afternoon: 'Öğleden Sonra', evening: 'Akşam' },
+    de: { morning: 'Morgen', afternoon: 'Nachmittag', evening: 'Abend' },
+    es: { morning: 'Mañana', afternoon: 'Tarde', evening: 'Noche' },
+    fr: { morning: 'Matin', afternoon: 'Après-midi', evening: 'Soir' }
+}
+
+function getTimeLabel(hour: number, locale: string): string {
+    const labels = timeLabels[locale] || timeLabels['en']
+    if (hour < 12) return labels.morning
+    if (hour < 17) return labels.afternoon
+    return labels.evening
+}
 // Helper to get OAuth2 client with tokens
 async function getAuthenticatedClient(userId: string) {
     const account = await prisma.account.findFirst({
@@ -48,6 +63,7 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const identifier = searchParams.get('identifier')
         const daysAhead = parseInt(searchParams.get('days') || '7')
+        const locale = searchParams.get('locale') || 'en'
 
         if (!identifier) {
             return NextResponse.json({ error: 'Chatbot identifier required' }, { status: 400 })
@@ -72,7 +88,7 @@ export async function GET(request: NextRequest) {
         // If calendar not connected, return hardcoded slots
         if (!chatbot.calendarConnected || !chatbot.googleCalendarId) {
             return NextResponse.json({
-                slots: generateDefaultSlots(daysAhead),
+                slots: generateDefaultSlots(daysAhead, locale),
                 source: 'default'
             })
         }
@@ -81,7 +97,7 @@ export async function GET(request: NextRequest) {
         const oauth2Client = await getAuthenticatedClient(chatbot.userId)
         if (!oauth2Client) {
             return NextResponse.json({
-                slots: generateDefaultSlots(daysAhead),
+                slots: generateDefaultSlots(daysAhead, locale),
                 source: 'default'
             })
         }
@@ -121,7 +137,8 @@ export async function GET(request: NextRequest) {
             timeMin,
             timeMax,
             busySlots,
-            businessHours
+            businessHours,
+            locale
         )
 
         return NextResponse.json({
@@ -133,7 +150,7 @@ export async function GET(request: NextRequest) {
         console.error('Error fetching calendar availability:', error)
         // Fallback to default slots on error
         return NextResponse.json({
-            slots: generateDefaultSlots(7),
+            slots: generateDefaultSlots(7, 'en'),
             source: 'default',
             error: 'Calendar unavailable'
         })
@@ -141,7 +158,7 @@ export async function GET(request: NextRequest) {
 }
 
 // Generate default slots when calendar is not connected
-function generateDefaultSlots(daysAhead: number) {
+function generateDefaultSlots(daysAhead: number, locale: string) {
     const slots: any[] = []
     const today = new Date()
 
@@ -154,24 +171,24 @@ function generateDefaultSlots(daysAhead: number) {
         // Skip Sunday
         if (dayOfWeek === 0) continue
 
-        const dateStr = formatDateTurkish(date)
+        const dateStr = formatDate(date)
         const isoDate = date.toISOString().split('T')[0]
 
         if (dayOfWeek === 6) {
             // Saturday - limited hours
             slots.push(
-                { date: dateStr, isoDate, time: '10:00', label: 'Sabah', type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '11:00', label: 'Sabah', type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '14:00', label: 'Öğleden Sonra', type: 'viewing', available: true }
+                { date: dateStr, isoDate, time: '10:00', label: getTimeLabel(10, locale), type: 'viewing', available: true },
+                { date: dateStr, isoDate, time: '11:00', label: getTimeLabel(11, locale), type: 'viewing', available: true },
+                { date: dateStr, isoDate, time: '14:00', label: getTimeLabel(14, locale), type: 'viewing', available: true }
             )
         } else {
             // Weekdays
             slots.push(
-                { date: dateStr, isoDate, time: '10:00', label: 'Sabah', type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '11:00', label: 'Sabah', type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '14:00', label: 'Öğleden Sonra', type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '15:00', label: 'Öğleden Sonra', type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '16:00', label: 'Akşam', type: 'viewing', available: true }
+                { date: dateStr, isoDate, time: '10:00', label: getTimeLabel(10, locale), type: 'viewing', available: true },
+                { date: dateStr, isoDate, time: '11:00', label: getTimeLabel(11, locale), type: 'viewing', available: true },
+                { date: dateStr, isoDate, time: '14:00', label: getTimeLabel(14, locale), type: 'viewing', available: true },
+                { date: dateStr, isoDate, time: '15:00', label: getTimeLabel(15, locale), type: 'viewing', available: true },
+                { date: dateStr, isoDate, time: '16:00', label: getTimeLabel(16, locale), type: 'viewing', available: true }
             )
         }
     }
@@ -184,7 +201,8 @@ function generateAvailableSlots(
     startDate: Date,
     endDate: Date,
     busySlots: Array<{ start?: string | null; end?: string | null }>,
-    businessHours: { start: number; end: number; slotDuration: number }
+    businessHours: { start: number; end: number; slotDuration: number },
+    locale: string
 ) {
     const slots: any[] = []
     const current = new Date(startDate)
@@ -194,7 +212,7 @@ function generateAvailableSlots(
 
         // Skip Sunday
         if (dayOfWeek !== 0) {
-            const dateStr = formatDateTurkish(current)
+            const dateStr = formatDate(current)
             const isoDate = current.toISOString().split('T')[0]
 
             // Generate slots for business hours
@@ -215,15 +233,12 @@ function generateAvailableSlots(
 
                 if (isAvailable) {
                     const timeStr = `${hour.toString().padStart(2, '0')}:00`
-                    let label = 'Öğleden Sonra'
-                    if (hour < 12) label = 'Sabah'
-                    else if (hour >= 17) label = 'Akşam'
 
                     slots.push({
                         date: dateStr,
                         isoDate,
                         time: timeStr,
-                        label,
+                        label: getTimeLabel(hour, locale),
                         type: 'viewing',
                         available: true
                     })
@@ -237,8 +252,8 @@ function generateAvailableSlots(
     return slots
 }
 
-// Format date as dd/mm/yyyy for Turkish locale
-function formatDateTurkish(date: Date): string {
+// Format date as dd/mm/yyyy
+function formatDate(date: Date): string {
     const day = date.getDate().toString().padStart(2, '0')
     const month = (date.getMonth() + 1).toString().padStart(2, '0')
     const year = date.getFullYear()

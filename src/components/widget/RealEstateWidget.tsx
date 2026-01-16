@@ -1794,8 +1794,8 @@ function AppointmentSlotPicker({
 
     const fetchSlots = async () => {
         try {
-            // Use new calendar availability API
-            const response = await fetch(`/api/calendar/availability?identifier=${identifier}`)
+            // Use new calendar availability API with locale for multilingual labels
+            const response = await fetch(`/api/calendar/availability?identifier=${identifier}&locale=${locale}`)
             const data = await response.json()
             setSlots(data.slots?.filter((s: any) => s.available) || generateLocalSlots())
         } catch (error) {
@@ -1810,6 +1810,16 @@ function AppointmentSlotPicker({
         const slots = []
         const today = new Date()
 
+        // Multilingual time labels  
+        const timeLabels: Record<string, { morning: string; afternoon: string }> = {
+            en: { morning: 'Morning', afternoon: 'Afternoon' },
+            tr: { morning: 'Sabah', afternoon: 'Öğleden Sonra' },
+            de: { morning: 'Morgen', afternoon: 'Nachmittag' },
+            es: { morning: 'Mañana', afternoon: 'Tarde' },
+            fr: { morning: 'Matin', afternoon: 'Après-midi' }
+        }
+        const labels = timeLabels[locale] || timeLabels['en']
+
         for (let i = 1; i <= 5; i++) {
             const date = new Date(today)
             date.setDate(date.getDate() + i)
@@ -1822,8 +1832,8 @@ function AppointmentSlotPicker({
 
             if (date.getDay() !== 0) { // Skip Sunday
                 slots.push(
-                    { date: dateStr, time: '10:00', label: locale === 'tr' ? 'Sabah' : 'Morning', type: 'viewing', available: true },
-                    { date: dateStr, time: '14:00', label: locale === 'tr' ? 'Öğleden Sonra' : 'Afternoon', type: 'viewing', available: true }
+                    { date: dateStr, time: '10:00', label: labels.morning, type: 'viewing', available: true },
+                    { date: dateStr, time: '14:00', label: labels.afternoon, type: 'viewing', available: true }
                 )
             }
         }
