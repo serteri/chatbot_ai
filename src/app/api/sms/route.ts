@@ -68,7 +68,8 @@ export async function POST(request: NextRequest) {
             })
 
             const settings = (chatbot?.customSettings as any) || {}
-            if (!settings.smsNotifications) {
+            // Only block if SMS notifications are explicitly disabled
+            if (settings.smsNotifications === false) {
                 return NextResponse.json({
                     success: false,
                     message: 'SMS notifications are disabled for this chatbot'

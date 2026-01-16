@@ -73,7 +73,8 @@ export async function notifyHotLead(leadId: string, chatbotId: string): Promise<
             return
         }
 
-        if (!chatbotSettings.smsNotifications) {
+        // Only block if SMS notifications are explicitly disabled
+        if (chatbotSettings.smsNotifications === false) {
             console.log('SMS notifications disabled for chatbot:', chatbot.name)
             return
         }

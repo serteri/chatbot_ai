@@ -55,8 +55,8 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
             return { success: false, error: 'No agent email configured' }
         }
 
-        // Check if email notifications are enabled
-        if (!chatbot.user.emailNotifications) {
+        // Check if email notifications are explicitly disabled
+        if (chatbot.user.emailNotifications === false) {
             console.log('Email notifications disabled for user')
             return { success: false, error: 'Email notifications disabled' }
         }
