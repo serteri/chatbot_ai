@@ -42,9 +42,49 @@ export function ChatbotSettings({ chatbotId, hasLiveSupport, initialSettings }: 
     const [calendarConnected, setCalendarConnected] = useState(false)
     const [calendarLoading, setCalendarLoading] = useState(true)
 
+    // Process OAuth callback code if present in URL
+    useEffect(() => {
+        const processCalendarCallback = async () => {
+            const urlParams = new URLSearchParams(window.location.search)
+            const calendarCode = urlParams.get('calendar_code')
+
+            if (calendarCode) {
+                setCalendarLoading(true)
+                try {
+                    const response = await fetch('/api/calendar/connect', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chatbotId, code: calendarCode })
+                    })
+
+                    if (response.ok) {
+                        setCalendarConnected(true)
+                        toast.success(t('settings.calendarConnected') || 'Google Calendar connected!')
+                        // Remove the code from URL
+                        const newUrl = window.location.pathname
+                        window.history.replaceState({}, '', newUrl)
+                    } else {
+                        const err = await response.json()
+                        toast.error(err.error || 'Failed to connect calendar')
+                    }
+                } catch (error) {
+                    console.error('Error processing calendar callback:', error)
+                    toast.error(t('common.error') || 'Connection failed')
+                } finally {
+                    setCalendarLoading(false)
+                }
+            }
+        }
+        processCalendarCallback()
+    }, [chatbotId, t])
+
     // Fetch calendar connection status on mount
     useEffect(() => {
         const fetchCalendarStatus = async () => {
+            // Skip if we just processed a callback
+            const urlParams = new URLSearchParams(window.location.search)
+            if (urlParams.get('calendar_code')) return
+
             try {
                 const response = await fetch(`/api/calendar/connect?chatbotId=${chatbotId}`)
                 if (response.ok) {
