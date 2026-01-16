@@ -2557,8 +2557,8 @@
         "coldDesc": "We can share market reports with you."
       },
       "messages": {
-        "hotLeadAlert": "Information received.\n\nOur expert advisor will prioritize your request and contact you shortly.",
-        "warmLeadAlert": "Thank you, information received.\n\nOur advisor will contact you soon.",
+        "hotLeadAlert": "🌟 Excellent! Your information has been received.\n\nOur senior property advisor will personally review your requirements and contact you within the next 30 minutes.\n\n📞 Keep your phone nearby!",
+        "warmLeadAlert": "✅ Thank you! Your details have been saved.\n\nOur property advisor will contact you within 24 hours to discuss your requirements and show you the best matching properties.\n\n💡 In the meantime, feel free to browse our listings.",
         "coldLeadResponse": "I understand you're still in the research phase.\n\nWe have some helpful resources:\n• Area price guide\n• Investment analysis report\n• Market trend report\n\nLeave your email and we'll send these to you.",
         "searchingProperties": "Searching for properties matching your criteria...",
         "propertiesFound": "Here are properties matching your criteria:",
@@ -2577,7 +2577,7 @@
         "upsellYes": "Yes, interested",
         "upsellNo": "No, keep searching"
       },
-      "thankYou": "Thank you!",
+      "thankYou": "Thank you, your information has been received!\n\n✅ Our advisor will contact you shortly.\n\n🔍 Search started: We'll scan properties matching your criteria and present the best options.\n\n📱 Keep your phone handy, have a great day!",
       "viewDetails": "View Details",
       "schedule": "Schedule Viewing",
       "showMore": "Show More",

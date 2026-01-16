@@ -891,8 +891,8 @@ export function RealEstateWidget({
             labels: t.leadScore
         })
 
-        // If Hot Lead, automatically offer Appointment
-        if (category === 'hot') {
+        // If Hot or Warm Lead (score >= 60), offer Appointment
+        if (category === 'hot' || score >= 60) {
             setTimeout(() => {
                 addBotMessage(
                     t.messages.schedulePrompt,

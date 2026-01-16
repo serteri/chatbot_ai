@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 import { z } from 'zod'
 import { notifyHotLead } from '@/lib/sms/notifications'
+import { sendLeadNotificationToAgent } from '@/lib/email/notifications'
 
 // Validation schema for lead
 const leadSchema = z.object({
@@ -176,12 +177,28 @@ export async function POST(request: NextRequest) {
             }
         })
 
-        // If hot lead, trigger SMS notification
+        // Send email notification to agent for ALL leads
+        sendLeadNotificationToAgent({
+            leadId: lead.id,
+            chatbotId,
+            name: lead.name,
+            phone: lead.phone,
+            email: lead.email || undefined,
+            intent: lead.intent || undefined,
+            propertyType: lead.propertyType || undefined,
+            budget: lead.budget || undefined,
+            timeline: lead.timeline || undefined,
+            hasPreApproval: lead.hasPreApproval || undefined,
+            score,
+            category
+        }).catch(err => console.error('Failed to send lead email notification:', err))
+
+        // If hot lead, ALSO trigger SMS notification for urgency
         if (category === 'hot') {
             console.log(`🔥 HOT LEAD: ${lead.name} - ${lead.phone} - Score: ${score}`)
             // Send SMS notification to agent (async, don't await to avoid blocking response)
             notifyHotLead(lead.id, chatbotId).catch(err =>
-                console.error('Failed to send hot lead notification:', err)
+                console.error('Failed to send hot lead SMS notification:', err)
             )
         }
 

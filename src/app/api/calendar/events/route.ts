@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { google } from 'googleapis'
 import { sendAppointmentConfirmation } from '@/lib/sms/notifications'
+import { sendAppointmentEmailToAgent, sendAppointmentEmailToCustomer } from '@/lib/email/notifications'
 
 // Helper to get OAuth2 client with tokens
 async function getAuthenticatedClient(userId: string) {
@@ -64,7 +65,11 @@ export async function POST(request: NextRequest) {
                 googleCalendarId: true,
                 customSettings: true,
                 user: {
-                    select: { name: true }
+                    select: {
+                        name: true,
+                        email: true,
+                        emailNotifications: true
+                    }
                 }
             }
         })
@@ -180,7 +185,7 @@ export async function POST(request: NextRequest) {
         const settings = (chatbot.customSettings as any) || {}
         const agentName = settings.agentName || chatbot.user?.name || 'Danışmanımız'
 
-        // Send SMS confirmation
+        // Send SMS confirmation to customer
         await sendAppointmentConfirmation(
             phone,
             name,
@@ -189,6 +194,31 @@ export async function POST(request: NextRequest) {
             agentName,
             chatbot.id
         ).catch(err => console.error('Failed to send SMS:', err))
+
+        // Prepare appointment email data
+        const appointmentEmailData = {
+            leadName: name,
+            leadPhone: phone,
+            leadEmail: email || undefined,
+            appointmentDate: formattedDate,
+            appointmentTime: time,
+            agentName,
+            chatbotName: chatbot.name,
+            type: type || 'Mülk Görüntüleme'
+        }
+
+        // Send email notification to agent
+        if (chatbot.user?.email && chatbot.user?.emailNotifications !== false) {
+            const agentEmail = settings.notificationEmail || chatbot.user.email
+            sendAppointmentEmailToAgent(appointmentEmailData, agentEmail)
+                .catch(err => console.error('Failed to send appointment email to agent:', err))
+        }
+
+        // Send email confirmation to customer (if they provided email)
+        if (email) {
+            sendAppointmentEmailToCustomer(appointmentEmailData, email)
+                .catch(err => console.error('Failed to send appointment email to customer:', err))
+        }
 
         return NextResponse.json({
             success: true,

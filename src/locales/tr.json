@@ -2566,8 +2566,8 @@
         "coldDesc": "Size özel raporlar gönderebiliriz."
       },
       "messages": {
-        "hotLeadAlert": "Bilgileriniz alındı.\n\nUzman danışmanımız başvurunuzu öncelikli olarak değerlendirip en kısa sürede size dönüş yapacaktır.",
-        "warmLeadAlert": "Teşekkürler, bilgileriniz alındı.\n\nDanışmanımız sizinle iletişime geçecektir.",
+        "hotLeadAlert": "🌟 Harika! Bilgileriniz başarıyla alındı.\n\nKıdemli emlak danışmanımız talebinizi inceleyip 30 dakika içinde sizinle iletişime geçecektir.\n\n📞 Telefonunuzu yanınızda bulundurun!",
+        "warmLeadAlert": "✅ Teşekkürler! Bilgileriniz kaydedildi.\n\nEmlak danışmanımız 24 saat içinde sizinle iletişime geçerek taleplerinizi görüşecek ve size en uygun mülkleri gösterecektir.\n\n💡 Bu süre zarfında ilanlarımıza göz atabilirsiniz.",
         "coldLeadResponse": "Anlıyorum, henüz araştırma aşamasındasınız.\n\nSize yardımcı olabilecek bazı kaynaklarımız var:\n• Bölge fiyat rehberi\n• Yatırım analiz raporu\n• Piyasa trend raporu\n\nE-posta adresinizi bırakırsanız bu raporları size gönderelim.",
         "searchingProperties": "Kriterlerinize uygun ilanları arıyorum...",
         "propertiesFound": "Size uygun ilanlarımız:",
@@ -2586,7 +2586,7 @@
         "upsellYes": "Evet, ilgileniyorum",
         "upsellNo": "Hayır, başka arayın"
       },
-      "thankYou": "Teşekkür ederiz!",
+      "thankYou": "Teşekkürler, bilgileriniz alındı!\n\n✅ Danışmanımız kısa süre içinde sizinle iletişime geçecektir.\n\n🔍 Arama başlatıldı: Kriterlerinize uygun mülkleri sizin için tarayacağız ve en iyi seçenekleri sunacağız.\n\n📱 Telefonunuzu açık tutun, iyi günler!",
       "viewDetails": "Detayları Gör",
       "schedule": "Randevu Al",
       "showMore": "Daha Fazla Göster",
