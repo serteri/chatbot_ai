@@ -2388,6 +2388,11 @@
         "phonePlaceholder": "Téléphone *",
         "emailPlaceholder": "Email",
         "error": "Veuillez entrer votre nom et numéro de téléphone."
+      },
+      "notificationBubble": {
+        "greeting": "Bonjour ! Puis-je vous aider ?",
+        "subtitle": "Votre Assistant d'Accueil",
+        "timestamp": "À l'instant"
       }
     }
   }

@@ -2571,6 +2571,11 @@
         "phonePlaceholder": "Phone *",
         "emailPlaceholder": "Email",
         "error": "Please enter your name and phone number."
+      },
+      "notificationBubble": {
+        "greeting": "Hello! Can I help you?",
+        "subtitle": "Your Front Desk Assistant",
+        "timestamp": "Just now"
       }
     }
   }

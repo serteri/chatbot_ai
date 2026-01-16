@@ -2580,6 +2580,11 @@
         "phonePlaceholder": "Telefon *",
         "emailPlaceholder": "E-posta",
         "error": "Lütfen ad ve telefon bilgilerini giriniz."
+      },
+      "notificationBubble": {
+        "greeting": "Merhaba! Size yardımcı olabilir miyim?",
+        "subtitle": "Ön Büro Asistanınız",
+        "timestamp": "Az önce"
       }
     }
   }

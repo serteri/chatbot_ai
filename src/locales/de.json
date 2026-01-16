@@ -2516,6 +2516,11 @@
         "phonePlaceholder": "Telefon *",
         "emailPlaceholder": "E-Mail",
         "error": "Bitte geben Sie Ihren Namen und Ihre Telefonnummer ein."
+      },
+      "notificationBubble": {
+        "greeting": "Hallo! Kann ich Ihnen helfen?",
+        "subtitle": "Ihr Empfangs-Assistent",
+        "timestamp": "Gerade eben"
       }
     }
   }

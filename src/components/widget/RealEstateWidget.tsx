@@ -83,7 +83,7 @@ interface TenantIssue {
 }
 
 interface RealEstateWidgetProps {
-    locale?: 'tr' | 'en'
+    locale?: string
     primaryColor?: string
     position?: 'bottom-right' | 'bottom-left'
     agentName?: string
@@ -315,7 +315,12 @@ export function RealEstateWidget({
         viewDetails: tRaw('viewDetails'),
         schedule: tRaw('schedule'),
         showMore: tRaw('showMore'),
-        loading: tRaw('loading')
+        loading: tRaw('loading'),
+        notificationBubble: {
+            greeting: tRaw('notificationBubble.greeting'),
+            subtitle: tRaw('notificationBubble.subtitle'),
+            timestamp: tRaw('notificationBubble.timestamp')
+        }
     }
     const positionClass = position === 'bottom-left' ? 'left-4' : 'right-4'
     const remainingMessages = demoChatLimit === -1 ? -1 : Math.max(0, demoChatLimit - demoChatUsed)
@@ -1394,15 +1399,13 @@ export function RealEstateWidget({
                                 }}
                             >
                                 <p className="text-xs text-gray-700 font-medium">
-                                    {locale === 'tr'
-                                        ? 'Merhaba! Size yardımcı olabilir miyim?'
-                                        : 'Hello! Can I help you?'}
+                                    {t.notificationBubble.greeting}
                                 </p>
                                 <p className="text-[10px] text-gray-500 mt-1">
-                                    {locale === 'tr' ? 'Ön Büro Asistanınız' : 'Your Front Desk Assistant'}
+                                    {t.notificationBubble.subtitle}
                                 </p>
                                 <span className="text-[10px] text-gray-400 mt-1 block">
-                                    {locale === 'tr' ? 'Az önce' : 'Just now'}
+                                    {t.notificationBubble.timestamp}
                                 </span>
                             </div>
                         )}
