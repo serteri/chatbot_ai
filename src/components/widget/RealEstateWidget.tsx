@@ -59,6 +59,10 @@ interface Property {
 interface LeadData {
     intent?: 'buy' | 'rent' | 'sell' | 'value' | 'tenant'
     propertyType?: string
+    bedrooms?: string
+    bathrooms?: string
+    city?: string
+    suburb?: string
     budget?: string
     budgetLevel?: 'low' | 'medium' | 'high' | 'premium'
     budgetMin?: number
@@ -204,6 +208,14 @@ export function RealEstateWidget({
             budget: tRaw('leadQualification.budget'),
             budgetNote: tRaw('leadQualification.budgetNote'),
             location: tRaw('leadQualification.location'),
+            city: tRaw('leadQualification.city'),
+            cityNote: tRaw('leadQualification.cityNote'),
+            suburb: tRaw('leadQualification.suburb'),
+            suburbNote: tRaw('leadQualification.suburbNote'),
+            bedrooms: tRaw('leadQualification.bedrooms'),
+            bedroomsNote: tRaw('leadQualification.bedroomsNote'),
+            bathrooms: tRaw('leadQualification.bathrooms'),
+            bathroomsNote: tRaw('leadQualification.bathroomsNote'),
             timeline: tRaw('leadQualification.timeline'),
             timelineNote: tRaw('leadQualification.timelineNote'),
             preApproval: tRaw('leadQualification.preApproval'),
@@ -236,6 +248,20 @@ export function RealEstateWidget({
             tRaw('timelines.soon'),
             tRaw('timelines.later'),
             tRaw('timelines.browsing')
+        ],
+        bedroomOptions: [
+            { label: tRaw('bedroomOptions.1'), value: '1' },
+            { label: tRaw('bedroomOptions.2'), value: '2' },
+            { label: tRaw('bedroomOptions.3'), value: '3' },
+            { label: tRaw('bedroomOptions.4'), value: '4' },
+            { label: tRaw('bedroomOptions.5plus'), value: '5+' },
+            { label: tRaw('bedroomOptions.any'), value: 'any' }
+        ],
+        bathroomOptions: [
+            { label: tRaw('bathroomOptions.1'), value: '1' },
+            { label: tRaw('bathroomOptions.2'), value: '2' },
+            { label: tRaw('bathroomOptions.3plus'), value: '3+' },
+            { label: tRaw('bathroomOptions.any'), value: 'any' }
         ],
         yesNo: [
             tRaw('yesNo.yes'),
@@ -664,6 +690,34 @@ export function RealEstateWidget({
 
         const apiType = mapPropertyTypeToApi(type, locale)
         setLeadData(prev => ({ ...prev, propertyType: apiType }))
+        setCurrentStep('bedrooms')
+        setTimeout(() => {
+            addBotMessage(`${t.leadQualification.bedrooms}\n\n🛏️ ${t.leadQualification.bedroomsNote}`, 'quick-replies', {
+                replies: t.bedroomOptions.map((b: any) => b.label)
+            })
+        }, 300)
+    }
+
+    const handleBedroomsSelect = async (bedroom: string) => {
+        await addUserMessage(bedroom)
+        if (limitReached) return
+
+        const bedroomValue = t.bedroomOptions.find((b: any) => b.label === bedroom)?.value || bedroom
+        setLeadData(prev => ({ ...prev, bedrooms: bedroomValue }))
+        setCurrentStep('bathrooms')
+        setTimeout(() => {
+            addBotMessage(`${t.leadQualification.bathrooms}\n\n🚿 ${t.leadQualification.bathroomsNote}`, 'quick-replies', {
+                replies: t.bathroomOptions.map((b: any) => b.label)
+            })
+        }, 300)
+    }
+
+    const handleBathroomsSelect = async (bathroom: string) => {
+        await addUserMessage(bathroom)
+        if (limitReached) return
+
+        const bathroomValue = t.bathroomOptions.find((b: any) => b.label === bathroom)?.value || bathroom
+        setLeadData(prev => ({ ...prev, bathrooms: bathroomValue }))
         setCurrentStep('budget')
         setTimeout(() => {
             const isRent = leadData.intent === 'rent'
@@ -1091,6 +1145,8 @@ export function RealEstateWidget({
                                         if (currentStep === 'initial') handleQuickReply(reply)
                                         else if (currentStep === 'purpose') handlePurposeSelect(reply)
                                         else if (currentStep === 'propertyType') handlePropertyTypeSelect(reply)
+                                        else if (currentStep === 'bedrooms') handleBedroomsSelect(reply)
+                                        else if (currentStep === 'bathrooms') handleBathroomsSelect(reply)
                                         else if (currentStep === 'budget') handleBudgetSelect(reply)
                                         else if (currentStep === 'timeline') handleTimelineSelect(reply)
                                         else if (currentStep === 'preApproval') handlePreApprovalSelect(reply)
