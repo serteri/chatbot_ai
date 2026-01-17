@@ -504,6 +504,7 @@
     "title": "Gestión Inmobiliaria",
     "subtitle": "Añada y gestione sus listados inmobiliarios",
     "back": "Panel Inmobiliario",
+    "selectChatbot": "Seleccionar Chatbot",
     "addProperty": "Añadir Propiedad",
     "importXml": "Importar XML",
     "noProperties": "Aún no hay propiedades",

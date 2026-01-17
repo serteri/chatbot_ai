@@ -504,6 +504,7 @@
     "title": "Gestion Immobilière",
     "subtitle": "Ajoutez et gérez vos annonces immobilières",
     "back": "Tableau de bord immobilier",
+    "selectChatbot": "Sélectionner un chatbot",
     "addProperty": "Ajouter une propriété",
     "importXml": "Importer XML",
     "noProperties": "Aucune propriété pour le moment",

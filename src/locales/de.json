@@ -506,6 +506,7 @@
     "title": "Immobilienverwaltung",
     "subtitle": "Fügen Sie Ihre Immobilienangebote hinzu und verwalten Sie sie",
     "back": "Immobilien Dashboard",
+    "selectChatbot": "Chatbot auswählen",
     "addProperty": "Immobilie hinzufügen",
     "importXml": "XML importieren",
     "noProperties": "Noch keine Immobilien",

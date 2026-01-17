@@ -522,6 +522,7 @@
     "title": "Property Management",
     "subtitle": "Add and manage your real estate listings",
     "back": "Real Estate Dashboard",
+    "selectChatbot": "Select Chatbot",
     "addProperty": "Add Property",
     "importXml": "Import XML",
     "noProperties": "No properties yet",

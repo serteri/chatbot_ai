@@ -871,6 +871,7 @@
     "title": "İlan Yönetimi",
     "subtitle": "Emlak ilanlarınızı ekleyin ve yönetin",
     "back": "Emlak Dashboard",
+    "selectChatbot": "Chatbot Seçin",
     "addProperty": "İlan Ekle",
     "importXml": "XML İçe Aktar",
     "noProperties": "Henüz ilan yok",
