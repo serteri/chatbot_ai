@@ -225,6 +225,8 @@ export function RealEstateWidget({
             preApproval: tRaw('leadQualification.preApproval'),
             preApprovalNote: tRaw('leadQualification.preApprovalNote'),
             contact: tRaw('leadQualification.contact'),
+            income: tRaw('leadQualification.income'),
+            incomeNote: tRaw('leadQualification.incomeNote'),
             affordabilityResult: tRaw('leadQualification.affordabilityResult'),
             affordabilityNote: tRaw('leadQualification.affordabilityNote'),
             affordabilityWarning: tRaw('leadQualification.affordabilityWarning'),
