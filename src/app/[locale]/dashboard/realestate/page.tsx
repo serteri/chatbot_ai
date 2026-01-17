@@ -387,22 +387,45 @@ export default async function RealEstateDashboard({
     const totalConversations = realestateChatbots.reduce((sum, bot) => sum + bot._count.conversations, 0)
     const totalDocuments = realestateChatbots.reduce((sum, bot) => sum + bot._count.documents, 0)
     const activeBots = realestateChatbots.filter(bot => bot.isActive).length
+    const chatbotIds = realestateChatbots.map(bot => bot.id)
 
-    // Simulated lead data (in production, this would come from a leads table)
-    const userIdSeed = session.user.id.charCodeAt(0) + session.user.id.charCodeAt(session.user.id.length - 1)
-    const hasData = totalConversations > 0
+    // Query REAL lead data from database
+    const leads = await prisma.lead.findMany({
+        where: {
+            chatbotId: { in: chatbotIds }
+        },
+        select: {
+            category: true,
+            score: true,
+            createdAt: true
+        }
+    })
 
-    // Lead statistics (simulated - would be real data in production)
-    const hotLeads = hasData ? Math.floor(totalConversations * 0.15) : 0
-    const warmLeads = hasData ? Math.floor(totalConversations * 0.35) : 0
-    const coldLeads = hasData ? Math.floor(totalConversations * 0.50) : 0
-    const totalLeads = hotLeads + warmLeads + coldLeads
+    // Query REAL appointments from database
+    const appointments = await prisma.appointment.findMany({
+        where: {
+            chatbotId: { in: chatbotIds }
+        },
+        select: {
+            id: true
+        }
+    })
 
-    // Appointments (simulated)
-    const scheduledAppointments = hasData ? Math.floor(hotLeads * 0.7 + warmLeads * 0.2) : 0
+    // Real lead statistics
+    const hotLeads = leads.filter(l => l.category === 'hot').length
+    const warmLeads = leads.filter(l => l.category === 'warm').length
+    const coldLeads = leads.filter(l => l.category === 'cold' || !l.category).length
+    const totalLeads = leads.length
 
-    // Property count (simulated based on documents)
-    const estimatedProperties = totalDocuments * 15
+    // Real appointments count
+    const scheduledAppointments = appointments.length
+
+    // Property count from database
+    const propertyCount = await prisma.property.count({
+        where: {
+            chatbotId: { in: chatbotIds }
+        }
+    })
 
     return (
         <div className="min-h-screen bg-background">
@@ -533,10 +556,10 @@ export default async function RealEstateDashboard({
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-slate-800 mb-1">{estimatedProperties}</div>
+                            <div className="text-2xl font-bold text-slate-800 mb-1">{propertyCount}</div>
                             <p className="text-xs text-muted-foreground mb-3">{rt.propertyManagementDesc}</p>
                             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                                {estimatedProperties > 0 ? 'Aktif' : 'Boş'}
+                                {propertyCount > 0 ? 'Aktif' : 'Boş'}
                             </Badge>
                         </CardContent>
                     </Card>

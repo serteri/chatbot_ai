@@ -812,14 +812,9 @@ export function RealEstateWidget({
             budgetMin: budgetRange?.min,
             budgetMax: budgetRange?.max
         }))
-        setCurrentStep('income')
-        setLoadingProperties(true) // Just a small delay effect
-        setTimeout(() => {
-            setLoadingProperties(false)
-            addBotMessage(`${t.leadQualification.income}\\n\\n💵 ${t.leadQualification.incomeNote}`)
-        }, 500)
 
-
+        // Skip income step - go directly to timeline
+        setCurrentStep('timeline')
         setTimeout(() => {
             addBotMessage(`${t.leadQualification.timeline}\n\n⏰ ${t.leadQualification.timelineNote}`, 'quick-replies', {
                 replies: t.timelines
@@ -1389,6 +1384,35 @@ export function RealEstateWidget({
                                             const isYes = reply.includes('Randevu') || reply.includes('Schedule')
                                             if (isYes) {
                                                 addBotMessage(t.appointmentSlots.title, 'appointment', {})
+                                                setTimeout(() => {
+                                                    // Offer mortgage calculator after appointment selection
+                                                    addBotMessage(
+                                                        locale === 'tr'
+                                                            ? '💰 Kredi hesaplaması yapmamı ister misiniz? (Aylık ödeme tahmini)'
+                                                            : '💰 Would you like me to calculate your mortgage? (Monthly payment estimate)',
+                                                        'quick-replies',
+                                                        { replies: [locale === 'tr' ? 'Evet, hesapla' : 'Yes, calculate', locale === 'tr' ? 'Hayır, teşekkürler' : 'No, thanks'] }
+                                                    )
+                                                    setCurrentStep('mortgage-offer')
+                                                }, 2000)
+                                            } else {
+                                                // Offer mortgage calculator even if they don't want appointment
+                                                addBotMessage(
+                                                    locale === 'tr'
+                                                        ? '💰 Kredi hesaplaması yapmamı ister misiniz? (Aylık ödeme tahmini)'
+                                                        : '💰 Would you like me to calculate your mortgage? (Monthly payment estimate)',
+                                                    'quick-replies',
+                                                    { replies: [locale === 'tr' ? 'Evet, hesapla' : 'Yes, calculate', locale === 'tr' ? 'Hayır, teşekkürler' : 'No, thanks'] }
+                                                )
+                                                setCurrentStep('mortgage-offer')
+                                            }
+                                        } else if (currentStep === 'mortgage-offer') {
+                                            addUserMessage(reply)
+                                            const wantsMortgage = reply.includes('Evet') || reply.includes('Yes')
+                                            if (wantsMortgage) {
+                                                // Start mortgage calculator flow
+                                                addBotMessage(`${t.leadQualification.income}\n\n💵 ${t.leadQualification.incomeNote}`)
+                                                setCurrentStep('income')
                                             } else {
                                                 addBotMessage(t.thankYou)
                                                 setCurrentStep('complete')
