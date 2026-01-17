@@ -2630,5 +2630,22 @@
         "timestamp": "Az önce"
       }
     }
+  },
+  "mortgage": {
+    "title": "Mortgage Hesaplayıcı",
+    "subtitle": "Aylık ödemenizi hesaplayın",
+    "propertyPrice": "Mülk Fiyatı",
+    "downPayment": "Peşinat",
+    "interestRate": "Faiz Oranı",
+    "monthly": "aylık",
+    "loanTerm": "Kredi Vadesi",
+    "years": "yıl",
+    "results": "Hesaplama Sonuçları",
+    "monthlyPayment": "Aylık Ödeme",
+    "perMonth": "/ ay",
+    "loanAmount": "Kredi Tutarı",
+    "totalInterest": "Toplam Faiz",
+    "totalPayment": "Toplam Ödeme",
+    "disclaimer": "Bu hesaplama tahminidir. Gerçek değerler bankaya göre değişebilir."
   }
 }

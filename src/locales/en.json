@@ -2621,5 +2621,22 @@
         "timestamp": "Just now"
       }
     }
+  },
+  "mortgage": {
+    "title": "Mortgage Calculator",
+    "subtitle": "Calculate your monthly payment",
+    "propertyPrice": "Property Price",
+    "downPayment": "Down Payment",
+    "interestRate": "Interest Rate",
+    "monthly": "monthly",
+    "loanTerm": "Loan Term",
+    "years": "years",
+    "results": "Calculation Results",
+    "monthlyPayment": "Monthly Payment",
+    "perMonth": "/ month",
+    "loanAmount": "Loan Amount",
+    "totalInterest": "Total Interest",
+    "totalPayment": "Total Payment",
+    "disclaimer": "This calculation is an estimate. Actual values may vary by lender."
   }
 }
