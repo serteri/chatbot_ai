@@ -190,7 +190,9 @@ export async function POST(request: NextRequest) {
             timeline: lead.timeline || undefined,
             hasPreApproval: lead.hasPreApproval || undefined,
             score,
-            category
+            category,
+            location: lead.location || undefined,
+            requirements: lead.requirements as any || undefined
         }).catch(err => console.error('Failed to send lead email notification:', err))
 
         // If hot lead, ALSO trigger SMS notification for urgency

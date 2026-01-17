@@ -16,6 +16,16 @@ interface LeadEmailData {
     hasPreApproval?: boolean
     score: number
     category: 'hot' | 'warm' | 'cold'
+    location?: string
+    requirements?: {
+        bedrooms?: string
+        bathrooms?: string
+        monthlyIncome?: number
+        monthlyExpenses?: number
+        downPayment?: number
+        calculatedMaxBudget?: number
+        housingType?: string
+    }
 }
 
 interface AppointmentEmailData {
@@ -81,6 +91,11 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
             'tenant': 'Kiracı'
         }[data.intent || 'buy'] || data.intent
 
+        const formatMoney = (amount?: number) => {
+            if (!amount) return '-'
+            return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(amount)
+        }
+
         const html = `
 <!DOCTYPE html>
 <html>
@@ -130,6 +145,12 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
                     <span class="value"><a href="mailto:${data.email}" style="color: #d97706; text-decoration: none;">${data.email}</a></span>
                 </div>
                 ` : ''}
+                ${data.location ? `
+                <div class="info-row">
+                    <span class="label">Lokasyon Tercihi</span>
+                    <span class="value">${data.location}</span>
+                </div>
+                ` : ''}
             </div>
 
             <div class="info-card">
@@ -148,8 +169,20 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
                 ` : ''}
                 ${data.budget ? `
                 <div class="info-row">
-                    <span class="label">Bütçe</span>
+                    <span class="label">Bütçe Aralığı</span>
                     <span class="value">${data.budget}</span>
+                </div>
+                ` : ''}
+                ${data.requirements?.bedrooms ? `
+                <div class="info-row">
+                    <span class="label">Oda Sayısı</span>
+                    <span class="value">${data.requirements.bedrooms}</span>
+                </div>
+                ` : ''}
+                ${data.requirements?.bathrooms ? `
+                <div class="info-row">
+                    <span class="label">Banyo Sayısı</span>
+                    <span class="value">${data.requirements.bathrooms}</span>
                 </div>
                 ` : ''}
                 ${data.timeline ? `
@@ -165,6 +198,36 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
                 </div>
                 ` : ''}
             </div>
+
+            ${data.requirements && (data.requirements.monthlyIncome || data.requirements.calculatedMaxBudget) ? `
+            <div class="info-card">
+                <h3 style="margin-top: 0; color: #111827;">💰 Finansal Analiz</h3>
+                ${data.requirements.monthlyIncome ? `
+                <div class="info-row">
+                    <span class="label">Aylık Gelir</span>
+                    <span class="value">${formatMoney(data.requirements.monthlyIncome)}</span>
+                </div>
+                ` : ''}
+                ${data.requirements.monthlyExpenses ? `
+                <div class="info-row">
+                    <span class="label">Aylık Gider</span>
+                    <span class="value">${formatMoney(data.requirements.monthlyExpenses)}</span>
+                </div>
+                ` : ''}
+                ${data.requirements.downPayment ? `
+                <div class="info-row">
+                    <span class="label">Peşinat</span>
+                    <span class="value">${formatMoney(data.requirements.downPayment)}</span>
+                </div>
+                ` : ''}
+                ${data.requirements.calculatedMaxBudget ? `
+                <div class="info-row">
+                    <span class="label">Hesaplanan Max Bütçe</span>
+                    <span class="value" style="color: #059669;">${formatMoney(data.requirements.calculatedMaxBudget)}</span>
+                </div>
+                ` : ''}
+            </div>
+            ` : ''}
 
             <div style="text-align: center;">
                 <a href="tel:${data.phone}" class="cta">📞 Hemen Ara</a>

@@ -641,10 +641,20 @@ export function RealEstateWidget({
                     budget: leadInfo.budget,
                     budgetMin: leadInfo.budgetMin,
                     budgetMax: leadInfo.budgetMax,
+                    location: `${leadInfo.city || ''} ${leadInfo.suburb || ''}`.trim(),
                     timeline: leadInfo.timeline,
                     hasPreApproval: leadInfo.hasPreApproval,
                     score: leadInfo.leadScore,
-                    category: leadInfo.leadCategory
+                    category: leadInfo.leadCategory,
+                    requirements: {
+                        bedrooms: leadInfo.bedrooms,
+                        bathrooms: leadInfo.bathrooms,
+                        monthlyIncome: leadInfo.monthlyIncome,
+                        monthlyExpenses: leadInfo.monthlyExpenses,
+                        downPayment: leadInfo.downPayment,
+                        calculatedMaxBudget: leadInfo.calculatedMaxBudget,
+                        housingType: leadInfo.propertyType // Add redundant for clarity
+                    }
                 })
             })
         } catch (error) {
