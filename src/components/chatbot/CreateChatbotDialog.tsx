@@ -28,6 +28,8 @@ import { toast } from 'react-hot-toast'
 
 interface CreateChatbotDialogProps {
     trigger?: React.ReactNode
+    children?: React.ReactNode
+    industry?: string
     prefilledData?: {
         name?: string
         type?: string
@@ -37,7 +39,7 @@ interface CreateChatbotDialogProps {
     }
 }
 
-export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDialogProps) {
+export function CreateChatbotDialog({ trigger, children, industry, prefilledData }: CreateChatbotDialogProps) {
     const router = useRouter()
     const t = useTranslations('chatbots')
     const [open, setOpen] = useState(false)
@@ -47,7 +49,7 @@ export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDia
     // Varsayılan değerler
     const [formData, setFormData] = useState({
         name: prefilledData?.name || '',
-        type: prefilledData?.type || prefilledData?.industry || 'general',
+        type: industry || prefilledData?.type || prefilledData?.industry || 'general',
         welcomeMessage: prefilledData?.welcomeMessage || ''
     })
 
@@ -75,14 +77,14 @@ export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDia
 
         try {
             // Map type to industry for the API
-            const industry = formData.type
+            const selectedIndustry = formData.type
 
             const response = await fetch('/api/chatbot/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: formData.name.trim(),
-                    industry: industry,
+                    industry: selectedIndustry,
                     welcomeMessage: formData.welcomeMessage || undefined
                 })
             })
@@ -116,7 +118,7 @@ export function CreateChatbotDialog({ trigger, prefilledData }: CreateChatbotDia
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                {trigger || (
+                {children || trigger || (
                     <Button className="bg-slate-900 hover:bg-slate-800 shadow-sm transition-all hover:scale-105 text-white">
                         <Plus className="mr-2 h-4 w-4" />
                         {t('createNew')}

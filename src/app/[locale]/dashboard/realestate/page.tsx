@@ -39,6 +39,9 @@ import { CreateChatbotDialog } from '@/components/chatbot/CreateChatbotDialog'
 import { PropertyImportSection } from '@/components/realestate/PropertyImportSection'
 import { PropertyValuationWidget } from '@/components/realestate/PropertyValuationWidget'
 
+// Force dynamic rendering to prevent build-time DB connection errors
+export const dynamic = 'force-dynamic'
+
 // Translations
 const realEstateTranslations = {
     tr: {
@@ -401,13 +404,11 @@ export default async function RealEstateDashboard({
         }
     })
 
-    // Query REAL appointments from database
-    const appointments = await prisma.appointment.findMany({
+    // Query REAL appointments from database (Stored in Lead table)
+    const scheduledAppointments = await prisma.lead.count({
         where: {
-            chatbotId: { in: chatbotIds }
-        },
-        select: {
-            id: true
+            chatbotId: { in: chatbotIds },
+            appointmentDate: { not: null }
         }
     })
 
@@ -417,15 +418,15 @@ export default async function RealEstateDashboard({
     const coldLeads = leads.filter(l => l.category === 'cold' || !l.category).length
     const totalLeads = leads.length
 
-    // Real appointments count
-    const scheduledAppointments = appointments.length
-
     // Property count from database
     const propertyCount = await prisma.property.count({
         where: {
             chatbotId: { in: chatbotIds }
         }
     })
+
+    // Check if there's any lead data to show
+    const hasData = totalLeads > 0
 
     return (
         <div className="min-h-screen bg-background">
