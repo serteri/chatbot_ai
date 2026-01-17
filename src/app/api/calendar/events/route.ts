@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
-import { google } from 'googleapis'
+import { google, calendar_v3 } from 'googleapis'
 import { sendAppointmentConfirmation } from '@/lib/sms/notifications'
 import { sendAppointmentEmailToAgent, sendAppointmentEmailToCustomer } from '@/lib/email/notifications'
 
@@ -244,5 +244,173 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         console.error('Error creating calendar event:', error)
         return NextResponse.json({ error: 'Failed to create appointment' }, { status: 500 })
+    }
+}
+
+// GET - Fetch appointments from Google Calendar and sync with database
+export async function GET(request: NextRequest) {
+    try {
+        const { searchParams } = new URL(request.url)
+        const identifier = searchParams.get('identifier')
+        const sync = searchParams.get('sync') === 'true'
+
+        if (!identifier) {
+            return NextResponse.json({ error: 'Missing identifier' }, { status: 400 })
+        }
+
+        // Find chatbot
+        const chatbot = await prisma.chatbot.findUnique({
+            where: { identifier },
+            select: {
+                id: true,
+                userId: true,
+                calendarConnected: true,
+                googleCalendarId: true
+            }
+        })
+
+        if (!chatbot) {
+            return NextResponse.json({ error: 'Chatbot not found' }, { status: 404 })
+        }
+
+        // Get appointments from database
+        const dbAppointments = await prisma.lead.findMany({
+            where: {
+                chatbotId: chatbot.id,
+                appointmentDate: { not: null }
+            },
+            select: {
+                id: true,
+                name: true,
+                phone: true,
+                email: true,
+                appointmentDate: true,
+                appointmentTime: true,
+                appointmentNote: true,
+                status: true
+            },
+            orderBy: { appointmentDate: 'asc' }
+        })
+
+        // If calendar is connected and sync is requested, fetch from Google Calendar
+        if (chatbot.calendarConnected && chatbot.googleCalendarId && sync) {
+            const oauth2Client = await getAuthenticatedClient(chatbot.userId)
+
+            if (oauth2Client) {
+                try {
+                    const calendar = google.calendar({ version: 'v3', auth: oauth2Client })
+
+                    // Fetch events from the last 30 days to 30 days in future
+                    const now = new Date()
+                    const timeMin = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+                    const timeMax = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+                    const response = await calendar.events.list({
+                        calendarId: chatbot.googleCalendarId,
+                        timeMin: timeMin.toISOString(),
+                        timeMax: timeMax.toISOString(),
+                        singleEvents: true,
+                        orderBy: 'startTime',
+                        maxResults: 100
+                    })
+
+                    const googleEvents = response.data.items || []
+
+                    // Build a map of Google event IDs that are still active (not cancelled)
+                    const activeGoogleEventIds = new Set<string>()
+                    const cancelledEventIds = new Set<string>()
+
+                    googleEvents.forEach((event: calendar_v3.Schema$Event) => {
+                        if (event.id) {
+                            if (event.status === 'cancelled') {
+                                cancelledEventIds.add(event.id)
+                            } else {
+                                activeGoogleEventIds.add(event.id)
+                            }
+                        }
+                    })
+
+                    // Sync: Clear appointments that no longer exist in Google Calendar
+                    // Check each DB appointment - if it was supposed to be in this time range but isn't in Google, mark as cancelled
+                    for (const dbAppt of dbAppointments) {
+                        if (dbAppt.appointmentDate) {
+                            const apptDate = new Date(dbAppt.appointmentDate)
+
+                            // Only check appointments within our sync time range
+                            if (apptDate >= timeMin && apptDate <= timeMax) {
+                                // Check if there's a matching event in Google Calendar
+                                const hasMatchingEvent = googleEvents.some((event: calendar_v3.Schema$Event) => {
+                                    if (!event.start?.dateTime) return false
+                                    const eventDate = new Date(event.start.dateTime)
+                                    // Match by date and time (within 1 hour tolerance)
+                                    const timeDiff = Math.abs(eventDate.getTime() - apptDate.getTime())
+                                    return timeDiff < 60 * 60 * 1000 && event.status !== 'cancelled'
+                                })
+
+                                // If no matching event found, this appointment was cancelled in Google Calendar
+                                if (!hasMatchingEvent) {
+                                    await prisma.lead.update({
+                                        where: { id: dbAppt.id },
+                                        data: {
+                                            appointmentDate: null,
+                                            appointmentTime: null,
+                                            status: 'appointment-cancelled',
+                                            appointmentNote: `${dbAppt.appointmentNote || ''} [Cancelled from Google Calendar]`
+                                        }
+                                    })
+                                    console.log(`📅 Appointment cancelled for lead ${dbAppt.id} - not found in Google Calendar`)
+                                }
+                            }
+                        }
+                    }
+
+                    // Return synced appointments (refresh from database)
+                    const syncedAppointments = await prisma.lead.findMany({
+                        where: {
+                            chatbotId: chatbot.id,
+                            appointmentDate: { not: null }
+                        },
+                        select: {
+                            id: true,
+                            name: true,
+                            phone: true,
+                            email: true,
+                            appointmentDate: true,
+                            appointmentTime: true,
+                            appointmentNote: true,
+                            status: true
+                        },
+                        orderBy: { appointmentDate: 'asc' }
+                    })
+
+                    return NextResponse.json({
+                        appointments: syncedAppointments,
+                        synced: true,
+                        googleEventsCount: googleEvents.filter((e: calendar_v3.Schema$Event) => e.status !== 'cancelled').length,
+                        message: 'Appointments synced with Google Calendar'
+                    })
+
+                } catch (calendarError) {
+                    console.error('Failed to fetch Google Calendar events:', calendarError)
+                    // Return database appointments without sync
+                    return NextResponse.json({
+                        appointments: dbAppointments,
+                        synced: false,
+                        error: 'Failed to sync with Google Calendar'
+                    })
+                }
+            }
+        }
+
+        // Return database appointments without sync
+        return NextResponse.json({
+            appointments: dbAppointments,
+            synced: false,
+            count: dbAppointments.length
+        })
+
+    } catch (error) {
+        console.error('Error fetching calendar events:', error)
+        return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 })
     }
 }

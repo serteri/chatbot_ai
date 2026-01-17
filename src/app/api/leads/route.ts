@@ -122,7 +122,18 @@ export async function POST(request: NextRequest) {
         })
 
         if (existingLead) {
-            // Update existing lead if new data is better
+            // Update existing lead and recalculate score/category with combined data
+            const combinedData = {
+                ...existingLead,
+                ...validatedData,
+                // Keep the better values
+                budgetMax: Math.max(validatedData.budgetMax || 0, existingLead.budgetMax || 0) || undefined,
+                hasPreApproval: validatedData.hasPreApproval ?? existingLead.hasPreApproval
+            }
+            const recalculated = calculateLeadScore(combinedData)
+            const finalScore = Math.max(recalculated.score, existingLead.score)
+            const finalCategory = recalculated.score >= existingLead.score ? recalculated.category : existingLead.category
+
             const updatedLead = await prisma.lead.update({
                 where: { id: existingLead.id },
                 data: {
@@ -136,12 +147,32 @@ export async function POST(request: NextRequest) {
                     location: validatedData.location || existingLead.location,
                     timeline: validatedData.timeline || existingLead.timeline,
                     hasPreApproval: validatedData.hasPreApproval ?? existingLead.hasPreApproval,
-                    score: Math.max(score, existingLead.score),
-                    category: score >= existingLead.score ? category : existingLead.category,
+                    score: finalScore,
+                    category: finalCategory,
                     notes: validatedData.notes ? `${existingLead.notes || ''}\n${validatedData.notes}` : existingLead.notes,
                     updatedAt: new Date()
                 }
             })
+
+            // Send email notification for updated leads with new/better info
+            if (score > existingLead.score || validatedData.email || validatedData.name !== existingLead.name) {
+                sendLeadNotificationToAgent({
+                    leadId: updatedLead.id,
+                    chatbotId,
+                    name: updatedLead.name,
+                    phone: updatedLead.phone,
+                    email: updatedLead.email || undefined,
+                    intent: updatedLead.intent || undefined,
+                    propertyType: updatedLead.propertyType || undefined,
+                    budget: updatedLead.budget || undefined,
+                    timeline: updatedLead.timeline || undefined,
+                    hasPreApproval: updatedLead.hasPreApproval || undefined,
+                    score: finalScore,
+                    category: finalCategory as 'hot' | 'warm' | 'cold',
+                    location: updatedLead.location || undefined,
+                    requirements: updatedLead.requirements as any || undefined
+                }).catch(err => console.error('Failed to send updated lead email notification:', err))
+            }
 
             return NextResponse.json({
                 lead: updatedLead,

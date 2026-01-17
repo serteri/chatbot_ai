@@ -1425,6 +1425,9 @@ export function RealEstateWidget({
                                                 )
                                                 setCurrentStep('mortgage-offer')
                                             }
+                                        } else if (currentStep === 'mortgage-offer') {
+                                            addUserMessage(reply)
+                                            const wantsMortgage = reply.includes('Evet') || reply.includes('Yes')
                                             if (wantsMortgage) {
                                                 // Ask for country first
                                                 addBotMessage(

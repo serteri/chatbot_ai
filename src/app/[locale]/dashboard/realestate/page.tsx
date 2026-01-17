@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth/auth'
 import { redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { prisma } from '@/lib/db/prisma'
+import { google, calendar_v3 } from 'googleapis'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -404,7 +405,88 @@ export default async function RealEstateDashboard({
         }
     })
 
-    // Query REAL appointments from database (Stored in Lead table)
+    // Sync appointments with Google Calendar for each connected chatbot
+    for (const bot of realestateChatbots) {
+        if (bot.calendarConnected && bot.googleCalendarId) {
+            try {
+                // Get OAuth tokens
+                const account = await prisma.account.findFirst({
+                    where: {
+                        userId: session.user.id,
+                        provider: 'google-calendar'
+                    }
+                })
+
+                if (account?.access_token) {
+                    const oauth2Client = new google.auth.OAuth2(
+                        process.env.GOOGLE_CLIENT_ID,
+                        process.env.GOOGLE_CLIENT_SECRET
+                    )
+                    oauth2Client.setCredentials({
+                        access_token: account.access_token,
+                        refresh_token: account.refresh_token,
+                        expiry_date: account.expires_at ? account.expires_at * 1000 : undefined
+                    })
+
+                    const calendar = google.calendar({ version: 'v3', auth: oauth2Client })
+                    const now = new Date()
+                    const timeMin = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+                    const timeMax = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+                    const response = await calendar.events.list({
+                        calendarId: bot.googleCalendarId,
+                        timeMin: timeMin.toISOString(),
+                        timeMax: timeMax.toISOString(),
+                        singleEvents: true,
+                        orderBy: 'startTime',
+                        maxResults: 100
+                    })
+
+                    const googleEvents = response.data.items || []
+
+                    // Get appointments for this chatbot
+                    const dbAppointments = await prisma.lead.findMany({
+                        where: {
+                            chatbotId: bot.id,
+                            appointmentDate: { not: null }
+                        },
+                        select: { id: true, appointmentDate: true, appointmentNote: true }
+                    })
+
+                    // Sync: Mark appointments as cancelled if not in Google Calendar
+                    for (const dbAppt of dbAppointments) {
+                        if (dbAppt.appointmentDate) {
+                            const apptDate = new Date(dbAppt.appointmentDate)
+                            if (apptDate >= timeMin && apptDate <= timeMax) {
+                                const hasMatchingEvent = googleEvents.some((event: calendar_v3.Schema$Event) => {
+                                    if (!event.start?.dateTime) return false
+                                    const eventDate = new Date(event.start.dateTime)
+                                    const timeDiff = Math.abs(eventDate.getTime() - apptDate.getTime())
+                                    return timeDiff < 60 * 60 * 1000 && event.status !== 'cancelled'
+                                })
+
+                                if (!hasMatchingEvent) {
+                                    await prisma.lead.update({
+                                        where: { id: dbAppt.id },
+                                        data: {
+                                            appointmentDate: null,
+                                            appointmentTime: null,
+                                            status: 'appointment-cancelled',
+                                            appointmentNote: `${dbAppt.appointmentNote || ''} [Cancelled]`
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (syncError) {
+                console.error('Calendar sync error for bot', bot.id, syncError)
+            }
+        }
+    }
+
+    // Query REAL appointments from database (Stored in Lead table) - after sync
     const scheduledAppointments = await prisma.lead.count({
         where: {
             chatbotId: { in: chatbotIds },
@@ -566,23 +648,25 @@ export default async function RealEstateDashboard({
                     </Card>
 
                     {/* Appointment Scheduling */}
-                    <Card className="border-green-100 shadow-sm hover:shadow-md transition-shadow">
-                        <CardHeader className="pb-2">
-                            <div className="flex items-center space-x-2">
-                                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <Calendar className="h-4 w-4 text-green-600" />
+                    <Link href={`/${locale}/dashboard/realestate/appointments`}>
+                        <Card className="border-green-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                            <CardHeader className="pb-2">
+                                <div className="flex items-center space-x-2">
+                                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <Calendar className="h-4 w-4 text-green-600" />
+                                    </div>
+                                    <CardTitle className="text-green-900 text-base">{rt.features.appointmentScheduling}</CardTitle>
                                 </div>
-                                <CardTitle className="text-green-900 text-base">{rt.features.appointmentScheduling}</CardTitle>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-slate-800 mb-1">{scheduledAppointments}</div>
-                            <p className="text-xs text-muted-foreground mb-3">{rt.appointmentSchedulingDesc}</p>
-                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                                Google Calendar
-                            </Badge>
-                        </CardContent>
-                    </Card>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold text-slate-800 mb-1">{scheduledAppointments}</div>
+                                <p className="text-xs text-muted-foreground mb-3">{rt.appointmentSchedulingDesc}</p>
+                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                    Google Calendar
+                                </Badge>
+                            </CardContent>
+                        </Card>
+                    </Link>
 
                     {/* Tenant Support */}
                     <Card className="border-purple-100 shadow-sm hover:shadow-md transition-shadow">
