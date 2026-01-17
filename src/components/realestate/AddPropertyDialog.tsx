@@ -66,6 +66,7 @@ const translations = {
         success: 'İlan başarıyla eklendi!',
         updated: 'İlan güncellendi!',
         error: 'İlan alınamadı. URL\'yi kontrol edin.',
+        magicButtonHint: 'Otomatik çekme başarısız (Site koruması). Lütfen "Sihirli Buton"u kullanarak ekleyin.',
         unsupported: 'Desteklenmeyen site. Sadece realestate.com.au ve domain.com.au desteklenir.',
         supportedSites: 'Desteklenen Siteler',
         bedrooms: 'Yatak Odası',
@@ -86,6 +87,7 @@ const translations = {
         success: 'Property added successfully!',
         updated: 'Property updated!',
         error: 'Could not fetch property. Check the URL.',
+        magicButtonHint: 'Auto-fetch failed (Site protection). Please use the "Magic Button" to add this property.',
         unsupported: 'Unsupported site. Only realestate.com.au and domain.com.au are supported.',
         supportedSites: 'Supported Sites',
         bedrooms: 'Bedrooms',
@@ -127,12 +129,13 @@ export function AddPropertyDialog({ chatbotId, locale = 'en', trigger, onPropert
             const data = await response.json()
 
             if (!response.ok) {
-                throw new Error(data.error || t.error)
+                // If scraping fails, suggest Magic Button
+                throw new Error(t.magicButtonHint)
             }
 
             setPreview(data.preview)
         } catch (err: any) {
-            setError(err.message || t.error)
+            setError(err.message || t.magicButtonHint)
         } finally {
             setPreviewing(false)
         }
@@ -279,8 +282,8 @@ export function AddPropertyDialog({ chatbotId, locale = 'en', trigger, onPropert
                                     />
                                     <Badge
                                         className={`absolute top-2 right-2 ${preview.listingType === 'rent'
-                                                ? 'bg-purple-600'
-                                                : 'bg-green-600'
+                                            ? 'bg-purple-600'
+                                            : 'bg-green-600'
                                             }`}
                                     >
                                         {preview.listingType === 'rent' ? t.rent : t.sale}
