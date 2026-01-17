@@ -19,7 +19,9 @@
       "WebFetch(domain:medium.com)",
       "WebFetch(domain:proptechdata.com.au)",
       "Bash(npx prisma db push:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git diff:*)"
     ]
   }
 }
