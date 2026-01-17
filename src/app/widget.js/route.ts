@@ -9,6 +9,8 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const chatbotId = searchParams.get('id');
 
+        console.log('🔍 Widget.js request for ID:', chatbotId);
+
         if (!chatbotId) {
             return new NextResponse('console.warn("No chatbot ID provided");', {
                 headers: { 'Content-Type': 'application/javascript' }
@@ -16,6 +18,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Find chatbot by ID or identifier
+        console.log('🔍 Looking up chatbot with ID or identifier:', chatbotId);
         const chatbot = await prisma.chatbot.findFirst({
             where: {
                 OR: [
@@ -26,24 +29,29 @@ export async function GET(request: NextRequest) {
             select: {
                 id: true,
                 isActive: true,
-                widgetPosition: true
+                widgetPosition: true,
+                name: true
             }
         });
 
+        console.log('🔍 Chatbot lookup result:', chatbot ? { id: chatbot.id, name: chatbot.name, isActive: chatbot.isActive } : 'NOT FOUND');
+
         if (!chatbot) {
-            console.log('Widget.js: Chatbot not found for ID:', chatbotId);
-            return new NextResponse('console.warn("Chatbot not found");', {
+            console.log('❌ Widget.js: Chatbot not found for ID:', chatbotId);
+            return new NextResponse(`console.warn("Chatbot not found: ${chatbotId}");`, {
                 headers: { 'Content-Type': 'application/javascript' }
             });
         }
 
         // Allow if isActive is true or null/undefined (default to active)
         if (chatbot.isActive === false) {
-            console.log('Widget.js: Chatbot is inactive:', chatbotId);
+            console.log('❌ Widget.js: Chatbot is inactive:', chatbotId);
             return new NextResponse('console.warn("Chatbot is inactive");', {
                 headers: { 'Content-Type': 'application/javascript' }
             });
         }
+
+        console.log('✅ Widget.js: Chatbot found and active:', chatbot.name);
 
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
         const position = chatbot.widgetPosition || 'bottom-right';
@@ -172,7 +180,7 @@ export async function GET(request: NextRequest) {
         return new NextResponse(scriptContent, {
             headers: {
                 'Content-Type': 'application/javascript',
-                'Cache-Control': 'public, max-age=3600',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
                 'Access-Control-Allow-Origin': '*',
             },
         });
