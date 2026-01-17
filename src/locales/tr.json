@@ -1153,6 +1153,10 @@
       "medium": "Orta",
       "low": "Düşük"
     },
+    "online": "Çevrimiçi",
+    "sources": "Kaynaklar:",
+    "aiPowered": "AI destekli asistan",
+    "realEstateAssistant": "Emlak Danışmanı",
     "errors": {
       "noId": "Hata: Chatbot ID gerekli.",
       "generic": "Bir hata oluştu. Lütfen tekrar deneyin."

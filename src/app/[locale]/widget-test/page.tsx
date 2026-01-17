@@ -25,6 +25,7 @@ export default function WidgetTestPage() {
     const [chatbotId, setChatbotId] = useState('')
     const [mode, setMode] = useState<ChatbotMode>('general')
     const [chatKey, setChatKey] = useState(0)
+    const [showRealEstateWidget, setShowRealEstateWidget] = useState(false)
 
     // URL'den ID ve Mode'u yakala
     useEffect(() => {
@@ -176,6 +177,7 @@ export default function WidgetTestPage() {
                                             key={chatKey} // ID/Refresh durumunda sıfırlar
                                             chatbotId={chatbotId}
                                             mode={mode}
+                                            onRealEstateClick={mode === 'realestate' ? () => setShowRealEstateWidget(true) : undefined}
                                         />
                                     ) : (
                                         <div className="p-16 bg-gray-100 rounded text-center text-gray-500">
@@ -212,17 +214,17 @@ export default function WidgetTestPage() {
             </div>
 
             {/* Floating WhatsApp-style Widget based on mode */}
-            {chatbotId && mode === 'realestate' && (
+            {chatbotId && mode === 'realestate' && showRealEstateWidget && (
                 <RealEstateWidget
-                    locale={locale as 'tr' | 'en'}
+                    locale={locale}
                     chatbotIdentifier={chatbotId}
                 />
             )}
             {chatbotId && (mode === 'education' || mode === 'university') && (
-                <EducationWidget locale={locale as 'tr' | 'en'} chatbotId={chatbotId} />
+                <EducationWidget locale={locale} chatbotId={chatbotId} />
             )}
             {chatbotId && mode === 'ecommerce' && (
-                <EcommerceWidget locale={locale as 'tr' | 'en'} chatbotId={chatbotId} />
+                <EcommerceWidget locale={locale} chatbotId={chatbotId} />
             )}
         </div>
     )

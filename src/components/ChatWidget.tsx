@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Send, Bot, User, FileText, Zap, BookOpen, AlertCircle, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react'
+import { Send, Bot, User, FileText, Zap, BookOpen, AlertCircle, RefreshCw, ChevronDown, ChevronUp, Building2 } from 'lucide-react'
 
 interface Message {
     id: string
@@ -25,6 +25,7 @@ interface ChatWidgetProps {
     chatbotId: string
     onClose?: () => void
     mode?: string
+    onRealEstateClick?: () => void // Callback to open RealEstateWidget
     // Customization Props for Live Preview
     customization?: {
         primaryColor?: string
@@ -37,7 +38,7 @@ interface ChatWidgetProps {
     }
 }
 
-export default function ChatWidget({ chatbotId, onClose, mode = 'document', customization }: ChatWidgetProps) {
+export default function ChatWidget({ chatbotId, onClose, mode = 'document', onRealEstateClick, customization }: ChatWidgetProps) {
     const t = useTranslations('ChatWidget')
     const [messages, setMessages] = useState<Message[]>([])
     const [inputValue, setInputValue] = useState('')
@@ -216,11 +217,25 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document', cust
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400"></span>
                             </span>
-                            <span className="text-xs font-medium" style={{ color: textColor }}>Çevrimiçi</span>
+                            <span className="text-xs font-medium" style={{ color: textColor }}>{t('online')}</span>
                         </div>
                     </div>
                 </div>
                 <div className="flex items-center gap-1">
+                    {/* Real Estate Button - only show when callback is provided */}
+                    {onRealEstateClick && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={onRealEstateClick}
+                            className="hover:bg-white/10 h-8 w-8"
+                            style={{ color: textColor }}
+                            title={t('realEstateAssistant')}
+                        >
+                            <Building2 className="h-4 w-4" />
+                        </Button>
+                    )}
+
                     {/* Debug Toggle */}
                     <Button
                         variant="ghost"
@@ -312,7 +327,7 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document', cust
                                     <div className="mt-2 pl-1 w-full">
                                         <p className="text-[10px] font-medium text-slate-500 mb-1.5 flex items-center gap-1">
                                             <FileText className="h-3 w-3" />
-                                            Kaynaklar:
+                                            {t('sources')}
                                         </p>
                                         <div className="flex flex-wrap gap-1.5">
                                             {message.sources.map((source, index) => (
@@ -391,7 +406,7 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document', cust
                     {!customization?.hideBranding && (
                         <div className="mt-2 text-center">
                             <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
-                                AI destekli asistan · Powered by
+                                {t('aiPowered')} · Powered by
                                 <span style={{ color: primaryColor, fontWeight: 600 }}>PylonChat</span>
                             </div>
                         </div>

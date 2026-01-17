@@ -1142,6 +1142,10 @@
       "medium": "Medium",
       "low": "Low"
     },
+    "online": "Online",
+    "sources": "Sources:",
+    "aiPowered": "AI-powered assistant",
+    "realEstateAssistant": "Real Estate Assistant",
     "errors": {
       "noId": "Error: Chatbot ID required.",
       "generic": "An error occurred. Please try again."

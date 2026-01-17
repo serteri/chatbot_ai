@@ -1118,6 +1118,10 @@
       "medium": "Mittel",
       "low": "Niedrig"
     },
+    "online": "Online",
+    "sources": "Quellen:",
+    "aiPowered": "KI-gestützter Assistent",
+    "realEstateAssistant": "Immobilienberater",
     "errors": {
       "noId": "Fehler: Chatbot ID erforderlich.",
       "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."

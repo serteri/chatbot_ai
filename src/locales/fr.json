@@ -1106,6 +1106,10 @@
       "medium": "Moyenne",
       "low": "Faible"
     },
+    "online": "En ligne",
+    "sources": "Sources :",
+    "aiPowered": "Assistant propulsé par IA",
+    "realEstateAssistant": "Assistant Immobilier",
     "errors": {
       "noId": "Erreur : ID du Chatbot requis.",
       "generic": "Une erreur s'est produite. Veuillez réessayer."
