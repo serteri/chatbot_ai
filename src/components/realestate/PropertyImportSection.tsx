@@ -165,26 +165,53 @@ export function PropertyImportSection({ locale, chatbots, translations: rt }: Pr
                                 </Button>
                             </div>
 
-                            {/* API Integration - Coming Soon */}
-                            <div className="p-4 border rounded-lg opacity-60">
+                            {/* Bookmarklet - Magic Buutton */}
+                            <div className="p-4 border rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-colors">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                        <Link2 className="h-5 w-5 text-purple-600" />
+                                        <TrendingUp className="h-5 w-5 text-purple-600" />
                                     </div>
                                     <div>
                                         <h4 className="font-semibold flex items-center gap-2">
-                                            {rt.importOptions.api}
-                                            <Badge variant="secondary" className="text-xs">
-                                                <Clock className="h-3 w-3 mr-1" />
-                                                {lt.soon}
+                                            {locale === 'tr' ? 'Sihirli Buton' : 'Magic Button'}
+                                            <Badge variant="default" className="text-xs bg-purple-600 hover:bg-purple-700">
+                                                {locale === 'tr' ? 'Yeni' : 'New'}
                                             </Badge>
                                         </h4>
-                                        <p className="text-xs text-muted-foreground">{rt.importOptions.apiDesc}</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {locale === 'tr'
+                                                ? 'Tarayıcınıza ekleyin, ilanı tek tıkla kaydedin'
+                                                : 'Add to browser, save listing with one click'}
+                                        </p>
                                     </div>
                                 </div>
-                                <Button variant="outline" className="w-full" disabled>
+                                <Button
+                                    className="w-full bg-purple-600 hover:bg-purple-700 text-white cursor-move"
+                                    draggable
+                                    onDragStart={(e) => {
+                                        // Bookmarklet code
+                                        const code = `javascript:(function(){
+                                            const chatbotId = '${selectedChatbotId}';
+                                            const apiEndpoint = '${window.location.origin}/api/properties/create-from-bookmarklet';
+                                            
+                                            const script = document.createElement('script');
+                                            script.src = '${window.location.origin}/bookmarklet-script.js?t=' + Date.now();
+                                            script.dataset.chatbotId = chatbotId;
+                                            script.dataset.apiEndpoint = apiEndpoint;
+                                            document.body.appendChild(script);
+                                        })();`
+                                        e.dataTransfer.setData('text/plain', code);
+                                        e.dataTransfer.setData('application/x-bookmark', code);
+                                    }}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        alert(locale === 'tr'
+                                            ? 'Bu butonu tarayıcınızın yer imleri çubuğuna SÜRÜKLEYİN. Sonra ilan sayfasındayken tıklayın.'
+                                            : 'DRAG this button to your bookmarks bar. Then click it when you are on a listing page.');
+                                    }}
+                                >
                                     <Link2 className="mr-2 h-4 w-4" />
-                                    {lt.connect}
+                                    {locale === 'tr' ? 'İlan Kaydedici (Sürükle)' : 'Listing Saver (Drag Me)'}
                                 </Button>
                             </div>
                         </div>
