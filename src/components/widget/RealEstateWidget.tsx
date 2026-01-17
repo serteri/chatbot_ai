@@ -1120,6 +1120,22 @@ export function RealEstateWidget({
         return parseInt(cleaned) || 0
     }
 
+    const handleMortgageCountrySelect = (reply: string) => {
+        addUserMessage(reply)
+        let country = 'tr'
+        if (reply.includes('Australia') || reply.includes('Avustralya')) country = 'au'
+        else if (reply.includes('USA') || reply.includes('ABD')) country = 'us'
+        else if (reply.includes('UK') || reply.includes('İngiltere')) country = 'uk'
+
+        setLeadData(prev => ({ ...prev, mortgageCountry: country }))
+
+        // Now ask for income
+        setCurrentStep('income')
+        setTimeout(() => {
+            addBotMessage(`${t.leadQualification.income}\n\n💵 ${t.leadQualification.incomeNote}`)
+        }, 300)
+    }
+
     const handleIncomeInput = async (text: string) => {
         await addUserMessage(text)
         if (limitReached) return
@@ -1182,9 +1198,15 @@ export function RealEstateWidget({
             }, 500)
         } else {
             const maxMonthlyPayment = netIncome * 0.5 // More aggressive than 0.35 for MVP
-            const isTr = locale === 'tr'
-            const monthlyRate = isTr ? 0.025 : 0.005
-            const months = 120
+
+            // Interest rates based on selected country
+            let monthlyRate = 0.005 // Default ~6% yearly
+            if (leadData.mortgageCountry === 'tr') monthlyRate = 0.025 // ~30% yearly
+            else if (leadData.mortgageCountry === 'au') monthlyRate = 0.005 // ~6% yearly
+            else if (leadData.mortgageCountry === 'us') monthlyRate = 0.0058 // ~7% yearly
+            else if (leadData.mortgageCountry === 'uk') monthlyRate = 0.0045 // ~5.4% yearly
+
+            const months = 360 // 30 years standard
 
             const maxLoan = maxMonthlyPayment * (Math.pow(1 + monthlyRate, months) - 1) / (monthlyRate * Math.pow(1 + monthlyRate, months))
 
@@ -1215,14 +1237,15 @@ export function RealEstateWidget({
         await addUserMessage(response)
         if (response === t.yesNo.yes) {
             // User accepts calculated budget or just proceeds
-            // If they accept, we might want to update budgetMax if reasonable
             if (leadData.calculatedMaxBudget) {
                 setLeadData(prev => ({ ...prev, budgetMax: leadData.calculatedMaxBudget }))
             }
         }
-        // Mortgage calculation is complete - show thank you
-        addBotMessage(t.thankYou)
-        setCurrentStep('complete')
+        // FORCE FLOW TO COMPLETE - NO LOOPING BACK
+        setTimeout(() => {
+            addBotMessage(t.thankYou)
+            setCurrentStep('complete')
+        }, 500)
     }
 
     const handleSend = () => {
@@ -1402,17 +1425,22 @@ export function RealEstateWidget({
                                                 )
                                                 setCurrentStep('mortgage-offer')
                                             }
-                                        } else if (currentStep === 'mortgage-offer') {
-                                            addUserMessage(reply)
-                                            const wantsMortgage = reply.includes('Evet') || reply.includes('Yes')
                                             if (wantsMortgage) {
-                                                // Start mortgage calculator flow
-                                                addBotMessage(`${t.leadQualification.income}\n\n💵 ${t.leadQualification.incomeNote}`)
-                                                setCurrentStep('income')
+                                                // Ask for country first
+                                                addBotMessage(
+                                                    locale === 'tr'
+                                                        ? 'Hangi ülke/bölge için hesaplama yapalım?'
+                                                        : 'Which country/region should we use for calculation?',
+                                                    'quick-replies',
+                                                    { replies: ['Türkiye (TR)', 'Australia (AU)', 'USA', 'UK'] }
+                                                )
+                                                setCurrentStep('mortgageCountry')
                                             } else {
                                                 addBotMessage(t.thankYou)
                                                 setCurrentStep('complete')
                                             }
+                                        } else if (currentStep === 'mortgageCountry') {
+                                            handleMortgageCountrySelect(reply)
                                         }
                                     }}
                                     className="px-3 py-1.5 text-sm rounded-full border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-700 transition-colors"
