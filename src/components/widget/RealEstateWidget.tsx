@@ -1301,8 +1301,32 @@ export function RealEstateWidget({
                     }} />
                 }
                 if (message.data?.type === 'email-only') {
-                    return <EmailOnlyForm locale={locale} onSubmit={(email) => {
+                    return <EmailOnlyForm locale={locale} onSubmit={async (email) => {
                         addUserMessage(email)
+
+                        // Save lead with email to database and notify realtor
+                        try {
+                            const response = await fetch('/api/leads', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    identifier: chatbotIdentifier,
+                                    name: leadData.contactName || 'Araştırma yapan müşteri',
+                                    phone: leadData.contactPhone || '',
+                                    email: email,
+                                    intent: leadData.intent || 'research',
+                                    propertyType: leadData.preferences?.propertyType,
+                                    budget: leadData.preferences?.budget,
+                                    timeline: leadData.preferences?.timeline,
+                                    notes: 'Piyasa raporları istedi',
+                                    source: 'email-reports'
+                                })
+                            })
+                            console.log('Lead saved for email reports:', response.ok)
+                        } catch (err) {
+                            console.error('Failed to save email lead:', err)
+                        }
+
                         addBotMessage(
                             locale === 'tr'
                                 ? `Teşekkürler! Piyasa raporlarını ${email} adresine göndereceğiz.\n\nAraştırma sürecinizde sorularınız olursa bize yazın!`
