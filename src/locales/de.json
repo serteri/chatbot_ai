@@ -502,6 +502,86 @@
     "uploadButton": "Datei hochladen",
     "cancelButton": "Abbrechen"
   },
+  "properties": {
+    "title": "Immobilienverwaltung",
+    "subtitle": "Fügen Sie Ihre Immobilienangebote hinzu und verwalten Sie sie",
+    "back": "Immobilien Dashboard",
+    "addProperty": "Immobilie hinzufügen",
+    "importXml": "XML importieren",
+    "noProperties": "Noch keine Immobilien",
+    "noPropertiesDesc": "Beginnen Sie mit dem Hinzufügen Ihrer ersten Immobilie",
+    "search": "Immobilien suchen...",
+    "filter": "Filtern",
+    "allTypes": "Alle Typen",
+    "allStatus": "Alle Status",
+    "form": {
+      "title": "Immobilientitel",
+      "description": "Beschreibung",
+      "propertyType": "Immobilientyp",
+      "listingType": "Angebotstyp",
+      "price": "Preis",
+      "currency": "Währung",
+      "city": "Stadt",
+      "district": "Bezirk",
+      "address": "Adresse",
+      "rooms": "Zimmer",
+      "area": "Fläche (m²)",
+      "floor": "Etage",
+      "totalFloors": "Gesamtetagen",
+      "buildingAge": "Baujahr",
+      "images": "Bild-URLs (eine pro Zeile)",
+      "features": "Merkmale",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "saving": "Speichern..."
+    },
+    "propertyTypes": {
+      "apartment": "Wohnung",
+      "villa": "Villa",
+      "house": "Haus",
+      "land": "Grundstück",
+      "commercial": "Gewerbe"
+    },
+    "listingTypes": {
+      "sale": "Verkauf",
+      "rent": "Miete"
+    },
+    "status": {
+      "active": "Aktiv",
+      "sold": "Verkauft",
+      "rented": "Vermietet",
+      "inactive": "Inaktiv"
+    },
+    "source": {
+      "manual": "Manuell",
+      "xml": "XML",
+      "api": "API"
+    },
+    "xmlImport": {
+      "title": "XML-Import",
+      "description": "Laden Sie XML-Dateien von Immobilienportalen hoch",
+      "selectFormat": "XML-Format",
+      "xmlUrl": "XML-URL",
+      "import": "Importieren",
+      "importing": "Importiert...",
+      "formats": {
+        "generic": "Allgemeines Format",
+        "sahibinden": "Sahibinden",
+        "hepsiemlak": "Hepsiemlak",
+        "emlakjet": "EmlakJet"
+      }
+    },
+    "messages": {
+      "propertyAdded": "Immobilie erfolgreich hinzugefügt",
+      "propertyUpdated": "Immobilie aktualisiert",
+      "propertyDeleted": "Immobilie gelöscht",
+      "importSuccess": "Import abgeschlossen",
+      "error": "Ein Fehler ist aufgetreten"
+    },
+    "noChatbots": "Kein Immobilien-Chatbot gefunden",
+    "noChatbotsDesc": "Sie müssen einen spezialisierten Immobilien-Chatbot erstellen, um Immobilien zu verwalten.",
+    "createChatbot": "Chatbot erstellen"
+  },
   "education": {
     "platformTitle": "Bildungsplattform",
     "platformSubtitle": "KI-gestützte umfassende Bildungsberatung",

@@ -500,6 +500,86 @@
     "uploadButton": "Télécharger le fichier",
     "cancelButton": "Annuler"
   },
+  "properties": {
+    "title": "Gestion Immobilière",
+    "subtitle": "Ajoutez et gérez vos annonces immobilières",
+    "back": "Tableau de bord immobilier",
+    "addProperty": "Ajouter une propriété",
+    "importXml": "Importer XML",
+    "noProperties": "Aucune propriété pour le moment",
+    "noPropertiesDesc": "Commencez par ajouter votre première propriété",
+    "search": "Rechercher des propriétés...",
+    "filter": "Filtrer",
+    "allTypes": "Tous les types",
+    "allStatus": "Tous les statuts",
+    "form": {
+      "title": "Titre",
+      "description": "Description",
+      "propertyType": "Type de propriété",
+      "listingType": "Type d'annonce",
+      "price": "Prix",
+      "currency": "Devise",
+      "city": "Ville",
+      "district": "Quartier",
+      "address": "Adresse",
+      "rooms": "Pièces",
+      "area": "Surface (m²)",
+      "floor": "Étage",
+      "totalFloors": "Total Étages",
+      "buildingAge": "Année de construction",
+      "images": "URL des images (une par ligne)",
+      "features": "Caractéristiques",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "saving": "Enregistrement..."
+    },
+    "propertyTypes": {
+      "apartment": "Appartement",
+      "villa": "Villa",
+      "house": "Maison",
+      "land": "Terrain",
+      "commercial": "Commercial"
+    },
+    "listingTypes": {
+      "sale": "Vente",
+      "rent": "Location"
+    },
+    "status": {
+      "active": "Actif",
+      "sold": "Vendu",
+      "rented": "Loué",
+      "inactive": "Inactif"
+    },
+    "source": {
+      "manual": "Manuel",
+      "xml": "XML",
+      "api": "API"
+    },
+    "xmlImport": {
+      "title": "Import XML",
+      "description": "Téléchargez un fichier XML depuis des portails immobiliers",
+      "selectFormat": "Format XML",
+      "xmlUrl": "URL XML",
+      "import": "Importer",
+      "importing": "Importation...",
+      "formats": {
+        "generic": "Format générique",
+        "sahibinden": "Sahibinden",
+        "hepsiemlak": "Hepsiemlak",
+        "emlakjet": "EmlakJet"
+      }
+    },
+    "messages": {
+      "propertyAdded": "Propriété ajoutée avec succès",
+      "propertyUpdated": "Propriété mise à jour",
+      "propertyDeleted": "Propriété supprimée",
+      "importSuccess": "Importation terminée",
+      "error": "Une erreur s'est produite"
+    },
+    "noChatbots": "Aucun chatbot immobilier trouvé",
+    "noChatbotsDesc": "Vous devez créer un chatbot immobilier spécialisé pour gérer les propriétés.",
+    "createChatbot": "Créer un chatbot"
+  },
   "education": {
     "platformTitle": "Plateforme Éducative",
     "platformSubtitle": "Service de conseil éducatif complet avec support IA",

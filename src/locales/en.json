@@ -518,6 +518,86 @@
     "uploadButton": "Upload File",
     "cancelButton": "Cancel"
   },
+  "properties": {
+    "title": "Property Management",
+    "subtitle": "Add and manage your real estate listings",
+    "back": "Real Estate Dashboard",
+    "addProperty": "Add Property",
+    "importXml": "Import XML",
+    "noProperties": "No properties yet",
+    "noPropertiesDesc": "Start by adding your first property",
+    "search": "Search properties...",
+    "filter": "Filter",
+    "allTypes": "All Types",
+    "allStatus": "All Status",
+    "form": {
+      "title": "Property Title",
+      "description": "Description",
+      "propertyType": "Property Type",
+      "listingType": "Listing Type",
+      "price": "Price",
+      "currency": "Currency",
+      "city": "City",
+      "district": "District",
+      "address": "Address",
+      "rooms": "Rooms",
+      "area": "Area (m²)",
+      "floor": "Floor",
+      "totalFloors": "Total Floors",
+      "buildingAge": "Building Age",
+      "images": "Image URLs (one per line)",
+      "features": "Features",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saving": "Saving..."
+    },
+    "propertyTypes": {
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "house": "House",
+      "land": "Land",
+      "commercial": "Commercial"
+    },
+    "listingTypes": {
+      "sale": "For Sale",
+      "rent": "For Rent"
+    },
+    "status": {
+      "active": "Active",
+      "sold": "Sold",
+      "rented": "Rented",
+      "inactive": "Inactive"
+    },
+    "source": {
+      "manual": "Manual",
+      "xml": "XML",
+      "api": "API"
+    },
+    "xmlImport": {
+      "title": "XML Import",
+      "description": "Upload XML file from Sahibinden, Hepsiemlak or similar sites",
+      "selectFormat": "XML Format",
+      "xmlUrl": "XML URL",
+      "import": "Import",
+      "importing": "Importing...",
+      "formats": {
+        "generic": "Generic Format",
+        "sahibinden": "Sahibinden",
+        "hepsiemlak": "Hepsiemlak",
+        "emlakjet": "EmlakJet"
+      }
+    },
+    "messages": {
+      "propertyAdded": "Property added successfully",
+      "propertyUpdated": "Property updated",
+      "propertyDeleted": "Property deleted",
+      "importSuccess": "Import completed",
+      "error": "An error occurred"
+    },
+    "noChatbots": "No Real Estate Chatbot Found",
+    "noChatbotsDesc": "You need to create a specialized Real Estate chatbot to manage properties.",
+    "createChatbot": "Create Chatbot"
+  },
   "education": {
     "platformTitle": "Education Platform",
     "platformSubtitle": "Comprehensive AI-powered education consulting service",

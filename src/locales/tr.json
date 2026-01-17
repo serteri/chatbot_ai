@@ -867,6 +867,86 @@
     "uploadButton": "Dosya Yükle",
     "cancelButton": "İptal"
   },
+  "properties": {
+    "title": "İlan Yönetimi",
+    "subtitle": "Emlak ilanlarınızı ekleyin ve yönetin",
+    "back": "Emlak Dashboard",
+    "addProperty": "İlan Ekle",
+    "importXml": "XML İçe Aktar",
+    "noProperties": "Henüz ilan yok",
+    "noPropertiesDesc": "İlk ilanınızı ekleyerek başlayın",
+    "search": "İlan ara...",
+    "filter": "Filtrele",
+    "allTypes": "Tüm Tipler",
+    "allStatus": "Tüm Durumlar",
+    "form": {
+      "title": "İlan Başlığı",
+      "description": "Açıklama",
+      "propertyType": "Emlak Tipi",
+      "listingType": "İlan Tipi",
+      "price": "Fiyat",
+      "currency": "Para Birimi",
+      "city": "Şehir",
+      "district": "İlçe",
+      "address": "Adres",
+      "rooms": "Oda Sayısı",
+      "area": "Metrekare (m²)",
+      "floor": "Kat",
+      "totalFloors": "Toplam Kat",
+      "buildingAge": "Bina Yaşı",
+      "images": "Görsel URL'leri (her satıra bir URL)",
+      "features": "Özellikler",
+      "save": "Kaydet",
+      "cancel": "İptal",
+      "saving": "Kaydediliyor..."
+    },
+    "propertyTypes": {
+      "apartment": "Daire",
+      "villa": "Villa",
+      "house": "Müstakil Ev",
+      "land": "Arsa",
+      "commercial": "Ticari"
+    },
+    "listingTypes": {
+      "sale": "Satılık",
+      "rent": "Kiralık"
+    },
+    "status": {
+      "active": "Aktif",
+      "sold": "Satıldı",
+      "rented": "Kiralandı",
+      "inactive": "Pasif"
+    },
+    "source": {
+      "manual": "Manuel",
+      "xml": "XML",
+      "api": "API"
+    },
+    "xmlImport": {
+      "title": "XML İçe Aktarma",
+      "description": "Sahibinden, Hepsiemlak veya benzeri sitelerden XML dosyası yükleyin",
+      "selectFormat": "XML Formatı",
+      "xmlUrl": "XML URL",
+      "import": "İçe Aktar",
+      "importing": "İçe aktarılıyor...",
+      "formats": {
+        "generic": "Genel Format",
+        "sahibinden": "Sahibinden",
+        "hepsiemlak": "Hepsiemlak",
+        "emlakjet": "EmlakJet"
+      }
+    },
+    "messages": {
+      "propertyAdded": "İlan başarıyla eklendi",
+      "propertyUpdated": "İlan güncellendi",
+      "propertyDeleted": "İlan silindi",
+      "importSuccess": "İçe aktarma tamamlandı",
+      "error": "Bir hata oluştu"
+    },
+    "noChatbots": "Emlak Chatbotu Bulunamadı",
+    "noChatbotsDesc": "İlanları yönetmek için özelleştirilmiş bir Emlak chatbotu oluşturmanız gerekiyor.",
+    "createChatbot": "Chatbot Oluştur"
+  },
   "conversations": {
     "title": "Konuşmalar",
     "subtitle": "Tüm chatbot konuşmalarınızı görüntüleyin",
