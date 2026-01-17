@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
 
         return new NextResponse(scriptContent, {
             headers: {
-                'Content-Type': 'application/javascript',
+                'Content-Type': 'application/javascript; charset=utf-8',
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
                 'Access-Control-Allow-Origin': '*',
             },
