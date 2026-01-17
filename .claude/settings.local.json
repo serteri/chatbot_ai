@@ -21,7 +21,9 @@
       "Bash(npx prisma db push:*)",
       "Bash(node -e:*)",
       "Bash(npx tsc:*)",
-      "Bash(git diff:*)"
+      "Bash(git diff:*)",
+      "WebFetch(domain:reaxml.realestate.com.au)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

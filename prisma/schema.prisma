@@ -770,6 +770,9 @@ model Property {
   // Inspection Times (Australia - Open House)
   inspectionTimes   Json?     // Array of { date: string, startTime: string, endTime: string, notes?: string }
   nextInspection    DateTime? // Cached next inspection date for quick queries
+  
+  // Import Metadata
+  rawMetadata       Json?     // Original source data for debugging imports
 
   // Timestamps
   createdAt       DateTime  @default(now())
