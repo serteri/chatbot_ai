@@ -30,8 +30,17 @@ export async function GET(request: NextRequest) {
             }
         });
 
-        if (!chatbot || !chatbot.isActive) {
-            return new NextResponse('console.warn("Chatbot not found or inactive");', {
+        if (!chatbot) {
+            console.log('Widget.js: Chatbot not found for ID:', chatbotId);
+            return new NextResponse('console.warn("Chatbot not found");', {
+                headers: { 'Content-Type': 'application/javascript' }
+            });
+        }
+
+        // Allow if isActive is true or null/undefined (default to active)
+        if (chatbot.isActive === false) {
+            console.log('Widget.js: Chatbot is inactive:', chatbotId);
+            return new NextResponse('console.warn("Chatbot is inactive");', {
                 headers: { 'Content-Type': 'application/javascript' }
             });
         }
