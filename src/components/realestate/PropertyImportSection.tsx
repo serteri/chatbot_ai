@@ -28,55 +28,7 @@ import {
 import Link from 'next/link'
 import { NormalizedProperty } from '@/lib/imports/types'
 import { toast } from 'sonner'
-
-const localTranslations = {
-    tr: {
-        cardDescription: 'İlanlarınızı ekleyin, chatbot müşteri tercihlerine göre otomatik eşleştirme yapsın',
-        createChatbotFirst: 'Önce bir emlak chatbotu oluşturun',
-        manageProperties: 'İlanları Yönet',
-        managePropertiesDesc: 'İlan ekle, düzenle, sil',
-        goToProperties: 'İlan Sayfasına Git',
-        smartImport: 'Akıllı İçe Aktar',
-        smartImportDesc: 'Web sitenizden ilanları otomatik çekin',
-        xmlImport: 'XML / Dosya Yükle',
-        xmlImportDesc: 'REAXML veya JSON dosyası yükleyin',
-        enterUrl: 'Web Sitesi Adresi',
-        enterUrlPlaceholder: 'https://emlak-siteniz.com',
-        detecting: 'İlanlar taranıyor...',
-        reviewImport: 'İçe Aktarmayı İncele',
-        foundProperties: 'Adet İlan Bulundu',
-        importAll: 'Hepsini İçe Aktar',
-        importing: 'İçe aktarılıyor...',
-        successImport: 'İlan başarıyla eklendi!',
-        errorImport: 'Bir hata oluştu.',
-        noPropertiesFound: 'Bu adreste ilan bulunamadı. Lütfen geçerli bir emlak web sitesi veya ilan sayfası girin.',
-        selectFile: 'Dosya Seç',
-        supportedFormats: 'Desteklenen formatlar: .xml, .json'
-    },
-    en: {
-        cardDescription: 'Add your listings, chatbot will automatically match based on customer preferences',
-        createChatbotFirst: 'Create a real estate chatbot first',
-        manageProperties: 'Manage Properties',
-        managePropertiesDesc: 'Add, edit, delete properties',
-        goToProperties: 'Go to Properties',
-        smartImport: 'Smart Import',
-        smartImportDesc: 'Automatically fetch listings from your website',
-        xmlImport: 'Upload XML / File',
-        xmlImportDesc: 'Upload REAXML or JSON file',
-        enterUrl: 'Website URL',
-        enterUrlPlaceholder: 'https://your-realestate-site.com',
-        detecting: 'Scanning for properties...',
-        reviewImport: 'Review Import',
-        foundProperties: 'Properties Found',
-        importAll: 'Import All',
-        importing: 'Importing...',
-        successImport: 'Properties successfully imported!',
-        errorImport: 'An error occurred.',
-        noPropertiesFound: 'No properties found at this URL. Please enter a valid real estate website or listing page.',
-        selectFile: 'Select File',
-        supportedFormats: 'Supported formats: .xml, .json'
-    }
-}
+import { useTranslations } from 'next-intl'
 
 interface PropertyImportSectionProps {
     locale: string
@@ -84,11 +36,11 @@ interface PropertyImportSectionProps {
         id: string
         name: string
     }>
-    translations: any
+    translations: any // Keeping for potential backward compatibility
 }
 
-export function PropertyImportSection({ locale, chatbots, translations: rt }: PropertyImportSectionProps) {
-    const lt = localTranslations[locale as keyof typeof localTranslations] || localTranslations.en
+export function PropertyImportSection({ locale, chatbots }: PropertyImportSectionProps) {
+    const t = useTranslations('propertyImport')
     const hasNoChatbots = chatbots.length === 0
     const [isOpen, setIsOpen] = useState(false)
     const [mode, setMode] = useState<'url' | 'file'>('url')
@@ -118,11 +70,11 @@ export function PropertyImportSection({ locale, chatbots, translations: rt }: Pr
                 setDetectedProperties(data.properties)
                 setImportStatus('review')
             } else {
-                toast.error(lt.noPropertiesFound)
+                toast.error(t('noPropertiesFound'))
                 setImportStatus('idle')
             }
         } catch (e) {
-            toast.error(lt.errorImport)
+            toast.error(t('errorImport'))
             setImportStatus('idle')
         } finally {
             setIsLoading(false)
@@ -151,11 +103,11 @@ export function PropertyImportSection({ locale, chatbots, translations: rt }: Pr
                     setDetectedProperties(data.properties)
                     setImportStatus('review')
                 } else {
-                    toast.error(lt.noPropertiesFound)
+                    toast.error(t('noPropertiesFound'))
                     setImportStatus('idle')
                 }
             } catch (e) {
-                toast.error(lt.errorImport)
+                toast.error(t('errorImport'))
                 setImportStatus('idle')
             } finally {
                 setIsLoading(false)
@@ -165,118 +117,106 @@ export function PropertyImportSection({ locale, chatbots, translations: rt }: Pr
     }
 
     const handleImport = async () => {
-        if (!selectedChatbotId) return
+        if (detectedProperties.length === 0 || !selectedChatbotId) return
 
+        setIsLoading(true)
         setImportStatus('importing')
-        setImportProgress(0)
         let successCount = 0
 
-        for (let i = 0; i < detectedProperties.length; i++) {
-            const prop = detectedProperties[i]
-            try {
-                // Map NormalizedProperty to API schema
-                const body = {
+        // Simulate progress for better UX
+        const interval = setInterval(() => {
+            setImportProgress(prev => Math.min(prev + 10, 90))
+        }, 500)
+
+        try {
+            const res = await fetch('/api/properties', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
                     chatbotId: selectedChatbotId,
-                    externalId: prop.externalId,
-                    title: prop.title,
-                    description: prop.description,
-                    price: prop.price,
-                    currency: prop.currency,
-                    address: prop.address,
-                    city: prop.city,
-                    country: prop.country,
-                    rooms: `${prop.bedrooms || 1}+1`, // Simplified mapping
-                    bedrooms: prop.bedrooms,
-                    bathrooms: prop.bathrooms,
-                    area: prop.area,
-                    propertyType: prop.propertyType as any,
-                    listingType: prop.listingType as any,
-                    images: prop.images,
-                    source: 'api',
-                    sourceUrl: prop.url,
-                    status: 'active'
-                }
-
-                await fetch('/api/properties', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
+                    properties: detectedProperties
                 })
-                successCount++
-            } catch (e) {
-                console.error('Failed to import property:', prop.title)
-            }
-            setImportProgress(Math.round(((i + 1) / detectedProperties.length) * 100))
-        }
+            })
 
-        toast.success(`${successCount} ${lt.successImport}`)
-        setImportStatus('success')
-        setTimeout(() => {
-            setIsOpen(false)
-            setImportStatus('idle')
-            setDetectedProperties([])
-        }, 2000)
+            if (res.ok) {
+                clearInterval(interval)
+                setImportProgress(100)
+                setImportStatus('success')
+                toast.success(t('successImport'))
+                setTimeout(() => {
+                    setIsOpen(false)
+                    setImportStatus('idle')
+                    setDetectedProperties([])
+                    setImportProgress(0)
+                }, 2000)
+            } else {
+                throw new Error('Import failed')
+            }
+        } catch (e) {
+            clearInterval(interval)
+            toast.error(t('errorImport'))
+            setImportStatus('review')
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
         <>
-            <Card className="mb-8 border-t-4 border-t-blue-500">
+            <Card className="mb-8 border-t-4 border-t-blue-500 shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
-                    <div className="flex items-center space-x-2">
-                        <Home className="h-5 w-5 text-blue-600" />
-                        <CardTitle>{rt.importOptions.title}</CardTitle>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle className="text-xl flex items-center gap-2">
+                                <Home className="w-5 h-5 text-blue-600" />
+                                {t('manageProperties')}
+                            </CardTitle>
+                            <CardDescription className="mt-1">
+                                {t('cardDescription')}
+                            </CardDescription>
+                        </div>
+                        <Link href={`/${locale}/dashboard/realestate/properties`}>
+                            <Button variant="outline" className="gap-2">
+                                {t('goToProperties')} <ArrowRight className="w-4 h-4" />
+                            </Button>
+                        </Link>
                     </div>
-                    <CardDescription>{lt.cardDescription}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     {hasNoChatbots ? (
-                        <div className="text-center py-8 text-muted-foreground">
-                            <Home className="h-12 w-12 mx-auto mb-3 text-slate-200" />
-                            <p className="text-sm mb-2">{lt.createChatbotFirst}</p>
+                        <div className="text-center py-8 bg-slate-50 dark:bg-slate-900 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                            <Building2 className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                            <p>{t('createChatbotFirst')}</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {/* 1. Go to Properties Page (Existing) */}
-                            <Link href={`/${locale}/dashboard/realestate/properties`}>
-                                <div className="h-full p-4 border rounded-xl hover:border-blue-300 hover:bg-blue-50/50 transition-all cursor-pointer flex flex-col items-center text-center group">
-                                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                                        <Building2 className="h-5 w-5 text-blue-600" />
-                                    </div>
-                                    <h4 className="font-medium text-sm mb-1">{lt.manageProperties}</h4>
-                                    <p className="text-xs text-muted-foreground mb-4">{lt.managePropertiesDesc}</p>
-                                    <Button size="sm" variant="outline" className="w-full mt-auto">
-                                        {lt.goToProperties} <ArrowRight className="ml-2 h-3 w-3" />
-                                    </Button>
-                                </div>
-                            </Link>
-
-                            {/* 2. Smart Import (New) */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Smart Import Option */}
                             <div
                                 onClick={() => { setIsOpen(true); setMode('url'); }}
-                                className="h-full p-4 border rounded-xl hover:border-purple-300 hover:bg-purple-50/50 transition-all cursor-pointer flex flex-col items-center text-center group"
+                                className="h-full p-6 border rounded-xl hover:border-blue-400 hover:bg-blue-50/30 dark:hover:bg-blue-900/10 hover:shadow-md cursor-pointer flex flex-col items-center text-center group transition-all duration-200 bg-white dark:bg-slate-950 dark:border-slate-800"
                             >
-                                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                                    <Globe className="h-5 w-5 text-purple-600" />
+                                <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <Globe className="w-6 h-6" />
                                 </div>
-                                <h4 className="font-medium text-sm mb-1">{lt.smartImport}</h4>
-                                <p className="text-xs text-muted-foreground mb-4">{lt.smartImportDesc}</p>
-                                <Button size="sm" variant="outline" className="w-full mt-auto">
-                                    {lt.smartImport} <Plus className="ml-2 h-3 w-3" />
+                                <h3 className="font-semibold text-lg mb-1 text-slate-900 dark:text-slate-100">{t('smartImport')}</h3>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t('smartImportDesc')}</p>
+                                <Button size="sm" variant="outline" className="w-full mt-auto border-blue-200 text-blue-700 hover:bg-blue-100 hover:text-blue-800 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-900/50 dark:hover:text-blue-200">
+                                    {t('smartImport')} <Plus className="ml-2 h-3 w-3" />
                                 </Button>
                             </div>
 
-                            {/* 3. XML Import (New) */}
+                            {/* XML/File Import Option */}
                             <div
                                 onClick={() => { setIsOpen(true); setMode('file'); }}
-                                className="h-full p-4 border rounded-xl hover:border-green-300 hover:bg-green-50/50 transition-all cursor-pointer flex flex-col items-center text-center group"
+                                className="h-full p-6 border rounded-xl hover:border-green-400 hover:bg-green-50/30 dark:hover:bg-green-900/10 hover:shadow-md cursor-pointer flex flex-col items-center text-center group transition-all duration-200 bg-white dark:bg-slate-950 dark:border-slate-800"
                             >
-                                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                                    <FileSpreadsheet className="h-5 w-5 text-green-600" />
+                                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <FileSpreadsheet className="w-6 h-6" />
                                 </div>
-                                <h4 className="font-medium text-sm mb-1">{lt.xmlImport}</h4>
-                                <p className="text-xs text-muted-foreground mb-4">{lt.xmlImportDesc}</p>
-                                <Button size="sm" variant="outline" className="w-full mt-auto">
-                                    {lt.xmlImport} <Upload className="ml-2 h-3 w-3" />
+                                <h3 className="font-semibold text-lg mb-1 text-slate-900 dark:text-slate-100">{t('xmlImport')}</h3>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t('xmlImportDesc')}</p>
+                                <Button size="sm" variant="outline" className="w-full mt-auto border-green-200 text-green-700 hover:bg-green-100 hover:text-green-800 dark:border-green-800 dark:text-green-300 dark:hover:bg-green-900/50 dark:hover:text-green-200">
+                                    {t('xmlImport')} <Upload className="ml-2 h-3 w-3" />
                                 </Button>
                             </div>
                         </div>
@@ -285,102 +225,147 @@ export function PropertyImportSection({ locale, chatbots, translations: rt }: Pr
             </Card>
 
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="sm:max-w-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
                     <DialogHeader>
-                        <DialogTitle>
-                            {mode === 'url' ? lt.smartImport : lt.xmlImport}
+                        <DialogTitle className="text-xl font-bold flex items-center gap-2">
+                            {mode === 'url' ? <Globe className="w-5 h-5 text-blue-500" /> : <FileSpreadsheet className="w-5 h-5 text-green-500" />}
+                            {mode === 'url' ? t('smartImport') : t('xmlImport')}
                         </DialogTitle>
-                        <DialogDescription>
-                            {mode === 'url' ? lt.smartImportDesc : lt.xmlImportDesc}
+                        <DialogDescription className="text-slate-500 dark:text-slate-400">
+                            {mode === 'url' ? t('smartImportDesc') : t('xmlImportDesc')}
                         </DialogDescription>
                     </DialogHeader>
 
-                    {importStatus === 'idle' && (
-                        <div className="py-4">
-                            {mode === 'url' ? (
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">{lt.enterUrl}</label>
-                                    <Input
-                                        placeholder={lt.enterUrlPlaceholder}
-                                        value={url}
-                                        onChange={(e) => setUrl(e.target.value)}
-                                    />
-                                </div>
-                            ) : (
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">{lt.selectFile}</label>
-                                    <Input
-                                        type="file"
-                                        accept=".xml,.json"
-                                        onChange={handleFileUpload}
-                                    />
-                                    <p className="text-xs text-muted-foreground">{lt.supportedFormats}</p>
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {importStatus === 'detecting' && (
-                        <div className="py-8 text-center space-y-3">
-                            <Loader2 className="h-8 w-8 animate-spin mx-auto text-blue-600" />
-                            <p className="text-sm text-muted-foreground">{lt.detecting}</p>
-                        </div>
-                    )}
-
-                    {importStatus === 'review' && (
-                        <div className="py-4">
-                            <div className="flex items-center justify-between mb-4">
-                                <h4 className="font-semibold text-sm">{lt.foundProperties}</h4>
-                                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                                    {detectedProperties.length}
-                                </span>
+                    <div className="py-4">
+                        {importStatus === 'idle' && (
+                            <div className="space-y-4">
+                                <Tabs defaultValue={mode} onValueChange={(v) => setMode(v as 'url' | 'file')} className="w-full">
+                                    <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-800">
+                                        <TabsTrigger value="url" className="data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100">{t('enterUrl')}</TabsTrigger>
+                                        <TabsTrigger value="file" className="data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100">{t('xmlImport')}</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="url" className="pt-4 space-y-4">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('enterUrl')}</label>
+                                            <div className="flex gap-2">
+                                                <Input
+                                                    placeholder={t('enterUrlPlaceholder')}
+                                                    value={url}
+                                                    onChange={(e) => setUrl(e.target.value)}
+                                                    className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                                                />
+                                            </div>
+                                        </div>
+                                    </TabsContent>
+                                    <TabsContent value="file" className="pt-4 space-y-4">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('selectFile')}</label>
+                                            <div className="flex items-center justify-center w-full">
+                                                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 dark:border-slate-600 border-dashed rounded-lg cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 transition-colors">
+                                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                        <Upload className="w-8 h-8 mb-4 text-slate-500 dark:text-slate-400" />
+                                                        <p className="mb-2 text-sm text-slate-500 dark:text-slate-400"><span className="font-semibold">{t('selectFile')}</span></p>
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400">{t('supportedFormats')}</p>
+                                                    </div>
+                                                    <input type="file" className="hidden" accept=".xml,.json" onChange={handleFileUpload} />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </TabsContent>
+                                </Tabs>
                             </div>
-                            <div className="max-h-[200px] overflow-y-auto space-y-2 border rounded-md p-2">
-                                {detectedProperties.map((prop, i) => (
-                                    <div key={i} className="flex items-start gap-2 text-sm p-2 hover:bg-slate-50 rounded bg-white border">
-                                        <div className="w-10 h-10 bg-slate-100 rounded flex-shrink-0 bg-cover bg-center" style={{ backgroundImage: `url(${prop.images[0]})` }} />
-                                        <div className="flex-1 min-w-0">
-                                            <p className="font-medium truncate">{prop.title}</p>
-                                            <p className="text-xs text-muted-foreground">{prop.price} {prop.currency}</p>
+                        )}
+
+                        {importStatus === 'detecting' && (
+                            <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                                <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+                                <p className="text-slate-600 dark:text-slate-300 font-medium">{t('detecting')}</p>
+                            </div>
+                        )}
+
+                        {importStatus === 'review' && (
+                            <div className="space-y-4">
+                                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 rounded-lg p-4 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400 flex items-center justify-center">
+                                            <Check className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-green-900 dark:text-green-100">{t('foundProperties')}</h4>
+                                            <p className="text-sm text-green-700 dark:text-green-300">{detectedProperties.length} properties ready to import</p>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                                </div>
 
-                    {importStatus === 'importing' && (
-                        <div className="py-8 space-y-4">
-                            <div className="flex justify-between text-sm mb-1">
-                                <span>{lt.importing}</span>
-                                <span>{importProgress}%</span>
+                                {/* Preview List (Limited) */}
+                                <div className="max-h-60 overflow-y-auto border border-slate-200 dark:border-slate-700 rounded-xl divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-800/50">
+                                    {detectedProperties.slice(0, 5).map((p, i) => (
+                                        <div key={i} className="p-3 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                            {p.images?.[0] ? (
+                                                <img src={p.images[0]} alt="" className="w-16 h-16 object-cover rounded-md bg-slate-200 dark:bg-slate-700" />
+                                            ) : (
+                                                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-md flex items-center justify-center text-slate-400">
+                                                    <Building2 className="w-6 h-6" />
+                                                </div>
+                                            )}
+                                            <div className="flex-1 min-w-0">
+                                                <h5 className="font-medium text-sm truncate text-slate-900 dark:text-slate-100">{p.title}</h5>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">{p.city}, {p.propertyType}</p>
+                                                <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-1">
+                                                    {p.price > 0 ? `${p.currency} ${p.price.toLocaleString()}` : 'Price on request'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {detectedProperties.length > 5 && (
+                                        <div className="p-3 text-center text-xs text-slate-500 dark:text-slate-400 italic bg-slate-50 dark:bg-slate-800/50">
+                                            + {detectedProperties.length - 5} more properties...
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <div className="w-full bg-slate-100 rounded-full h-2">
-                                <div className="bg-blue-600 h-2 rounded-full transition-all" style={{ width: `${importProgress}%` }} />
-                            </div>
-                        </div>
-                    )}
+                        )}
 
-                    {importStatus === 'success' && (
-                        <div className="py-8 text-center text-green-600 space-y-2">
-                            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                                <Check className="h-6 w-6" />
+                        {importStatus === 'importing' && (
+                            <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                                <div className="w-full max-w-xs bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                                    <div className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${importProgress}%` }}></div>
+                                </div>
+                                <p className="text-slate-600 dark:text-slate-300 font-medium">{t('importing')}</p>
                             </div>
-                            <p className="font-medium">{lt.successImport}</p>
-                        </div>
-                    )}
+                        )}
 
-                    <DialogFooter className="sm:justify-between items-center gap-2">
-                        {(importStatus === 'idle' && mode === 'url') && (
-                            <Button className="w-full" onClick={handleIdentify} disabled={!url || isLoading}>
-                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
-                                {lt.reviewImport}
-                            </Button>
+                        {importStatus === 'success' && (
+                            <div className="flex flex-col items-center justify-center py-8 space-y-4 text-center animate-in fade-in zoom-in-95">
+                                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center text-green-600 dark:text-green-400 mb-2">
+                                    <Check className="w-8 h-8" />
+                                </div>
+                                <h3 className="text-lg font-bold text-green-700 dark:text-green-300">{t('successImport')}</h3>
+                            </div>
+                        )}
+                    </div>
+
+                    <DialogFooter className="flex gap-2 sm:justify-between border-t border-slate-100 dark:border-slate-800 pt-4 mt-4">
+                        {importStatus === 'idle' && (
+                            <>
+                                <Button variant="ghost" onClick={() => setIsOpen(false)} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">{t('cancelButton')}</Button>
+                                <Button onClick={handleIdentify} disabled={isLoading || (mode === 'url' && !url)} className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-500">
+                                    {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                                    {t('detectButton')}
+                                </Button>
+                            </>
                         )}
                         {importStatus === 'review' && (
-                            <Button className="w-full" onClick={handleImport}>
-                                <Upload className="mr-2 h-4 w-4" />
-                                {lt.importAll}
+                            <>
+                                <Button variant="outline" onClick={() => setImportStatus('idle')} className="dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">{t('cancelButton')}</Button>
+                                <Button onClick={handleImport} className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-500">
+                                    {t('importAll')}
+                                </Button>
+                            </>
+                        )}
+                        {importStatus === 'success' && (
+                            <Button onClick={() => setIsOpen(false)} className="w-full bg-green-600 hover:bg-green-700 text-white">
+                                OK
                             </Button>
                         )}
                     </DialogFooter>
