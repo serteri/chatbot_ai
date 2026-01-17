@@ -2293,7 +2293,17 @@
         "timelineNote": "Cela nous aide à prioriser votre recherche.",
         "preApproval": "Avez-vous une pré-approbation hypothécaire ?",
         "preApprovalNote": "La pré-approbation accélère considérablement le processus.",
-        "contact": "Veuillez partager vos coordonnées afin que nous puissions vous contacter."
+        "contact": "Veuillez partager vos coordonnées afin que nous puissions vous contacter.",
+        "income": "Quel est le revenu mensuel net de votre ménage ? (ex : 5000)",
+        "incomeNote": "Requis pour le calcul du prêt",
+        "expenses": "Quelles sont vos charges mensuelles totales (loyer + crédits) ?",
+        "expensesNote": "Utilisé pour calculer votre capacité d'emprunt",
+        "downPayment": "Quel apport personnel pouvez-vous fournir ?",
+        "downPaymentNote": "Important pour le calcul de l'hypothèque",
+        "affordabilityResult": "💰 D'après mes calculs, vous pouvez acheter un bien jusqu'à {amount}.",
+        "affordabilityNote": "Souhaitez-vous voir des biens dans cette fourchette ?",
+        "affordabilityWarning": "⚠️ Votre budget semble un peu serré. Devrions-nous regarder des options plus abordables ?",
+        "affordabilitySuccess": "✅ Votre budget semble excellent !"
       },
       "propertyTypes": {
         "apartment": "Appartement",

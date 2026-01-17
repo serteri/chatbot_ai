@@ -2421,7 +2421,17 @@
         "timelineNote": "Das hilft uns, Ihre Suche zu priorisieren.",
         "preApproval": "Haben Sie eine Hypotheken-Vorabgenehmigung?",
         "preApprovalNote": "Eine Vorabgenehmigung beschleunigt den Prozess erheblich.",
-        "contact": "Bitte teilen Sie Ihre Kontaktdaten mit, damit wir Sie erreichen können."
+        "contact": "Bitte teilen Sie Ihre Kontaktdaten mit, damit wir Sie erreichen können.",
+        "income": "Wie hoch ist Ihr monatliches Haushaltsnettoeinkommen? (z.B. 5000)",
+        "incomeNote": "Für die Kreditberechnung erforderlich",
+        "expenses": "Wie hoch sind Ihre monatlichen Gesamtausgaben (Miete + Kredite)?",
+        "expensesNote": "Wird zur Berechnung der Erschwinglichkeit verwendet",
+        "downPayment": "Wie viel Eigenkapital können Sie einbringen?",
+        "downPaymentNote": "Wichtig für die Hypothekenberechnung",
+        "affordabilityResult": "💰 Basierend auf meinen Berechnungen können Sie sich eine Immobilie bis zu {amount} leisten.",
+        "affordabilityNote": "Möchten Sie Immobilien in diesem Bereich sehen?",
+        "affordabilityWarning": "⚠️ Ihr Budget scheint etwas knapp zu sein. Sollen wir nach günstigeren Optionen suchen?",
+        "affordabilitySuccess": "✅ Ihr Budget sieht gut aus!"
       },
       "propertyTypes": {
         "apartment": "Wohnung",

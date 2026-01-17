@@ -2293,7 +2293,17 @@
         "timelineNote": "Esto nos ayuda a priorizar su búsqueda.",
         "preApproval": "¿Tiene pre-aprobación hipotecaria?",
         "preApprovalNote": "La pre-aprobación acelera significativamente el proceso.",
-        "contact": "Por favor comparta su información de contacto para que podamos comunicarnos con usted."
+        "contact": "Por favor comparta su información de contacto para que podamos comunicarnos con usted.",
+        "income": "¿Cuál es el ingreso mensual neto de su hogar? (ej. 5000)",
+        "incomeNote": "Requerido para el cálculo del préstamo",
+        "expenses": "¿Cuáles son sus gastos mensuales totales (alquiler + préstamos)?",
+        "expensesNote": "Utilizado para calcular la asequibilidad",
+        "downPayment": "¿Cuánto pago inicial puede aportar?",
+        "downPaymentNote": "Importante para el cálculo de la hipoteca",
+        "affordabilityResult": "💰 Basado en mis cálculos, puede permitirse una propiedad de hasta {amount}.",
+        "affordabilityNote": "¿Le gustaría ver propiedades en este rango?",
+        "affordabilityWarning": "⚠️ Su presupuesto parece un poco ajustado. ¿Buscamos opciones más asequibles?",
+        "affordabilitySuccess": "✅ ¡Su presupuesto se ve genial!"
       },
       "propertyTypes": {
         "apartment": "Apartamento",

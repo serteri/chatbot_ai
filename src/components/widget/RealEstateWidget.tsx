@@ -77,6 +77,10 @@ interface LeadData {
     contactEmail?: string
     leadScore?: number
     leadCategory?: 'hot' | 'warm' | 'cold'
+    monthlyIncome?: number
+    monthlyExpenses?: number
+    downPayment?: number
+    calculatedMaxBudget?: number
 }
 
 interface TenantIssue {
@@ -788,7 +792,13 @@ export function RealEstateWidget({
             budgetMin: budgetRange?.min,
             budgetMax: budgetRange?.max
         }))
-        setCurrentStep('timeline')
+        setCurrentStep('income')
+        setLoadingProperties(true) // Just a small delay effect
+        setTimeout(() => {
+            setLoadingProperties(false)
+            addBotMessage(`${t.leadQualification.income}\\n\\n💵 ${t.leadQualification.incomeNote}`)
+        }, 500)
+
 
         setTimeout(() => {
             addBotMessage(`${t.leadQualification.timeline}\n\n⏰ ${t.leadQualification.timelineNote}`, 'quick-replies', {
@@ -1089,10 +1099,141 @@ export function RealEstateWidget({
         setCurrentStep('complete')
     }
 
+    // Parse numerical input
+    const parseNumber = (text: string): number => {
+        const cleaned = text.replace(/[^0-9]/g, '')
+        return parseInt(cleaned) || 0
+    }
+
+    const handleIncomeInput = async (text: string) => {
+        await addUserMessage(text)
+        if (limitReached) return
+
+        const income = parseNumber(text)
+        setLeadData(prev => ({ ...prev, monthlyIncome: income }))
+        setCurrentStep('expenses')
+        setTimeout(() => {
+            addBotMessage(`${t.leadQualification.expenses}\\n\\n📉 ${t.leadQualification.expensesNote}`)
+        }, 300)
+    }
+
+    const handleExpensesInput = async (text: string) => {
+        await addUserMessage(text)
+        if (limitReached) return
+
+        const expenses = parseNumber(text)
+        setLeadData(prev => ({ ...prev, monthlyExpenses: expenses }))
+
+        if (leadData.intent === 'rent') {
+            checkAffordability(leadData.monthlyIncome || 0, expenses, 0)
+        } else {
+            setCurrentStep('downPayment')
+            setTimeout(() => {
+                addBotMessage(`${t.leadQualification.downPayment}\\n\\n💰 ${t.leadQualification.downPaymentNote}`)
+            }, 300)
+        }
+    }
+
+    const handleDownPaymentInput = async (text: string) => {
+        await addUserMessage(text)
+        if (limitReached) return
+
+        const downPayment = parseNumber(text)
+        setLeadData(prev => ({ ...prev, downPayment: downPayment }))
+
+        checkAffordability(leadData.monthlyIncome || 0, leadData.monthlyExpenses || 0, downPayment)
+    }
+
+    const checkAffordability = (income: number, expenses: number, downPayment: number) => {
+        const netIncome = income - expenses
+        let maxBudget = 0
+
+        const formatCurrency = (amount: number) => {
+            return new Intl.NumberFormat(locale, { style: 'currency', currency: locale === 'tr' ? 'TRY' : 'USD', maximumFractionDigits: 0 }).format(amount)
+        }
+
+        if (leadData.intent === 'rent') {
+            maxBudget = netIncome * 0.35
+            setLeadData(prev => ({ ...prev, calculatedMaxBudget: maxBudget }))
+
+            setTimeout(() => {
+                addBotMessage(t.leadQualification.affordabilityResult.replace('{amount}', formatCurrency(maxBudget)))
+                setTimeout(() => {
+                    addBotMessage(t.leadQualification.affordabilityNote, 'quick-replies', {
+                        replies: [t.yesNo.yes, t.yesNo.no]
+                    })
+                    setCurrentStep('affordability-confirm')
+                }, 500)
+            }, 500)
+        } else {
+            const maxMonthlyPayment = netIncome * 0.5 // More aggressive than 0.35 for MVP
+            const isTr = locale === 'tr'
+            const monthlyRate = isTr ? 0.025 : 0.005
+            const months = 120
+
+            const maxLoan = maxMonthlyPayment * (Math.pow(1 + monthlyRate, months) - 1) / (monthlyRate * Math.pow(1 + monthlyRate, months))
+
+            maxBudget = maxLoan + downPayment
+            setLeadData(prev => ({ ...prev, calculatedMaxBudget: maxBudget }))
+
+            setTimeout(() => {
+                addBotMessage(t.leadQualification.affordabilityResult.replace('{amount}', formatCurrency(maxBudget)))
+                setTimeout(() => {
+                    const statusMsg = maxBudget < (leadData.budgetMin || 0)
+                        ? t.leadQualification.affordabilityWarning
+                        : t.leadQualification.affordabilitySuccess
+
+                    addBotMessage(statusMsg)
+
+                    setTimeout(() => {
+                        addBotMessage(t.leadQualification.affordabilityNote, 'quick-replies', {
+                            replies: [t.yesNo.yes, t.yesNo.no]
+                        })
+                        setCurrentStep('affordability-confirm')
+                    }, 500)
+                }, 500)
+            }, 500)
+        }
+    }
+
+    const handleAffordabilityResponse = async (response: string) => {
+        await addUserMessage(response)
+        if (response === t.yesNo.yes) {
+            // User accepts calculated budget or just proceeds
+            // If they accept, we might want to update budgetMax if reasonable
+            if (leadData.calculatedMaxBudget) {
+                setLeadData(prev => ({ ...prev, budgetMax: leadData.calculatedMaxBudget }))
+            }
+        }
+        // Proceed to timeline regardless
+        setCurrentStep('timeline')
+        setTimeout(() => {
+            addBotMessage(`${t.leadQualification.timeline}\\n\\n⏰ ${t.leadQualification.timelineNote}`, 'quick-replies', {
+                replies: t.timelines
+            })
+        }, 300)
+    }
+
     const handleSend = () => {
         if (!input.trim()) return
 
         // Handle city/suburb text input steps directly
+        if (currentStep === 'income') {
+            handleIncomeInput(input.trim())
+            setInput('')
+            return
+        }
+        if (currentStep === 'expenses') {
+            handleExpensesInput(input.trim())
+            setInput('')
+            return
+        }
+        if (currentStep === 'downPayment') {
+            handleDownPaymentInput(input.trim())
+            setInput('')
+            return
+        }
+
         if (currentStep === 'city') {
             handleCityInput(input.trim())
             setInput('')
@@ -1194,6 +1335,7 @@ export function RealEstateWidget({
                                         else if (currentStep === 'purpose') handlePurposeSelect(reply)
                                         else if (currentStep === 'propertyType') handlePropertyTypeSelect(reply)
                                         else if (currentStep === 'bedrooms') handleBedroomsSelect(reply)
+                                        else if (currentStep === 'affordability-confirm') handleAffordabilityResponse(reply)
                                         else if (currentStep === 'bathrooms') handleBathroomsSelect(reply)
                                         else if (currentStep === 'budget') handleBudgetSelect(reply)
                                         else if (currentStep === 'timeline') handleTimelineSelect(reply)

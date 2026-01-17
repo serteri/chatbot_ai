@@ -2484,7 +2484,17 @@
         "bathroomsNote": "Specify your comfort preference.",
         "preApproval": "Do you have mortgage pre-approval?",
         "preApprovalNote": "Pre-approval speeds up the process significantly.",
-        "contact": "Please share your contact info so we can reach you."
+        "contact": "Please share your contact info so we can reach you.",
+        "income": "What is your monthly household net income? (e.g. 5000)",
+        "incomeNote": "Required for loan calculation",
+        "expenses": "What are your total monthly expenses (rent + loans)?",
+        "expensesNote": "Used to calculate affordability",
+        "downPayment": "How much down payment can you afford?",
+        "downPaymentNote": "Important for mortgage calculation",
+        "affordabilityResult": "💰 Based on my calculations, you can afford a property up to {amount}.",
+        "affordabilityNote": "Would you like to see properties in this range?",
+        "affordabilityWarning": "⚠️ Your budget seems a bit tight. Shall we look at more affordable options?",
+        "affordabilitySuccess": "✅ Your budget looks great!"
       },
       "propertyTypes": {
         "apartment": "Apartment",

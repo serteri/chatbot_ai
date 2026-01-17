@@ -2493,7 +2493,17 @@
         "bathroomsNote": "Konfor tercihinizi belirtin.",
         "preApproval": "Banka ön onayınız var mı?",
         "preApprovalNote": "Ön onay, işlemleri çok hızlandırır.",
-        "contact": "Sizinle iletişime geçebilmemiz için bilgilerinizi paylaşır mısınız?"
+        "contact": "Sizinle iletişime geçebilmemiz için bilgilerinizi paylaşır mısınız?",
+        "income": "Aylık net hane geliriniz ne kadar? (Örn: 50000)",
+        "incomeNote": "Kredi hesaplaması için gerekli",
+        "expenses": "Aylık kira ve kredi gibi düzenli giderleriniz ne kadar?",
+        "expensesNote": "Ödeme gücünüzü hesaplamak için kullanacağız.",
+        "downPayment": "Ne kadar peşinat ayırabilirsiniz?",
+        "downPaymentNote": "Mortgage hesaplaması için önemli",
+        "affordabilityResult": "💰 Hesaplamalarıma göre, yaklaşık {amount} tutarına kadar ev alabilirsiniz.",
+        "affordabilityNote": "Bu bütçe ile ilgilenir misiniz?",
+        "affordabilityWarning": "⚠️ Bütçeniz biraz kısıtlı görünüyor. Daha uygun fiyatlı seçeneklere bakabiliriz veya kredi başvurusu konusunda danışmanımız yardımcı olabilir.",
+        "affordabilitySuccess": "✅ Bütçeniz gayet uygun görünüyor!"
       },
       "propertyTypes": {
         "apartment": "Daire",
