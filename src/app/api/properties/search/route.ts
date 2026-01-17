@@ -32,6 +32,8 @@ export async function GET(request: NextRequest) {
         const minPrice = searchParams.get('minPrice')
         const maxPrice = searchParams.get('maxPrice')
         const rooms = searchParams.get('rooms')
+        const bedrooms = searchParams.get('bedrooms')
+        const bathrooms = searchParams.get('bathrooms')
         const minArea = searchParams.get('minArea')
         const maxArea = searchParams.get('maxArea')
         const limit = Math.min(parseInt(searchParams.get('limit') || '6'), 20)
@@ -47,6 +49,24 @@ export async function GET(request: NextRequest) {
         if (city) where.city = { contains: city, mode: 'insensitive' }
         if (district) where.district = { contains: district, mode: 'insensitive' }
         if (rooms) where.rooms = rooms
+
+        // Add bedrooms/bathrooms filters
+        if (bedrooms) {
+            const bedroomNum = parseInt(bedrooms)
+            if (!isNaN(bedroomNum)) {
+                where.bedrooms = bedrooms.includes('+')
+                    ? { gte: bedroomNum }
+                    : bedroomNum
+            }
+        }
+        if (bathrooms) {
+            const bathroomNum = parseInt(bathrooms)
+            if (!isNaN(bathroomNum)) {
+                where.bathrooms = bathrooms.includes('+')
+                    ? { gte: bathroomNum }
+                    : bathroomNum
+            }
+        }
 
         // Price filter
         if (minPrice || maxPrice) {
@@ -107,6 +127,7 @@ export async function GET(request: NextRequest) {
                 hasPool: true,
                 hasGarden: true,
                 hasBalcony: true,
+                sourceUrl: true,
             }
         })
 
@@ -118,12 +139,15 @@ export async function GET(request: NextRequest) {
             priceRaw: prop.price,
             location: prop.district ? `${prop.district}, ${prop.city}` : prop.city,
             rooms: prop.rooms || `${prop.bedrooms || 0}+1`,
+            bedrooms: prop.bedrooms,
+            bathrooms: prop.bathrooms,
             area: prop.area ? `${prop.area} m²` : null,
             image: prop.images?.[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop',
             badge: getBadge(prop),
             monthlyRent: prop.monthlyRent ? formatPrice(prop.monthlyRent, prop.currency) + '/ay' : null,
             roi: prop.estimatedRoi ? `%${prop.estimatedRoi.toFixed(1)} Getiri` : null,
-            features: getFeatures(prop)
+            features: getFeatures(prop),
+            sourceUrl: prop.sourceUrl || null
         }))
 
         // Increment view count for returned properties

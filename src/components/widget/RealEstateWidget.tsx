@@ -524,6 +524,20 @@ export function RealEstateWidget({
             if (budgetMax) params.append('maxPrice', budgetMax.toString())
             if (propertyType) params.append('propertyType', propertyType)
 
+            // Add new search filters from leadData
+            if (leadData.bedrooms && leadData.bedrooms !== 'any') {
+                params.append('rooms', leadData.bedrooms)
+            }
+            if (leadData.bathrooms && leadData.bathrooms !== 'any') {
+                params.append('bathrooms', leadData.bathrooms)
+            }
+            if (leadData.city) {
+                params.append('city', leadData.city)
+            }
+            if (leadData.suburb) {
+                params.append('district', leadData.suburb)
+            }
+
             const response = await fetch(`/api/properties/search?${params.toString()}`)
             if (!response.ok) return []
 
