@@ -2474,6 +2474,14 @@
         "location": "Which areas do you prefer?",
         "timeline": "When are you planning to move?",
         "timelineNote": "This helps us prioritize your search.",
+        "city": "Which city are you searching in?",
+        "cityNote": "Knowing your location helps me find options nearby.",
+        "suburb": "Which suburb or district do you prefer?",
+        "suburbNote": "Do you have a specific area preference?",
+        "bedrooms": "How many bedrooms do you need?",
+        "bedroomsNote": "Select based on your family size.",
+        "bathrooms": "How many bathrooms do you need?",
+        "bathroomsNote": "Specify your comfort preference.",
         "preApproval": "Do you have mortgage pre-approval?",
         "preApprovalNote": "Pre-approval speeds up the process significantly.",
         "contact": "Please share your contact info so we can reach you."
@@ -2504,6 +2512,20 @@
         "soon": "Within 1-3 months",
         "later": "Within 3-6 months",
         "browsing": "Just browsing the market"
+      },
+      "bedroomOptions": {
+        "1": "1 Bedroom",
+        "2": "2 Bedrooms",
+        "3": "3 Bedrooms",
+        "4": "4 Bedrooms",
+        "5plus": "5+ Bedrooms",
+        "any": "Any"
+      },
+      "bathroomOptions": {
+        "1": "1 Bathroom",
+        "2": "2 Bathrooms",
+        "3plus": "3+ Bathrooms",
+        "any": "Any"
       },
       "yesNo": {
         "yes": "Yes, I have it",

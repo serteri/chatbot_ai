@@ -2483,7 +2483,15 @@
         "location": "Hangi bölgeleri tercih edersiniz?",
         "timeline": "Ne zaman taşınmayı planlıyorsunuz?",
         "timelineNote": "Bu bilgi, size öncelik vermemizi sağlar.",
-        "preApproval": "Kredi ön onayınız var mı?",
+        "city": "Hangi şehirde arıyorsunuz?",
+        "cityNote": "Lokasyonu bilmem önemli, size yakın seçenekler sunacağım.",
+        "suburb": "Hangi semtte/ilçede arıyorsunuz?",
+        "suburbNote": "Belirli bir bölge tercihiniz var mı?",
+        "bedrooms": "Kaç yatak odası olmalı?",
+        "bedroomsNote": "Aile büyüklüğünüze göre seçin.",
+        "bathrooms": "Kaç banyo olmalı?",
+        "bathroomsNote": "Konfor tercihinizi belirtin.",
+        "preApproval": "Banka ön onayınız var mı?",
         "preApprovalNote": "Ön onay, işlemleri çok hızlandırır.",
         "contact": "Sizinle iletişime geçebilmemiz için bilgilerinizi paylaşır mısınız?"
       },
@@ -2513,6 +2521,20 @@
         "soon": "1-3 ay içinde",
         "later": "3-6 ay içinde",
         "browsing": "Sadece piyasayı araştırıyorum"
+      },
+      "bedroomOptions": {
+        "1": "1 Yatak Odası",
+        "2": "2 Yatak Odası",
+        "3": "3 Yatak Odası",
+        "4": "4 Yatak Odası",
+        "5plus": "5+ Yatak Odası",
+        "any": "Farketmez"
+      },
+      "bathroomOptions": {
+        "1": "1 Banyo",
+        "2": "2 Banyo",
+        "3plus": "3+ Banyo",
+        "any": "Farketmez"
       },
       "yesNo": {
         "yes": "Evet, var",

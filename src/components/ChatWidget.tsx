@@ -176,7 +176,30 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document', onRe
         e.preventDefault()
 
         // Detect real estate intent and trigger RealEstateWidget
-        const realEstateKeywords = ['emlak', 'ev', 'daire', 'villa', 'arsa', 'kiralık', 'satılık', 'randevu', 'gayrimenkul', 'konut', 'müstakil', 'real estate', 'apartment', 'house', 'property', 'rent', 'buy', 'immobilier', 'maison', 'immobilien', 'wohnung', 'inmobiliaria', 'casa']
+        // Comprehensive keywords for all 5 languages
+        const realEstateKeywords = [
+            // Turkish
+            'emlak', 'ev', 'daire', 'villa', 'arsa', 'kiralık', 'satılık', 'randevu',
+            'gayrimenkul', 'konut', 'müstakil', 'oda', 'banyo', 'yatak odası', 'salon',
+            'mutfak', 'balkon', 'garaj', 'bahçe', 'bölge', 'semt', 'mahalle', 'görüşme',
+            // English
+            'real estate', 'apartment', 'house', 'property', 'rent', 'buy', 'sell',
+            'appointment', 'viewing', 'bedroom', 'bathroom', 'kitchen', 'garage',
+            'garden', 'balcony', 'location', 'suburb', 'area', 'neighborhood', 'budget',
+            'mortgage', 'home', 'condo', 'townhouse', 'studio', 'flat',
+            // French
+            'immobilier', 'maison', 'appartement', 'louer', 'acheter', 'vendre',
+            'rendez-vous', 'visite', 'chambre', 'salle de bain', 'cuisine', 'garage',
+            'jardin', 'balcon', 'quartier', 'budget', 'propriété', 'logement', 'studio',
+            // German
+            'immobilien', 'wohnung', 'haus', 'mieten', 'kaufen', 'verkaufen',
+            'termin', 'besichtigung', 'schlafzimmer', 'badezimmer', 'küche', 'garage',
+            'garten', 'balkon', 'nachbarschaft', 'budget', 'grundstück', 'eigentum',
+            // Spanish
+            'inmobiliaria', 'casa', 'apartamento', 'piso', 'alquilar', 'comprar', 'vender',
+            'cita', 'visita', 'dormitorio', 'baño', 'cocina', 'garaje',
+            'jardín', 'balcón', 'barrio', 'presupuesto', 'propiedad', 'vivienda'
+        ]
         const messageLC = inputValue.toLowerCase()
         const hasRealEstateIntent = realEstateKeywords.some(keyword => messageLC.includes(keyword))
 
