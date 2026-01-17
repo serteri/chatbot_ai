@@ -1128,7 +1128,7 @@ export function RealEstateWidget({
         setLeadData(prev => ({ ...prev, monthlyIncome: income }))
         setCurrentStep('expenses')
         setTimeout(() => {
-            addBotMessage(`${t.leadQualification.expenses}\\n\\n📉 ${t.leadQualification.expensesNote}`)
+            addBotMessage(`${t.leadQualification.expenses}\n\n📉 ${t.leadQualification.expensesNote}`)
         }, 300)
     }
 
@@ -1220,13 +1220,9 @@ export function RealEstateWidget({
                 setLeadData(prev => ({ ...prev, budgetMax: leadData.calculatedMaxBudget }))
             }
         }
-        // Proceed to timeline regardless
-        setCurrentStep('timeline')
-        setTimeout(() => {
-            addBotMessage(`${t.leadQualification.timeline}\\n\\n⏰ ${t.leadQualification.timelineNote}`, 'quick-replies', {
-                replies: t.timelines
-            })
-        }, 300)
+        // Mortgage calculation is complete - show thank you
+        addBotMessage(t.thankYou)
+        setCurrentStep('complete')
     }
 
     const handleSend = () => {
