@@ -595,81 +595,83 @@ export default async function RealEstateDashboard({
                 {/* Lead Analytics & Chatbots */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                     {/* Lead Analytics */}
-                    <Card className="flex flex-col h-full">
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                    <TrendingUp className="h-5 w-5 text-amber-600" />
-                                    <CardTitle>{rt.sections.leadAnalytics}</CardTitle>
+                    <Link href={`/${locale}/dashboard/realestate/leads`} className="block h-full transition-transform hover:scale-[1.01]">
+                        <Card className="flex flex-col h-full hover:shadow-md transition-shadow cursor-pointer border-amber-200">
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                        <TrendingUp className="h-5 w-5 text-amber-600" />
+                                        <CardTitle>{rt.sections.leadAnalytics}</CardTitle>
+                                    </div>
+                                    {hasData && <Badge variant="secondary" className="bg-amber-100 text-amber-800">Canlı</Badge>}
                                 </div>
-                                {hasData && <Badge variant="secondary" className="bg-amber-100 text-amber-800">Canlı</Badge>}
-                            </div>
-                            <CardDescription>
-                                {rt.leadQualifyPerformance}
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="flex-1 flex flex-col">
-                            {!hasData ? (
-                                <div className="flex-1 flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                                    <BarChart3 className="h-12 w-12 mb-3 text-slate-200" />
-                                    <p className="text-sm">
-                                        {rt.leadDataEmpty}
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {/* Lead Distribution */}
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-sm text-slate-600 flex items-center gap-2">
-                                                <Flame className="h-4 w-4 text-red-500" />
-                                                {rt.leadCategories.hot}
-                                            </span>
-                                            <span className="font-bold text-red-600">{hotLeads} ({Math.round((hotLeads / totalLeads) * 100)}%)</span>
-                                        </div>
-                                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                            <div className="h-full bg-red-500 rounded-full" style={{ width: `${(hotLeads / totalLeads) * 100}%` }} />
-                                        </div>
+                                <CardDescription>
+                                    {rt.leadQualifyPerformance}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex-1 flex flex-col">
+                                {!hasData ? (
+                                    <div className="flex-1 flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+                                        <BarChart3 className="h-12 w-12 mb-3 text-slate-200" />
+                                        <p className="text-sm">
+                                            {rt.leadDataEmpty}
+                                        </p>
                                     </div>
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-sm text-slate-600 flex items-center gap-2">
-                                                <ThermometerSun className="h-4 w-4 text-orange-500" />
-                                                {rt.leadCategories.warm}
-                                            </span>
-                                            <span className="font-bold text-orange-600">{warmLeads} ({Math.round((warmLeads / totalLeads) * 100)}%)</span>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {/* Lead Distribution */}
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-slate-600 flex items-center gap-2">
+                                                    <Flame className="h-4 w-4 text-red-500" />
+                                                    {rt.leadCategories.hot}
+                                                </span>
+                                                <span className="font-bold text-red-600">{hotLeads} ({Math.round((hotLeads / totalLeads) * 100)}%)</span>
+                                            </div>
+                                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                                <div className="h-full bg-red-500 rounded-full" style={{ width: `${(hotLeads / totalLeads) * 100}%` }} />
+                                            </div>
                                         </div>
-                                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                            <div className="h-full bg-orange-500 rounded-full" style={{ width: `${(warmLeads / totalLeads) * 100}%` }} />
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-slate-600 flex items-center gap-2">
+                                                    <ThermometerSun className="h-4 w-4 text-orange-500" />
+                                                    {rt.leadCategories.warm}
+                                                </span>
+                                                <span className="font-bold text-orange-600">{warmLeads} ({Math.round((warmLeads / totalLeads) * 100)}%)</span>
+                                            </div>
+                                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                                <div className="h-full bg-orange-500 rounded-full" style={{ width: `${(warmLeads / totalLeads) * 100}%` }} />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-sm text-slate-600 flex items-center gap-2">
-                                                <Snowflake className="h-4 w-4 text-blue-500" />
-                                                {rt.leadCategories.cold}
-                                            </span>
-                                            <span className="font-bold text-blue-600">{coldLeads} ({Math.round((coldLeads / totalLeads) * 100)}%)</span>
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-slate-600 flex items-center gap-2">
+                                                    <Snowflake className="h-4 w-4 text-blue-500" />
+                                                    {rt.leadCategories.cold}
+                                                </span>
+                                                <span className="font-bold text-blue-600">{coldLeads} ({Math.round((coldLeads / totalLeads) * 100)}%)</span>
+                                            </div>
+                                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                                <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(coldLeads / totalLeads) * 100}%` }} />
+                                            </div>
                                         </div>
-                                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                            <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(coldLeads / totalLeads) * 100}%` }} />
-                                        </div>
-                                    </div>
 
-                                    <div className="pt-4 border-t">
-                                        <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                                            <span className="text-sm text-green-800">
-                                                {rt.appointmentConversion}
-                                            </span>
-                                            <span className="font-bold text-green-700">
-                                                {totalLeads > 0 ? Math.round((scheduledAppointments / totalLeads) * 100) : 0}%
-                                            </span>
+                                        <div className="pt-4 border-t">
+                                            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                                <span className="text-sm text-green-800">
+                                                    {rt.appointmentConversion}
+                                                </span>
+                                                <span className="font-bold text-green-700">
+                                                    {totalLeads > 0 ? Math.round((scheduledAppointments / totalLeads) * 100) : 0}%
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </Link>
 
                     {/* Chatbots Section */}
                     <Card className="flex flex-col h-full">

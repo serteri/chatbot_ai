@@ -224,7 +224,15 @@ export function RealEstateWidget({
             timelineNote: tRaw('leadQualification.timelineNote'),
             preApproval: tRaw('leadQualification.preApproval'),
             preApprovalNote: tRaw('leadQualification.preApprovalNote'),
-            contact: tRaw('leadQualification.contact')
+            contact: tRaw('leadQualification.contact'),
+            affordabilityResult: tRaw('leadQualification.affordabilityResult'),
+            affordabilityNote: tRaw('leadQualification.affordabilityNote'),
+            affordabilityWarning: tRaw('leadQualification.affordabilityWarning'),
+            affordabilitySuccess: tRaw('leadQualification.affordabilitySuccess'),
+            expenses: tRaw('leadQualification.expenses'),
+            expensesNote: tRaw('leadQualification.expensesNote'),
+            downPayment: tRaw('leadQualification.downPayment'),
+            downPaymentNote: tRaw('leadQualification.downPaymentNote')
         },
         propertyTypes: [
             tRaw('propertyTypes.apartment'),
