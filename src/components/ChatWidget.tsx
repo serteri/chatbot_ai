@@ -58,6 +58,7 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document', onRe
     const textColor = customization?.textColor || '#FFFFFF';
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
 
     // İlk yükleme (ve customization değişirse güncelle)
     useEffect(() => {
@@ -166,11 +167,23 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document', onRe
             setMessages(prev => [...prev, errorMessage])
         } finally {
             setIsLoading(false)
+            // Auto-focus input after sending message
+            setTimeout(() => inputRef.current?.focus(), 100)
         }
     }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
+
+        // Detect real estate intent and trigger RealEstateWidget
+        const realEstateKeywords = ['emlak', 'ev', 'daire', 'villa', 'arsa', 'kiralık', 'satılık', 'randevu', 'gayrimenkul', 'konut', 'müstakil', 'real estate', 'apartment', 'house', 'property', 'rent', 'buy', 'immobilier', 'maison', 'immobilien', 'wohnung', 'inmobiliaria', 'casa']
+        const messageLC = inputValue.toLowerCase()
+        const hasRealEstateIntent = realEstateKeywords.some(keyword => messageLC.includes(keyword))
+
+        if (hasRealEstateIntent && onRealEstateClick) {
+            onRealEstateClick()
+        }
+
         sendMessage()
     }
 
@@ -383,6 +396,7 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document', onRe
                 <div className="p-4 bg-white border-t border-slate-100">
                     <form onSubmit={handleSubmit} className="flex gap-2 items-end relative">
                         <Input
+                            ref={inputRef}
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             placeholder={mode === 'education' ? t('placeholderEducation') : t('placeholderGeneral')}
