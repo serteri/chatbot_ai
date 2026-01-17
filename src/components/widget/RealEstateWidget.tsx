@@ -718,6 +718,28 @@ export function RealEstateWidget({
 
         const bathroomValue = t.bathroomOptions.find((b: any) => b.label === bathroom)?.value || bathroom
         setLeadData(prev => ({ ...prev, bathrooms: bathroomValue }))
+        setCurrentStep('city')
+        setTimeout(() => {
+            addBotMessage(`${t.leadQualification.city}\n\n📍 ${t.leadQualification.cityNote}`)
+        }, 300)
+    }
+
+    const handleCityInput = async (city: string) => {
+        await addUserMessage(city)
+        if (limitReached) return
+
+        setLeadData(prev => ({ ...prev, city: city.trim() }))
+        setCurrentStep('suburb')
+        setTimeout(() => {
+            addBotMessage(`${t.leadQualification.suburb}\n\n🏘️ ${t.leadQualification.suburbNote}`)
+        }, 300)
+    }
+
+    const handleSuburbInput = async (suburb: string) => {
+        await addUserMessage(suburb)
+        if (limitReached) return
+
+        setLeadData(prev => ({ ...prev, suburb: suburb.trim() }))
         setCurrentStep('budget')
         setTimeout(() => {
             const isRent = leadData.intent === 'rent'
@@ -1055,6 +1077,19 @@ export function RealEstateWidget({
 
     const handleSend = () => {
         if (!input.trim()) return
+
+        // Handle city/suburb text input steps directly
+        if (currentStep === 'city') {
+            handleCityInput(input.trim())
+            setInput('')
+            return
+        }
+        if (currentStep === 'suburb') {
+            handleSuburbInput(input.trim())
+            setInput('')
+            return
+        }
+
         addUserMessage(input.trim())
 
         const userInput = input.toLowerCase()
@@ -1070,7 +1105,6 @@ export function RealEstateWidget({
                 addBotMessage(t.leadQualification.propertyType, 'quick-replies', {
                     replies: t.propertyTypes
                 })
-                setCurrentStep('propertyType')
                 setCurrentStep('propertyType')
             } else {
                 // FALLBACK: Use AI for general questions
