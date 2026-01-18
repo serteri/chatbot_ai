@@ -46,15 +46,15 @@ export const authConfig: NextAuthConfig = {
             }
         }),
 
-        // Google OAuth
+        // Google OAuth - Basic login only (no Calendar scopes to avoid verification warning)
+        // Calendar access will be requested separately when user connects calendar
         Google({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             allowDangerousEmailAccountLinking: true,
             authorization: {
                 params: {
-                    scope: 'openid email profile https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events',
-                    access_type: 'offline',
+                    scope: 'openid email profile',
                     prompt: 'consent'
                 }
             }
