@@ -52,6 +52,7 @@
       "register": "Commencer Gratuitement"
     },
     "stats": {
+      "setupTimeValue": "5 min",
       "setupTime": "Temps d'installation",
       "languages": "Langues prises en charge",
       "supportLabel": "Support Continu"

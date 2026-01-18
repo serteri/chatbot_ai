@@ -51,6 +51,7 @@
       "register": "Start for Free"
     },
     "stats": {
+      "setupTimeValue": "5 min",
       "setupTime": "Setup Time",
       "languages": "Supported Languages",
       "supportLabel": "Continuous Support"

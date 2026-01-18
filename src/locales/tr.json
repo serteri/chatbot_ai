@@ -53,6 +53,7 @@
       "register": "Ücretsiz Başla"
     },
     "stats": {
+      "setupTimeValue": "5 dk",
       "setupTime": "Kurulum Süresi",
       "languages": "Desteklenen Diller",
       "supportLabel": "Kesintisiz Destek"
