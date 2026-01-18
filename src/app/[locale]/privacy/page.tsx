@@ -2,12 +2,34 @@ import { getTranslations } from 'next-intl/server'
 import { PublicNav } from '@/components/layout/PublicNav'
 import { Footer } from '@/components/Footer'
 import { Shield, Eye, Lock, Share2, Cookie, Mail, Trash2, FileText, Globe } from 'lucide-react'
+import { Metadata } from 'next'
 
 interface PageProps {
     params: Promise<{
         locale: string
     }>
 }
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { locale } = await params
+    const t = await getTranslations({ locale, namespace: 'legal.privacy' })
+
+    return {
+        title: t('title') + ' | PylonChat',
+        description: t('intro'),
+        alternates: {
+            canonical: `https://www.pylonchat.com/${locale}/privacy`,
+        },
+        openGraph: {
+            title: t('title'),
+            description: t('intro'),
+            url: `https://www.pylonchat.com/${locale}/privacy`,
+            siteName: 'PylonChat',
+            type: 'website',
+        },
+    }
+}
+
 
 export default async function PrivacyPage({ params }: PageProps) {
     const { locale } = await params
