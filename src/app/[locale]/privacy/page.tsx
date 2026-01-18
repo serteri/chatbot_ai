@@ -66,7 +66,7 @@ export default async function PrivacyPage({ params }: PageProps) {
                                 {t('intro')}
                             </p>
                             <p className="text-sm text-blue-200">
-                                {tCommon('lastUpdated')}: 18 Ocak 2026
+                                {tCommon('lastUpdated')}: {new Intl.DateTimeFormat(locale === 'tr' ? 'tr-TR' : locale === 'de' ? 'de-DE' : locale === 'fr' ? 'fr-FR' : locale === 'es' ? 'es-ES' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date('2026-01-18'))}
                             </p>
                         </div>
                     </div>
