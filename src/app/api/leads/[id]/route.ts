@@ -41,7 +41,8 @@ export async function GET(
                         id: true,
                         title: true,
                         price: true,
-                        location: true
+                        city: true,
+                        district: true
                     }
                 }
             }
