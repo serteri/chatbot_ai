@@ -203,15 +203,13 @@ export default async function AppointmentsCalendarPage({
                             {calendarDays.map((day, i) => (
                                 <div
                                     key={i}
-                                    className={`min-h-[120px] border-r border-b last:border-r-0 p-2 ${
-                                        day === null ? 'bg-gray-50' : 'bg-white'
-                                    } ${isToday(day || 0) ? 'bg-green-50' : ''}`}
+                                    className={`min-h-[120px] border-r border-b last:border-r-0 p-2 ${day === null ? 'bg-gray-50' : 'bg-white'
+                                        } ${isToday(day || 0) ? 'bg-green-50' : ''}`}
                                 >
                                     {day !== null && (
                                         <>
-                                            <div className={`text-sm font-medium mb-1 ${
-                                                isToday(day) ? 'text-green-600' : 'text-gray-700'
-                                            }`}>
+                                            <div className={`text-sm font-medium mb-1 ${isToday(day) ? 'text-green-600' : 'text-gray-700'
+                                                }`}>
                                                 {isToday(day) ? (
                                                     <span className="inline-flex items-center justify-center w-7 h-7 bg-green-600 text-white rounded-full">
                                                         {day}
@@ -237,7 +235,6 @@ export default async function AppointmentsCalendarPage({
                                                             <a
                                                                 href={`tel:${appt.phone}`}
                                                                 className="flex items-center gap-1 text-amber-700 hover:text-amber-900 truncate"
-                                                                onClick={(e) => e.stopPropagation()}
                                                             >
                                                                 <Phone className="h-3 w-3 flex-shrink-0" />
                                                                 {appt.phone}
