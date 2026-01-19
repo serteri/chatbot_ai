@@ -134,13 +134,65 @@ export async function POST(request: NextRequest) {
     }
 }
 
-// GET - Get available slots for a chatbot
+// GET - Get available slots for a chatbot OR appointments for dashboard
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url)
         const identifier = searchParams.get('identifier')
-        const date = searchParams.get('date') // Optional: specific date
+        const month = searchParams.get('month')
+        const year = searchParams.get('year')
 
+        // Dashboard mode: authenticated user fetching their appointments
+        if (month !== null && year !== null) {
+            const session = await auth()
+            if (!session?.user?.id) {
+                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+            }
+
+            const currentMonth = parseInt(month)
+            const currentYear = parseInt(year)
+
+            // Get user's real estate chatbots
+            const chatbots = await prisma.chatbot.findMany({
+                where: {
+                    userId: session.user.id,
+                    industry: 'realestate'
+                },
+                select: { id: true }
+            })
+
+            const chatbotIds = chatbots.map(c => c.id)
+
+            // Get appointments for the specified month
+            const startOfMonth = new Date(currentYear, currentMonth, 1)
+            const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59)
+
+            const appointments = await prisma.lead.findMany({
+                where: {
+                    chatbotId: { in: chatbotIds },
+                    appointmentDate: {
+                        gte: startOfMonth,
+                        lte: endOfMonth
+                    },
+                    status: { not: 'appointment-cancelled' }
+                },
+                orderBy: { appointmentDate: 'asc' },
+                select: {
+                    id: true,
+                    name: true,
+                    phone: true,
+                    email: true,
+                    appointmentDate: true,
+                    appointmentTime: true,
+                    appointmentNote: true,
+                    status: true
+                }
+            })
+
+            return NextResponse.json({ appointments })
+        }
+
+        // Widget mode: public request for available slots
         if (!identifier) {
             return NextResponse.json({ error: 'Chatbot identifier is required' }, { status: 400 })
         }
@@ -158,6 +210,7 @@ export async function GET(request: NextRequest) {
         }
 
         const settings = (chatbot.customSettings as any) || {}
+        const date = searchParams.get('date')
 
         // Get configured slots or use defaults
         const defaultSlots = generateDefaultSlots()
@@ -207,8 +260,8 @@ export async function GET(request: NextRequest) {
         })
 
     } catch (error) {
-        console.error('Error fetching available slots:', error)
-        return NextResponse.json({ error: 'Failed to fetch available slots' }, { status: 500 })
+        console.error('Error fetching appointments:', error)
+        return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 })
     }
 }
 
