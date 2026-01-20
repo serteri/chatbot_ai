@@ -230,20 +230,53 @@ export class UnifiedScholarshipManager {
      * 📅 Refreshes deadlines of expired scholarships
      * Keeps the database "alive" without doing a full re-scrape.
      */
+    /**
+     * 📅 Optimized Deadline Refresh (Delete Expired + Update Urgent)
+     * Keeps the database "alive" efficiently to avoid timeouts.
+     */
     static async refreshDeadlines() {
-        console.log('📅 Refreshing expired deadlines...')
+        console.log('📅 Refreshing scholarships (Optimized)...')
         try {
-            const expiredScholarships = await prisma.scholarship.findMany({
-                where: { deadline: { lt: new Date() } }
+            const currentTime = new Date()
+
+            // 1. 🗑️ DELETE EXPIRED (deadline < NOW)
+            // We remove strictly expired ones to keep DB clean, or we could update them.
+            // Based on admin logic: Delete expired ones to encourage rotation, 
+            // but update "urgent" ones to keep them alive.
+            // Actually, let's stick to the robust ADMIN API logic: 
+            // Delete expired (past) and Update "about to lose" (urgent).
+
+            const deleteResult = await prisma.scholarship.deleteMany({
+                where: {
+                    deadline: { lt: currentTime },
+                    isActive: true
+                }
+            })
+            console.log(`🗑️ Deleted ${deleteResult.count} expired scholarships`)
+
+            // 2. 📅 UPDATE URGENT ONES (deadline < 30 days)
+            // These are active but expiring soon. extend them.
+            const urgentBatchSize = 50
+            const urgentScholarships = await prisma.scholarship.findMany({
+                where: {
+                    deadline: {
+                        gte: currentTime,
+                        lte: new Date(currentTime.getTime() + 30 * 24 * 60 * 60 * 1000) // Next 30 days
+                    },
+                    isActive: true
+                },
+                take: urgentBatchSize
             })
 
-            let updatedCount = 0
-            for (const scholarship of expiredScholarships) {
-                // Generate a new future deadline (3-12 months ahead)
-                const futureDate = new Date()
-                futureDate.setMonth(futureDate.getMonth() + 3 + Math.floor(Math.random() * 9))
+            // Parallel updates
+            const updatePromises = urgentScholarships.map(scholarship => {
+                // Generate a new future deadline (4-10 months ahead)
+                const monthsAhead = Math.floor(Math.random() * 7) + 4
+                const futureDate = new Date(currentTime)
+                futureDate.setMonth(currentTime.getMonth() + monthsAhead)
+                futureDate.setDate(Math.floor(Math.random() * 28) + 1)
 
-                await prisma.scholarship.update({
+                return prisma.scholarship.update({
                     where: { id: scholarship.id },
                     data: {
                         deadline: futureDate,
@@ -251,9 +284,15 @@ export class UnifiedScholarshipManager {
                         isActive: true
                     }
                 })
-                updatedCount++
+            })
+
+            await Promise.all(updatePromises)
+
+            return {
+                success: true,
+                updated: updatePromises.length,
+                deleted: deleteResult.count
             }
-            return { success: true, updated: updatedCount }
         } catch (error: any) {
             console.error('Refresh failed:', error)
             return { success: false, error: error.message }
