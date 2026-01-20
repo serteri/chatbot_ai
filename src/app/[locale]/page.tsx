@@ -86,7 +86,7 @@ export default async function HomePage({ params }: HomePageProps) {
                                                 <Globe className="h-5 w-5" />
                                             </div>
                                             <span className="text-4xl font-bold bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
-                                                5+
+                                                {t('stats.languageCount')}
                                             </span>
                                         </div>
                                         <div className="text-blue-100 text-sm font-medium">
