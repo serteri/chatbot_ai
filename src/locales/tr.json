@@ -58,7 +58,8 @@
       "education": "Eğitim Chatbotu",
       "ecommerce": "E-ticaret Chatbotu",
       "realestate": "Emlak Chatbotu",
-      "general": "Genel Chatbot"
+      "general": "Genel Chatbot",
+      "badge": "DEMO"
     },
     "stats": {
       "setupTimeValue": "5 dk",
@@ -71,9 +72,6 @@
     "discover": {
       "title": "Chatbot Türlerimizi Keşfedin",
       "subtitle": "İhtiyacınıza uygun AI asistanı seçin ve hemen deneyin"
-    },
-    "demo": {
-      "badge": "DEMO"
     },
     "education": {
       "title": "Eğitim Chatbot",

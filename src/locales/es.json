@@ -58,7 +58,8 @@
       "education": "Chatbot Educativo",
       "ecommerce": "Chatbot E-commerce",
       "realestate": "Chatbot Inmobiliario",
-      "general": "Chatbot General"
+      "general": "Chatbot General",
+      "badge": "DEMO"
     },
     "stats": {
       "setupTimeValue": "5 min",
@@ -71,9 +72,6 @@
     "discover": {
       "title": "Descubra Nuestros Tipos de Chatbot",
       "subtitle": "Elija el asistente de IA que se adapte a sus necesidades y pruébelo ahora"
-    },
-    "demo": {
-      "badge": "DEMO"
     },
     "education": {
       "title": "Chatbot Educativo",
