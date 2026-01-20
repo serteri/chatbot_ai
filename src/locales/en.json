@@ -31,12 +31,6 @@
     "register": "Register",
     "team": "Team"
   },
-  "demo": {
-    "education": "Education Chatbot",
-    "ecommerce": "E-commerce Chatbot",
-    "realestate": "Real Estate Chatbot",
-    "general": "General Chatbot"
-  },
   "home": {
     "hero": {
       "title": "AI Chatbot Solutions",
@@ -54,7 +48,15 @@
       "educationDemo": "Education Demo",
       "ecommerceDemo": "E-commerce Demo",
       "login": "Log In",
-      "register": "Start for Free"
+      "register": "Start for Free",
+      "realestateDemo": "Real Estate Demo",
+      "generalDemo": "General Demo"
+    },
+    "demo": {
+      "education": "Education Chatbot",
+      "ecommerce": "E-commerce Chatbot",
+      "realestate": "Real Estate Chatbot",
+      "general": "General Chatbot"
     },
     "stats": {
       "setupTimeValue": "5 min",

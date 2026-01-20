@@ -33,12 +33,6 @@
     "register": "Registrieren",
     "team": "Team"
   },
-  "demo": {
-    "education": "Bildungs-Chatbot",
-    "ecommerce": "E-Commerce-Chatbot",
-    "realestate": "Immobilien-Chatbot",
-    "general": "Allgemeiner Chatbot"
-  },
   "home": {
     "hero": {
       "title": "KI-Chatbot-Lösungen",
@@ -56,7 +50,15 @@
       "educationDemo": "Bildungs-Demo",
       "ecommerceDemo": "E-Commerce-Demo",
       "login": "Anmelden",
-      "register": "Kostenlos starten"
+      "register": "Kostenlos starten",
+      "realestateDemo": "Immobilien-Demo",
+      "generalDemo": "Allgemeine Demo"
+    },
+    "demo": {
+      "education": "Bildungs-Chatbot",
+      "ecommerce": "E-Commerce-Chatbot",
+      "realestate": "Immobilien-Chatbot",
+      "general": "Allgemeiner Chatbot"
     },
     "stats": {
       "setupTimeValue": "5 Min",

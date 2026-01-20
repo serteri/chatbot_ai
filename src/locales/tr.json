@@ -33,12 +33,6 @@
     "register": "Kayıt Ol",
     "team": "Ekip"
   },
-  "demo": {
-    "education": "Eğitim Chatbotu",
-    "ecommerce": "E-ticaret Chatbotu",
-    "realestate": "Emlak Chatbotu",
-    "general": "Genel Chatbot"
-  },
   "home": {
     "hero": {
       "title": "AI Chatbot Çözümleri",
@@ -56,7 +50,15 @@
       "educationDemo": "Eğitim Demo",
       "ecommerceDemo": "E-ticaret Demo",
       "login": "Giriş Yap",
-      "register": "Ücretsiz Başla"
+      "register": "Ücretsiz Başla",
+      "realestateDemo": "Emlak Demo",
+      "generalDemo": "Genel Demo"
+    },
+    "demo": {
+      "education": "Eğitim Chatbotu",
+      "ecommerce": "E-ticaret Chatbotu",
+      "realestate": "Emlak Chatbotu",
+      "general": "Genel Chatbot"
     },
     "stats": {
       "setupTimeValue": "5 dk",

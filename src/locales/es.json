@@ -33,12 +33,6 @@
     "register": "Registrarse",
     "team": "Equipo"
   },
-  "demo": {
-    "education": "Chatbot Educativo",
-    "ecommerce": "Chatbot E-commerce",
-    "realestate": "Chatbot Inmobiliario",
-    "general": "Chatbot General"
-  },
   "home": {
     "hero": {
       "title": "Soluciones de Chatbot AI",
@@ -56,7 +50,15 @@
       "educationDemo": "Demo Educativo",
       "ecommerceDemo": "Demo E-commerce",
       "login": "Iniciar Sesión",
-      "register": "Empezar Gratis"
+      "register": "Empezar Gratis",
+      "realestateDemo": "Demo Inmobiliario",
+      "generalDemo": "Demo General"
+    },
+    "demo": {
+      "education": "Chatbot Educativo",
+      "ecommerce": "Chatbot E-commerce",
+      "realestate": "Chatbot Inmobiliario",
+      "general": "Chatbot General"
     },
     "stats": {
       "setupTimeValue": "5 min",

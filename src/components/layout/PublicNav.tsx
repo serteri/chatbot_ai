@@ -135,20 +135,10 @@ export function PublicNav() {
                                         </div>
                                         <div>
                                             <div className="font-medium">
-                                                {locale === 'tr' ? 'Eğitim Chatbot'
-                                                    : locale === 'en' ? 'Education Chatbot'
-                                                        : locale === 'de' ? 'Bildungs-Chatbot'
-                                                            : locale === 'es' ? 'Chatbot Educativo'
-                                                                : locale === 'fr' ? 'Chatbot Éducatif'
-                                                                    : 'Education Chatbot'}
+                                                {t('educationDemo')}
                                             </div>
                                             <div className="text-xs text-gray-500">
-                                                {locale === 'tr' ? 'Yurtdışı eğitim danışmanlığı'
-                                                    : locale === 'en' ? 'Study abroad consultation'
-                                                        : locale === 'de' ? 'Auslandsstudien-Beratung'
-                                                            : locale === 'es' ? 'Consultoría de estudios en el extranjero'
-                                                                : locale === 'fr' ? 'Consultation d\'études à l\'étranger'
-                                                                    : 'Study abroad consultation'}
+                                                {t('educationDemo')}
                                             </div>
                                         </div>
                                     </Link>
@@ -161,20 +151,10 @@ export function PublicNav() {
                                         </div>
                                         <div>
                                             <div className="font-medium">
-                                                {locale === 'tr' ? 'E-ticaret Chatbot'
-                                                    : locale === 'en' ? 'E-commerce Chatbot'
-                                                        : locale === 'de' ? 'E-Commerce-Chatbot'
-                                                            : locale === 'es' ? 'Chatbot E-commerce'
-                                                                : locale === 'fr' ? 'Chatbot E-commerce'
-                                                                    : 'E-commerce Chatbot'}
+                                                {t('ecommerceDemo')}
                                             </div>
                                             <div className="text-xs text-gray-500">
-                                                {locale === 'tr' ? 'Müşteri hizmetleri asistanı'
-                                                    : locale === 'en' ? 'Customer service assistant'
-                                                        : locale === 'de' ? 'Kundendienst-Assistent'
-                                                            : locale === 'es' ? 'Asistente de atención al cliente'
-                                                                : locale === 'fr' ? 'Assistant service client'
-                                                                    : 'Customer service assistant'}
+                                                {t('ecommerceDemo')}
                                             </div>
                                         </div>
                                     </Link>
@@ -187,20 +167,26 @@ export function PublicNav() {
                                         </div>
                                         <div>
                                             <div className="font-medium">
-                                                {locale === 'tr' ? 'Emlak Chatbot'
-                                                    : locale === 'en' ? 'Real Estate Chatbot'
-                                                        : locale === 'de' ? 'Immobilien-Chatbot'
-                                                            : locale === 'es' ? 'Chatbot Inmobiliario'
-                                                                : locale === 'fr' ? 'Chatbot Immobilier'
-                                                                    : 'Real Estate Chatbot'}
+                                                {t('realestateDemo')}
                                             </div>
                                             <div className="text-xs text-gray-500">
-                                                {locale === 'tr' ? 'Lead qualification asistanı'
-                                                    : locale === 'en' ? 'Lead qualification assistant'
-                                                        : locale === 'de' ? 'Lead-Qualifizierungs-Assistent'
-                                                            : locale === 'es' ? 'Asistente de calificación de leads'
-                                                                : locale === 'fr' ? 'Assistant qualification de leads'
-                                                                    : 'Lead qualification assistant'}
+                                                {t.raw('realestateChatbotDesc') || t('realestateDemo')}
+                                            </div>
+                                        </div>
+                                    </Link>
+                                    <Link
+                                        href={`/${locale}/demo/general`}
+                                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+                                    >
+                                        <div className="w-10 h-10 bg-gray-600 rounded-lg flex items-center justify-center mr-3">
+                                            <MessageSquare className="h-5 w-5 text-white" />
+                                        </div>
+                                        <div>
+                                            <div className="font-medium">
+                                                {t('generalDemo')}
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                                {t('generalDemo')}
                                             </div>
                                         </div>
                                     </Link>
@@ -314,7 +300,15 @@ export function PublicNav() {
                                 className="flex items-center px-3 py-2 text-gray-700 hover:text-amber-600 hover:bg-gray-50 rounded-md transition-colors"
                             >
                                 <Building2 className="h-4 w-4 mr-2" />
-                                {locale === 'tr' ? 'Emlak Demo' : 'Real Estate Demo'}
+                                {t('realestateDemo')}
+                            </Link>
+
+                            <Link
+                                href={`/${locale}/demo/general`}
+                                className="flex items-center px-3 py-2 text-gray-700 hover:text-purple-600 hover:bg-gray-50 rounded-md transition-colors"
+                            >
+                                <MessageSquare className="h-4 w-4 mr-2" />
+                                {t('generalDemo')}
                             </Link>
 
                             <div className="pt-4 border-t border-gray-200">
