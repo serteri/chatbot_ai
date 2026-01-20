@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
         console.log(`🗑️ Deleted ${allExpired.count} ALL expired scholarships`)
 
         // 2. 📅 UPDATE URGENT ONES (deadline < 30 days)
+        const urgentBatchSize = 50 // Reduced from 75 to prevent timeout
         const urgentScholarships = await prisma.scholarship.findMany({
             where: {
                 deadline: {
@@ -81,14 +82,13 @@ export async function POST(request: NextRequest) {
                 },
                 isActive: true
             },
-            take: 75
+            take: urgentBatchSize
         })
 
-        let updated = 0
-        for (const scholarship of urgentScholarships) {
+        // Optimized: Use Promise.all for parallel updates instead of serial for loop
+        const updatePromises = urgentScholarships.map(scholarship => {
             const newDeadline = generateFarFutureDeadline()
-
-            await prisma.scholarship.update({
+            return prisma.scholarship.update({
                 where: { id: scholarship.id },
                 data: {
                     deadline: newDeadline,
@@ -96,8 +96,10 @@ export async function POST(request: NextRequest) {
                     isActive: true
                 }
             })
-            updated++
-        }
+        })
+
+        await Promise.all(updatePromises)
+        const updated = updatePromises.length
 
         console.log(`📅 Updated ${updated} upcoming scholarship deadlines`)
 
