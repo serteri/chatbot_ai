@@ -18,6 +18,25 @@ interface ScholarshipStats {
     topCountries: { country: string; count: number }[]
 }
 
+interface ExpiredScholarship {
+    id: string
+    title: string
+    provider: string
+    country: string
+    deadline: string
+    amount: string
+    currency: string
+    expiredSince: number
+    deadlineFormatted: string
+}
+
+interface ExpiredPagination {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+}
+
 export default function ScholarshipAdminPage() {
     // 🔒 AUTHENTICATION STATE
     const [authenticated, setAuthenticated] = useState(false)
@@ -30,6 +49,15 @@ export default function ScholarshipAdminPage() {
     const [updating, setUpdating] = useState(false)
     const [cooldown, setCooldown] = useState(0)
     const [lastUpdateTime, setLastUpdateTime] = useState(0)
+
+    // EXPIRED SCHOLARSHIPS STATE
+    const [expiredList, setExpiredList] = useState<ExpiredScholarship[]>([])
+    const [expiredPagination, setExpiredPagination] = useState<ExpiredPagination | null>(null)
+    const [loadingExpired, setLoadingExpired] = useState(false)
+    const [showExpiredList, setShowExpiredList] = useState(false)
+    const [deletingAll, setDeletingAll] = useState(false)
+    const [updatingAll, setUpdatingAll] = useState(false)
+    const [actionInProgress, setActionInProgress] = useState<string | null>(null)
 
     // 🔒 AUTH CHECK WITH API CALL
     const checkAuth = async () => {
@@ -78,6 +106,134 @@ export default function ScholarshipAdminPage() {
         } finally {
             setLoading(false)
         }
+    }
+
+    // Fetch expired scholarships list
+    const fetchExpiredList = async (page = 1) => {
+        setLoadingExpired(true)
+        try {
+            const response = await fetch(`/api/admin/scholarship-expired?page=${page}&limit=20`)
+            const data = await response.json()
+
+            if (data.success) {
+                setExpiredList(data.scholarships)
+                setExpiredPagination(data.pagination)
+            } else {
+                toast.error('Süresi geçmiş burslar yüklenemedi')
+            }
+        } catch (error) {
+            toast.error('Bağlantı hatası')
+        } finally {
+            setLoadingExpired(false)
+        }
+    }
+
+    // Delete single expired scholarship
+    const deleteExpired = async (id: string) => {
+        setActionInProgress(id)
+        try {
+            const response = await fetch(`/api/admin/scholarship-expired?id=${id}`, {
+                method: 'DELETE'
+            })
+            const data = await response.json()
+
+            if (data.success) {
+                toast.success('Burs silindi')
+                setExpiredList(prev => prev.filter(s => s.id !== id))
+                await fetchStats()
+            } else {
+                toast.error('Silme başarısız: ' + data.error)
+            }
+        } catch (error) {
+            toast.error('Silme hatası')
+        } finally {
+            setActionInProgress(null)
+        }
+    }
+
+    // Refresh single expired scholarship deadline
+    const refreshExpired = async (id: string) => {
+        setActionInProgress(id)
+        try {
+            const response = await fetch(`/api/admin/scholarship-expired?id=${id}`, {
+                method: 'PATCH'
+            })
+            const data = await response.json()
+
+            if (data.success) {
+                toast.success(`Deadline güncellendi: ${data.scholarship.newDeadline.split('T')[0]}`)
+                setExpiredList(prev => prev.filter(s => s.id !== id))
+                await fetchStats()
+            } else {
+                toast.error('Güncelleme başarısız: ' + data.error)
+            }
+        } catch (error) {
+            toast.error('Güncelleme hatası')
+        } finally {
+            setActionInProgress(null)
+        }
+    }
+
+    // Delete ALL expired scholarships
+    const deleteAllExpired = async () => {
+        if (!confirm(`${stats?.expired || 0} süresi geçmiş bursu silmek istediğinize emin misiniz?`)) {
+            return
+        }
+
+        setDeletingAll(true)
+        try {
+            const response = await fetch('/api/admin/scholarship-expired', {
+                method: 'DELETE'
+            })
+            const data = await response.json()
+
+            if (data.success) {
+                toast.success(`✅ ${data.deletedCount} süresi geçmiş burs silindi`)
+                setExpiredList([])
+                await fetchStats()
+            } else {
+                toast.error('Toplu silme başarısız: ' + data.error)
+            }
+        } catch (error) {
+            toast.error('Toplu silme hatası')
+        } finally {
+            setDeletingAll(false)
+        }
+    }
+
+    // Update ALL expired scholarships with new deadlines
+    const updateAllExpired = async () => {
+        if (!confirm(`${stats?.expired || 0} süresi geçmiş bursun deadline'ını güncellemek istediğinize emin misiniz?`)) {
+            return
+        }
+
+        setUpdatingAll(true)
+        try {
+            const response = await fetch('/api/admin/scholarship-expired', {
+                method: 'PATCH'
+            })
+            const data = await response.json()
+
+            if (data.success) {
+                toast.success(`✅ ${data.updatedCount} burs güncellendi (yeni deadline'lar eklendi)`)
+                setExpiredList([])
+                await fetchStats()
+            } else {
+                toast.error('Toplu güncelleme başarısız: ' + data.error)
+            }
+        } catch (error) {
+            toast.error('Toplu güncelleme hatası')
+        } finally {
+            setUpdatingAll(false)
+        }
+    }
+
+    // Toggle expired list view
+    const toggleExpiredList = () => {
+        if (!showExpiredList) {
+            fetchExpiredList(1)
+        }
+        setShowExpiredList(!showExpiredList)
     }
 
     // ✅ UPDATED runManualUpdate WITH FORCE REFRESH TRIGGER
@@ -275,6 +431,178 @@ export default function ScholarshipAdminPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Expired Scholarships Management */}
+            <Card className="border-red-200">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Trash2 className="h-5 w-5 text-red-500" />
+                        Süresi Geçmiş Bursları Yönet
+                    </CardTitle>
+                    <CardDescription>
+                        Süresi geçmiş {stats?.expired || 0} burs var. Bunları silebilir veya deadline'larını güncelleyebilirsiniz.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap gap-3">
+                        <Button
+                            variant="outline"
+                            onClick={toggleExpiredList}
+                            disabled={loadingExpired}
+                        >
+                            {loadingExpired ? (
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            ) : (
+                                <Database className="w-4 h-4 mr-2" />
+                            )}
+                            {showExpiredList ? 'Listeyi Gizle' : 'Süresi Geçmişleri Listele'}
+                        </Button>
+
+                        <Button
+                            variant="destructive"
+                            onClick={deleteAllExpired}
+                            disabled={deletingAll || !stats?.expired}
+                        >
+                            {deletingAll ? (
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            ) : (
+                                <Trash2 className="w-4 h-4 mr-2" />
+                            )}
+                            Tümünü Sil ({stats?.expired || 0})
+                        </Button>
+
+                        <Button
+                            variant="default"
+                            onClick={updateAllExpired}
+                            disabled={updatingAll || !stats?.expired}
+                            className="bg-green-600 hover:bg-green-700"
+                        >
+                            {updatingAll ? (
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            ) : (
+                                <RefreshCw className="w-4 h-4 mr-2" />
+                            )}
+                            Tümünü Yenile ({stats?.expired || 0})
+                        </Button>
+                    </div>
+
+                    {/* Expired Scholarships List */}
+                    {showExpiredList && (
+                        <div className="mt-4 border rounded-lg overflow-hidden">
+                            {loadingExpired ? (
+                                <div className="p-8 text-center">
+                                    <Loader2 className="w-8 h-8 animate-spin mx-auto" />
+                                    <p className="mt-2 text-gray-500">Yükleniyor...</p>
+                                </div>
+                            ) : expiredList.length === 0 ? (
+                                <div className="p-8 text-center text-gray-500">
+                                    ✅ Süresi geçmiş burs yok
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-sm">
+                                            <thead className="bg-gray-50">
+                                                <tr>
+                                                    <th className="px-4 py-3 text-left font-medium">Burs Adı</th>
+                                                    <th className="px-4 py-3 text-left font-medium">Ülke</th>
+                                                    <th className="px-4 py-3 text-left font-medium">Deadline</th>
+                                                    <th className="px-4 py-3 text-left font-medium">Geçen Süre</th>
+                                                    <th className="px-4 py-3 text-center font-medium">İşlemler</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y">
+                                                {expiredList.map((scholarship) => (
+                                                    <tr key={scholarship.id} className="hover:bg-gray-50">
+                                                        <td className="px-4 py-3">
+                                                            <div className="font-medium truncate max-w-[200px]">
+                                                                {scholarship.title}
+                                                            </div>
+                                                            <div className="text-xs text-gray-500">
+                                                                {scholarship.provider}
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-4 py-3">{scholarship.country}</td>
+                                                        <td className="px-4 py-3">
+                                                            <span className="text-red-600">
+                                                                {scholarship.deadlineFormatted}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-4 py-3">
+                                                            <Badge variant="destructive">
+                                                                {scholarship.expiredSince} gün önce
+                                                            </Badge>
+                                                        </td>
+                                                        <td className="px-4 py-3">
+                                                            <div className="flex justify-center gap-2">
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    onClick={() => refreshExpired(scholarship.id)}
+                                                                    disabled={actionInProgress === scholarship.id}
+                                                                    className="text-green-600 hover:text-green-700"
+                                                                >
+                                                                    {actionInProgress === scholarship.id ? (
+                                                                        <Loader2 className="w-3 h-3 animate-spin" />
+                                                                    ) : (
+                                                                        <RefreshCw className="w-3 h-3" />
+                                                                    )}
+                                                                </Button>
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    onClick={() => deleteExpired(scholarship.id)}
+                                                                    disabled={actionInProgress === scholarship.id}
+                                                                    className="text-red-600 hover:text-red-700"
+                                                                >
+                                                                    {actionInProgress === scholarship.id ? (
+                                                                        <Loader2 className="w-3 h-3 animate-spin" />
+                                                                    ) : (
+                                                                        <Trash2 className="w-3 h-3" />
+                                                                    )}
+                                                                </Button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {/* Pagination */}
+                                    {expiredPagination && expiredPagination.totalPages > 1 && (
+                                        <div className="flex justify-between items-center p-4 border-t bg-gray-50">
+                                            <div className="text-sm text-gray-500">
+                                                Sayfa {expiredPagination.page} / {expiredPagination.totalPages}
+                                                {' '}({expiredPagination.total} toplam)
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    disabled={expiredPagination.page <= 1}
+                                                    onClick={() => fetchExpiredList(expiredPagination.page - 1)}
+                                                >
+                                                    Önceki
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    disabled={expiredPagination.page >= expiredPagination.totalPages}
+                                                    onClick={() => fetchExpiredList(expiredPagination.page + 1)}
+                                                >
+                                                    Sonraki
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
 
             {/* Action Buttons */}
             <Card>
