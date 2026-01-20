@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { MessageSquare, ArrowLeft } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 
 interface AuthLayoutProps {
     children: React.ReactNode
@@ -12,6 +13,7 @@ export default async function AuthLayout({
     params
 }: AuthLayoutProps) {
     const { locale } = await params
+    const t = await getTranslations({ locale, namespace: 'auth.login' })
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -29,7 +31,7 @@ export default async function AuthLayout({
                         <Link href={`/${locale}`}>
                             <Button variant="outline" size="sm">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
-                                Ana Sayfa
+                                {t('backToHome')}
                             </Button>
                         </Link>
                     </div>
