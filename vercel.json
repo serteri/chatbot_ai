@@ -3,7 +3,7 @@
   "crons": [
     {
       "path": "/api/scholarships/auto-update",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 2 * * *"
     },
     {
       "path": "/api/scholarships/balance-countries",
