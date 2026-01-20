@@ -560,7 +560,18 @@
     },
     "listingTypes": {
       "sale": "Vente",
-      "rent": "Location"
+      "rent": "Location",
+      "time": "Heure",
+      "select": "Sélectionner Date & Heure"
+    },
+    "careers": {
+      "title": "Carrières",
+      "subtitle": "Vous souhaitez rejoindre l'équipe PylonChat ?",
+      "noOpeningsTitle": "Aucun poste vacant actuellement",
+      "noOpeningsDesc": "Nous n'avons aucun poste ouvert pour le moment. Cependant, nous sommes toujours heureux de rencontrer des gens talentueux.",
+      "sendCvTitle": "Candidature Spontanée",
+      "sendCvDesc": "Envoyez-nous votre CV et nous vous contacterons lorsqu'un poste approprié s'ouvrira.",
+      "sendButton": "Envoyer CV"
     },
     "status": {
       "active": "Actif",

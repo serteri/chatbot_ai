@@ -2516,7 +2516,17 @@
       },
       "appointmentSlots": {
         "title": "Nuestro asesor está disponible en estos horarios:",
-        "select": "Seleccionar horario"
+        "time": "Hora",
+        "select": "Seleccionar Fecha y Hora"
+      },
+      "careers": {
+        "title": "Carreras",
+        "subtitle": "¿Quieres unirte al equipo de PylonChat?",
+        "noOpeningsTitle": "No hay vacantes actualmente",
+        "noOpeningsDesc": "No tenemos puestos abiertos en este momento. Sin embargo, siempre estamos felices de conocer gente talentosa.",
+        "sendCvTitle": "Solicitud General",
+        "sendCvDesc": "Envíanos tu CV y te contactaremos cuando se abra una posición adecuada.",
+        "sendButton": "Enviar CV"
       },
       "valuation": {
         "title": "Valoración Gratuita",

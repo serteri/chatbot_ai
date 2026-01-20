@@ -2831,5 +2831,14 @@
     "totalInterest": "Toplam Faiz",
     "totalPayment": "Toplam Ödeme",
     "disclaimer": "Bu hesaplama tahminidir. Gerçek değerler bankaya göre değişebilir."
+  },
+  "careers": {
+    "title": "Kariyer",
+    "subtitle": "PylonChat ekibine katılmak ister misiniz?",
+    "noOpeningsTitle": "Şu anda açık pozisyon yok",
+    "noOpeningsDesc": "Şu anda ekibimizde açık bir rol bulunmamaktadır. Ancak yetenekli kişilerle tanışmayı her zaman isteriz.",
+    "sendCvTitle": "Genel Başvuru",
+    "sendCvDesc": "CV'nizi gönderin, uygun bir pozisyon açıldığında sizinle iletişime geçelim.",
+    "sendButton": "CV Gönder"
   }
 }

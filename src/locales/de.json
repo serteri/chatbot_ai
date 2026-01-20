@@ -1863,6 +1863,8 @@
     },
     "filters": {
       "title": "Filter",
+      "time": "Zeit",
+      "select": "Datum & Zeit wählen",
       "search": "Suchen",
       "searchPlaceholder": "Land, Visumstyp suchen...",
       "region": "Region",

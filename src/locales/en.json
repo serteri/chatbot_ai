@@ -2184,9 +2184,18 @@
       "privacy": "Privacy Policy",
       "terms": "Terms of Service",
       "cookies": "Cookie Policy",
-      "gdpr": "GDPR",
-      "help": "Help"
+      "time": "Time",
+      "select": "Select Date & Time"
     }
+  },
+  "careers": {
+    "title": "Careers",
+    "subtitle": "Want to join the PylonChat team?",
+    "noOpeningsTitle": "No open positions currently",
+    "noOpeningsDesc": "We don't have any open roles at the moment. However, we're always happy to meet talented people.",
+    "sendCvTitle": "General Application",
+    "sendCvDesc": "Send us your CV and we'll contact you when a suitable position opens up.",
+    "sendButton": "Send CV"
   },
   "status": {
     "title": "System Status",
