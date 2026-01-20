@@ -92,6 +92,9 @@ export default async function HomePage({ params }: HomePageProps) {
                                         <div className="text-blue-100 text-sm font-medium">
                                             {t('stats.languages')}
                                         </div>
+                                        <div className="text-blue-200/70 text-xs mt-1">
+                                            {t('stats.languageList')}
+                                        </div>
                                     </div>
                                 </div>
 
