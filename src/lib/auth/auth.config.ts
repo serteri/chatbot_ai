@@ -215,7 +215,7 @@ export const authConfig: NextAuthConfig = {
 
     session: {
         strategy: 'jwt',
-        maxAge: 7 * 24 * 60 * 60, // 7 days for security (was 30 days)
+        maxAge: 2 * 24 * 60 * 60, // 2 days default (14 days if "Remember Me" is checked)
         updateAge: 24 * 60 * 60, // Refresh session every 24 hours if user is active
     },
 

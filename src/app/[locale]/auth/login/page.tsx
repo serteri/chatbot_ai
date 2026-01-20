@@ -55,7 +55,7 @@ export default function LoginPage() {
 
         // Store rememberMe preference for session duration
         if (typeof window !== 'undefined') {
-            localStorage.setItem('rememberMe', rememberMe ? '14' : '7')
+            localStorage.setItem('rememberMe', rememberMe ? '14' : '2')
         }
 
         try {
@@ -83,7 +83,7 @@ export default function LoginPage() {
 
         // Store rememberMe preference for session duration
         if (typeof window !== 'undefined') {
-            localStorage.setItem('rememberMe', rememberMe ? '14' : '7')
+            localStorage.setItem('rememberMe', rememberMe ? '14' : '2')
         }
 
         try {
@@ -299,7 +299,7 @@ export default function LoginPage() {
                                     </span>
                                 </label>
                                 <span className="text-xs text-gray-400">
-                                    {!rememberMe && (locale === 'tr' ? '7 gün' : '7 days')}
+                                    {!rememberMe && (locale === 'tr' ? '2 gün' : '2 days')}
                                 </span>
                             </div>
 
