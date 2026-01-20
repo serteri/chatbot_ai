@@ -17,6 +17,7 @@ export default function LoginPage() {
 
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
+    const [rememberMe, setRememberMe] = useState(true) // Default to remember
     const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({})
     const [formData, setFormData] = useState({
         email: '',
@@ -52,6 +53,11 @@ export default function LoginPage() {
         setIsLoading(true)
         setErrors({})
 
+        // Store rememberMe preference for session duration
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('rememberMe', rememberMe ? '14' : '7')
+        }
+
         try {
             const result = await signIn('credentials', {
                 email: formData.email,
@@ -74,6 +80,11 @@ export default function LoginPage() {
     const handleOAuthLogin = async (provider: 'google' | 'github' | 'azure-ad') => {
         setIsLoading(true)
         setErrors({})
+
+        // Store rememberMe preference for session duration
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('rememberMe', rememberMe ? '14' : '7')
+        }
 
         try {
             await signIn(provider, {
@@ -272,6 +283,24 @@ export default function LoginPage() {
                                         <span>{errors.password}</span>
                                     </div>
                                 )}
+                            </div>
+
+                            {/* Remember Me */}
+                            <div className="flex items-center justify-between">
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={rememberMe}
+                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                    />
+                                    <span className="text-sm text-gray-600">
+                                        {locale === 'tr' ? 'Beni hatırla (14 gün)' : 'Remember me (14 days)'}
+                                    </span>
+                                </label>
+                                <span className="text-xs text-gray-400">
+                                    {!rememberMe && (locale === 'tr' ? '7 gün' : '7 days')}
+                                </span>
                             </div>
 
                             <button
