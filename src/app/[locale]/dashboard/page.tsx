@@ -293,7 +293,7 @@ export default async function DashboardPage({
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <Card className="text-center">
                         <CardHeader>
                             <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -324,6 +324,23 @@ export default async function DashboardPage({
                                 <li>• {t('dashboard.orderTracking')}</li>
                                 <li>• {t('dashboard.customerSupport')}</li>
                                 <li>• {t('dashboard.salesOptimization')}</li>
+                            </ul>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="text-center">
+                        <CardHeader>
+                            <div className="w-16 h-16 bg-amber-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                <Building2 className="h-8 w-8 text-amber-600" />
+                            </div>
+                            <CardTitle className="text-amber-900">{t('dashboard.realestateFeatures')}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ul className="text-sm text-muted-foreground space-y-2">
+                                <li>• {t('dashboard.leadQualification')}</li>
+                                <li>• {t('dashboard.appointmentScheduling')}</li>
+                                <li>• {t('dashboard.propertyMatching')}</li>
+                                <li>• {t('dashboard.mortgagePreApproval')}</li>
                             </ul>
                         </CardContent>
                     </Card>
