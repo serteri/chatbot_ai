@@ -33,6 +33,11 @@
     "register": "Registrieren",
     "team": "Team"
   },
+  "demo": {
+    "education": "Bildungs-Chatbot",
+    "ecommerce": "E-Commerce-Chatbot",
+    "realestate": "Immobilien-Chatbot"
+  },
   "home": {
     "hero": {
       "title": "KI-Chatbot-Lösungen",

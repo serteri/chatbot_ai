@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
+import { DemoDropdown } from '@/components/home/DemoDropdown'
 import {
     MessageSquare,
     GraduationCap,
@@ -51,12 +52,15 @@ export default async function HomePage({ params }: HomePageProps) {
                                         {t('hero.cta')}
                                     </Button>
                                 </Link>
-                                <Link href={`/${locale}/demo/education`}>
-                                    <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-                                        <MessageSquare className="mr-2 h-5 w-5" />
-                                        {t('hero.demoTry')}
-                                    </Button>
-                                </Link>
+                                <DemoDropdown
+                                    locale={locale}
+                                    translations={{
+                                        demoTry: t('hero.demoTry'),
+                                        education: t('demo.education'),
+                                        ecommerce: t('demo.ecommerce'),
+                                        realestate: t('demo.realestate')
+                                    }}
+                                />
                             </div>
 
                             {/* Stats - Modern Glassmorphism Cards */}

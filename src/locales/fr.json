@@ -33,6 +33,11 @@
     "register": "S'inscrire",
     "team": "Équipe"
   },
+  "demo": {
+    "education": "Chatbot Éducatif",
+    "ecommerce": "Chatbot E-commerce",
+    "realestate": "Chatbot Immobilier"
+  },
   "home": {
     "hero": {
       "title": "Solutions de Chatbot IA",

@@ -33,6 +33,11 @@
     "register": "Kayıt Ol",
     "team": "Ekip"
   },
+  "demo": {
+    "education": "Eğitim Chatbotu",
+    "ecommerce": "E-ticaret Chatbotu",
+    "realestate": "Emlak Chatbotu"
+  },
   "home": {
     "hero": {
       "title": "AI Chatbot Çözümleri",
