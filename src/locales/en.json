@@ -34,7 +34,8 @@
   "demo": {
     "education": "Education Chatbot",
     "ecommerce": "E-commerce Chatbot",
-    "realestate": "Real Estate Chatbot"
+    "realestate": "Real Estate Chatbot",
+    "general": "General Chatbot"
   },
   "home": {
     "hero": {

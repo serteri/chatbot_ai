@@ -58,7 +58,8 @@ export default async function HomePage({ params }: HomePageProps) {
                                         demoTry: t('hero.demoTry'),
                                         education: t('demo.education'),
                                         ecommerce: t('demo.ecommerce'),
-                                        realestate: t('demo.realestate')
+                                        realestate: t('demo.realestate'),
+                                        general: t('demo.general')
                                     }}
                                 />
                             </div>

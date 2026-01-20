@@ -36,7 +36,8 @@
   "demo": {
     "education": "Eğitim Chatbotu",
     "ecommerce": "E-ticaret Chatbotu",
-    "realestate": "Emlak Chatbotu"
+    "realestate": "Emlak Chatbotu",
+    "general": "Genel Chatbot"
   },
   "home": {
     "hero": {
