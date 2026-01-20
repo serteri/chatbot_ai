@@ -607,7 +607,7 @@ export default function ScholarshipAdminPage() {
             {/* Action Buttons */}
             <Card>
                 <CardHeader>
-                    <CardTitle>🔧 Manual Database Update</CardTitle>
+                    <CardTitle>🔧 Manual Database Update v2</CardTitle>
                     <CardDescription>
                         Süresi geçmiş bursları sil ve yeni deadlinelar ekle
                     </CardDescription>
