@@ -766,7 +766,14 @@
     "products": "Produkte",
     "productDocuments": "Produktdokumente",
     "productDocumentsDesc": "Dokumente mit Ihren Produktkataloginformationen",
-    "noDocumentsYet": "Noch keine Produktdokumente hochgeladen"
+    "noDocumentsYet": "Noch keine Produktdokumente hochgeladen",
+    "noChatbotsYet": "Noch keine E-Commerce-Chatbots",
+    "noChatbotsDesc": "Erstellen Sie Ihren ersten KI-Verkaufsassistenten, um den Kundensupport zu automatisieren, Produktfragen zu beantworten und Ihre Verkäufe rund um die Uhr zu steigern.",
+    "createFirstChatbot": "Ersten Chatbot erstellen",
+    "viewDemoFirst": "Zuerst Demo ansehen",
+    "alwaysAvailable": "Immer Verfügbar",
+    "languagesSupported": "Unterstützte Sprachen",
+    "createNew": "Neu erstellen"
   },
   "templates": {
     "education": {

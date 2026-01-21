@@ -369,8 +369,55 @@ export default async function EcommerceDashboard({
                     </Card>
                 </div>
 
-                {/* E-commerce Chatbots Preview */}
-                {ecommerceChatbots.length > 0 && (
+                {/* E-commerce Chatbots Section */}
+                {ecommerceChatbots.length === 0 ? (
+                    /* Empty State - No Chatbots Yet */
+                    <Card className="mb-8 border-t-4 border-t-green-500 bg-gradient-to-br from-green-50 to-emerald-50">
+                        <CardContent className="flex flex-col items-center justify-center py-12">
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                                <Bot className="h-10 w-10 text-green-600" />
+                            </div>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                                {t('ecommerce.noChatbotsYet')}
+                            </h3>
+                            <p className="text-muted-foreground mb-6 text-center max-w-md">
+                                {t('ecommerce.noChatbotsDesc')}
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <CreateChatbotDialog
+                                    prefilledData={{ type: 'ecommerce', industry: 'ecommerce' }}
+                                    trigger={
+                                        <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white shadow-md">
+                                            <Plus className="mr-2 h-5 w-5" />
+                                            {t('ecommerce.createFirstChatbot')}
+                                        </Button>
+                                    }
+                                />
+                                <Link href={`/${locale}/demo/ecommerce`}>
+                                    <Button variant="outline" size="lg" className="border-green-200 text-green-700 hover:bg-green-50">
+                                        <ShoppingCart className="mr-2 h-5 w-5" />
+                                        {t('ecommerce.viewDemoFirst')}
+                                    </Button>
+                                </Link>
+                            </div>
+                            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                                <div className="p-4 bg-white/60 rounded-lg">
+                                    <div className="text-2xl font-bold text-green-600">24/7</div>
+                                    <div className="text-sm text-muted-foreground">{t('ecommerce.alwaysAvailable')}</div>
+                                </div>
+                                <div className="p-4 bg-white/60 rounded-lg">
+                                    <div className="text-2xl font-bold text-green-600">5+</div>
+                                    <div className="text-sm text-muted-foreground">{t('ecommerce.languagesSupported')}</div>
+                                </div>
+                                <div className="p-4 bg-white/60 rounded-lg">
+                                    <div className="text-2xl font-bold text-green-600">&lt;1s</div>
+                                    <div className="text-sm text-muted-foreground">{t('ecommerce.responseTime')}</div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    /* Existing Chatbots Section */
                     <Card className="mb-8 border-t-4 border-t-green-500">
                         <CardHeader>
                             <div className="flex items-center justify-between">
@@ -378,11 +425,22 @@ export default async function EcommerceDashboard({
                                     <Bot className="h-5 w-5 text-green-600" />
                                     <CardTitle>{t('ecommerce.sections.chatbots')}</CardTitle>
                                 </div>
-                                <Link href={`/${locale}/dashboard/ecommerce/chatbots`}>
-                                    <Button variant="ghost" size="sm" className="text-green-700 hover:text-green-800 hover:bg-green-50">
-                                        {t('ecommerce.viewAll')} <ArrowLeft className="ml-1 h-3 w-3 rotate-180" />
-                                    </Button>
-                                </Link>
+                                <div className="flex items-center space-x-2">
+                                    <CreateChatbotDialog
+                                        prefilledData={{ type: 'ecommerce', industry: 'ecommerce' }}
+                                        trigger={
+                                            <Button variant="outline" size="sm" className="text-green-700 border-green-200 hover:bg-green-50">
+                                                <Plus className="mr-1 h-4 w-4" />
+                                                {t('ecommerce.createNew')}
+                                            </Button>
+                                        }
+                                    />
+                                    <Link href={`/${locale}/dashboard/ecommerce/chatbots`}>
+                                        <Button variant="ghost" size="sm" className="text-green-700 hover:text-green-800 hover:bg-green-50">
+                                            {t('ecommerce.viewAll')} <ArrowLeft className="ml-1 h-3 w-3 rotate-180" />
+                                        </Button>
+                                    </Link>
+                                </div>
                             </div>
                             <CardDescription>
                                 {t('ecommerce.chatbotsDescription')}

@@ -779,7 +779,14 @@
     "products": "Products",
     "productDocuments": "Product Documents",
     "productDocumentsDesc": "Documents containing your product catalog information",
-    "noDocumentsYet": "No product documents uploaded yet"
+    "noDocumentsYet": "No product documents uploaded yet",
+    "noChatbotsYet": "No E-commerce Chatbots Yet",
+    "noChatbotsDesc": "Create your first AI sales assistant to automate customer support, answer product questions, and boost your sales 24/7.",
+    "createFirstChatbot": "Create Your First Chatbot",
+    "viewDemoFirst": "View Demo First",
+    "alwaysAvailable": "Always Available",
+    "languagesSupported": "Languages Supported",
+    "createNew": "Create New"
   },
   "templates": {
     "education": {

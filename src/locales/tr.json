@@ -674,7 +674,14 @@
     "products": "Ürün",
     "productDocuments": "Ürün Dokümanları",
     "productDocumentsDesc": "Ürün kataloğu bilgilerinizi içeren dokümanlar",
-    "noDocumentsYet": "Henüz ürün dokümanı yüklenmedi"
+    "noDocumentsYet": "Henüz ürün dokümanı yüklenmedi",
+    "noChatbotsYet": "Henüz E-ticaret Chatbotu Yok",
+    "noChatbotsDesc": "Müşteri desteğini otomatikleştirmek, ürün sorularını yanıtlamak ve satışlarınızı 7/24 artırmak için ilk AI satış asistanınızı oluşturun.",
+    "createFirstChatbot": "İlk Chatbotunuzu Oluşturun",
+    "viewDemoFirst": "Önce Demoyu Görün",
+    "alwaysAvailable": "Her Zaman Erişilebilir",
+    "languagesSupported": "Desteklenen Dil",
+    "createNew": "Yeni Oluştur"
   },
   "templates": {
     "education": {

@@ -764,7 +764,14 @@
     "products": "Productos",
     "productDocuments": "Documentos de Productos",
     "productDocumentsDesc": "Documentos que contienen la información de tu catálogo de productos",
-    "noDocumentsYet": "Aún no se han cargado documentos de productos"
+    "noDocumentsYet": "Aún no se han cargado documentos de productos",
+    "noChatbotsYet": "Aún no hay Chatbots E-commerce",
+    "noChatbotsDesc": "Crea tu primer asistente de ventas AI para automatizar el soporte al cliente, responder preguntas de productos y aumentar tus ventas las 24 horas.",
+    "createFirstChatbot": "Crea tu Primer Chatbot",
+    "viewDemoFirst": "Ver Demo Primero",
+    "alwaysAvailable": "Siempre Disponible",
+    "languagesSupported": "Idiomas Soportados",
+    "createNew": "Crear Nuevo"
   },
   "templates": {
     "education": {
