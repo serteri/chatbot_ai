@@ -319,6 +319,49 @@ export default function LanguageSchoolsPage() {
         return school.multiLanguage?.tr?.description || school.description
     }
 
+    // Get color theme based on primary language
+    const getLanguageTheme = (languages: string[]) => {
+        const primaryLang = languages[0]?.toLowerCase() || ''
+        const themes: Record<string, { border: string; bg: string; badge: string; icon: string }> = {
+            'english': { border: 'border-l-blue-500', bg: 'bg-gradient-to-br from-blue-50 to-white', badge: 'bg-blue-100 text-blue-700 border-blue-200', icon: 'text-blue-600' },
+            'spanish': { border: 'border-l-orange-500', bg: 'bg-gradient-to-br from-orange-50 to-white', badge: 'bg-orange-100 text-orange-700 border-orange-200', icon: 'text-orange-600' },
+            'french': { border: 'border-l-indigo-500', bg: 'bg-gradient-to-br from-indigo-50 to-white', badge: 'bg-indigo-100 text-indigo-700 border-indigo-200', icon: 'text-indigo-600' },
+            'german': { border: 'border-l-yellow-500', bg: 'bg-gradient-to-br from-yellow-50 to-white', badge: 'bg-yellow-100 text-yellow-700 border-yellow-200', icon: 'text-yellow-600' },
+            'japanese': { border: 'border-l-red-500', bg: 'bg-gradient-to-br from-red-50 to-white', badge: 'bg-red-100 text-red-700 border-red-200', icon: 'text-red-600' },
+            'korean': { border: 'border-l-pink-500', bg: 'bg-gradient-to-br from-pink-50 to-white', badge: 'bg-pink-100 text-pink-700 border-pink-200', icon: 'text-pink-600' },
+            'mandarin chinese': { border: 'border-l-rose-500', bg: 'bg-gradient-to-br from-rose-50 to-white', badge: 'bg-rose-100 text-rose-700 border-rose-200', icon: 'text-rose-600' },
+            'chinese': { border: 'border-l-rose-500', bg: 'bg-gradient-to-br from-rose-50 to-white', badge: 'bg-rose-100 text-rose-700 border-rose-200', icon: 'text-rose-600' },
+            'portuguese': { border: 'border-l-green-500', bg: 'bg-gradient-to-br from-green-50 to-white', badge: 'bg-green-100 text-green-700 border-green-200', icon: 'text-green-600' },
+            'italian': { border: 'border-l-emerald-500', bg: 'bg-gradient-to-br from-emerald-50 to-white', badge: 'bg-emerald-100 text-emerald-700 border-emerald-200', icon: 'text-emerald-600' },
+            'russian': { border: 'border-l-purple-500', bg: 'bg-gradient-to-br from-purple-50 to-white', badge: 'bg-purple-100 text-purple-700 border-purple-200', icon: 'text-purple-600' },
+            'arabic': { border: 'border-l-teal-500', bg: 'bg-gradient-to-br from-teal-50 to-white', badge: 'bg-teal-100 text-teal-700 border-teal-200', icon: 'text-teal-600' },
+            'thai': { border: 'border-l-violet-500', bg: 'bg-gradient-to-br from-violet-50 to-white', badge: 'bg-violet-100 text-violet-700 border-violet-200', icon: 'text-violet-600' },
+            'vietnamese': { border: 'border-l-amber-500', bg: 'bg-gradient-to-br from-amber-50 to-white', badge: 'bg-amber-100 text-amber-700 border-amber-200', icon: 'text-amber-600' },
+            'dutch': { border: 'border-l-cyan-500', bg: 'bg-gradient-to-br from-cyan-50 to-white', badge: 'bg-cyan-100 text-cyan-700 border-cyan-200', icon: 'text-cyan-600' },
+            'swedish': { border: 'border-l-sky-500', bg: 'bg-gradient-to-br from-sky-50 to-white', badge: 'bg-sky-100 text-sky-700 border-sky-200', icon: 'text-sky-600' },
+            'polish': { border: 'border-l-fuchsia-500', bg: 'bg-gradient-to-br from-fuchsia-50 to-white', badge: 'bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200', icon: 'text-fuchsia-600' },
+            'greek': { border: 'border-l-lime-500', bg: 'bg-gradient-to-br from-lime-50 to-white', badge: 'bg-lime-100 text-lime-700 border-lime-200', icon: 'text-lime-600' },
+            'czech': { border: 'border-l-slate-500', bg: 'bg-gradient-to-br from-slate-50 to-white', badge: 'bg-slate-100 text-slate-700 border-slate-200', icon: 'text-slate-600' },
+        }
+        return themes[primaryLang] || { border: 'border-l-gray-400', bg: 'bg-gradient-to-br from-gray-50 to-white', badge: 'bg-gray-100 text-gray-700 border-gray-200', icon: 'text-gray-600' }
+    }
+
+    // Get country flag emoji
+    const getCountryFlag = (country: string) => {
+        const flags: Record<string, string> = {
+            'USA': '🇺🇸', 'UK': '🇬🇧', 'Canada': '🇨🇦', 'Australia': '🇦🇺', 'Ireland': '🇮🇪',
+            'Malta': '🇲🇹', 'New Zealand': '🇳🇿', 'South Africa': '🇿🇦', 'Germany': '🇩🇪',
+            'France': '🇫🇷', 'Spain': '🇪🇸', 'Italy': '🇮🇹', 'Japan': '🇯🇵', 'South Korea': '🇰🇷',
+            'China': '🇨🇳', 'Taiwan': '🇹🇼', 'Singapore': '🇸🇬', 'Mexico': '🇲🇽', 'Argentina': '🇦🇷',
+            'Colombia': '🇨🇴', 'Chile': '🇨🇱', 'Peru': '🇵🇪', 'Ecuador': '🇪🇨', 'Guatemala': '🇬🇹',
+            'Thailand': '🇹🇭', 'Vietnam': '🇻🇳', 'Philippines': '🇵🇭', 'Portugal': '🇵🇹',
+            'Netherlands': '🇳🇱', 'Sweden': '🇸🇪', 'Czech Republic': '🇨🇿', 'Poland': '🇵🇱',
+            'Greece': '🇬🇷', 'Russia': '🇷🇺', 'UAE': '🇦🇪', 'Jordan': '🇯🇴', 'Egypt': '🇪🇬',
+            'Brazil': '🇧🇷', 'Morocco': '🇲🇦', 'Costa Rica': '🇨🇷'
+        }
+        return flags[country] || '🌍'
+    }
+
     if (loading) {
         return (
             <div className="container mx-auto p-6">
@@ -344,40 +387,40 @@ export default function LanguageSchoolsPage() {
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                    <Card>
+                    <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">{t('stats.totalSchools')}</CardTitle>
-                            <div className="text-2xl font-bold">{stats.total}</div>
+                            <CardTitle className="text-sm font-medium text-blue-100">{t('stats.totalSchools')}</CardTitle>
+                            <div className="text-3xl font-bold">{stats.total}</div>
                         </CardHeader>
                     </Card>
-                    <Card>
+                    <Card className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0 shadow-lg">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">{t('stats.countries')}</CardTitle>
-                            <div className="text-2xl font-bold">{stats.countries}</div>
+                            <CardTitle className="text-sm font-medium text-emerald-100">{t('stats.countries')}</CardTitle>
+                            <div className="text-3xl font-bold">{stats.countries}</div>
                         </CardHeader>
                     </Card>
-                    <Card>
+                    <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">{t('stats.languages')}</CardTitle>
-                            <div className="text-2xl font-bold">{stats.languages}</div>
+                            <CardTitle className="text-sm font-medium text-purple-100">{t('stats.languages')}</CardTitle>
+                            <div className="text-3xl font-bold">{stats.languages}</div>
                         </CardHeader>
                     </Card>
-                    <Card>
+                    <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">{t('stats.avgPrice')}</CardTitle>
-                            <div className="text-2xl font-bold">${stats.avgPrice}</div>
+                            <CardTitle className="text-sm font-medium text-orange-100">{t('stats.avgPrice')}</CardTitle>
+                            <div className="text-3xl font-bold">${stats.avgPrice}</div>
                         </CardHeader>
                     </Card>
-                    <Card>
+                    <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">{t('stats.cheapest')}</CardTitle>
-                            <div className="text-2xl font-bold">${stats.minPrice}</div>
+                            <CardTitle className="text-sm font-medium text-green-100">{t('stats.cheapest')}</CardTitle>
+                            <div className="text-3xl font-bold">${stats.minPrice}</div>
                         </CardHeader>
                     </Card>
-                    <Card>
+                    <Card className="bg-gradient-to-br from-rose-500 to-rose-600 text-white border-0 shadow-lg">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-gray-600">{t('stats.mostExpensive')}</CardTitle>
-                            <div className="text-2xl font-bold">${stats.maxPrice}</div>
+                            <CardTitle className="text-sm font-medium text-rose-100">{t('stats.mostExpensive')}</CardTitle>
+                            <div className="text-3xl font-bold">${stats.maxPrice}</div>
                         </CardHeader>
                     </Card>
                 </div>
@@ -467,10 +510,10 @@ export default function LanguageSchoolsPage() {
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-gray-600">{t('filters.country')}</label>
                                 <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                                    <SelectTrigger className="h-9">
-                                        <SelectValue />
+                                    <SelectTrigger className="h-9 bg-white border-gray-300">
+                                        <SelectValue placeholder={t('filters.allCountries')} />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="z-[9999] bg-white border shadow-lg max-h-[300px]" position="popper" sideOffset={4}>
                                         <SelectItem value="all">{t('filters.allCountries')}</SelectItem>
                                         {countries.map(country => (
                                             <SelectItem key={country} value={country}>
@@ -485,10 +528,10 @@ export default function LanguageSchoolsPage() {
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-gray-600">{t('filters.language')}</label>
                                 <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                                    <SelectTrigger className="h-9">
-                                        <SelectValue />
+                                    <SelectTrigger className="h-9 bg-white border-gray-300">
+                                        <SelectValue placeholder={t('filters.allLanguages')} />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="z-[9999] bg-white border shadow-lg max-h-[300px]" position="popper" sideOffset={4}>
                                         <SelectItem value="all">{t('filters.allLanguages')}</SelectItem>
                                         {languages.map(language => (
                                             <SelectItem key={language} value={language}>
@@ -503,10 +546,10 @@ export default function LanguageSchoolsPage() {
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-gray-600">{t('filters.priceRange')}</label>
                                 <Select value={priceFilter} onValueChange={setPriceFilter}>
-                                    <SelectTrigger className="h-9">
-                                        <SelectValue />
+                                    <SelectTrigger className="h-9 bg-white border-gray-300">
+                                        <SelectValue placeholder={t('filters.allPrices')} />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="z-[9999] bg-white border shadow-lg" position="popper" sideOffset={4}>
                                         <SelectItem value="all">{t('filters.allPrices')}</SelectItem>
                                         <SelectItem value="budget">{t('filters.budget')}</SelectItem>
                                         <SelectItem value="mid">{t('filters.mid')}</SelectItem>
@@ -519,10 +562,10 @@ export default function LanguageSchoolsPage() {
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-gray-600">{t('filters.duration')}</label>
                                 <Select value={durationFilter} onValueChange={setDurationFilter}>
-                                    <SelectTrigger className="h-9">
-                                        <SelectValue />
+                                    <SelectTrigger className="h-9 bg-white border-gray-300">
+                                        <SelectValue placeholder={t('filters.allDurations')} />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="z-[9999] bg-white border shadow-lg" position="popper" sideOffset={4}>
                                         <SelectItem value="all">{t('filters.allDurations')}</SelectItem>
                                         <SelectItem value="shortTerm">{t('filters.shortTerm')}</SelectItem>
                                         <SelectItem value="longTerm">{t('filters.longTerm')}</SelectItem>
@@ -534,10 +577,10 @@ export default function LanguageSchoolsPage() {
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-gray-600">{t('filters.accommodation')}</label>
                                 <Select value={accommodationFilter} onValueChange={setAccommodationFilter}>
-                                    <SelectTrigger className="h-9">
-                                        <SelectValue />
+                                    <SelectTrigger className="h-9 bg-white border-gray-300">
+                                        <SelectValue placeholder={t('filters.allDurations')} />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="z-[9999] bg-white border shadow-lg" position="popper" sideOffset={4}>
                                         <SelectItem value="all">{t('filters.allDurations')}</SelectItem>
                                         <SelectItem value="withAccommodation">{t('filters.withAccommodation')}</SelectItem>
                                         <SelectItem value="withoutAccommodation">{t('filters.withoutAccommodation')}</SelectItem>
@@ -549,10 +592,10 @@ export default function LanguageSchoolsPage() {
                             <div className="space-y-1">
                                 <label className="text-xs font-medium text-gray-600">{t('sort.sortBy')}</label>
                                 <Select value={sortBy} onValueChange={setSortBy}>
-                                    <SelectTrigger className="h-9">
-                                        <SelectValue />
+                                    <SelectTrigger className="h-9 bg-white border-gray-300">
+                                        <SelectValue placeholder={t('sort.relevance')} />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="z-[9999] bg-white border shadow-lg" position="popper" sideOffset={4}>
                                         <SelectItem value="relevance">{t('sort.relevance')}</SelectItem>
                                         <SelectItem value="priceLowHigh">{t('sort.priceLowHigh')}</SelectItem>
                                         <SelectItem value="priceHighLow">{t('sort.priceHighLow')}</SelectItem>
@@ -607,94 +650,110 @@ export default function LanguageSchoolsPage() {
                         </Card>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {processedData.map((school) => (
-                                <Card key={school.id} className="hover:shadow-lg transition-shadow cursor-pointer h-full"
-                                      onClick={() => setSelectedSchool(school)}>
-                                    <CardHeader className="pb-3">
-                                        <div className="flex items-start justify-between">
-                                            <div className="flex-1">
-                                                <CardTitle className="text-lg leading-tight">
-                                                    {getSchoolDisplayName(school)}
-                                                </CardTitle>
-                                                <CardDescription className="mt-1 flex items-center space-x-1">
-                                                    <MapPin className="h-3 w-3" />
-                                                    <span>{school.city}, {safeTranslateCountry(school.country)}</span>
-                                                </CardDescription>
-                                            </div>
-                                            <div className="flex flex-col items-end space-y-1">
-                                                {school.pricePerWeek && (
-                                                    <Badge variant="outline" className="text-sm font-bold">
-                                                        ${school.pricePerWeek}/{t('card.week')}
-                                                    </Badge>
-                                                )}
-                                                {getSourceBadge(school)}
-                                            </div>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="space-y-3">
-                                        {/* Languages */}
-                                        <div className="flex flex-wrap gap-1">
-                                            {school.languages.slice(0, 3).map(lang => (
-                                                <Badge key={lang} variant="secondary" className="text-xs">
-                                                    {safeTranslateLanguage(lang)}
-                                                </Badge>
-                                            ))}
-                                            {school.languages.length > 3 && (
-                                                <Badge variant="secondary" className="text-xs">
-                                                    +{school.languages.length - 3}
-                                                </Badge>
-                                            )}
-                                        </div>
-
-                                        {/* Course Info */}
-                                        <div className="space-y-2 text-sm">
-                                            <div className="flex items-center space-x-2">
-                                                <Clock className="h-3 w-3 text-gray-500" />
-                                                <span>{school.courseDuration}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <BarChart3 className="h-3 w-3 text-gray-500" />
-                                                <span>{school.intensity}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Home className="h-3 w-3 text-gray-500" />
-                                                <span>{school.accommodation ? t('card.available') : t('card.notAvailable')}</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Certifications */}
-                                        {school.certifications.length > 0 && (
-                                            <div className="space-y-1">
-                                                <div className="text-xs font-medium text-gray-600">{t('card.certifications')}:</div>
-                                                <div className="flex flex-wrap gap-1">
-                                                    {school.certifications.slice(0, 3).map(cert => (
-                                                        <Badge key={cert} variant="outline" className="text-xs">
-                                                            {cert}
+                            {processedData.map((school) => {
+                                const theme = getLanguageTheme(school.languages)
+                                return (
+                                    <Card
+                                        key={school.id}
+                                        className={`hover:shadow-xl transition-all duration-300 cursor-pointer h-full border-l-4 ${theme.border} ${theme.bg} hover:scale-[1.02]`}
+                                        onClick={() => setSelectedSchool(school)}
+                                    >
+                                        <CardHeader className="pb-3">
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="text-xl">{getCountryFlag(school.country)}</span>
+                                                        <CardTitle className="text-lg leading-tight text-gray-800">
+                                                            {getSchoolDisplayName(school)}
+                                                        </CardTitle>
+                                                    </div>
+                                                    <CardDescription className="mt-1 flex items-center space-x-1">
+                                                        <MapPin className={`h-3 w-3 ${theme.icon}`} />
+                                                        <span className="font-medium">{school.city}, {safeTranslateCountry(school.country)}</span>
+                                                    </CardDescription>
+                                                </div>
+                                                <div className="flex flex-col items-end space-y-1">
+                                                    {school.pricePerWeek && (
+                                                        <Badge className={`text-sm font-bold ${theme.badge} border`}>
+                                                            ${school.pricePerWeek}/{t('card.week')}
                                                         </Badge>
-                                                    ))}
-                                                    {school.certifications.length > 3 && (
-                                                        <span className="text-xs text-gray-500">+{school.certifications.length - 3}</span>
                                                     )}
+                                                    {getSourceBadge(school)}
                                                 </div>
                                             </div>
-                                        )}
+                                        </CardHeader>
+                                        <CardContent className="space-y-3">
+                                            {/* Languages */}
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {school.languages.slice(0, 3).map(lang => (
+                                                    <Badge key={lang} className={`text-xs ${theme.badge} border font-medium`}>
+                                                        {safeTranslateLanguage(lang)}
+                                                    </Badge>
+                                                ))}
+                                                {school.languages.length > 3 && (
+                                                    <Badge variant="secondary" className="text-xs">
+                                                        +{school.languages.length - 3}
+                                                    </Badge>
+                                                )}
+                                            </div>
 
-                                        {/* Action Buttons */}
-                                        <div className="flex space-x-2 pt-2">
-                                            <Button size="sm" className="flex-1">
-                                                {t('card.moreInfo')}
-                                            </Button>
-                                            {school.website && (
-                                                <Button size="sm" variant="outline" asChild onClick={(e) => e.stopPropagation()}>
-                                                    <a href={school.website} target="_blank" rel="noopener noreferrer">
-                                                        <ExternalLink className="h-3 w-3" />
-                                                    </a>
-                                                </Button>
+                                            {/* Course Info */}
+                                            <div className="space-y-2 text-sm bg-white/60 rounded-lg p-3">
+                                                <div className="flex items-center space-x-2">
+                                                    <Clock className={`h-4 w-4 ${theme.icon}`} />
+                                                    <span className="font-medium">{school.courseDuration}</span>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <BarChart3 className={`h-4 w-4 ${theme.icon}`} />
+                                                    <span>{school.intensity}</span>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <Home className={`h-4 w-4 ${theme.icon}`} />
+                                                    <span>{school.accommodation ? (
+                                                        <span className="text-green-600 font-medium">{t('card.available')}</span>
+                                                    ) : (
+                                                        <span className="text-gray-400">{t('card.notAvailable')}</span>
+                                                    )}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Certifications */}
+                                            {school.certifications.length > 0 && (
+                                                <div className="space-y-1.5">
+                                                    <div className="text-xs font-semibold text-gray-600 flex items-center gap-1">
+                                                        <Award className={`h-3 w-3 ${theme.icon}`} />
+                                                        {t('card.certifications')}:
+                                                    </div>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {school.certifications.slice(0, 3).map(cert => (
+                                                            <Badge key={cert} variant="outline" className="text-xs bg-white/80 font-medium">
+                                                                {cert}
+                                                            </Badge>
+                                                        ))}
+                                                        {school.certifications.length > 3 && (
+                                                            <span className="text-xs text-gray-500 font-medium">+{school.certifications.length - 3}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             )}
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
+
+                                            {/* Action Buttons */}
+                                            <div className="flex space-x-2 pt-2">
+                                                <Button size="sm" className={`flex-1 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-900 hover:to-black text-white shadow-md`}>
+                                                    {t('card.moreInfo')}
+                                                </Button>
+                                                {school.website && (
+                                                    <Button size="sm" variant="outline" className="border-2 hover:bg-gray-50" asChild onClick={(e) => e.stopPropagation()}>
+                                                        <a href={school.website} target="_blank" rel="noopener noreferrer">
+                                                            <ExternalLink className="h-3 w-3" />
+                                                        </a>
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                )
+                            })}
                         </div>
                     )}
                 </TabsContent>
