@@ -210,7 +210,7 @@ export default async function EcommerceDashboard({
                                                 <Info className="h-4 w-4 text-muted-foreground/60" />
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                <p>Yüklenen dokümanlara göre tahmini ürün sayısı</p>
+                                                <p>{t('ecommerce.estimatedProductCountTooltip')}</p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -219,10 +219,10 @@ export default async function EcommerceDashboard({
                             <p className="text-xs text-muted-foreground mb-3 line-clamp-1">{t('ecommerce.productCatalogDesc')}</p>
                             {totalProducts > 0 ? (
                                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                                    {isEstimatedInventory ? "Tahmini Katalog" : t('ecommerce.active')}
+                                    {isEstimatedInventory ? t('ecommerce.estimatedCatalog') : t('ecommerce.active')}
                                 </Badge>
                             ) : (
-                                <Badge variant="outline" className="bg-gray-100 text-gray-500 border-gray-200">Veri Yok</Badge>
+                                <Badge variant="outline" className="bg-gray-100 text-gray-500 border-gray-200">{t('ecommerce.noData')}</Badge>
                             )}
                         </CardContent>
                     </Card>
@@ -238,7 +238,7 @@ export default async function EcommerceDashboard({
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-slate-800 mb-1">{hasData ? "Aktif" : "Beklemede"}</div>
+                            <div className="text-2xl font-bold text-slate-800 mb-1">{hasData ? t('ecommerce.active') : t('ecommerce.pending')}</div>
                             <p className="text-xs text-muted-foreground mb-3">{t('ecommerce.orderTrackingDesc')}</p>
                             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">{t('ecommerce.integrated')}</Badge>
                         </CardContent>
@@ -278,10 +278,10 @@ export default async function EcommerceDashboard({
                             <p className="text-xs text-muted-foreground mb-3">{t('ecommerce.satisfactionDesc')}</p>
                             {hasData ? (
                                 <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
-                                    {customerSatisfaction > 4.5 ? t('ecommerce.excellent') : "İyi"}
+                                    {customerSatisfaction > 4.5 ? t('ecommerce.excellent') : t('ecommerce.good')}
                                 </Badge>
                             ) : (
-                                <Badge variant="outline" className="text-gray-500 border-gray-200">Veri Bekleniyor</Badge>
+                                <Badge variant="outline" className="text-gray-500 border-gray-200">{t('ecommerce.dataExpected')}</Badge>
                             )}
                         </CardContent>
                     </Card>
@@ -307,7 +307,7 @@ export default async function EcommerceDashboard({
                             {!hasData ? (
                                 <div className="flex-1 flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
                                     <BarChart3 className="h-12 w-12 mb-3 text-slate-200" />
-                                    <p className="text-sm">Analiz verileri konuşmalar başladığında burada görünecek.</p>
+                                    <p className="text-sm">{t('ecommerce.analyticsDataWillAppear')}</p>
                                 </div>
                             ) : (
                                 <div className="space-y-4">
@@ -380,7 +380,7 @@ export default async function EcommerceDashboard({
                                 </div>
                                 <Link href={`/${locale}/dashboard/ecommerce/chatbots`}>
                                     <Button variant="ghost" size="sm" className="text-green-700 hover:text-green-800 hover:bg-green-50">
-                                        Tümünü Gör <ArrowLeft className="ml-1 h-3 w-3 rotate-180" />
+                                        {t('ecommerce.viewAll')} <ArrowLeft className="ml-1 h-3 w-3 rotate-180" />
                                     </Button>
                                 </Link>
                             </div>
@@ -396,7 +396,7 @@ export default async function EcommerceDashboard({
                                             <div className={`w-2 h-2 rounded-full ${bot.isActive ? 'bg-green-500' : 'bg-gray-300'}`} />
                                             <div className="flex-1">
                                                 <div className="font-medium text-sm">{bot.name}</div>
-                                                <div className="text-xs text-muted-foreground">{bot._count.conversations} konuşma</div>
+                                                <div className="text-xs text-muted-foreground">{bot._count.conversations} {t('ecommerce.conversations')}</div>
                                             </div>
                                             <Link href={`/${locale}/dashboard/chatbots/${bot.id}`}>
                                                 <Button size="icon" variant="ghost" className="h-8 w-8">
