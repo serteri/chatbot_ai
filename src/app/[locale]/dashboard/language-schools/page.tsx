@@ -848,104 +848,119 @@ export default function LanguageSchoolsPage() {
             </Tabs>
 
             {/* School Details Modal */}
-            {selectedSchool && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-                     onClick={() => setSelectedSchool(null)}>
-                    <Card className="max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-                          onClick={(e) => e.stopPropagation()}>
-                        <CardHeader>
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <CardTitle className="text-2xl">{getSchoolDisplayName(selectedSchool)}</CardTitle>
-                                    <CardDescription className="mt-2 flex items-center space-x-2">
-                                        <MapPin className="h-4 w-4" />
-                                        <span>{selectedSchool.city}, {safeTranslateCountry(selectedSchool.country)}</span>
-                                        {getSourceBadge(selectedSchool)}
-                                    </CardDescription>
+            {selectedSchool && (() => {
+                const modalTheme = getLanguageTheme(selectedSchool.languages)
+                return (
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]"
+                         onClick={() => setSelectedSchool(null)}>
+                        <Card className={`max-w-4xl w-full max-h-[90vh] overflow-y-auto bg-white shadow-2xl border-t-4 ${modalTheme.border.replace('border-l-', 'border-t-')}`}
+                              onClick={(e) => e.stopPropagation()}>
+                            <CardHeader className="bg-gradient-to-r from-gray-50 to-white border-b">
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <span className="text-3xl">{getCountryFlag(selectedSchool.country)}</span>
+                                            <CardTitle className="text-2xl text-gray-900">{getSchoolDisplayName(selectedSchool)}</CardTitle>
+                                        </div>
+                                        <CardDescription className="mt-2 flex items-center space-x-2 text-gray-600">
+                                            <MapPin className={`h-4 w-4 ${modalTheme.icon}`} />
+                                            <span className="font-medium">{selectedSchool.city}, {safeTranslateCountry(selectedSchool.country)}</span>
+                                            {getSourceBadge(selectedSchool)}
+                                        </CardDescription>
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setSelectedSchool(null)}
+                                        className="hover:bg-red-50 hover:text-red-600 hover:border-red-300"
+                                    >
+                                        ✕
+                                    </Button>
                                 </div>
-                                <Button variant="outline" size="sm" onClick={() => setSelectedSchool(null)}>
-                                    ✕
-                                </Button>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            {/* Key Info Grid */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div className="space-y-1">
-                                    <div className="text-sm font-medium text-gray-600">{t('modal.pricePerWeek')}</div>
-                                    <div className="text-xl font-bold">
-                                        {selectedSchool.pricePerWeek ? `$${selectedSchool.pricePerWeek}` : t('modal.contactForDetails')}
+                            </CardHeader>
+                            <CardContent className="space-y-6 p-6 bg-white">
+                                {/* Key Info Grid */}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div className={`p-4 rounded-lg ${modalTheme.bg} border`}>
+                                        <div className="text-sm font-medium text-gray-500">{t('modal.pricePerWeek')}</div>
+                                        <div className="text-2xl font-bold text-gray-900">
+                                            {selectedSchool.pricePerWeek ? `$${selectedSchool.pricePerWeek}` : t('modal.contactForDetails')}
+                                        </div>
+                                    </div>
+                                    <div className="p-4 rounded-lg bg-blue-50 border border-blue-100">
+                                        <div className="text-sm font-medium text-gray-500">{t('modal.courseDuration')}</div>
+                                        <div className="text-lg font-semibold text-gray-900">{selectedSchool.courseDuration}</div>
+                                    </div>
+                                    <div className="p-4 rounded-lg bg-purple-50 border border-purple-100">
+                                        <div className="text-sm font-medium text-gray-500">{t('modal.classIntensity')}</div>
+                                        <div className="text-lg font-semibold text-gray-900">{selectedSchool.intensity}</div>
+                                    </div>
+                                    <div className="p-4 rounded-lg bg-green-50 border border-green-100">
+                                        <div className="text-sm font-medium text-gray-500">{t('modal.accommodationOptions')}</div>
+                                        <div className={`text-lg font-semibold ${selectedSchool.accommodation ? 'text-green-600' : 'text-gray-400'}`}>
+                                            {selectedSchool.accommodation ? t('card.available') : t('card.notAvailable')}
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <div className="text-sm font-medium text-gray-600">{t('modal.courseDuration')}</div>
-                                    <div className="text-lg font-semibold">{selectedSchool.courseDuration}</div>
-                                </div>
-                                <div className="space-y-1">
-                                    <div className="text-sm font-medium text-gray-600">{t('modal.classIntensity')}</div>
-                                    <div className="text-lg font-semibold">{selectedSchool.intensity}</div>
-                                </div>
-                                <div className="space-y-1">
-                                    <div className="text-sm font-medium text-gray-600">{t('modal.accommodationOptions')}</div>
-                                    <div className="text-lg font-semibold">
-                                        {selectedSchool.accommodation ? t('card.available') : t('card.notAvailable')}
+
+                                {/* Description */}
+                                {getSchoolDescription(selectedSchool) && (
+                                    <div className="space-y-2 p-4 bg-gray-50 rounded-lg border">
+                                        <div className="text-lg font-semibold text-gray-900">{t('modal.overview')}</div>
+                                        <p className="text-gray-700 leading-relaxed">{getSchoolDescription(selectedSchool)}</p>
                                     </div>
-                                </div>
-                            </div>
+                                )}
 
-                            {/* Description */}
-                            {getSchoolDescription(selectedSchool) && (
-                                <div className="space-y-2">
-                                    <div className="text-lg font-semibold">{t('modal.overview')}</div>
-                                    <p className="text-gray-700">{getSchoolDescription(selectedSchool)}</p>
-                                </div>
-                            )}
-
-                            {/* Languages */}
-                            <div className="space-y-2">
-                                <div className="text-lg font-semibold">{t('modal.availableLanguages')}</div>
-                                <div className="flex flex-wrap gap-2">
-                                    {selectedSchool.languages.map(language => (
-                                        <Badge key={language} variant="default">
-                                            {safeTranslateLanguage(language)}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Certifications */}
-                            {selectedSchool.certifications.length > 0 && (
-                                <div className="space-y-2">
-                                    <div className="text-lg font-semibold">{t('modal.certificationPrograms')}</div>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                        {selectedSchool.certifications.map(cert => (
-                                            <Badge key={cert} variant="outline" className="justify-center py-2">
-                                                <Award className="h-3 w-3 mr-1" />
-                                                {cert}
+                                {/* Languages */}
+                                <div className="space-y-3">
+                                    <div className="text-lg font-semibold text-gray-900">{t('modal.availableLanguages')}</div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {selectedSchool.languages.map(language => (
+                                            <Badge key={language} className={`${modalTheme.badge} border text-sm px-3 py-1`}>
+                                                {safeTranslateLanguage(language)}
                                             </Badge>
                                         ))}
                                     </div>
                                 </div>
-                            )}
 
-                            {/* Actions */}
-                            <div className="flex space-x-3 pt-4 border-t">
-                                {selectedSchool.website && (
-                                    <Button asChild className="flex-1">
-                                        <a href={selectedSchool.website} target="_blank" rel="noopener noreferrer">
-                                            <ExternalLink className="h-4 w-4 mr-2" />
-                                            {t('modal.officialWebsite')}
-                                        </a>
-                                    </Button>
+                                {/* Certifications */}
+                                {selectedSchool.certifications.length > 0 && (
+                                    <div className="space-y-3">
+                                        <div className="text-lg font-semibold text-gray-900">{t('modal.certificationPrograms')}</div>
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                            {selectedSchool.certifications.map(cert => (
+                                                <Badge key={cert} variant="outline" className="justify-center py-2 bg-white text-gray-700 border-gray-300">
+                                                    <Award className={`h-3 w-3 mr-1 ${modalTheme.icon}`} />
+                                                    {cert}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    </div>
                                 )}
-                                <Button variant="outline" onClick={() => setSelectedSchool(null)}>
-                                    {t('modal.close')}
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            )}
+
+                                {/* Actions */}
+                                <div className="flex space-x-3 pt-6 border-t border-gray-200">
+                                    {selectedSchool.website && (
+                                        <Button asChild className={`flex-1 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-900 hover:to-black text-white shadow-md`}>
+                                            <a href={selectedSchool.website} target="_blank" rel="noopener noreferrer">
+                                                <ExternalLink className="h-4 w-4 mr-2" />
+                                                {t('modal.officialWebsite')}
+                                            </a>
+                                        </Button>
+                                    )}
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setSelectedSchool(null)}
+                                        className="px-6 border-2 hover:bg-gray-100 text-gray-700"
+                                    >
+                                        {t('modal.close')}
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )
+            })()}
         </div>
     )
 }
