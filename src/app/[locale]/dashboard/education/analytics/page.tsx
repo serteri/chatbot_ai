@@ -14,9 +14,11 @@ import {
     Clock,
     Users,
     AlertCircle,
-    BrainCircuit
+    BrainCircuit,
+    Plus
 } from 'lucide-react'
 import Link from 'next/link'
+import { CreateChatbotDialog } from '@/components/chatbot/CreateChatbotDialog'
 
 export default async function EducationAnalyticsPage({
                                                          params,
@@ -127,11 +129,15 @@ export default async function EducationAnalyticsPage({
                                         {t('education.manageChatbots')}
                                     </Button>
                                 </Link>
-                                <Link href={`/${locale}/dashboard/chatbots/create?industry=education`}>
-                                    <Button variant="outline">
-                                        {t('education.createEducationChatbot')}
-                                    </Button>
-                                </Link>
+                                <CreateChatbotDialog
+                                    prefilledData={{ type: 'education', industry: 'education' }}
+                                    trigger={
+                                        <Button variant="outline">
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            {t('education.createEducationChatbot')}
+                                        </Button>
+                                    }
+                                />
                             </div>
                         </CardContent>
                     </Card>

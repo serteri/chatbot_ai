@@ -19,9 +19,11 @@ import {
     Target,
     Award,
     Package,
-    AlertCircle
+    AlertCircle,
+    Plus
 } from 'lucide-react'
 import Link from 'next/link'
+import { CreateChatbotDialog } from '@/components/chatbot/CreateChatbotDialog'
 
 export default async function EcommerceAnalyticsPage({
                                                          params,
@@ -128,11 +130,15 @@ export default async function EcommerceAnalyticsPage({
                                         {t('ecommerce.manageChatbots')}
                                     </Button>
                                 </Link>
-                                <Link href={`/${locale}/dashboard/chatbots/create?industry=ecommerce`}>
-                                    <Button variant="outline">
-                                        {t('ecommerce.createEcommerceChatbot')}
-                                    </Button>
-                                </Link>
+                                <CreateChatbotDialog
+                                    prefilledData={{ type: 'ecommerce', industry: 'ecommerce' }}
+                                    trigger={
+                                        <Button variant="outline">
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            {t('ecommerce.createEcommerceChatbot')}
+                                        </Button>
+                                    }
+                                />
                             </div>
                         </CardContent>
                     </Card>

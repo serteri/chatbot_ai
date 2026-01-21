@@ -14,9 +14,11 @@ import {
     XCircle,
     Upload,
     FileText,
-    Info
+    Info,
+    Plus
 } from 'lucide-react'
 import Link from 'next/link'
+import { CreateChatbotDialog } from '@/components/chatbot/CreateChatbotDialog'
 import {
     Tooltip,
     TooltipContent,
@@ -130,11 +132,15 @@ export default async function InventoryPage({
                                         {t('ecommerce.manageChatbots')}
                                     </Button>
                                 </Link>
-                                <Link href={`/${locale}/dashboard/chatbots/create?industry=ecommerce`}>
-                                    <Button variant="outline">
-                                        {t('ecommerce.createEcommerceChatbot')}
-                                    </Button>
-                                </Link>
+                                <CreateChatbotDialog
+                                    prefilledData={{ type: 'ecommerce', industry: 'ecommerce' }}
+                                    trigger={
+                                        <Button variant="outline">
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            {t('ecommerce.createEcommerceChatbot')}
+                                        </Button>
+                                    }
+                                />
                             </div>
                         </CardContent>
                     </Card>
