@@ -61,15 +61,49 @@ export default async function EducationDashboard({
         orderBy: { createdAt: 'desc' }
     })
 
-    // Get REAL data from database - Mock data kullanılıyor
-    const universitiesCount = 50
-    const universitiesCountries = [{country: 'US', _count: {country: 1}}]
-    const scholarshipsCount = 100
-    const scholarshipsCountries = [{country: 'DE', _count: {country: 1}}]
-    const languageSchoolsCount = 150
-    const languageSchoolsCountries = [{country: 'UK', _count: {country: 1}}]
-    const visaInfoCount = 70
-    const visaCountries = [{country: 'AU', _count: {country: 1}}]
+    // Get REAL data from database
+    const [
+        universitiesCount,
+        universitiesCountries,
+        scholarshipsCount,
+        scholarshipsCountries,
+        languageSchoolsCount,
+        languageSchoolsCountries,
+        visaInfoCount,
+        visaCountries
+    ] = await Promise.all([
+        // Universities count
+        prisma.university.count(),
+        // Universities unique countries
+        prisma.university.groupBy({
+            by: ['country'],
+            _count: { country: true }
+        }),
+        // Scholarships count (active only)
+        prisma.scholarship.count({
+            where: { isActive: true }
+        }),
+        // Scholarships unique countries
+        prisma.scholarship.groupBy({
+            by: ['country'],
+            where: { isActive: true },
+            _count: { country: true }
+        }),
+        // Language Schools count
+        prisma.languageSchool.count(),
+        // Language Schools unique countries
+        prisma.languageSchool.groupBy({
+            by: ['country'],
+            _count: { country: true }
+        }),
+        // Visa Info count
+        prisma.visaInfo.count(),
+        // Visa Info unique countries
+        prisma.visaInfo.groupBy({
+            by: ['country'],
+            _count: { country: true }
+        })
+    ])
 
 
     // Calculate totals from REAL data
