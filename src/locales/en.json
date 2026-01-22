@@ -29,7 +29,8 @@
     "signup": "Sign Up",
     "toDashboard": "Go to Dashboard",
     "register": "Register",
-    "team": "Team"
+    "team": "Team",
+    "support": "Support"
   },
   "home": {
     "hero": {
@@ -176,10 +177,10 @@
     "ecommerceTitle": "E-commerce Support",
     "ecommerceDesc": "Smart customer service and sales assistant for online stores",
     "stats": "PylonChat by the Numbers",
-    "activeUsers": "Active Users",
-    "countries": "Countries",
+    "chatbotsCreated": "Chatbots Created",
+    "industries": "Industries Served",
     "languages": "Language Support",
-    "satisfaction": "Customer Satisfaction",
+    "support": "AI Support",
     "team": "Our Team",
     "teamDesc": "The talented team bringing PylonChat to life",
     "contactTitle": "Contact Us",
@@ -2850,5 +2851,39 @@
     "totalInterest": "Total Interest",
     "totalPayment": "Total Payment",
     "disclaimer": "This calculation is an estimate. Actual values may vary by lender."
+  },
+  "support": {
+    "title": "Support Center",
+    "subtitle": "Get help when you need it",
+    "support247": "24/7 Support",
+    "prioritySupport": "Priority Support",
+    "basicSupport": "Basic Support",
+    "responseTime": "Response Time",
+    "channels": "Support Channels",
+    "active": "Active",
+    "priority": "Priority Level",
+    "highest": "Highest",
+    "high": "High",
+    "standard": "Standard",
+    "emailSupport": "Email Support",
+    "emailSupportDesc": "Send us an email anytime",
+    "sendEmail": "Send Email",
+    "liveChat": "Live Chat",
+    "liveChatDesc": "Chat with our support team",
+    "startChat": "Start Chat",
+    "available": "Available Now",
+    "phoneSupport": "Phone Support",
+    "phoneSupportDesc": "Talk to a specialist",
+    "callNow": "Call Now",
+    "upgradePlan": "Upgrade Plan",
+    "upgradeEnterprise": "Upgrade to Enterprise",
+    "helpResources": "Help Resources",
+    "documentation": "Documentation",
+    "documentationDesc": "Browse our help articles and guides",
+    "contactForm": "Contact Form",
+    "contactFormDesc": "Send us a detailed message",
+    "upgradeTitle": "Get Priority Support",
+    "upgradeDesc": "Upgrade to Pro or Business plan to access priority support with faster response times and live chat.",
+    "viewPlans": "View Plans"
   }
 }

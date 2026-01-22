@@ -31,7 +31,8 @@
     "signup": "S'inscrire",
     "toDashboard": "Aller au Tableau de bord",
     "register": "S'inscrire",
-    "team": "Équipe"
+    "team": "Équipe",
+    "support": "Support"
   },
   "home": {
     "hero": {
@@ -166,10 +167,10 @@
     "ecommerceTitle": "Support E-commerce",
     "ecommerceDesc": "Service client intelligent et assistant de vente pour boutiques en ligne",
     "stats": "PylonChat en Chiffres",
-    "activeUsers": "Utilisateurs Actifs",
-    "countries": "Pays",
+    "chatbotsCreated": "Chatbots Créés",
+    "industries": "Industries Servies",
     "languages": "Support Linguistique",
-    "satisfaction": "Satisfaction Client",
+    "support": "Support IA",
     "team": "Notre Équipe",
     "teamDesc": "Notre équipe talentueuse qui rend PylonChat réel",
     "contactTitle": "Contactez-nous",
@@ -2633,5 +2634,39 @@
         "timestamp": "À l'instant"
       }
     }
+  },
+  "support": {
+    "title": "Centre de Support",
+    "subtitle": "Obtenez de l'aide quand vous en avez besoin",
+    "support247": "Support 24/7",
+    "prioritySupport": "Support Prioritaire",
+    "basicSupport": "Support de Base",
+    "responseTime": "Temps de Réponse",
+    "channels": "Canaux de Support",
+    "active": "Actifs",
+    "priority": "Niveau de Priorité",
+    "highest": "Le Plus Élevé",
+    "high": "Élevé",
+    "standard": "Standard",
+    "emailSupport": "Support par Email",
+    "emailSupportDesc": "Envoyez-nous un email à tout moment",
+    "sendEmail": "Envoyer un Email",
+    "liveChat": "Chat en Direct",
+    "liveChatDesc": "Discutez avec notre équipe de support",
+    "startChat": "Démarrer le Chat",
+    "available": "Disponible Maintenant",
+    "phoneSupport": "Support Téléphonique",
+    "phoneSupportDesc": "Parlez à un spécialiste",
+    "callNow": "Appeler Maintenant",
+    "upgradePlan": "Améliorer le Plan",
+    "upgradeEnterprise": "Passer à Enterprise",
+    "helpResources": "Ressources d'Aide",
+    "documentation": "Documentation",
+    "documentationDesc": "Parcourez nos articles d'aide et guides",
+    "contactForm": "Formulaire de Contact",
+    "contactFormDesc": "Envoyez-nous un message détaillé",
+    "upgradeTitle": "Obtenez le Support Prioritaire",
+    "upgradeDesc": "Passez à Pro ou Business pour accéder au support prioritaire avec des temps de réponse plus rapides et un chat en direct.",
+    "viewPlans": "Voir les Plans"
   }
 }

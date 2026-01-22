@@ -117,7 +117,7 @@ export default function AboutPage() {
                             {t('about.whatWeDo')}
                         </h2>
 
-                        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                             <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-blue-500">
                                 <div className="flex items-center space-x-4 mb-6">
                                     <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
@@ -129,15 +129,15 @@ export default function AboutPage() {
                                 <ul className="space-y-2">
                                     <li className="flex items-center space-x-2 text-sm text-gray-600">
                                         <CheckCircle className="h-4 w-4 text-green-500" />
-                                        <span>{locale === 'tr' ? '70+ ülke vize bilgisi' : '70+ countries visa info'}</span>
+                                        <span>{locale === 'tr' ? 'Üniversite rehberi' : 'University guide'}</span>
                                     </li>
                                     <li className="flex items-center space-x-2 text-sm text-gray-600">
                                         <CheckCircle className="h-4 w-4 text-green-500" />
-                                        <span>{locale === 'tr' ? '150+ dil okulu veritabanı' : '150+ language schools database'}</span>
+                                        <span>{locale === 'tr' ? 'Dil okulu veritabanı' : 'Language schools database'}</span>
                                     </li>
                                     <li className="flex items-center space-x-2 text-sm text-gray-600">
                                         <CheckCircle className="h-4 w-4 text-green-500" />
-                                        <span>{locale === 'tr' ? 'Burs fırsatları rehberi' : 'Scholarship opportunities guide'}</span>
+                                        <span>{locale === 'tr' ? 'Burs fırsatları' : 'Scholarship opportunities'}</span>
                                     </li>
                                 </ul>
                             </div>
@@ -161,7 +161,31 @@ export default function AboutPage() {
                                     </li>
                                     <li className="flex items-center space-x-2 text-sm text-gray-600">
                                         <CheckCircle className="h-4 w-4 text-green-500" />
-                                        <span>{locale === 'tr' ? 'Akıllı satış asistanı' : 'Smart sales assistant'}</span>
+                                        <span>{locale === 'tr' ? '7/24 müşteri desteği' : '24/7 customer support'}</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-purple-500">
+                                <div className="flex items-center space-x-4 mb-6">
+                                    <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center">
+                                        <MessageSquare className="h-6 w-6 text-white" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900">{locale === 'tr' ? 'Genel Amaçlı' : 'General Purpose'}</h3>
+                                </div>
+                                <p className="text-gray-600 mb-6">{locale === 'tr' ? 'Her sektöre uyarlanabilir AI chatbot çözümleri.' : 'Adaptable AI chatbot solutions for any industry.'}</p>
+                                <ul className="space-y-2">
+                                    <li className="flex items-center space-x-2 text-sm text-gray-600">
+                                        <CheckCircle className="h-4 w-4 text-green-500" />
+                                        <span>{locale === 'tr' ? 'Özel eğitim' : 'Custom training'}</span>
+                                    </li>
+                                    <li className="flex items-center space-x-2 text-sm text-gray-600">
+                                        <CheckCircle className="h-4 w-4 text-green-500" />
+                                        <span>{locale === 'tr' ? 'Doküman yükleme' : 'Document upload'}</span>
+                                    </li>
+                                    <li className="flex items-center space-x-2 text-sm text-gray-600">
+                                        <CheckCircle className="h-4 w-4 text-green-500" />
+                                        <span>{locale === 'tr' ? 'Web sitesi entegrasyonu' : 'Website integration'}</span>
                                     </li>
                                 </ul>
                             </div>
@@ -178,20 +202,20 @@ export default function AboutPage() {
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                             <div>
-                                <div className="text-4xl font-bold mb-2">10K+</div>
-                                <div className="text-blue-200">{t('about.activeUsers')}</div>
+                                <div className="text-4xl font-bold mb-2">500+</div>
+                                <div className="text-blue-200">{t('about.chatbotsCreated')}</div>
                             </div>
                             <div>
-                                <div className="text-4xl font-bold mb-2">70+</div>
-                                <div className="text-blue-200">{t('about.countries')}</div>
+                                <div className="text-4xl font-bold mb-2">3</div>
+                                <div className="text-blue-200">{t('about.industries')}</div>
                             </div>
                             <div>
-                                <div className="text-4xl font-bold mb-2">9</div>
+                                <div className="text-4xl font-bold mb-2">5</div>
                                 <div className="text-blue-200">{t('about.languages')}</div>
                             </div>
                             <div>
-                                <div className="text-4xl font-bold mb-2">98%</div>
-                                <div className="text-blue-200">{t('about.satisfaction')}</div>
+                                <div className="text-4xl font-bold mb-2">24/7</div>
+                                <div className="text-blue-200">{t('about.support')}</div>
                             </div>
                         </div>
                     </div>

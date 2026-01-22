@@ -26,7 +26,8 @@ import {
     MessageSquare,
     BarChart3,
     CreditCard,
-    Building2
+    Building2,
+    HeadphonesIcon
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
@@ -301,6 +302,13 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                                     <Link href={`/${currentLocale}/dashboard/billing`} className="cursor-pointer py-2.5">
                                         <CreditCard className="h-4 w-4 mr-2 text-gray-500" />
                                         {t('nav.billing')}
+                                    </Link>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem asChild>
+                                    <Link href={`/${currentLocale}/dashboard/support`} className="cursor-pointer py-2.5">
+                                        <HeadphonesIcon className="h-4 w-4 mr-2 text-gray-500" />
+                                        {t('nav.support')}
                                     </Link>
                                 </DropdownMenuItem>
 

@@ -31,7 +31,8 @@
     "signup": "Kayıt Ol",
     "toDashboard": "Dashboard'a Git",
     "register": "Kayıt Ol",
-    "team": "Ekip"
+    "team": "Ekip",
+    "support": "Destek"
   },
   "home": {
     "hero": {
@@ -178,10 +179,10 @@
     "ecommerceTitle": "E-ticaret Desteği",
     "ecommerceDesc": "Online mağazalar için akıllı müşteri hizmetleri ve satış asistanı",
     "stats": "Rakamlarla PylonChat",
-    "activeUsers": "Aktif Kullanıcı",
-    "countries": "Ülke",
+    "chatbotsCreated": "Oluşturulan Chatbot",
+    "industries": "Hizmet Verilen Sektör",
     "languages": "Dil Desteği",
-    "satisfaction": "Müşteri Memnuniyeti",
+    "support": "AI Destek",
     "team": "Ekibimiz",
     "teamDesc": "PylonChat'ı hayata geçiren yetenekli ekibimiz",
     "contactTitle": "Bizimle İletişime Geçin",
@@ -2859,5 +2860,39 @@
     "deadline": "Son Başvuru Tarihi",
     "shareJob": "Bu İlanı Paylaş",
     "shareDesc": "Bu pozisyon için mükemmel birini tanıyor musunuz?"
+  },
+  "support": {
+    "title": "Destek Merkezi",
+    "subtitle": "İhtiyaç duyduğunuzda yardım alın",
+    "support247": "7/24 Destek",
+    "prioritySupport": "Öncelikli Destek",
+    "basicSupport": "Temel Destek",
+    "responseTime": "Yanıt Süresi",
+    "channels": "Destek Kanalları",
+    "active": "Aktif",
+    "priority": "Öncelik Seviyesi",
+    "highest": "En Yüksek",
+    "high": "Yüksek",
+    "standard": "Standart",
+    "emailSupport": "E-posta Desteği",
+    "emailSupportDesc": "Bize istediğiniz zaman e-posta gönderin",
+    "sendEmail": "E-posta Gönder",
+    "liveChat": "Canlı Sohbet",
+    "liveChatDesc": "Destek ekibimizle sohbet edin",
+    "startChat": "Sohbeti Başlat",
+    "available": "Şu An Müsait",
+    "phoneSupport": "Telefon Desteği",
+    "phoneSupportDesc": "Bir uzmanla konuşun",
+    "callNow": "Şimdi Ara",
+    "upgradePlan": "Planı Yükselt",
+    "upgradeEnterprise": "Enterprise'a Yükselt",
+    "helpResources": "Yardım Kaynakları",
+    "documentation": "Dokümantasyon",
+    "documentationDesc": "Yardım makalelerimizi ve kılavuzlarımızı inceleyin",
+    "contactForm": "İletişim Formu",
+    "contactFormDesc": "Bize detaylı bir mesaj gönderin",
+    "upgradeTitle": "Öncelikli Destek Alın",
+    "upgradeDesc": "Daha hızlı yanıt süreleri ve canlı sohbet için Pro veya Business planına yükseltin.",
+    "viewPlans": "Planları Görüntüle"
   }
 }
