@@ -39,7 +39,8 @@ import {
     ArrowLeft,
     Globe,
     Building,
-    Calendar
+    Calendar,
+    Mail
 } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
@@ -442,144 +443,169 @@ export default function AdminJobsPage() {
 
                 {/* Create/Edit Dialog */}
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                            <DialogTitle>{selectedJob ? 'Edit Job Posting' : 'Create Job Posting'}</DialogTitle>
-                            <DialogDescription>
-                                Fill in the job details. The posting will be displayed in the language you write it.
+                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white border shadow-2xl">
+                        <DialogHeader className="border-b pb-4 mb-4">
+                            <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <Briefcase className="h-5 w-5 text-blue-600" />
+                                </div>
+                                {selectedJob ? 'Edit Job Posting' : 'Create New Job Posting'}
+                            </DialogTitle>
+                            <DialogDescription className="text-gray-600 mt-2">
+                                Fill in the job details below. The posting will be displayed in the language you write it.
                             </DialogDescription>
                         </DialogHeader>
 
                         <div className="grid gap-6 py-4">
-                            {/* Basic Info */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="col-span-2">
-                                    <Label htmlFor="title">Job Title *</Label>
-                                    <Input
-                                        id="title"
-                                        value={formData.title}
-                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                        placeholder="e.g. Senior Software Engineer"
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="department">Department *</Label>
-                                    <Input
-                                        id="department"
-                                        value={formData.department}
-                                        onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                                        placeholder="e.g. Engineering"
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="language">Language</Label>
-                                    <Select
-                                        value={formData.language}
-                                        onValueChange={(value) => setFormData({ ...formData, language: value })}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="en">English</SelectItem>
-                                            <SelectItem value="tr">Turkish</SelectItem>
-                                            <SelectItem value="de">German</SelectItem>
-                                            <SelectItem value="es">Spanish</SelectItem>
-                                            <SelectItem value="fr">French</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-
-                            {/* Location & Type */}
-                            <div className="grid grid-cols-3 gap-4">
-                                <div>
-                                    <Label htmlFor="location">Location</Label>
-                                    <Input
-                                        id="location"
-                                        value={formData.location}
-                                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                                        placeholder="e.g. Istanbul, Turkey"
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="locationType">Location Type</Label>
-                                    <Select
-                                        value={formData.locationType}
-                                        onValueChange={(value) => setFormData({ ...formData, locationType: value })}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="remote">Remote</SelectItem>
-                                            <SelectItem value="onsite">On-site</SelectItem>
-                                            <SelectItem value="hybrid">Hybrid</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div>
-                                    <Label htmlFor="employmentType">Employment Type</Label>
-                                    <Select
-                                        value={formData.employmentType}
-                                        onValueChange={(value) => setFormData({ ...formData, employmentType: value })}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="full-time">Full-time</SelectItem>
-                                            <SelectItem value="part-time">Part-time</SelectItem>
-                                            <SelectItem value="contract">Contract</SelectItem>
-                                            <SelectItem value="internship">Internship</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                            {/* Basic Info Section */}
+                            <div className="bg-blue-50 rounded-xl p-5 border border-blue-100">
+                                <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wide mb-4 flex items-center gap-2">
+                                    <Building className="h-4 w-4" />
+                                    Basic Information
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="col-span-2">
+                                        <Label htmlFor="title" className="text-gray-700 font-medium">Job Title *</Label>
+                                        <Input
+                                            id="title"
+                                            value={formData.title}
+                                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                            placeholder="e.g. Senior Software Engineer"
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="department" className="text-gray-700 font-medium">Department *</Label>
+                                        <Input
+                                            id="department"
+                                            value={formData.department}
+                                            onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                                            placeholder="e.g. Engineering"
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="language" className="text-gray-700 font-medium">Language</Label>
+                                        <Select
+                                            value={formData.language}
+                                            onValueChange={(value) => setFormData({ ...formData, language: value })}
+                                        >
+                                            <SelectTrigger className="mt-1.5 bg-white border-gray-300 text-gray-900">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-white border shadow-lg">
+                                                <SelectItem value="en">English</SelectItem>
+                                                <SelectItem value="tr">Turkish</SelectItem>
+                                                <SelectItem value="de">German</SelectItem>
+                                                <SelectItem value="es">Spanish</SelectItem>
+                                                <SelectItem value="fr">French</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Salary */}
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <Label>Salary Information</Label>
-                                    <div className="flex items-center gap-2">
+                            {/* Location & Type Section */}
+                            <div className="bg-green-50 rounded-xl p-5 border border-green-100">
+                                <h3 className="text-sm font-semibold text-green-800 uppercase tracking-wide mb-4 flex items-center gap-2">
+                                    <MapPin className="h-4 w-4" />
+                                    Location & Employment
+                                </h3>
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <Label htmlFor="location" className="text-gray-700 font-medium">Location</Label>
+                                        <Input
+                                            id="location"
+                                            value={formData.location}
+                                            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                            placeholder="e.g. Istanbul, Turkey"
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="locationType" className="text-gray-700 font-medium">Location Type</Label>
+                                        <Select
+                                            value={formData.locationType}
+                                            onValueChange={(value) => setFormData({ ...formData, locationType: value })}
+                                        >
+                                            <SelectTrigger className="mt-1.5 bg-white border-gray-300 text-gray-900">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-white border shadow-lg">
+                                                <SelectItem value="remote">Remote</SelectItem>
+                                                <SelectItem value="onsite">On-site</SelectItem>
+                                                <SelectItem value="hybrid">Hybrid</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="employmentType" className="text-gray-700 font-medium">Employment Type</Label>
+                                        <Select
+                                            value={formData.employmentType}
+                                            onValueChange={(value) => setFormData({ ...formData, employmentType: value })}
+                                        >
+                                            <SelectTrigger className="mt-1.5 bg-white border-gray-300 text-gray-900">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-white border shadow-lg">
+                                                <SelectItem value="full-time">Full-time</SelectItem>
+                                                <SelectItem value="part-time">Part-time</SelectItem>
+                                                <SelectItem value="contract">Contract</SelectItem>
+                                                <SelectItem value="internship">Internship</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Salary Section */}
+                            <div className="bg-purple-50 rounded-xl p-5 border border-purple-100">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-sm font-semibold text-purple-800 uppercase tracking-wide flex items-center gap-2">
+                                        <DollarSign className="h-4 w-4" />
+                                        Salary Information
+                                    </h3>
+                                    <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-purple-200">
                                         <Switch
                                             checked={formData.showSalary}
                                             onCheckedChange={(checked) => setFormData({ ...formData, showSalary: checked })}
                                         />
-                                        <span className="text-sm text-gray-500">Show on posting</span>
+                                        <span className="text-sm text-gray-600">Show on posting</span>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-4 gap-4">
                                     <div>
-                                        <Label htmlFor="salaryMin">Min Salary</Label>
+                                        <Label htmlFor="salaryMin" className="text-gray-700 font-medium">Min Salary</Label>
                                         <Input
                                             id="salaryMin"
                                             type="number"
                                             value={formData.salaryMin || ''}
                                             onChange={(e) => setFormData({ ...formData, salaryMin: parseInt(e.target.value) || undefined })}
                                             placeholder="50000"
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="salaryMax">Max Salary</Label>
+                                        <Label htmlFor="salaryMax" className="text-gray-700 font-medium">Max Salary</Label>
                                         <Input
                                             id="salaryMax"
                                             type="number"
                                             value={formData.salaryMax || ''}
                                             onChange={(e) => setFormData({ ...formData, salaryMax: parseInt(e.target.value) || undefined })}
                                             placeholder="80000"
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="salaryCurrency">Currency</Label>
+                                        <Label htmlFor="salaryCurrency" className="text-gray-700 font-medium">Currency</Label>
                                         <Select
                                             value={formData.salaryCurrency}
                                             onValueChange={(value) => setFormData({ ...formData, salaryCurrency: value })}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="mt-1.5 bg-white border-gray-300 text-gray-900">
                                                 <SelectValue />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent className="bg-white border shadow-lg">
                                                 <SelectItem value="USD">USD</SelectItem>
                                                 <SelectItem value="EUR">EUR</SelectItem>
                                                 <SelectItem value="TRY">TRY</SelectItem>
@@ -588,15 +614,15 @@ export default function AdminJobsPage() {
                                         </Select>
                                     </div>
                                     <div>
-                                        <Label htmlFor="salaryPeriod">Period</Label>
+                                        <Label htmlFor="salaryPeriod" className="text-gray-700 font-medium">Period</Label>
                                         <Select
                                             value={formData.salaryPeriod}
                                             onValueChange={(value) => setFormData({ ...formData, salaryPeriod: value })}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="mt-1.5 bg-white border-gray-300 text-gray-900">
                                                 <SelectValue />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent className="bg-white border shadow-lg">
                                                 <SelectItem value="yearly">Yearly</SelectItem>
                                                 <SelectItem value="monthly">Monthly</SelectItem>
                                                 <SelectItem value="hourly">Hourly</SelectItem>
@@ -606,120 +632,148 @@ export default function AdminJobsPage() {
                                 </div>
                             </div>
 
-                            {/* Job Details */}
-                            <div>
-                                <Label htmlFor="description">Job Description *</Label>
-                                <Textarea
-                                    id="description"
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    placeholder="Describe the role, team, and what makes this opportunity exciting..."
-                                    rows={5}
-                                />
-                            </div>
-
-                            <div>
-                                <Label htmlFor="responsibilities">Key Responsibilities</Label>
-                                <Textarea
-                                    id="responsibilities"
-                                    value={formData.responsibilities}
-                                    onChange={(e) => setFormData({ ...formData, responsibilities: e.target.value })}
-                                    placeholder="• Lead development of new features&#10;• Collaborate with product team&#10;• Review code and mentor junior developers"
-                                    rows={4}
-                                />
-                            </div>
-
-                            <div>
-                                <Label htmlFor="requirements">Requirements</Label>
-                                <Textarea
-                                    id="requirements"
-                                    value={formData.requirements}
-                                    onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
-                                    placeholder="• 5+ years of experience with React&#10;• Strong understanding of TypeScript&#10;• Experience with cloud services"
-                                    rows={4}
-                                />
-                            </div>
-
-                            <div>
-                                <Label htmlFor="niceToHave">Nice to Have</Label>
-                                <Textarea
-                                    id="niceToHave"
-                                    value={formData.niceToHave}
-                                    onChange={(e) => setFormData({ ...formData, niceToHave: e.target.value })}
-                                    placeholder="• Experience with AI/ML&#10;• Open source contributions&#10;• Startup experience"
-                                    rows={3}
-                                />
-                            </div>
-
-                            <div>
-                                <Label htmlFor="benefits">Benefits & Perks</Label>
-                                <Textarea
-                                    id="benefits"
-                                    value={formData.benefits}
-                                    onChange={(e) => setFormData({ ...formData, benefits: e.target.value })}
-                                    placeholder="• Competitive salary&#10;• Remote work flexibility&#10;• Health insurance&#10;• Learning budget"
-                                    rows={3}
-                                />
-                            </div>
-
-                            {/* Application */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <Label htmlFor="applicationUrl">Application URL</Label>
-                                    <Input
-                                        id="applicationUrl"
-                                        value={formData.applicationUrl}
-                                        onChange={(e) => setFormData({ ...formData, applicationUrl: e.target.value })}
-                                        placeholder="https://..."
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="applicationEmail">Application Email</Label>
-                                    <Input
-                                        id="applicationEmail"
-                                        type="email"
-                                        value={formData.applicationEmail}
-                                        onChange={(e) => setFormData({ ...formData, applicationEmail: e.target.value })}
-                                        placeholder="careers@company.com"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Settings */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <Label htmlFor="expiresAt">Expiry Date (Optional)</Label>
-                                    <Input
-                                        id="expiresAt"
-                                        type="date"
-                                        value={formData.expiresAt?.split('T')[0] || ''}
-                                        onChange={(e) => setFormData({ ...formData, expiresAt: e.target.value })}
-                                    />
-                                </div>
-                                <div className="flex items-end gap-6">
-                                    <div className="flex items-center gap-2">
-                                        <Switch
-                                            checked={formData.isFeatured}
-                                            onCheckedChange={(checked) => setFormData({ ...formData, isFeatured: checked })}
+                            {/* Job Details Section */}
+                            <div className="bg-orange-50 rounded-xl p-5 border border-orange-100">
+                                <h3 className="text-sm font-semibold text-orange-800 uppercase tracking-wide mb-4 flex items-center gap-2">
+                                    <Briefcase className="h-4 w-4" />
+                                    Job Details
+                                </h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <Label htmlFor="description" className="text-gray-700 font-medium">Job Description *</Label>
+                                        <Textarea
+                                            id="description"
+                                            value={formData.description}
+                                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                            placeholder="Describe the role, team, and what makes this opportunity exciting..."
+                                            rows={5}
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                                         />
-                                        <span className="text-sm">Featured</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <Switch
-                                            checked={formData.isPublished}
-                                            onCheckedChange={(checked) => setFormData({ ...formData, isPublished: checked })}
+
+                                    <div>
+                                        <Label htmlFor="responsibilities" className="text-gray-700 font-medium">Key Responsibilities</Label>
+                                        <Textarea
+                                            id="responsibilities"
+                                            value={formData.responsibilities}
+                                            onChange={(e) => setFormData({ ...formData, responsibilities: e.target.value })}
+                                            placeholder="• Lead development of new features&#10;• Collaborate with product team&#10;• Review code and mentor junior developers"
+                                            rows={4}
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                                         />
-                                        <span className="text-sm">Publish Now</span>
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="requirements" className="text-gray-700 font-medium">Requirements</Label>
+                                        <Textarea
+                                            id="requirements"
+                                            value={formData.requirements}
+                                            onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
+                                            placeholder="• 5+ years of experience with React&#10;• Strong understanding of TypeScript&#10;• Experience with cloud services"
+                                            rows={4}
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="niceToHave" className="text-gray-700 font-medium">Nice to Have</Label>
+                                        <Textarea
+                                            id="niceToHave"
+                                            value={formData.niceToHave}
+                                            onChange={(e) => setFormData({ ...formData, niceToHave: e.target.value })}
+                                            placeholder="• Experience with AI/ML&#10;• Open source contributions&#10;• Startup experience"
+                                            rows={3}
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor="benefits" className="text-gray-700 font-medium">Benefits & Perks</Label>
+                                        <Textarea
+                                            id="benefits"
+                                            value={formData.benefits}
+                                            onChange={(e) => setFormData({ ...formData, benefits: e.target.value })}
+                                            placeholder="• Competitive salary&#10;• Remote work flexibility&#10;• Health insurance&#10;• Learning budget"
+                                            rows={3}
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Application Section */}
+                            <div className="bg-cyan-50 rounded-xl p-5 border border-cyan-100">
+                                <h3 className="text-sm font-semibold text-cyan-800 uppercase tracking-wide mb-4 flex items-center gap-2">
+                                    <Mail className="h-4 w-4" />
+                                    Application Details
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <Label htmlFor="applicationUrl" className="text-gray-700 font-medium">Application URL</Label>
+                                        <Input
+                                            id="applicationUrl"
+                                            value={formData.applicationUrl}
+                                            onChange={(e) => setFormData({ ...formData, applicationUrl: e.target.value })}
+                                            placeholder="https://..."
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="applicationEmail" className="text-gray-700 font-medium">Application Email</Label>
+                                        <Input
+                                            id="applicationEmail"
+                                            type="email"
+                                            value={formData.applicationEmail}
+                                            onChange={(e) => setFormData({ ...formData, applicationEmail: e.target.value })}
+                                            placeholder="careers@company.com"
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Settings Section */}
+                            <div className="bg-gray-100 rounded-xl p-5 border border-gray-200">
+                                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4 flex items-center gap-2">
+                                    <Calendar className="h-4 w-4" />
+                                    Publishing Settings
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <Label htmlFor="expiresAt" className="text-gray-700 font-medium">Expiry Date (Optional)</Label>
+                                        <Input
+                                            id="expiresAt"
+                                            type="date"
+                                            value={formData.expiresAt?.split('T')[0] || ''}
+                                            onChange={(e) => setFormData({ ...formData, expiresAt: e.target.value })}
+                                            className="mt-1.5 bg-white border-gray-300 text-gray-900"
+                                        />
+                                    </div>
+                                    <div className="flex items-end gap-6">
+                                        <div className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-lg border border-gray-200">
+                                            <Switch
+                                                checked={formData.isFeatured}
+                                                onCheckedChange={(checked) => setFormData({ ...formData, isFeatured: checked })}
+                                            />
+                                            <span className="text-sm text-gray-700 font-medium">Featured</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 bg-green-100 px-4 py-2.5 rounded-lg border border-green-200">
+                                            <Switch
+                                                checked={formData.isPublished}
+                                                onCheckedChange={(checked) => setFormData({ ...formData, isPublished: checked })}
+                                            />
+                                            <span className="text-sm text-green-700 font-medium">Publish Now</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                        <DialogFooter className="border-t pt-4 mt-4">
+                            <Button variant="outline" onClick={() => setDialogOpen(false)} className="text-gray-700">
                                 Cancel
                             </Button>
-                            <Button onClick={handleSave} disabled={saving}>
+                            <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-white">
                                 {saving ? (
                                     <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>
                                 ) : (
@@ -732,15 +786,15 @@ export default function AdminJobsPage() {
 
                 {/* Delete Confirmation Dialog */}
                 <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                    <DialogContent>
+                    <DialogContent className="bg-white border shadow-xl">
                         <DialogHeader>
-                            <DialogTitle>Delete Job Posting</DialogTitle>
-                            <DialogDescription>
+                            <DialogTitle className="text-gray-900">Delete Job Posting</DialogTitle>
+                            <DialogDescription className="text-gray-600">
                                 Are you sure you want to delete "{selectedJob?.title}"? This action cannot be undone.
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
-                            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+                            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} className="text-gray-700">
                                 Cancel
                             </Button>
                             <Button variant="destructive" onClick={handleDelete}>
