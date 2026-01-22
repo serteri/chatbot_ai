@@ -2283,36 +2283,34 @@
     }
   },
   "careers": {
-    "title": "Únase a Nuestra Misión",
-    "subtitle": "Estamos construyendo el futuro de la comunicación con el cliente con IA. Ven y ayúdanos a darle forma.",
-    "remoteFriendly": "Trabajo Remoto Amigable",
-    "glassdoorRating": "Calificación Glassdoor",
+    "title": "Carreras",
+    "badge": "Estamos Contratando",
+    "subtitle": "Únete a nosotros para construir el futuro de la comunicación con clientes impulsada por IA",
+    "noOpeningsTitle": "No hay posiciones abiertas actualmente",
+    "noOpeningsDesc": "No tenemos roles abiertos en este momento. Sin embargo, siempre nos alegra conocer personas talentosas.",
+    "sendCvTitle": "Solicitud General",
+    "sendCvDesc": "Envíanos tu CV y te contactaremos cuando se abra una posición adecuada.",
+    "sendButton": "Enviar CV",
     "openPositions": "Posiciones Abiertas",
-    "applyNow": "Aplicar Ahora",
-    "noRole": "¿No ve un rol que encaje?",
-    "sendResume": "Envíenos su currículum de todos modos",
-    "positions": {
-      "pos1": {
-        "title": "Ingeniero Full Stack Senior",
-        "dept": "Ingeniería",
-        "type": "Tiempo Completo"
-      },
-      "pos2": {
-        "title": "Científico de Investigación de IA",
-        "dept": "IA y ML",
-        "type": "Tiempo Completo"
-      },
-      "pos3": {
-        "title": "Gerente de Marketing de Producto",
-        "dept": "Marketing",
-        "type": "Tiempo Completo"
-      },
-      "pos4": {
-        "title": "Especialista en Éxito del Cliente",
-        "dept": "Soporte",
-        "type": "Medio Tiempo"
-      }
-    }
+    "departments": "Departamentos",
+    "dontSeeRole": "¿No encuentras un rol que te encaje?",
+    "backToJobs": "Volver a todas las posiciones",
+    "aboutRole": "Sobre este Rol",
+    "responsibilities": "Responsabilidades Clave",
+    "requirements": "Requisitos",
+    "niceToHave": "Deseable",
+    "benefits": "Beneficios y Ventajas",
+    "applyNow": "¿Interesado en este rol?",
+    "applyDesc": "Aplica ahora y únete a nuestro equipo en crecimiento",
+    "applyButton": "Aplicar Ahora",
+    "applyByEmail": "Aplicar por Email",
+    "jobDetails": "Detalles del Puesto",
+    "department": "Departamento",
+    "location": "Ubicación",
+    "employmentType": "Tipo de Empleo",
+    "deadline": "Fecha Límite de Solicitud",
+    "shareJob": "Compartir este Puesto",
+    "shareDesc": "¿Conoces a alguien perfecto para este rol?"
   },
   "docs": {
     "title": "Documentación",
@@ -2548,15 +2546,6 @@
         "title": "Nuestro asesor está disponible en estos horarios:",
         "time": "Hora",
         "select": "Seleccionar Fecha y Hora"
-      },
-      "careers": {
-        "title": "Carreras",
-        "subtitle": "¿Quieres unirte al equipo de PylonChat?",
-        "noOpeningsTitle": "No hay vacantes actualmente",
-        "noOpeningsDesc": "No tenemos puestos abiertos en este momento. Sin embargo, siempre estamos felices de conocer gente talentosa.",
-        "sendCvTitle": "Solicitud General",
-        "sendCvDesc": "Envíanos tu CV y te contactaremos cuando se abra una posición adecuada.",
-        "sendButton": "Enviar CV"
       },
       "valuation": {
         "title": "Valoración Gratuita",

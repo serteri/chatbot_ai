@@ -2297,36 +2297,34 @@
     }
   },
   "careers": {
-    "title": "Werden Sie Teil unserer Mission",
-    "subtitle": "Wir bauen die Zukunft der Kundenkommunikation mit KI. Helfen Sie uns, sie zu gestalten.",
-    "remoteFriendly": "Remote-Arbeit Möglich",
-    "glassdoorRating": "Glassdoor Bewertung",
+    "title": "Karriere",
+    "badge": "Wir stellen ein",
+    "subtitle": "Gestalten Sie mit uns die Zukunft der KI-gestützten Kundenkommunikation",
+    "noOpeningsTitle": "Derzeit keine offenen Stellen",
+    "noOpeningsDesc": "Wir haben momentan keine offenen Stellen. Wir freuen uns jedoch immer, talentierte Menschen kennenzulernen.",
+    "sendCvTitle": "Initiativbewerbung",
+    "sendCvDesc": "Senden Sie uns Ihren Lebenslauf und wir kontaktieren Sie, wenn eine passende Position frei wird.",
+    "sendButton": "Lebenslauf senden",
     "openPositions": "Offene Stellen",
-    "applyNow": "Jetzt Bewerben",
-    "noRole": "Keine passende Rolle gefunden?",
-    "sendResume": "Senden Sie uns trotzdem Ihren Lebenslauf",
-    "positions": {
-      "pos1": {
-        "title": "Senior Full Stack Engineer",
-        "dept": "Engineering",
-        "type": "Vollzeit"
-      },
-      "pos2": {
-        "title": "KI-Forschungswissenschaftler",
-        "dept": "KI & ML",
-        "type": "Vollzeit"
-      },
-      "pos3": {
-        "title": "Produktmarketing-Manager",
-        "dept": "Marketing",
-        "type": "Vollzeit"
-      },
-      "pos4": {
-        "title": "Customer Success Spezialist",
-        "dept": "Support",
-        "type": "Teilzeit"
-      }
-    }
+    "departments": "Abteilungen",
+    "dontSeeRole": "Keine passende Stelle gefunden?",
+    "backToJobs": "Zurück zu allen Positionen",
+    "aboutRole": "Über diese Position",
+    "responsibilities": "Hauptaufgaben",
+    "requirements": "Anforderungen",
+    "niceToHave": "Wünschenswert",
+    "benefits": "Vorteile & Leistungen",
+    "applyNow": "Interesse an dieser Position?",
+    "applyDesc": "Bewerben Sie sich jetzt und werden Sie Teil unseres wachsenden Teams",
+    "applyButton": "Jetzt Bewerben",
+    "applyByEmail": "Per E-Mail bewerben",
+    "jobDetails": "Stellendetails",
+    "department": "Abteilung",
+    "location": "Standort",
+    "employmentType": "Beschäftigungsart",
+    "deadline": "Bewerbungsfrist",
+    "shareJob": "Stelle teilen",
+    "shareDesc": "Kennen Sie jemanden, der perfekt für diese Position wäre?"
   },
   "docs": {
     "title": "Dokumentation",

@@ -2308,38 +2308,6 @@
       }
     }
   },
-  "careers": {
-    "title": "Join Our Mission",
-    "subtitle": "We're building the future of customer communication with AI. Come help us shape it.",
-    "remoteFriendly": "Remote Friendly",
-    "glassdoorRating": "Glassdoor Rating",
-    "openPositions": "Open Positions",
-    "applyNow": "Apply Now",
-    "noRole": "Don't see a role that fits?",
-    "sendResume": "Send us your resume anyway",
-    "positions": {
-      "pos1": {
-        "title": "Senior Full Stack Engineer",
-        "dept": "Engineering",
-        "type": "Full-time"
-      },
-      "pos2": {
-        "title": "AI Research Scientist",
-        "dept": "AI & ML",
-        "type": "Full-time"
-      },
-      "pos3": {
-        "title": "Product Marketing Manager",
-        "dept": "Marketing",
-        "type": "Full-time"
-      },
-      "pos4": {
-        "title": "Customer Success Specialist",
-        "dept": "Support",
-        "type": "Part-time"
-      }
-    }
-  },
   "docs": {
     "title": "Documentation",
     "subtitle": "Everything you need to build with PylonChat",

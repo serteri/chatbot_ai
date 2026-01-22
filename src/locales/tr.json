@@ -2288,38 +2288,6 @@
       }
     }
   },
-  "careers": {
-    "title": "Ekibimize Katılın",
-    "subtitle": "Müşteri iletişiminin geleceğini AI ile inşa ediyoruz. Bize katılın ve şekillendirmemize yardımcı olun.",
-    "remoteFriendly": "Uzaktan Çalışma Dostu",
-    "glassdoorRating": "Glassdoor Puanı",
-    "openPositions": "Açık Pozisyonlar",
-    "applyNow": "Başvur",
-    "noRole": "Size uygun bir rol yok mu?",
-    "sendResume": "Yine de CV'nizi gönderin",
-    "positions": {
-      "pos1": {
-        "title": "Kıdemli Full Stack Mühendisi",
-        "dept": "Mühendislik",
-        "type": "Tam Zamanlı"
-      },
-      "pos2": {
-        "title": "AI Araştırma Bilimcisi",
-        "dept": "AI & ML",
-        "type": "Tam Zamanlı"
-      },
-      "pos3": {
-        "title": "Ürün Pazarlama Müdürü",
-        "dept": "Pazarlama",
-        "type": "Tam Zamanlı"
-      },
-      "pos4": {
-        "title": "Müşteri Başarı Uzmanı",
-        "dept": "Destek",
-        "type": "Yarı Zamanlı"
-      }
-    }
-  },
   "docs": {
     "title": "Dokümantasyon",
     "subtitle": "PylonChat ile geliştirme yapmak için ihtiyacınız olan her şey",

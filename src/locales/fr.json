@@ -564,15 +564,6 @@
       "time": "Heure",
       "select": "Sélectionner Date & Heure"
     },
-    "careers": {
-      "title": "Carrières",
-      "subtitle": "Vous souhaitez rejoindre l'équipe PylonChat ?",
-      "noOpeningsTitle": "Aucun poste vacant actuellement",
-      "noOpeningsDesc": "Nous n'avons aucun poste ouvert pour le moment. Cependant, nous sommes toujours heureux de rencontrer des gens talentueux.",
-      "sendCvTitle": "Candidature Spontanée",
-      "sendCvDesc": "Envoyez-nous votre CV et nous vous contacterons lorsqu'un poste approprié s'ouvrira.",
-      "sendButton": "Envoyer CV"
-    },
     "status": {
       "active": "Actif",
       "sold": "Vendu",
@@ -2255,36 +2246,34 @@
     }
   },
   "careers": {
-    "title": "Rejoignez Notre Mission",
-    "subtitle": "Nous construisons l'avenir de la communication client avec l'IA. Venez nous aider à le façonner.",
-    "remoteFriendly": "Télétravail Possible",
-    "glassdoorRating": "Note Glassdoor",
+    "title": "Carrières",
+    "badge": "Nous Recrutons",
+    "subtitle": "Rejoignez-nous pour construire l'avenir de la communication client alimentée par l'IA",
+    "noOpeningsTitle": "Aucun poste ouvert actuellement",
+    "noOpeningsDesc": "Nous n'avons pas de postes ouverts pour le moment. Cependant, nous sommes toujours heureux de rencontrer des personnes talentueuses.",
+    "sendCvTitle": "Candidature Spontanée",
+    "sendCvDesc": "Envoyez-nous votre CV et nous vous contacterons lorsqu'un poste adapté se libérera.",
+    "sendButton": "Envoyer CV",
     "openPositions": "Postes Ouverts",
-    "applyNow": "Postuler Maintenant",
-    "noRole": "Vous ne voyez pas de rôle qui vous correspond ?",
-    "sendResume": "Envoyez-nous votre CV quand même",
-    "positions": {
-      "pos1": {
-        "title": "Ingénieur Full Stack Senior",
-        "dept": "Ingénierie",
-        "type": "Temps Plein"
-      },
-      "pos2": {
-        "title": "Chercheur en IA",
-        "dept": "IA & ML",
-        "type": "Temps Plein"
-      },
-      "pos3": {
-        "title": "Responsable Marketing Produit",
-        "dept": "Marketing",
-        "type": "Temps Plein"
-      },
-      "pos4": {
-        "title": "Spécialiste Succès Client",
-        "dept": "Support",
-        "type": "Temps Partiel"
-      }
-    }
+    "departments": "Départements",
+    "dontSeeRole": "Vous ne trouvez pas de rôle qui vous convient ?",
+    "backToJobs": "Retour à tous les postes",
+    "aboutRole": "À propos de ce Poste",
+    "responsibilities": "Responsabilités Clés",
+    "requirements": "Exigences",
+    "niceToHave": "Atouts",
+    "benefits": "Avantages et Bénéfices",
+    "applyNow": "Intéressé par ce poste ?",
+    "applyDesc": "Postulez maintenant et rejoignez notre équipe en pleine croissance",
+    "applyButton": "Postuler Maintenant",
+    "applyByEmail": "Postuler par Email",
+    "jobDetails": "Détails du Poste",
+    "department": "Département",
+    "location": "Localisation",
+    "employmentType": "Type d'Emploi",
+    "deadline": "Date Limite de Candidature",
+    "shareJob": "Partager ce Poste",
+    "shareDesc": "Connaissez-vous quelqu'un de parfait pour ce rôle ?"
   },
   "docs": {
     "title": "Documentation",
