@@ -883,3 +883,54 @@ model TenantRequest {
   @@index([status])
   @@index([requestType])
 }
+
+// ========================================
+// JOB POSTINGS MODULE
+// ========================================
+
+model JobPosting {
+  id              String    @id @default(cuid())
+
+  // Basic Info
+  title           String
+  department      String    // Engineering, Marketing, Sales, etc.
+  location        String    // Remote, Istanbul, New York, etc.
+  locationType    String    @default("remote") // remote, onsite, hybrid
+  employmentType  String    @default("full-time") // full-time, part-time, contract, internship
+
+  // Salary (Optional)
+  salaryMin       Int?
+  salaryMax       Int?
+  salaryCurrency  String    @default("USD")
+  salaryPeriod    String    @default("yearly") // yearly, monthly, hourly
+  showSalary      Boolean   @default(false)
+
+  // Job Details
+  description     String    // Main job description (HTML/Markdown)
+  responsibilities String?   // Key responsibilities (HTML/Markdown)
+  requirements    String?   // Required qualifications (HTML/Markdown)
+  niceToHave      String?   // Nice to have qualifications (HTML/Markdown)
+  benefits        String?   // Benefits and perks (HTML/Markdown)
+
+  // Application
+  applicationUrl  String?   // External application URL
+  applicationEmail String?  // Email for applications
+
+  // Meta
+  language        String    @default("en") // Language the posting is written in
+  isPublished     Boolean   @default(false)
+  isFeatured      Boolean   @default(false)
+  viewCount       Int       @default(0)
+
+  // Dates
+  publishedAt     DateTime?
+  expiresAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([isPublished])
+  @@index([department])
+  @@index([locationType])
+  @@index([employmentType])
+  @@index([expiresAt])
+}

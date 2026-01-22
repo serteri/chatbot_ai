@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Loader2, Shield, GraduationCap, ArrowRight, Settings, Users, FolderOpen } from 'lucide-react'
+import { Loader2, Shield, GraduationCap, ArrowRight, Settings, Users, FolderOpen, Briefcase } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -127,6 +127,26 @@ export default function AdminDashboardPage() {
                             <Link href="/tr/admin/scholarships">
                                 <Button className="w-full">
                                     Yönetim Paneline Git <ArrowRight className="ml-2 h-4 w-4" />
+                                </Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+
+                    {/* Job Postings Module */}
+                    <Card className="hover:shadow-lg transition-shadow border-green-100">
+                        <CardHeader>
+                            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 text-green-600">
+                                <Briefcase className="h-6 w-6" />
+                            </div>
+                            <CardTitle>İş İlanları</CardTitle>
+                            <CardDescription>
+                                Kariyer sayfası için iş ilanları oluştur ve yönet
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Link href="/tr/admin/jobs">
+                                <Button className="w-full bg-green-600 hover:bg-green-700">
+                                    İlanları Yönet <ArrowRight className="ml-2 h-4 w-4" />
                                 </Button>
                             </Link>
                         </CardContent>
