@@ -193,7 +193,7 @@ export default async function SupportPage({
                     </CardContent>
                 </Card>
 
-                {/* Live Chat - Priority & Enterprise */}
+                {/* Live Chat - Priority & Enterprise - Opens WhatsApp */}
                 <Card className="hover:shadow-lg transition-shadow">
                     <CardHeader>
                         <div className="flex items-center gap-3">
@@ -207,10 +207,16 @@ export default async function SupportPage({
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <Button className="w-full bg-green-600 hover:bg-green-700">
-                            <MessageSquare className="h-4 w-4 mr-2" />
-                            {t('startChat')}
-                        </Button>
+                        <a
+                            href={`https://wa.me/61432672696?text=${encodeURIComponent(`Hello! I need support.\n\nName: ${user?.name || session.user.name || 'User'}\nEmail: ${user?.email || session.user.email || ''}`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Button className="w-full bg-green-600 hover:bg-green-700">
+                                <MessageSquare className="h-4 w-4 mr-2" />
+                                {t('startChat')}
+                            </Button>
+                        </a>
                         <p className="text-sm text-green-600 mt-3 text-center flex items-center justify-center gap-1">
                             <CheckCircle className="h-4 w-4" />
                             {t('available')}
@@ -264,22 +270,24 @@ export default async function SupportPage({
             {/* Resources */}
             <h2 className="text-xl font-bold text-gray-900 mb-4">{t('helpResources')}</h2>
             <div className="grid md:grid-cols-2 gap-6">
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-600 transition-colors">
-                                    <FileText className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors" />
+                <Link href={`/${locale}/about`}>
+                    <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                                        <FileText className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">{t('documentation')}</h3>
+                                        <p className="text-sm text-gray-500">{t('documentationDesc')}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-900">{t('documentation')}</h3>
-                                    <p className="text-sm text-gray-500">{t('documentationDesc')}</p>
-                                </div>
+                                <ExternalLink className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
                             </div>
-                            <ExternalLink className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
-                        </div>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </Link>
 
                 <Link href={`/${locale}/contact`}>
                     <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
