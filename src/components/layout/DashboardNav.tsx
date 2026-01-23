@@ -36,9 +36,11 @@ interface DashboardNavProps {
         name?: string | null
         email?: string | null
     }
+    planType?: string
 }
 
-export default function DashboardNav({ user }: DashboardNavProps) {
+export default function DashboardNav({ user, planType = 'free' }: DashboardNavProps) {
+    const hasPaidPlan = planType !== 'free'
     const t = useTranslations()
     const locale = useLocale() // Mevcut dili güvenli bir şekilde alıyoruz
     const router = useRouter()
@@ -305,12 +307,14 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                                     </Link>
                                 </DropdownMenuItem>
 
-                                <DropdownMenuItem asChild>
-                                    <Link href={`/${currentLocale}/dashboard/support`} className="cursor-pointer py-2.5">
-                                        <HeadphonesIcon className="h-4 w-4 mr-2 text-gray-500" />
-                                        {t('nav.support')}
-                                    </Link>
-                                </DropdownMenuItem>
+                                {hasPaidPlan && (
+                                    <DropdownMenuItem asChild>
+                                        <Link href={`/${currentLocale}/dashboard/support`} className="cursor-pointer py-2.5">
+                                            <HeadphonesIcon className="h-4 w-4 mr-2 text-gray-500" />
+                                            {t('nav.support')}
+                                        </Link>
+                                    </DropdownMenuItem>
+                                )}
 
                                 <DropdownMenuSeparator className="bg-gray-100 my-1" />
 

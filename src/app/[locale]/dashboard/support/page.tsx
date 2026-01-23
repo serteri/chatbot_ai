@@ -19,6 +19,7 @@ import {
     Sparkles
 } from 'lucide-react'
 import Link from 'next/link'
+import { WhatsAppChatWidget } from '@/components/support/WhatsAppChatWidget'
 
 export default async function SupportPage({
     params,
@@ -40,11 +41,17 @@ export default async function SupportPage({
 
     const planType = user?.subscription?.planType || 'free'
 
+    // Redirect free users to pricing page
+    if (planType === 'free') {
+        redirect(`/${locale}/dashboard/pricing`)
+    }
+
     // Determine support level based on plan
     const supportLevel = planType === 'enterprise' ? '24/7' :
                          planType === 'business' || planType === 'pro' ? 'priority' : 'basic'
 
     const hasPrioritySupport = supportLevel === 'priority' || supportLevel === '24/7'
+    const isEnterprise = supportLevel === '24/7'
 
     // Support options based on plan
     const supportOptions = {
@@ -95,6 +102,17 @@ export default async function SupportPage({
                     </Badge>
                 </div>
             </div>
+
+            {/* Enterprise 24/7 WhatsApp Support Section */}
+            {isEnterprise && (
+                <div className="mb-8">
+                    <WhatsAppChatWidget
+                        locale={locale}
+                        userName={user?.name || session.user.name || 'User'}
+                        userEmail={user?.email || session.user.email || ''}
+                    />
+                </div>
+            )}
 
             {/* Support Level Info */}
             <Card className={`mb-8 ${
@@ -165,7 +183,7 @@ export default async function SupportPage({
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <a href="mailto:support@pylonchat.com?subject=Support Request">
+                        <a href="mailto:support@pylonchat.com?subject=Priority Support Request">
                             <Button className="w-full bg-blue-600 hover:bg-blue-700">
                                 <Mail className="h-4 w-4 mr-2" />
                                 {t('sendEmail')}
@@ -176,45 +194,27 @@ export default async function SupportPage({
                 </Card>
 
                 {/* Live Chat - Priority & Enterprise */}
-                <Card className={`transition-shadow ${hasPrioritySupport ? 'hover:shadow-lg' : 'opacity-60'}`}>
+                <Card className="hover:shadow-lg transition-shadow">
                     <CardHeader>
                         <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                                hasPrioritySupport ? 'bg-green-100' : 'bg-gray-100'
-                            }`}>
-                                <MessageSquare className={`h-5 w-5 ${hasPrioritySupport ? 'text-green-600' : 'text-gray-400'}`} />
+                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <MessageSquare className="h-5 w-5 text-green-600" />
                             </div>
                             <div>
-                                <CardTitle className="text-lg flex items-center gap-2">
-                                    {t('liveChat')}
-                                    {!hasPrioritySupport && (
-                                        <Badge variant="outline" className="text-xs">Pro+</Badge>
-                                    )}
-                                </CardTitle>
+                                <CardTitle className="text-lg">{t('liveChat')}</CardTitle>
                                 <CardDescription>{t('liveChatDesc')}</CardDescription>
                             </div>
                         </div>
                     </CardHeader>
                     <CardContent>
-                        {hasPrioritySupport ? (
-                            <Button className="w-full bg-green-600 hover:bg-green-700">
-                                <MessageSquare className="h-4 w-4 mr-2" />
-                                {t('startChat')}
-                            </Button>
-                        ) : (
-                            <Link href={`/${locale}/dashboard/pricing`}>
-                                <Button variant="outline" className="w-full">
-                                    <Star className="h-4 w-4 mr-2" />
-                                    {t('upgradePlan')}
-                                </Button>
-                            </Link>
-                        )}
-                        {hasPrioritySupport && (
-                            <p className="text-sm text-green-600 mt-3 text-center flex items-center justify-center gap-1">
-                                <CheckCircle className="h-4 w-4" />
-                                {t('available')}
-                            </p>
-                        )}
+                        <Button className="w-full bg-green-600 hover:bg-green-700">
+                            <MessageSquare className="h-4 w-4 mr-2" />
+                            {t('startChat')}
+                        </Button>
+                        <p className="text-sm text-green-600 mt-3 text-center flex items-center justify-center gap-1">
+                            <CheckCircle className="h-4 w-4" />
+                            {t('available')}
+                        </p>
                     </CardContent>
                 </Card>
 
@@ -240,10 +240,12 @@ export default async function SupportPage({
                     </CardHeader>
                     <CardContent>
                         {supportLevel === '24/7' ? (
-                            <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                                <HeadphonesIcon className="h-4 w-4 mr-2" />
-                                {t('callNow')}
-                            </Button>
+                            <a href="tel:+61432672696">
+                                <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                                    <HeadphonesIcon className="h-4 w-4 mr-2" />
+                                    {t('callNow')}
+                                </Button>
+                            </a>
                         ) : (
                             <Link href={`/${locale}/dashboard/pricing`}>
                                 <Button variant="outline" className="w-full">
@@ -299,17 +301,17 @@ export default async function SupportPage({
                 </Link>
             </div>
 
-            {/* Upgrade CTA for Free/Basic users */}
-            {!hasPrioritySupport && (
-                <Card className="mt-8 bg-gradient-to-br from-blue-600 to-purple-700 text-white border-0">
+            {/* Upgrade to Enterprise CTA for Pro/Business users */}
+            {!isEnterprise && (
+                <Card className="mt-8 bg-gradient-to-br from-amber-500 to-orange-600 text-white border-0">
                     <CardContent className="p-8 text-center">
-                        <Sparkles className="h-12 w-12 mx-auto mb-4 text-blue-200" />
-                        <h3 className="text-2xl font-bold mb-2">{t('upgradeTitle')}</h3>
-                        <p className="text-blue-100 mb-6 max-w-lg mx-auto">{t('upgradeDesc')}</p>
+                        <Crown className="h-12 w-12 mx-auto mb-4 text-amber-200" />
+                        <h3 className="text-2xl font-bold mb-2">{t('upgrade247Title')}</h3>
+                        <p className="text-amber-100 mb-6 max-w-lg mx-auto">{t('upgrade247Desc')}</p>
                         <Link href={`/${locale}/dashboard/pricing`}>
-                            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
-                                <Star className="h-5 w-5 mr-2" />
-                                {t('viewPlans')}
+                            <Button size="lg" className="bg-white text-amber-600 hover:bg-amber-50">
+                                <Crown className="h-5 w-5 mr-2" />
+                                {t('upgradeEnterprise')}
                             </Button>
                         </Link>
                     </CardContent>
