@@ -573,47 +573,71 @@ export function WhatsAppChatWidget({
     )
 }
 
-// Quick FAQ data for floating widget
-const quickFAQs: Record<string, Array<{ q: string; a: string }>> = {
+// Comprehensive FAQ data for floating widget
+const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string }>> = {
     tr: [
-        { q: 'Chatbot nasil entegre edilir?', a: 'Dashboard > Chatbot > Ayarlar > Embed Kodu bolumunden script kodunu kopyalayip sitenize yapistirin.' },
-        { q: 'Fiyatlandirma nasil calisiyor?', a: 'Free (ucretsiz), Pro ($29/ay), Business ($79/ay) ve Enterprise (ozel fiyat) planlarimiz var.' },
-        { q: 'Hangi diller destekleniyor?', a: '50+ dil destekliyoruz: Turkce, Ingilizce, Almanca, Fransizca, Ispanyolca ve daha fazlasi.' },
-        { q: 'API dokumantasyonu nerede?', a: 'Dashboard > Gelistirici > API Dokumantasyonu bolumunden ulasabilirsiniz.' },
-        { q: 'Chatbot nasil egitilir?', a: 'PDF, DOCX, TXT dosyalari yukleyerek veya web sitesi URL\'si ekleyerek egitebilirsiniz.' },
-        { q: 'Mesaj limiti asarsam ne olur?', a: 'Chatbot calismaya devam eder, asim ucreti uygulanir. Enterprise planlarda limit yoktur.' }
+        // Genel
+        { q: 'PylonChat nedir ve ne ise yarar?', a: 'PylonChat, isletmeler icin gelistirilmis yapay zeka destekli chatbot platformudur. Web sitenize, mobil uygulamaniza veya sosyal medya kanallariniza entegre edebileceginiz akilli chatbotlar olusturmanizi saglar. Musteri sorularini 7/24 otomatik yanitlar, musteri memnuniyetini artirir ve destek maliyetlerinizi %60\'a kadar azaltir.', category: 'Genel' },
+        { q: 'Hangi sektorlere hizmet veriyorsunuz?', a: 'PylonChat tum sektorlerde kullanilabilir: E-ticaret (urun onerileri, siparis takibi), Egitim (ogrenci danismanligi, kayit islemleri), Emlak (mulk sorgulama, randevu alma), Saglik (randevu, SSS), Finans (hesap bilgileri, islem sorgulama), Turizm (rezervasyon, bilgi), Perakende ve daha fazlasi. Her sektor icin ozellestirilmis sablonlar sunuyoruz.', category: 'Genel' },
+        { q: 'Ucretsiz deneme surumu var mi?', a: 'Evet! Ucretsiz planumuzla hemen baslayabilirsiniz. Kredi karti gerektirmez. Ucretsiz planda 1 chatbot olusturabilir, 3 belge yukleyebilir ve aylik 100 mesaj kullanabilirsiniz. Tum temel ozelliklere erisim saglarsiniz. Daha fazla ozellik icin Pro veya Business planina yukseltebilirsiniz.', category: 'Genel' },
+
+        // Fiyatlandirma
+        { q: 'Fiyatlandirma nasil calisiyor? Hangi planlar var?', a: 'Dort plan sunuyoruz:\n\n• UCRETSIZ: 1 chatbot, 3 belge, aylik 100 mesaj, temel ozellikler\n• PRO ($29/ay): 5 chatbot, 20 belge, aylik 5.000 mesaj, gelismis analitik, oncelikli destek\n• BUSINESS ($79/ay): 15 chatbot, 100 belge, aylik 25.000 mesaj, API erisimi, ozel marka, 7/24 destek\n• ENTERPRISE (Ozel): Sinirsiz chatbot ve mesaj, ozel entegrasyonlar, SLA garantisi, ozel hesap yoneticisi\n\nYillik odemede %20 indirim kazanirsiniz.', category: 'Fiyatlandirma' },
+        { q: 'Mesaj limiti asarsam ne olur?', a: 'Mesaj limitinizi astiginizda chatbotunuz calismaya devam eder ancak asim ucreti uygulanir:\n\n• Pro plan: Asim basina $0.01\n• Business plan: Asim basina $0.008\n• Enterprise: Asim ucreti yoktur, sinirsiz mesaj\n\nLimit yaklastiginizda (80% ve 95%) e-posta bildirimi alirsiniz. Dashboard\'dan kullanim durumunuzu takip edebilirsiniz.', category: 'Fiyatlandirma' },
+        { q: 'Para iade politikasi nedir?', a: 'Memnuniyet garantisi sunuyoruz:\n\n• Ilk 14 gun icinde memnun kalmazsaniz tam iade\n• Yillik planlarda kalan sure icin orantili iade\n• Iade islemi 5-7 is gunu icinde tamamlanir\n• Iade talebinizi support@pylonchat.com adresine gonderebilirsiniz\n\nIptal sonrasi verileriniz 30 gun saklanir, istediginiz zaman geri donebilirsiniz.', category: 'Fiyatlandirma' },
+
+        // Entegrasyon
+        { q: 'Chatbotu web siteme nasil entegre ederim?', a: 'Entegrasyon 3 kolay adimda tamamlanir:\n\n1. Dashboard\'da chatbotunuzu olusturun ve egitim verilerini ekleyin\n2. Ayarlar > Embed Kodu bolumune gidin\n3. Verilen JavaScript kodunu web sitenizin </body> etiketinden hemen once yapistirin\n\nWordPress icin eklentimizi kullanabilirsiniz. Shopify, Wix, Squarespace icin de ozel entegrasyon rehberlerimiz mevcuttur. Chatbot otomatik olarak sitenizde gorunecektir.', category: 'Entegrasyon' },
+        { q: 'Hangi platformlarla entegre olur?', a: 'PylonChat genis entegrasyon destegi sunar:\n\n• WEB: Tum web siteleri, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MESAJLASMA: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• IS ARACLARI: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• OTOMASYON: Zapier ile 5000+ uygulama baglantisi\n• OZEL: REST API ile kendi entegrasyonlarinizi gelistirebilirsiniz', category: 'Entegrasyon' },
+        { q: 'API dokumantasyonu nerede? Nasil kullanirim?', a: 'API dokumantasyonuna Dashboard > Gelistirici > API Dokumantasyonu bolumunden ulasabilirsiniz.\n\nAPI ile yapabilecekleriniz:\n• Chatbot olusturma ve yonetme\n• Egitim verileri yukleme\n• Mesaj gonderme ve alma\n• Konusma gecmisine erisim\n• Analitik verileri cekme\n\nAPI anahtarinizi ayni sayfadan olusturabilirsiniz. Rate limit: Pro 60/dk, Business 300/dk, Enterprise ozel.', category: 'Entegrasyon' },
+
+        // Egitim
+        { q: 'Chatbotumu nasil egitirim? Hangi yontemler var?', a: 'Chatbotunuzu 3 farkli yontemle egitebilirsiniz:\n\n1. BELGE YUKLEME: PDF, DOCX, DOC, TXT, CSV, XLSX dosyalari yukleyin. AI otomatik olarak icerigi analiz eder.\n\n2. WEB SITESI TARAMA: URL girin, chatbot sitenizi tarar ve icerik cikarir. SSS, urun bilgileri, blog yazilari otomatik ogrenilir.\n\n3. MANUEL GIRIS: Soru-cevap ciftleri dogrudan ekleyin. Ozel senaryolar icin ideal.\n\nEgitim genellikle birkac dakika icerisinde tamamlanir.', category: 'Egitim' },
+        { q: 'Hangi dosya formatlarini destekliyorsunuz?', a: 'Desteklenen dosya formatlari:\n\n• BELGELER: PDF, DOCX, DOC, TXT, RTF, ODT\n• TABLOLAR: CSV, XLSX, XLS (urun kataloglari icin ideal)\n• WEB: HTML, XML, Sitemap\n• KOD: Markdown (MD)\n\nMaksimum dosya boyutu:\n• Pro: 10MB/dosya, toplam 50MB\n• Business: 50MB/dosya, toplam 500MB\n• Enterprise: Sinirsiz\n\nBirden fazla dosya ayni anda yuklenebilir.', category: 'Egitim' },
+        { q: 'Chatbot kac dil destekliyor?', a: 'PylonChat 50\'den fazla dili destekler:\n\n• Turkce, Ingilizce, Almanca, Fransizca, Ispanyolca\n• Arapca, Cince (Basitlestirilmis/Geleneksel), Japonca, Korece\n• Rusca, Portekizce, Italyanca, Hollandaca, Lehce\n• Hintce, Endonezyaca, Vietnamca, Tayce\n• Ve daha fazlasi...\n\nChatbot kullanicinin dilini otomatik algilar ve ayni dilde yanit verir. Her dil icin ayri egitim verileri de yukleyebilirsiniz.', category: 'Egitim' },
+
+        // Analitik
+        { q: 'Hangi analitik ve raporlari gorebilirim?', a: 'Dashboard\'da kapsamli analitikler sunuyoruz:\n\n• GENEL: Toplam konusma, mesaj sayisi, aktif kullanici\n• PERFORMANS: Cozum orani, ortalama yanit suresi, musteri memnuniyeti\n• ICERIK: En cok sorulan sorular, yanitlanamayan sorular, populer konular\n• ZAMAN: Yogun saatler, gunluk/haftalik/aylik trendler\n• DONUSUM: Lead yakalama, hedef tamamlama, canli destege yonlendirme\n\nRaporlar CSV, PDF, JSON formatinda indirilebilir. Zamanlanmis e-posta raporlari ayarlanabilir.', category: 'Analitik' },
+
+        // Guvenlik
+        { q: 'Verilerim guvenli mi? Hangi onlemler aliniyor?', a: 'En yuksek guvenlik standartlarini uyguluyoruz:\n\n• SIFRELEME: TLS 1.3 baglanti, AES-256 veri sifreleme\n• ALTYAPI: SOC 2 Type II sertifikali AWS veri merkezleri\n• ERISIM: 2FA zorunlu, IP beyaz listesi (Enterprise), rol bazli yetkilendirme\n• DENETIM: Duzenli guvenlik testleri, penetrasyon testleri\n• UYUMLULUK: GDPR, KVKK, CCPA, HIPAA (Enterprise)\n\nVerileriniz Avrupa (Frankfurt) veya ABD (Virginia) veri merkezlerinde saklanir.', category: 'Guvenlik' },
+        { q: 'GDPR ve KVKK uyumlu mu?', a: 'Evet, tam uyumluyuz:\n\n• Veri Isleme Sozlesmesi (DPA) mevcut\n• Kullanici rizasi yonetimi (cookie banner entegrasyonu)\n• Veri silme talep araci (RTBF - Right to be Forgotten)\n• Veri tasima destegi (Data Portability)\n• Avrupa\'da veri depolama secenegi\n• Gizlilik politikasi ve kullanim sartlari sablonlari\n• DPO (Data Protection Officer) ile iletisim kanali\n\nKVKK verbis bildirimi icin gerekli dokumanlari sagliyoruz.', category: 'Guvenlik' },
+
+        // Hesap
+        { q: 'Hesabimi nasil yonetirim? Ayarlari nereden degistiririm?', a: 'Dashboard\'dan tum hesap islemlerinizi yapabilirsiniz:\n\n• PROFIL: Ad, e-posta, sifre degisikligi\n• FATURALAMA: Plan degisikligi, odeme yontemi, fatura gecmisi\n• EKIP: Kullanici ekleme/cikarma, roller ve izinler\n• BILDIRIMLER: E-posta bildirimleri, haftalik raporlar\n• GUVENLIK: 2FA etkinlestirme, oturum yonetimi, API anahtarlari\n• ENTEGRASYONLAR: Ucuncu parti baglantilari yonetme\n\nTum degisiklikler aninda kaydedilir.', category: 'Hesap' },
+        { q: 'Aboneligimi nasil iptal ederim?', a: 'Dashboard > Faturalama > Abonelik Yonetimi bolumunden iptal edebilirsiniz:\n\n• Iptal mevcut fatura donemi sonuna kadar gecerlidir\n• Tum ozellikleriniz donem sonuna kadar aktif kalir\n• Verileriniz iptal sonrasi 30 gun saklanir\n• 30 gun icinde yeniden aktif edebilirsiniz\n• 14 gun icinde iptal ederseniz tam iade alirsiniz\n\nIptal oncesi verilerinizi disa aktarmanizi oneririz. Geri bildiriminiz bizim icin degerli!', category: 'Hesap' }
     ],
     en: [
-        { q: 'How to integrate the chatbot?', a: 'Go to Dashboard > Chatbot > Settings > Embed Code, copy the script and paste it on your site.' },
-        { q: 'How does pricing work?', a: 'We have Free, Pro ($29/mo), Business ($79/mo), and Enterprise (custom) plans.' },
-        { q: 'What languages are supported?', a: 'We support 50+ languages: English, Turkish, German, French, Spanish, and more.' },
-        { q: 'Where is the API documentation?', a: 'You can access it from Dashboard > Developer > API Documentation.' },
-        { q: 'How to train the chatbot?', a: 'Upload PDF, DOCX, TXT files or add website URLs to train your chatbot.' },
-        { q: 'What if I exceed message limit?', a: 'Chatbot continues working with overage fees. Enterprise plans have no limits.' }
-    ],
-    de: [
-        { q: 'Wie integriere ich den Chatbot?', a: 'Gehen Sie zu Dashboard > Chatbot > Einstellungen > Embed-Code und kopieren Sie das Skript.' },
-        { q: 'Wie funktioniert die Preisgestaltung?', a: 'Wir haben Free, Pro (29$/Monat), Business (79$/Monat) und Enterprise (individuell) Plane.' },
-        { q: 'Welche Sprachen werden unterstutzt?', a: 'Wir unterstutzen 50+ Sprachen: Deutsch, Englisch, Turkisch, Franzosisch und mehr.' },
-        { q: 'Wo ist die API-Dokumentation?', a: 'Dashboard > Entwickler > API-Dokumentation.' },
-        { q: 'Wie trainiere ich den Chatbot?', a: 'Laden Sie PDF, DOCX, TXT-Dateien hoch oder fugen Sie Website-URLs hinzu.' },
-        { q: 'Was passiert bei Limituberschreitung?', a: 'Chatbot funktioniert weiter mit Zusatzkosten. Enterprise hat keine Limits.' }
-    ],
-    es: [
-        { q: 'Como integrar el chatbot?', a: 'Ve a Dashboard > Chatbot > Configuracion > Codigo Embed y copia el script.' },
-        { q: 'Como funciona el precio?', a: 'Tenemos planes Free, Pro ($29/mes), Business ($79/mes) y Enterprise (personalizado).' },
-        { q: 'Que idiomas son compatibles?', a: 'Soportamos 50+ idiomas: Espanol, Ingles, Aleman, Frances, Turco y mas.' },
-        { q: 'Donde esta la documentacion API?', a: 'Dashboard > Desarrollador > Documentacion API.' },
-        { q: 'Como entrenar el chatbot?', a: 'Sube archivos PDF, DOCX, TXT o agrega URLs de sitios web.' },
-        { q: 'Que pasa si excedo el limite?', a: 'El chatbot sigue funcionando con cargos adicionales. Enterprise no tiene limites.' }
-    ],
-    fr: [
-        { q: 'Comment integrer le chatbot?', a: 'Allez dans Dashboard > Chatbot > Parametres > Code Embed et copiez le script.' },
-        { q: 'Comment fonctionne la tarification?', a: 'Nous avons des plans Free, Pro (29$/mois), Business (79$/mois) et Enterprise (personnalise).' },
-        { q: 'Quelles langues sont supportees?', a: 'Nous supportons 50+ langues: Francais, Anglais, Allemand, Espagnol, Turc et plus.' },
-        { q: 'Ou est la documentation API?', a: 'Dashboard > Developpeur > Documentation API.' },
-        { q: 'Comment entrainer le chatbot?', a: 'Telechargez des fichiers PDF, DOCX, TXT ou ajoutez des URLs de sites web.' },
-        { q: 'Que se passe-t-il si je depasse la limite?', a: 'Le chatbot continue avec des frais supplementaires. Enterprise na pas de limites.' }
+        // General
+        { q: 'What is PylonChat and what does it do?', a: 'PylonChat is an AI-powered chatbot platform built for businesses. It allows you to create intelligent chatbots that integrate with your website, mobile app, or social media channels. It automatically answers customer questions 24/7, increases customer satisfaction, and reduces support costs by up to 60%.', category: 'General' },
+        { q: 'Which industries do you serve?', a: 'PylonChat works for all industries: E-commerce (product recommendations, order tracking), Education (student advising, registration), Real Estate (property inquiries, appointments), Healthcare (appointments, FAQs), Finance (account info, transactions), Tourism (reservations, info), Retail, and more. We offer customized templates for each industry.', category: 'General' },
+        { q: 'Is there a free trial?', a: 'Yes! You can start with our free plan immediately. No credit card required. Free plan includes 1 chatbot, 3 documents, and 100 messages/month. Access all basic features. Upgrade to Pro or Business for more features.', category: 'General' },
+
+        // Pricing
+        { q: 'How does pricing work? What plans are available?', a: 'We offer four plans:\n\n• FREE: 1 chatbot, 3 docs, 100 msgs/month, basic features\n• PRO ($29/mo): 5 chatbots, 20 docs, 5,000 msgs/month, advanced analytics, priority support\n• BUSINESS ($79/mo): 15 chatbots, 100 docs, 25,000 msgs/month, API access, white-label, 24/7 support\n• ENTERPRISE (Custom): Unlimited chatbots & messages, custom integrations, SLA guarantee, dedicated account manager\n\nGet 20% off with annual billing.', category: 'Pricing' },
+        { q: 'What happens if I exceed the message limit?', a: 'If you exceed your message limit, your chatbot continues working but overage fees apply:\n\n• Pro plan: $0.01 per overage\n• Business plan: $0.008 per overage\n• Enterprise: No overage fees, unlimited messages\n\nYou receive email notifications at 80% and 95% usage. Track usage in Dashboard.', category: 'Pricing' },
+        { q: 'What is the refund policy?', a: 'We offer a satisfaction guarantee:\n\n• Full refund within first 14 days if not satisfied\n• Prorated refund for remaining time on annual plans\n• Refund processed within 5-7 business days\n• Send requests to support@pylonchat.com\n\nAfter cancellation, data is kept for 30 days - you can return anytime.', category: 'Pricing' },
+
+        // Integration
+        { q: 'How do I integrate the chatbot with my website?', a: 'Integration is completed in 3 easy steps:\n\n1. Create your chatbot in Dashboard and add training data\n2. Go to Settings > Embed Code\n3. Paste the JavaScript code just before </body> tag on your website\n\nUse our plugin for WordPress. We have dedicated integration guides for Shopify, Wix, Squarespace. The chatbot will automatically appear on your site.', category: 'Integration' },
+        { q: 'Which platforms do you integrate with?', a: 'PylonChat offers extensive integration support:\n\n• WEB: All websites, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MESSAGING: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• BUSINESS TOOLS: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• AUTOMATION: 5000+ apps via Zapier\n• CUSTOM: Build your own integrations with REST API', category: 'Integration' },
+        { q: 'Where is the API documentation? How do I use it?', a: 'Access API documentation at Dashboard > Developer > API Documentation.\n\nWith the API you can:\n• Create and manage chatbots\n• Upload training data\n• Send and receive messages\n• Access conversation history\n• Pull analytics data\n\nGenerate your API key on the same page. Rate limits: Pro 60/min, Business 300/min, Enterprise custom.', category: 'Integration' },
+
+        // Training
+        { q: 'How do I train my chatbot? What methods are available?', a: 'Train your chatbot using 3 methods:\n\n1. DOCUMENT UPLOAD: Upload PDF, DOCX, DOC, TXT, CSV, XLSX files. AI automatically analyzes content.\n\n2. WEBSITE CRAWLING: Enter URL, chatbot crawls your site and extracts content. FAQs, product info, blog posts are auto-learned.\n\n3. MANUAL ENTRY: Add Q&A pairs directly. Ideal for custom scenarios.\n\nTraining typically completes within minutes.', category: 'Training' },
+        { q: 'What file formats do you support?', a: 'Supported file formats:\n\n• DOCUMENTS: PDF, DOCX, DOC, TXT, RTF, ODT\n• SPREADSHEETS: CSV, XLSX, XLS (ideal for product catalogs)\n• WEB: HTML, XML, Sitemap\n• CODE: Markdown (MD)\n\nMaximum file size:\n• Pro: 10MB/file, 50MB total\n• Business: 50MB/file, 500MB total\n• Enterprise: Unlimited\n\nMultiple files can be uploaded simultaneously.', category: 'Training' },
+        { q: 'How many languages does the chatbot support?', a: 'PylonChat supports 50+ languages:\n\n• English, Turkish, German, French, Spanish\n• Arabic, Chinese (Simplified/Traditional), Japanese, Korean\n• Russian, Portuguese, Italian, Dutch, Polish\n• Hindi, Indonesian, Vietnamese, Thai\n• And more...\n\nThe chatbot auto-detects user language and responds accordingly. You can also upload separate training data for each language.', category: 'Training' },
+
+        // Analytics
+        { q: 'What analytics and reports can I see?', a: 'We offer comprehensive analytics in Dashboard:\n\n• GENERAL: Total conversations, message count, active users\n• PERFORMANCE: Resolution rate, avg response time, customer satisfaction\n• CONTENT: Most asked questions, unanswered queries, popular topics\n• TIME: Peak hours, daily/weekly/monthly trends\n• CONVERSION: Lead capture, goal completion, live support escalation\n\nReports downloadable in CSV, PDF, JSON. Scheduled email reports available.', category: 'Analytics' },
+
+        // Security
+        { q: 'Is my data secure? What measures are taken?', a: 'We implement highest security standards:\n\n• ENCRYPTION: TLS 1.3 connection, AES-256 data encryption\n• INFRASTRUCTURE: SOC 2 Type II certified AWS data centers\n• ACCESS: Mandatory 2FA, IP whitelist (Enterprise), role-based permissions\n• AUDIT: Regular security tests, penetration testing\n• COMPLIANCE: GDPR, CCPA, HIPAA (Enterprise)\n\nData stored in Europe (Frankfurt) or USA (Virginia) data centers.', category: 'Security' },
+        { q: 'Is it GDPR and CCPA compliant?', a: 'Yes, we are fully compliant:\n\n• Data Processing Agreement (DPA) available\n• User consent management (cookie banner integration)\n• Data deletion request tool (RTBF - Right to be Forgotten)\n• Data portability support\n• Europe data storage option\n• Privacy policy and terms of service templates\n• DPO (Data Protection Officer) contact channel\n\nWe provide necessary documentation for compliance.', category: 'Security' },
+
+        // Account
+        { q: 'How do I manage my account? Where do I change settings?', a: 'Manage all account operations from Dashboard:\n\n• PROFILE: Name, email, password changes\n• BILLING: Plan changes, payment method, invoice history\n• TEAM: Add/remove users, roles and permissions\n• NOTIFICATIONS: Email notifications, weekly reports\n• SECURITY: Enable 2FA, session management, API keys\n• INTEGRATIONS: Manage third-party connections\n\nAll changes are saved instantly.', category: 'Account' },
+        { q: 'How do I cancel my subscription?', a: 'Cancel from Dashboard > Billing > Subscription Management:\n\n• Cancellation is valid until end of current billing period\n• All features remain active until period ends\n• Data is kept for 30 days after cancellation\n• Reactivate within 30 days anytime\n• Full refund if cancelled within 14 days\n\nWe recommend exporting your data before cancelling. Your feedback is valuable to us!', category: 'Account' }
     ]
 }
 
