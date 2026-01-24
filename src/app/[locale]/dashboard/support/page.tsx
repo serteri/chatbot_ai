@@ -19,7 +19,7 @@ import {
     Sparkles
 } from 'lucide-react'
 import Link from 'next/link'
-import { WhatsAppChatWidget } from '@/components/support/WhatsAppChatWidget'
+import { EnterpriseSupportCenter } from '@/components/support/EnterpriseSupportCenter'
 
 export default async function SupportPage({
     params,
@@ -103,10 +103,10 @@ export default async function SupportPage({
                 </div>
             </div>
 
-            {/* Enterprise 24/7 WhatsApp Support Section */}
+            {/* Enterprise FAQ & Support Center */}
             {isEnterprise && (
                 <div className="mb-8">
-                    <WhatsAppChatWidget
+                    <EnterpriseSupportCenter
                         locale={locale}
                         userName={user?.name || session.user.name || 'User'}
                         userEmail={user?.email || session.user.email || ''}
