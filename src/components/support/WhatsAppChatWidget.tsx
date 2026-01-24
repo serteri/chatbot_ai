@@ -13,7 +13,11 @@ import {
     Crown,
     ExternalLink,
     ChevronRight,
-    Headphones
+    Headphones,
+    X,
+    Search,
+    Settings,
+    Users
 } from 'lucide-react'
 
 interface WhatsAppChatWidgetProps {
@@ -569,7 +573,109 @@ export function WhatsAppChatWidget({
     )
 }
 
-// Floating WhatsApp Button Component for Enterprise users
+// Quick FAQ data for floating widget
+const quickFAQs: Record<string, Array<{ q: string; a: string }>> = {
+    tr: [
+        { q: 'Chatbot nasil entegre edilir?', a: 'Dashboard > Chatbot > Ayarlar > Embed Kodu bolumunden script kodunu kopyalayip sitenize yapistirin.' },
+        { q: 'Fiyatlandirma nasil calisiyor?', a: 'Free (ucretsiz), Pro ($29/ay), Business ($79/ay) ve Enterprise (ozel fiyat) planlarimiz var.' },
+        { q: 'Hangi diller destekleniyor?', a: '50+ dil destekliyoruz: Turkce, Ingilizce, Almanca, Fransizca, Ispanyolca ve daha fazlasi.' },
+        { q: 'API dokumantasyonu nerede?', a: 'Dashboard > Gelistirici > API Dokumantasyonu bolumunden ulasabilirsiniz.' },
+        { q: 'Chatbot nasil egitilir?', a: 'PDF, DOCX, TXT dosyalari yukleyerek veya web sitesi URL\'si ekleyerek egitebilirsiniz.' },
+        { q: 'Mesaj limiti asarsam ne olur?', a: 'Chatbot calismaya devam eder, asim ucreti uygulanir. Enterprise planlarda limit yoktur.' }
+    ],
+    en: [
+        { q: 'How to integrate the chatbot?', a: 'Go to Dashboard > Chatbot > Settings > Embed Code, copy the script and paste it on your site.' },
+        { q: 'How does pricing work?', a: 'We have Free, Pro ($29/mo), Business ($79/mo), and Enterprise (custom) plans.' },
+        { q: 'What languages are supported?', a: 'We support 50+ languages: English, Turkish, German, French, Spanish, and more.' },
+        { q: 'Where is the API documentation?', a: 'You can access it from Dashboard > Developer > API Documentation.' },
+        { q: 'How to train the chatbot?', a: 'Upload PDF, DOCX, TXT files or add website URLs to train your chatbot.' },
+        { q: 'What if I exceed message limit?', a: 'Chatbot continues working with overage fees. Enterprise plans have no limits.' }
+    ],
+    de: [
+        { q: 'Wie integriere ich den Chatbot?', a: 'Gehen Sie zu Dashboard > Chatbot > Einstellungen > Embed-Code und kopieren Sie das Skript.' },
+        { q: 'Wie funktioniert die Preisgestaltung?', a: 'Wir haben Free, Pro (29$/Monat), Business (79$/Monat) und Enterprise (individuell) Plane.' },
+        { q: 'Welche Sprachen werden unterstutzt?', a: 'Wir unterstutzen 50+ Sprachen: Deutsch, Englisch, Turkisch, Franzosisch und mehr.' },
+        { q: 'Wo ist die API-Dokumentation?', a: 'Dashboard > Entwickler > API-Dokumentation.' },
+        { q: 'Wie trainiere ich den Chatbot?', a: 'Laden Sie PDF, DOCX, TXT-Dateien hoch oder fugen Sie Website-URLs hinzu.' },
+        { q: 'Was passiert bei Limituberschreitung?', a: 'Chatbot funktioniert weiter mit Zusatzkosten. Enterprise hat keine Limits.' }
+    ],
+    es: [
+        { q: 'Como integrar el chatbot?', a: 'Ve a Dashboard > Chatbot > Configuracion > Codigo Embed y copia el script.' },
+        { q: 'Como funciona el precio?', a: 'Tenemos planes Free, Pro ($29/mes), Business ($79/mes) y Enterprise (personalizado).' },
+        { q: 'Que idiomas son compatibles?', a: 'Soportamos 50+ idiomas: Espanol, Ingles, Aleman, Frances, Turco y mas.' },
+        { q: 'Donde esta la documentacion API?', a: 'Dashboard > Desarrollador > Documentacion API.' },
+        { q: 'Como entrenar el chatbot?', a: 'Sube archivos PDF, DOCX, TXT o agrega URLs de sitios web.' },
+        { q: 'Que pasa si excedo el limite?', a: 'El chatbot sigue funcionando con cargos adicionales. Enterprise no tiene limites.' }
+    ],
+    fr: [
+        { q: 'Comment integrer le chatbot?', a: 'Allez dans Dashboard > Chatbot > Parametres > Code Embed et copiez le script.' },
+        { q: 'Comment fonctionne la tarification?', a: 'Nous avons des plans Free, Pro (29$/mois), Business (79$/mois) et Enterprise (personnalise).' },
+        { q: 'Quelles langues sont supportees?', a: 'Nous supportons 50+ langues: Francais, Anglais, Allemand, Espagnol, Turc et plus.' },
+        { q: 'Ou est la documentation API?', a: 'Dashboard > Developpeur > Documentation API.' },
+        { q: 'Comment entrainer le chatbot?', a: 'Telechargez des fichiers PDF, DOCX, TXT ou ajoutez des URLs de sites web.' },
+        { q: 'Que se passe-t-il si je depasse la limite?', a: 'Le chatbot continue avec des frais supplementaires. Enterprise na pas de limites.' }
+    ]
+}
+
+const floatingTranslations: Record<string, Record<string, string>> = {
+    tr: {
+        title: 'Yardim Merkezi',
+        searchPlaceholder: 'Soru ara...',
+        popularQuestions: 'Sik Sorulan Sorular',
+        noResults: 'Sonuc bulunamadi',
+        needHelp: 'Canli destek gerekiyor mu?',
+        technicalSupport: 'Teknik Destek',
+        customerService: 'Musteri Hizmetleri',
+        connectWhatsApp: 'WhatsApp ile Baglan',
+        close: 'Kapat'
+    },
+    en: {
+        title: 'Help Center',
+        searchPlaceholder: 'Search questions...',
+        popularQuestions: 'Frequently Asked Questions',
+        noResults: 'No results found',
+        needHelp: 'Need live support?',
+        technicalSupport: 'Technical Support',
+        customerService: 'Customer Service',
+        connectWhatsApp: 'Connect via WhatsApp',
+        close: 'Close'
+    },
+    de: {
+        title: 'Hilfezentrum',
+        searchPlaceholder: 'Fragen suchen...',
+        popularQuestions: 'Haufig gestellte Fragen',
+        noResults: 'Keine Ergebnisse',
+        needHelp: 'Live-Support benotigt?',
+        technicalSupport: 'Technischer Support',
+        customerService: 'Kundendienst',
+        connectWhatsApp: 'Uber WhatsApp verbinden',
+        close: 'Schliessen'
+    },
+    es: {
+        title: 'Centro de Ayuda',
+        searchPlaceholder: 'Buscar preguntas...',
+        popularQuestions: 'Preguntas Frecuentes',
+        noResults: 'Sin resultados',
+        needHelp: 'Necesitas soporte en vivo?',
+        technicalSupport: 'Soporte Tecnico',
+        customerService: 'Servicio al Cliente',
+        connectWhatsApp: 'Conectar via WhatsApp',
+        close: 'Cerrar'
+    },
+    fr: {
+        title: 'Centre d\'Aide',
+        searchPlaceholder: 'Rechercher...',
+        popularQuestions: 'Questions Frequentes',
+        noResults: 'Aucun resultat',
+        needHelp: 'Besoin de support?',
+        technicalSupport: 'Support Technique',
+        customerService: 'Service Client',
+        connectWhatsApp: 'Connecter via WhatsApp',
+        close: 'Fermer'
+    }
+}
+
+// Floating Support Button with FAQ Popup
 export function FloatingWhatsAppButton({
     locale,
     phoneNumber = WHATSAPP_NUMBER
@@ -577,44 +683,127 @@ export function FloatingWhatsAppButton({
     locale: string
     phoneNumber?: string
 }) {
-    const [isTooltipVisible, setIsTooltipVisible] = useState(false)
+    const [isOpen, setIsOpen] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('')
+    const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
 
-    const tooltips: Record<string, string> = {
-        en: '24/7 Enterprise Support',
-        tr: '7/24 Enterprise Destek',
-        de: '24/7 Enterprise Support',
-        es: 'Soporte Enterprise 24/7',
-        fr: 'Support Enterprise 24/7'
-    }
+    const t = floatingTranslations[locale] || floatingTranslations.en
+    const faqs = quickFAQs[locale] || quickFAQs.en
 
-    const tooltip = tooltips[locale] || tooltips.en
+    const filteredFAQs = faqs.filter(faq =>
+        faq.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        faq.a.toLowerCase().includes(searchQuery.toLowerCase())
+    )
 
-    const handleClick = () => {
-        const message = encodeURIComponent('Hello! I am an Enterprise customer and need support.')
-        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank', 'noopener,noreferrer')
+    const openWhatsApp = (type: 'technical' | 'customer') => {
+        const msg = type === 'technical'
+            ? 'Hello! I need Technical Support assistance.'
+            : 'Hello! I need Customer Service assistance.'
+        window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`, '_blank')
     }
 
     return (
         <div className="fixed bottom-6 right-6 z-50">
-            {isTooltipVisible && (
-                <div className="absolute bottom-full right-0 mb-2 bg-gray-900 text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap shadow-lg">
-                    {tooltip}
-                    <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
+            {/* FAQ Popup */}
+            {isOpen && (
+                <div className="absolute bottom-20 right-0 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-in slide-in-from-bottom-5 duration-300">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <HelpCircle className="h-5 w-5" />
+                                <h3 className="font-bold">{t.title}</h3>
+                            </div>
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="p-1 hover:bg-white/20 rounded-full transition-colors"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                        {/* Search */}
+                        <div className="mt-3 relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-200" />
+                            <input
+                                type="text"
+                                placeholder={t.searchPlaceholder}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-9 pr-4 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-green-200 text-sm focus:outline-none focus:bg-white/30"
+                            />
+                        </div>
+                    </div>
+
+                    {/* FAQ List */}
+                    <div className="max-h-64 overflow-y-auto">
+                        {filteredFAQs.length > 0 ? (
+                            <div className="divide-y divide-gray-100">
+                                {filteredFAQs.map((faq, index) => (
+                                    <div key={index}>
+                                        <button
+                                            onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                                            className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between"
+                                        >
+                                            <span className="text-sm font-medium text-gray-800 pr-2">{faq.q}</span>
+                                            <ChevronRight className={`h-4 w-4 text-gray-400 flex-shrink-0 transition-transform ${expandedIndex === index ? 'rotate-90' : ''}`} />
+                                        </button>
+                                        {expandedIndex === index && (
+                                            <div className="px-4 pb-3">
+                                                <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">{faq.a}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-4 text-center text-gray-500 text-sm">
+                                {t.noResults}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Contact Support Section */}
+                    <div className="border-t border-gray-200 p-4 bg-gray-50">
+                        <p className="text-xs text-gray-500 mb-3">{t.needHelp}</p>
+                        <div className="grid grid-cols-2 gap-2">
+                            <button
+                                onClick={() => openWhatsApp('technical')}
+                                className="flex items-center justify-center gap-2 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors"
+                            >
+                                <Settings className="h-4 w-4" />
+                                {t.technicalSupport}
+                            </button>
+                            <button
+                                onClick={() => openWhatsApp('customer')}
+                                className="flex items-center justify-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
+                            >
+                                <Users className="h-4 w-4" />
+                                {t.customerService}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
 
+            {/* Floating Button */}
             <button
-                onClick={handleClick}
-                onMouseEnter={() => setIsTooltipVisible(true)}
-                onMouseLeave={() => setIsTooltipVisible(false)}
-                className="w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
-                aria-label="WhatsApp Support"
+                onClick={() => setIsOpen(!isOpen)}
+                className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 ${
+                    isOpen ? 'bg-gray-600 hover:bg-gray-700' : 'bg-green-500 hover:bg-green-600'
+                }`}
+                aria-label="Support"
             >
-                <MessageCircle className="h-7 w-7 text-white" />
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center shadow">
-                    <Crown className="h-3 w-3 text-white" />
-                </div>
-                <span className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-25"></span>
+                {isOpen ? (
+                    <X className="h-6 w-6 text-white" />
+                ) : (
+                    <>
+                        <HelpCircle className="h-7 w-7 text-white" />
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center shadow">
+                            <Crown className="h-3 w-3 text-white" />
+                        </div>
+                        <span className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-25"></span>
+                    </>
+                )}
             </button>
         </div>
     )
