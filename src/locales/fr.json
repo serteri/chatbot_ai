@@ -1171,7 +1171,13 @@
     "logoDesc": "Télécharger logo personnalisé pour le widget",
     "logoInfo": "PNG, JPG ou SVG. Maximum 2MB.",
     "livePreview": "Aperçu en Direct",
-    "previewDesc": "Tester l'apparence du widget"
+    "previewDesc": "Tester l'apparence du widget",
+    "branding": "Image de Marque",
+    "brandingDesc": "Contrôler la visibilité de 'Powered by PylonChat' dans le widget",
+    "hideBranding": "Masquer la Marque",
+    "hideBrandingDesc": "Supprimer 'Powered by PylonChat' du widget de chat",
+    "brandingUpgradeMessage": "Passez à Pro ou supérieur pour supprimer la marque PylonChat de votre widget",
+    "upgradePlan": "Mettre à Niveau"
   },
   "common": {
     "loading": "Chargement...",
