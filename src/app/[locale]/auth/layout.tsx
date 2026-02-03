@@ -3,6 +3,13 @@ import { Button } from '@/components/ui/button'
 import { MessageSquare, ArrowLeft } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
+export const metadata = {
+    robots: {
+        index: false,
+        follow: false
+    }
+}
+
 interface AuthLayoutProps {
     children: React.ReactNode
     params: Promise<{ locale: string }>

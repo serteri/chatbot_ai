@@ -6,6 +6,13 @@ import { SessionProvider } from 'next-auth/react'
 import { prisma } from '@/lib/db/prisma'
 import { EnterpriseWhatsAppSupport } from '@/components/support/EnterpriseWhatsAppSupport'
 
+export const metadata = {
+    robots: {
+        index: false,
+        follow: false
+    }
+}
+
 interface DashboardLayoutProps {
     children: React.ReactNode
     params: Promise<{ locale: string }>
