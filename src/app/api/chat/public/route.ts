@@ -11,6 +11,23 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true // Sadece server-side çalıştığı için sorun yok ama Next.js bazen uyarı verir
 });
 
+const LANGUAGE_NAME_MAP: Record<string, string> = {
+  tr: 'Turkish',
+  en: 'English',
+  de: 'German',
+  fr: 'French',
+  es: 'Spanish'
+};
+
+function getLanguageInstruction(language: string): string {
+  if (language === 'tr') {
+    return 'Cevaplarini Turkce ver. Kullanici baska bir dilde yazsa bile Turkce devam et.';
+  }
+
+  const name = LANGUAGE_NAME_MAP[language] || language;
+  return `Respond in ${name}. If the user writes in another language, keep responding in ${name}.`;
+}
+
 // Tool Definitions
 const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
   {
@@ -64,7 +81,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { chatbotId, message, conversationHistory } = body;
+    const { chatbotId, message, conversationHistory, language } = body;
 
     if (!chatbotId || !message) {
       return new NextResponse('Eksik bilgi', { status: 400 });
@@ -82,6 +99,9 @@ export async function POST(req: NextRequest) {
       return new NextResponse('Chatbot bulunamadı veya pasif', { status: 404 });
     }
 
+    const responseLanguage = language || chatbot.language || 'tr';
+    const languageInstruction = getLanguageInstruction(responseLanguage);
+
     // 2. OpenAI veya Yapay Zeka Servisine Bağlan
     // Eğer API Key varsa OpenAI'dan cevap al, yoksa "demo" cevabı dön.
     let aiResponse = "";
@@ -95,7 +115,9 @@ export async function POST(req: NextRequest) {
             content: `You are a helpful real estate assistant for ${chatbot.name || 'our agency'}. 
             Use the available tools to search for properties when a user asks about them. 
             If you find properties, summarize them nicely. 
-            Currency is usually the local currency of the property.`
+            Currency is usually the local currency of the property.
+
+            ${languageInstruction}`
           }
         ];
 

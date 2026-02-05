@@ -19,6 +19,23 @@ import { findSimilarUniversities } from '@/lib/services/university-search'
 export const runtime = 'nodejs'
 export const maxDuration = 30
 
+const LANGUAGE_NAME_MAP: Record<string, string> = {
+    tr: 'Turkish',
+    en: 'English',
+    de: 'German',
+    fr: 'French',
+    es: 'Spanish'
+}
+
+function getLanguageInstruction(language: string): string {
+    if (language === 'tr') {
+        return 'Cevaplarini Turkce ver. Kullanici baska bir dilde yazsa bile Turkce devam et.'
+    }
+
+    const name = LANGUAGE_NAME_MAP[language] || language
+    return `Respond in ${name}. If the user writes in another language, keep responding in ${name}.`
+}
+
 /**
  * Domain kontrolü fonksiyonu
  */
@@ -52,7 +69,7 @@ function isDomainAllowed(origin: string | null, allowedDomains: string[]): boole
 
 export async function POST(req: NextRequest) {
     try {
-        const { chatbotId, conversationId, message, visitorId } = await req.json()
+        const { chatbotId, conversationId, message, visitorId, language } = await req.json()
 
         if (!chatbotId || !message || !visitorId) {
             return NextResponse.json(
@@ -95,6 +112,9 @@ export async function POST(req: NextRequest) {
                 { status: 403 }
             )
         }
+
+        const responseLanguage = language || chatbot.language || 'tr'
+        const languageInstruction = getLanguageInstruction(responseLanguage)
 
         // Subscription kontrolü
         const subscription = chatbot.user.subscription
@@ -365,9 +385,13 @@ export async function POST(req: NextRequest) {
         })
 
         // System prompt oluştur
-        let systemPrompt = specializedContext || `Sen ${chatbot.botName} adlı bir AI asistanısın. ${chatbot.welcomeMessage}
+        const basePrompt = `You are an AI assistant named ${chatbot.botName}. ${chatbot.welcomeMessage}
 
-Kullanıcılara yardımcı ol, ${chatbot.language} dilinde cevap ver.`
+${languageInstruction}`
+
+        let systemPrompt = specializedContext
+            ? `${specializedContext}\n\n${basePrompt}`
+            : basePrompt
 
         let userPrompt = message
 

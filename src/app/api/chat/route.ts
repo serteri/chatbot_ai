@@ -10,6 +10,23 @@ const openai = apiKey ? new OpenAI({ apiKey }) : null;
 // Prisma Client uyumluluğu için Node.js runtime kullanıyoruz
 export const runtime = 'nodejs';
 
+const LANGUAGE_NAME_MAP: Record<string, string> = {
+    tr: 'Turkish',
+    en: 'English',
+    de: 'German',
+    fr: 'French',
+    es: 'Spanish'
+};
+
+function getLanguageInstruction(language: string): string {
+    if (language === 'tr') {
+        return 'Cevaplarini Turkce ver. Kullanici baska bir dilde yazsa bile Turkce devam et.';
+    }
+
+    const name = LANGUAGE_NAME_MAP[language] || language;
+    return `Respond in ${name}. If the user writes in another language, keep responding in ${name}.`;
+}
+
 // ---------------------------------------------------------------------------
 // ✅ YEDEK PLAN: KELİME BAZLI ARAMA (Keyword Search)
 // Vektör veritabanı çalışmazsa veya sonuçlar yetersizse devreye girer.
@@ -187,7 +204,8 @@ export async function POST(req: NextRequest) {
                 agentPhone: true,
                 agentEmail: true,
                 calendlyUrl: true,
-                whatsappNumber: true
+                whatsappNumber: true,
+                language: true
             }
         });
 
@@ -257,6 +275,8 @@ export async function POST(req: NextRequest) {
         }
 
         // --- SYSTEM PROMPT GENERATION ---
+        const responseLanguage = body.language || chatbot.language || 'tr';
+        const languageInstruction = getLanguageInstruction(responseLanguage);
         let systemPrompt = "";
 
         if (chatbot.industry === 'realestate') {
@@ -304,6 +324,8 @@ ${ragContext || "Şu an için ilgili bir doküman parçası bulunamadı."}
 [DOKÜMAN BİLGİSİ SONU]
 `;
         }
+
+        systemPrompt += `\n\nLANGUAGE:\n${languageInstruction}`;
 
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',

@@ -94,6 +94,7 @@ export function DynamicWidget({ chatbotId }: DynamicWidgetProps) {
                     conversationId,
                     message: userMessage,
                     visitorId,
+                    language: config.language
                 }),
             })
 

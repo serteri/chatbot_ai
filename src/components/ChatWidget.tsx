@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -40,6 +40,7 @@ interface ChatWidgetProps {
 
 export default function ChatWidget({ chatbotId, onClose, mode = 'document', onRealEstateClick, customization }: ChatWidgetProps) {
     const t = useTranslations('ChatWidget')
+    const locale = useLocale()
     const [messages, setMessages] = useState<Message[]>([])
     const [inputValue, setInputValue] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -118,7 +119,8 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document', onRe
             message: userMessage.content,
             chatbotId: chatbotId.trim(),
             conversationId: conversationId || null,
-            mode
+            mode,
+            language: locale
         }
 
         try {

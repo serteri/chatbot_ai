@@ -1322,7 +1322,8 @@ export function RealEstateWidget({
                         body: JSON.stringify({
                             messages: [...apiMessages, { role: 'user', content: userInput }],
                             chatbotId: chatbotIdentifier,
-                            mode: 'realestate'
+                            mode: 'realestate',
+                            language: currentLocale || locale
                         })
                     })
 
