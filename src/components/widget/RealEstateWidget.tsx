@@ -1109,6 +1109,33 @@ export function RealEstateWidget({
             description: `${contactData.name} - ${contactData.phone}`
         }
 
+        if (chatbotIdentifier) {
+            const issueNotes = [
+                `Issue: ${finalIssue.type}`,
+                finalIssue.urgency ? `Urgency: ${finalIssue.urgency}` : null,
+                finalIssue.description ? `Contact: ${finalIssue.description}` : null
+            ].filter(Boolean).join(' | ')
+
+            fetch('/api/leads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    identifier: chatbotIdentifier,
+                    name: contactData.name,
+                    phone: contactData.phone,
+                    email: contactData.email,
+                    intent: 'tenant',
+                    notes: issueNotes,
+                    requirements: {
+                        issueType: finalIssue.type,
+                        urgency: finalIssue.urgency
+                    }
+                })
+            }).catch(error => {
+                console.error('Failed to submit tenant lead:', error)
+            })
+        }
+
         onTenantIssue?.(finalIssue)
         addBotMessage(t.tenant.submitted)
         setCurrentStep('complete')
