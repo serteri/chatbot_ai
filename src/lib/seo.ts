@@ -17,7 +17,12 @@ export const DEFAULT_LOCALE = 'en'
 
 export function getSiteUrl(): URL {
     try {
-        return new URL(SITE_URL)
+        const url = new URL(SITE_URL)
+        // Production ortamında her zaman HTTPS kullanmaya zorla
+        if (process.env.NODE_ENV === 'production' && url.protocol !== 'https:') {
+            url.protocol = 'https:'
+        }
+        return url
     } catch {
         return new URL(DEFAULT_SITE_URL)
     }
