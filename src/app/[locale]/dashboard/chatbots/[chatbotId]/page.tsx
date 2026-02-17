@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth/auth'
 import { redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { prisma } from '@/lib/db/prisma'
+import { headers } from 'next/headers'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -100,6 +101,12 @@ export default async function ChatbotDetailPage({
 
         // Botun industry değerini URL'de kullanmak için ayarla
         const botIndustry = chatbot.industry || 'general';
+
+        const headersList = await headers()
+        const host = headersList.get('host')
+        const protocol = headersList.get('x-forwarded-proto') || 'http'
+        const dynamicAppUrl = host ? `${protocol}://${host}` : null
+        const appUrl = dynamicAppUrl || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
         return (
             <div className="container mx-auto px-4 py-8">
@@ -365,10 +372,11 @@ export default async function ChatbotDetailPage({
                                             </div>
                                         </div>
 
+
                                         <EmbedCodeGenerator
                                             chatbotId={chatbot.id}
                                             initialPosition={chatbot.widgetPosition || 'bottom-right'}
-                                            appUrl={process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}
+                                            appUrl={appUrl}
                                         />
                                         {/* ... */}
                                     </div>
