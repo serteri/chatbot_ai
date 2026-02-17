@@ -86,7 +86,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
             })
 
             if (!response.ok) {
-                throw new Error('Kayıt başarısız')
+                throw new Error(t('widget.saveError'))
             }
 
             router.refresh()
@@ -356,7 +356,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
                         <div className="absolute right-6 bottom-6 flex flex-col items-end gap-2 group cursor-pointer hover:scale-105 transition-transform">
                             {/* Message Bubble Hint */}
                             <div className="bg-white px-4 py-2 rounded-xl rounded-br-none shadow-md border border-slate-100 mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                                <span className="text-sm font-medium text-slate-700">Deneme Önizlemesi</span>
+                                <span className="text-sm font-medium text-slate-700">{t('widget.previewSample')}</span>
                             </div>
 
                             {/* Launcher Button */}

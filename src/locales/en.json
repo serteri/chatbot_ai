@@ -1202,7 +1202,9 @@
     "hideBranding": "Hide Branding",
     "hideBrandingDesc": "Remove 'Powered by PylonChat' from the chat widget",
     "brandingUpgradeMessage": "Upgrade to Pro or higher to remove PylonChat branding from your widget",
-    "upgradePlan": "Upgrade Plan"
+    "upgradePlan": "Upgrade Plan",
+    "previewSample": "Trial Preview",
+    "saveError": "Save failed"
   },
   "common": {
     "loading": "Loading...",
