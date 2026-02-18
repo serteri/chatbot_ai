@@ -2703,5 +2703,20 @@
     "upgradePlan": "Actualizar Plan",
     "previewSample": "Vista Previa de Prueba",
     "saveError": "Error al guardar"
+  },
+  "ChatWidget": {
+    "online": "En línea",
+    "aiPowered": "Asistente de IA",
+    "placeholderGeneral": "Escribe tu mensaje...",
+    "placeholderEducation": "Pregunta sobre educación...",
+    "defaultBotName": "Asistente de IA",
+    "defaultWelcomeMessage": "¡Hola! ¿Cómo puedo ayudarte?",
+    "realEstateAssistant": "Asistente Inmobiliario",
+    "educationAdvisor": "Asesor Educativo",
+    "sources": "Fuentes",
+    "errors": {
+      "noId": "ID del chatbot no encontrado.",
+      "generic": "Ocurrió un error."
+    }
   }
 }

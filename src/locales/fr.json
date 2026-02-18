@@ -2704,5 +2704,20 @@
     "upgradePlan": "Mettre à Niveau le Plan",
     "previewSample": "Aperçu de l'Essai",
     "saveError": "Échec de l'enregistrement"
+  },
+  "ChatWidget": {
+    "online": "En ligne",
+    "aiPowered": "Assistant IA",
+    "placeholderGeneral": "Tapez votre message...",
+    "placeholderEducation": "Posez des questions sur l'éducation...",
+    "defaultBotName": "Assistant IA",
+    "defaultWelcomeMessage": "Bonjour ! Comment puis-je vous aider ?",
+    "realEstateAssistant": "Assistant Immobilier",
+    "educationAdvisor": "Conseiller Éducatif",
+    "sources": "Sources",
+    "errors": {
+      "noId": "ID du chatbot introuvable.",
+      "generic": "Une erreur est survenue."
+    }
   }
 }

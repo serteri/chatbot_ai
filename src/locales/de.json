@@ -2826,5 +2826,20 @@
     "upgradePlan": "Plan upgraden",
     "previewSample": "Testvorschau",
     "saveError": "Speichern fehlgeschlagen"
+  },
+  "ChatWidget": {
+    "online": "Online",
+    "aiPowered": "KI-gestützte Assistenz",
+    "placeholderGeneral": "Geben Sie Ihre Nachricht ein...",
+    "placeholderEducation": "Fragen Sie nach Bildung...",
+    "defaultBotName": "KI-Assistent",
+    "defaultWelcomeMessage": "Hallo! Wie kann ich Ihnen helfen?",
+    "realEstateAssistant": "Immobilien-Assistent",
+    "educationAdvisor": "Bildungsberater",
+    "sources": "Quellen",
+    "errors": {
+      "noId": "Chatbot-ID nicht gefunden.",
+      "generic": "Ein Fehler ist aufgetreten."
+    }
   }
 }

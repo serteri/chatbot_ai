@@ -2887,5 +2887,20 @@
     "upgradeTitle": "Get Priority Support",
     "upgradeDesc": "Upgrade to Pro or Business plan to access priority support with faster response times and live chat.",
     "viewPlans": "View Plans"
+  },
+  "ChatWidget": {
+    "online": "Online",
+    "aiPowered": "AI-powered assistant",
+    "placeholderGeneral": "Type your message...",
+    "placeholderEducation": "Ask about education...",
+    "defaultBotName": "AI Assistant",
+    "defaultWelcomeMessage": "Hello! How can I help you?",
+    "realEstateAssistant": "Real Estate Assistant",
+    "educationAdvisor": "Education Advisor",
+    "sources": "Sources",
+    "errors": {
+      "noId": "Chatbot ID not found.",
+      "generic": "An error occurred."
+    }
   }
 }

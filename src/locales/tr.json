@@ -2924,5 +2924,20 @@
     "upgradePlan": "Planı Yükselt",
     "previewSample": "Deneme Önizlemesi",
     "saveError": "Kayıt başarısız"
+  },
+  "ChatWidget": {
+    "online": "Çevrimiçi",
+    "aiPowered": "Yapay Zeka Destekli",
+    "placeholderGeneral": "Mesajınızı yazın...",
+    "placeholderEducation": "Eğitim hakkında sorun...",
+    "defaultBotName": "AI Asistan",
+    "defaultWelcomeMessage": "Merhaba! Size nasıl yardımcı olabilirim?",
+    "realEstateAssistant": "Emlak Asistanı",
+    "educationAdvisor": "Eğitim Danışmanı",
+    "sources": "Kaynaklar",
+    "errors": {
+      "noId": "Chatbot ID bulunamadı.",
+      "generic": "Bir hata oluştu."
+    }
   }
 }
