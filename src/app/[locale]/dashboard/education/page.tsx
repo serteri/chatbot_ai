@@ -28,8 +28,8 @@ import Link from 'next/link'
 import { CreateChatbotDialog } from '@/components/chatbot/CreateChatbotDialog'
 
 export default async function EducationDashboard({
-                                                     params,
-                                                 }: {
+    params,
+}: {
     params: Promise<{ locale: string }>
 }) {
     const { locale } = await params
@@ -214,6 +214,23 @@ export default async function EducationDashboard({
                         </CardContent>
                     </Card>
 
+                    {/* Scholarships - ADDED */}
+                    <Card className="border-yellow-200">
+                        <CardHeader>
+                            <div className="flex items-center space-x-2">
+                                <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                    <Award className="h-4 w-4 text-yellow-600" />
+                                </div>
+                                <CardTitle className="text-yellow-900">{t('education.features.scholarships')}</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold mb-2">{scholarshipsCount}</div>
+                            <p className="text-sm text-muted-foreground mb-4">{t('education.scholarshipsDesc')}</p>
+                            <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">{t('education.financialAid')}</Badge>
+                        </CardContent>
+                    </Card>
+
                     {/* Student Visa Information */}
                     <Card className="border-green-200">
                         <CardHeader>
@@ -296,6 +313,40 @@ export default async function EducationDashboard({
                                     <Button variant="outline" className="w-full mt-4">
                                         <BookOpen className="mr-2 h-4 w-4" />
                                         {t('education.exploreUniversities')}
+                                    </Button>
+                                </Link>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Scholarships Section - ADDED */}
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                    <Award className="h-5 w-5 text-yellow-600" />
+                                    <CardTitle>{t('education.sections.scholarships')}</CardTitle>
+                                </div>
+                                <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">{t('education.financialAid')}</Badge>
+                            </div>
+                            <CardDescription>
+                                {t('education.scholarshipsDescription')}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-3">
+                                <div className="flex justify-between">
+                                    <span className="text-sm">{t('education.recordCount')}</span>
+                                    <span className="font-medium">{scholarshipsCount}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-sm">{t('education.countryCount')}</span>
+                                    <span className="font-medium">{scholarshipsCountries.length}</span>
+                                </div>
+                                <Link href={`/${locale}/dashboard/student/scholarships`}>
+                                    <Button variant="outline" className="w-full mt-4 border-yellow-200 hover:bg-yellow-50 text-yellow-800">
+                                        <Award className="mr-2 h-4 w-4" />
+                                        {t('education.exploreScholarships')}
                                     </Button>
                                 </Link>
                             </div>
