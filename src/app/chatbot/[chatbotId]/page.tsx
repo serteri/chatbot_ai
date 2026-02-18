@@ -51,7 +51,18 @@ export default async function ChatbotPage(props: Props) {
             enableLiveChat: true,
             liveSupportUrl: true,
             whatsappNumber: true,
-            language: true, // Dil ayarını da çekiyoruz
+            // Dil ayarını da çekiyoruz
+            language: true,
+            botNameTr: true,
+            botNameEn: true,
+            botNameDe: true,
+            botNameFr: true,
+            botNameEs: true,
+            welcomeMessageTr: true,
+            welcomeMessageEn: true,
+            welcomeMessageDe: true,
+            welcomeMessageFr: true,
+            welcomeMessageEs: true
         }
     });
 
@@ -69,6 +80,34 @@ export default async function ChatbotPage(props: Props) {
     } else if (chatbot.language && validLangs.includes(chatbot.language)) {
         locale = chatbot.language as Locale;
     }
+
+    // Localized Values Resolution
+    let localizedName = chatbot.name;
+    let localizedWelcome = chatbot.welcomeMessage;
+
+    if (locale === 'tr') {
+        localizedName = chatbot.botNameTr || chatbot.name;
+        localizedWelcome = chatbot.welcomeMessageTr || chatbot.welcomeMessage;
+    } else if (locale === 'en') {
+        localizedName = chatbot.botNameEn || chatbot.name;
+        localizedWelcome = chatbot.welcomeMessageEn || chatbot.welcomeMessage;
+    } else if (locale === 'de') {
+        localizedName = chatbot.botNameDe || chatbot.name;
+        localizedWelcome = chatbot.welcomeMessageDe || chatbot.welcomeMessage;
+    } else if (locale === 'fr') {
+        localizedName = chatbot.botNameFr || chatbot.name;
+        localizedWelcome = chatbot.welcomeMessageFr || chatbot.welcomeMessage;
+    } else if (locale === 'es') {
+        localizedName = chatbot.botNameEs || chatbot.name;
+        localizedWelcome = chatbot.welcomeMessageEs || chatbot.welcomeMessage;
+    }
+
+    // Override chatbot object with localized values for display
+    const displayChatbot = {
+        ...chatbot,
+        name: localizedName,
+        welcomeMessage: localizedWelcome
+    };
 
     // Çevirileri getir
     const fullTranslations = getTranslations(locale);
@@ -91,7 +130,7 @@ export default async function ChatbotPage(props: Props) {
     return (
         <div className="h-[100dvh] w-full overflow-hidden bg-white">
             <ChatInterface
-                chatbot={chatbot}
+                chatbot={displayChatbot}
                 translations={t}
                 language={locale}
             />

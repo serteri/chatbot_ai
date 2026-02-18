@@ -43,6 +43,17 @@ export async function POST(
                 widgetLogoUrl: data.widgetLogoUrl,
                 botName: data.botName,
                 welcomeMessage: data.welcomeMessage,
+                // Multilingual fields
+                botNameTr: data.botNameTr,
+                botNameEn: data.botNameEn,
+                botNameDe: data.botNameDe,
+                botNameFr: data.botNameFr,
+                botNameEs: data.botNameEs,
+                welcomeMessageTr: data.welcomeMessageTr,
+                welcomeMessageEn: data.welcomeMessageEn,
+                welcomeMessageDe: data.welcomeMessageDe,
+                welcomeMessageFr: data.welcomeMessageFr,
+                welcomeMessageEs: data.welcomeMessageEs,
                 hideBranding: data.hideBranding ?? false
             }
         })

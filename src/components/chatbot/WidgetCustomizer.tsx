@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Loader2, Palette, Image as ImageIcon, Eye, EyeOff, Crown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Switch } from '@/components/ui/switch'
@@ -27,6 +28,17 @@ interface WidgetCustomizerProps {
         welcomeMessage: string
         botName: string
         hideBranding: boolean
+        // Localized fields
+        botNameTr?: string
+        botNameEn?: string
+        botNameDe?: string
+        botNameFr?: string
+        botNameEs?: string
+        welcomeMessageTr?: string
+        welcomeMessageEn?: string
+        welcomeMessageDe?: string
+        welcomeMessageFr?: string
+        welcomeMessageEs?: string
     }
     hasCustomBranding?: boolean
     locale?: string
@@ -224,28 +236,140 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
                         <CardDescription>{t('widget.messagesDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div>
-                            <Label htmlFor="botName">{t('settings.botDisplayName')}</Label>
-                            <Input
-                                id="botName"
-                                value={settings.botName}
-                                onChange={(e) => setSettings({ ...settings, botName: e.target.value })}
-                                placeholder={t('widget.botNamePlaceholder')}
-                                className="mt-2"
-                            />
-                        </div>
+                        <Tabs defaultValue="en" className="w-full">
+                            <TabsList className="grid w-full grid-cols-5 mb-4">
+                                <TabsTrigger value="tr">TR</TabsTrigger>
+                                <TabsTrigger value="en">EN</TabsTrigger>
+                                <TabsTrigger value="de">DE</TabsTrigger>
+                                <TabsTrigger value="fr">FR</TabsTrigger>
+                                <TabsTrigger value="es">ES</TabsTrigger>
+                            </TabsList>
 
-                        <div>
-                            <Label htmlFor="welcomeMessage">{t('settings.welcomeMessage')}</Label>
-                            <Textarea
-                                id="welcomeMessage"
-                                value={settings.welcomeMessage}
-                                onChange={(e) => setSettings({ ...settings, welcomeMessage: e.target.value })}
-                                placeholder={t('widget.welcomePlaceholder')}
-                                rows={3}
-                                className="mt-2"
-                            />
-                        </div>
+                            {/* Turkish */}
+                            <TabsContent value="tr" className="space-y-4">
+                                <div>
+                                    <Label htmlFor="botNameTr">{t('settings.botDisplayName')} (TR)</Label>
+                                    <Input
+                                        id="botNameTr"
+                                        value={settings.botNameTr || settings.botName || ''}
+                                        onChange={(e) => setSettings({ ...settings, botNameTr: e.target.value })}
+                                        placeholder="AI Asistan"
+                                        className="mt-2"
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="welcomeMessageTr">{t('settings.welcomeMessage')} (TR)</Label>
+                                    <Textarea
+                                        id="welcomeMessageTr"
+                                        value={settings.welcomeMessageTr || ''}
+                                        onChange={(e) => setSettings({ ...settings, welcomeMessageTr: e.target.value })}
+                                        placeholder="Merhaba! Size nasıl yardımcı olabilirim?"
+                                        rows={3}
+                                        className="mt-2"
+                                    />
+                                </div>
+                            </TabsContent>
+
+                            {/* English */}
+                            <TabsContent value="en" className="space-y-4">
+                                <div>
+                                    <Label htmlFor="botNameEn">{t('settings.botDisplayName')} (EN)</Label>
+                                    <Input
+                                        id="botNameEn"
+                                        value={settings.botNameEn || settings.botName || ''}
+                                        onChange={(e) => setSettings({ ...settings, botNameEn: e.target.value, botName: e.target.value })} // Default to EN
+                                        placeholder="AI Assistant"
+                                        className="mt-2"
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="welcomeMessageEn">{t('settings.welcomeMessage')} (EN)</Label>
+                                    <Textarea
+                                        id="welcomeMessageEn"
+                                        value={settings.welcomeMessageEn || settings.welcomeMessage || ''}
+                                        onChange={(e) => setSettings({ ...settings, welcomeMessageEn: e.target.value, welcomeMessage: e.target.value })} // Default to EN
+                                        placeholder="Hello! How can I help you?"
+                                        rows={3}
+                                        className="mt-2"
+                                    />
+                                </div>
+                            </TabsContent>
+
+                            {/* German */}
+                            <TabsContent value="de" className="space-y-4">
+                                <div>
+                                    <Label htmlFor="botNameDe">{t('settings.botDisplayName')} (DE)</Label>
+                                    <Input
+                                        id="botNameDe"
+                                        value={settings.botNameDe || ''}
+                                        onChange={(e) => setSettings({ ...settings, botNameDe: e.target.value })}
+                                        placeholder="KI-Assistent"
+                                        className="mt-2"
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="welcomeMessageDe">{t('settings.welcomeMessage')} (DE)</Label>
+                                    <Textarea
+                                        id="welcomeMessageDe"
+                                        value={settings.welcomeMessageDe || ''}
+                                        onChange={(e) => setSettings({ ...settings, welcomeMessageDe: e.target.value })}
+                                        placeholder="Hallo! Wie kann ich Ihnen helfen?"
+                                        rows={3}
+                                        className="mt-2"
+                                    />
+                                </div>
+                            </TabsContent>
+
+                            {/* French */}
+                            <TabsContent value="fr" className="space-y-4">
+                                <div>
+                                    <Label htmlFor="botNameFr">{t('settings.botDisplayName')} (FR)</Label>
+                                    <Input
+                                        id="botNameFr"
+                                        value={settings.botNameFr || ''}
+                                        onChange={(e) => setSettings({ ...settings, botNameFr: e.target.value })}
+                                        placeholder="Assistant IA"
+                                        className="mt-2"
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="welcomeMessageFr">{t('settings.welcomeMessage')} (FR)</Label>
+                                    <Textarea
+                                        id="welcomeMessageFr"
+                                        value={settings.welcomeMessageFr || ''}
+                                        onChange={(e) => setSettings({ ...settings, welcomeMessageFr: e.target.value })}
+                                        placeholder="Bonjour! Comment puis-je vous aider?"
+                                        rows={3}
+                                        className="mt-2"
+                                    />
+                                </div>
+                            </TabsContent>
+
+                            {/* Spanish */}
+                            <TabsContent value="es" className="space-y-4">
+                                <div>
+                                    <Label htmlFor="botNameEs">{t('settings.botDisplayName')} (ES)</Label>
+                                    <Input
+                                        id="botNameEs"
+                                        value={settings.botNameEs || ''}
+                                        onChange={(e) => setSettings({ ...settings, botNameEs: e.target.value })}
+                                        placeholder="Asistente IA"
+                                        className="mt-2"
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="welcomeMessageEs">{t('settings.welcomeMessage')} (ES)</Label>
+                                    <Textarea
+                                        id="welcomeMessageEs"
+                                        value={settings.welcomeMessageEs || ''}
+                                        onChange={(e) => setSettings({ ...settings, welcomeMessageEs: e.target.value })}
+                                        placeholder="¡Hola! ¿Cómo puedo ayudarte?"
+                                        rows={3}
+                                        className="mt-2"
+                                    />
+                                </div>
+                            </TabsContent>
+                        </Tabs>
                     </CardContent>
                 </Card>
 

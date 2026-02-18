@@ -35,7 +35,20 @@ export async function GET(request: NextRequest) {
                 welcomeMessage: true,
                 widgetPrimaryColor: true,
                 widgetButtonColor: true,
-                widgetTextColor: true
+                widgetTextColor: true,
+                // Localized fields
+                botName: true,
+                botNameTr: true,
+                botNameEn: true,
+                botNameDe: true,
+                botNameFr: true,
+                botNameEs: true,
+                welcomeMessage: true,
+                welcomeMessageTr: true,
+                welcomeMessageEn: true,
+                welcomeMessageDe: true,
+                welcomeMessageFr: true,
+                welcomeMessageEs: true
             }
         });
 
@@ -69,15 +82,14 @@ export async function GET(request: NextRequest) {
         const welcomeMessage = chatbot.welcomeMessage || 'Hello! How can I help you?';
         const language = chatbot.language || 'en';
 
-        // Localized greeting
-        const greetings: Record<string, string> = {
-            tr: 'Merhaba!',
-            en: 'Hello!',
-            de: 'Hallo!',
-            fr: 'Bonjour!',
-            es: '¡Hola!'
+        // Localized greetings and messages
+        const translations = {
+            tr: { greeting: 'Merhaba!', welcome: chatbot.welcomeMessageTr || chatbot.welcomeMessage || 'Merhaba! Size nasıl yardımcı olabilirim?' },
+            en: { greeting: 'Hello!', welcome: chatbot.welcomeMessageEn || chatbot.welcomeMessage || 'Hello! How can I help you?' },
+            de: { greeting: 'Hallo!', welcome: chatbot.welcomeMessageDe || chatbot.welcomeMessage || 'Hallo! Wie kann ich Ihnen helfen?' },
+            fr: { greeting: 'Bonjour!', welcome: chatbot.welcomeMessageFr || chatbot.welcomeMessage || 'Bonjour! Comment puis-je vous aider?' },
+            es: { greeting: '¡Hola!', welcome: chatbot.welcomeMessageEs || chatbot.welcomeMessage || '¡Hola! ¿Cómo puedo ayudarte?' }
         };
-        const greeting = greetings[language] || greetings['en'];
 
         // Widget loader script
         const scriptContent = `
@@ -93,6 +105,16 @@ export async function GET(request: NextRequest) {
     var buttonColor = "${buttonColor}";
     var textColor = "${textColor}";
 
+    // Determine Language
+    var userLang = navigator.language || navigator.userLanguage; 
+    var langCode = userLang.split('-')[0];
+    var availableLangs = ['tr', 'en', 'de', 'fr', 'es'];
+    var currentLang = availableLangs.includes(langCode) ? langCode : 'en';
+
+    // Translations
+    var translations = ${JSON.stringify(translations)};
+    var t = translations[currentLang] || translations['en'];
+
     // Create widget container
     var container = document.createElement('div');
     container.id = 'pylon-chatbot-widget';
@@ -101,7 +123,7 @@ export async function GET(request: NextRequest) {
     // Create welcome bubble (WhatsApp-style teaser)
     var bubble = document.createElement('div');
     bubble.id = 'pylon-welcome-bubble';
-    bubble.innerHTML = '<div style="font-weight:600;margin-bottom:4px;">${greeting} 👋</div><div style="font-size:13px;opacity:0.9;">${welcomeMessage.replace(/'/g, "\\'")}</div><div style="position:absolute;bottom:-8px;${isLeft ? 'left' : 'right'}:24px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid white;"></div>';
+    bubble.innerHTML = '<div style="font-weight:600;margin-bottom:4px;">' + t.greeting + ' 👋</div><div style="font-size:13px;opacity:0.9;">' + t.welcome + '</div><div style="position:absolute;bottom:-8px;${isLeft ? 'left' : 'right'}:24px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid white;"></div>';
     bubble.style.cssText = 'position:absolute;bottom:70px;${isLeft ? 'left' : 'right'}:0;background:white;padding:12px 16px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.15);min-width:200px;max-width:280px;cursor:pointer;opacity:0;transform:translateY(10px) scale(0.95);transition:all 0.3s ease;display:none;color:#333;';
 
     // Create close button for bubble
