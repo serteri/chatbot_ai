@@ -50,7 +50,9 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
     const [saving, setSaving] = useState(false)
     const [settings, setSettings] = useState(initialSettings)
     const [logoFile, setLogoFile] = useState<File | null>(null)
+    const [logoFile, setLogoFile] = useState<File | null>(null)
     const [logoPreview, setLogoPreview] = useState<string | null>(initialSettings.widgetLogoUrl)
+    const [activeTab, setActiveTab] = useState('en')
 
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -235,18 +237,18 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
                         <CardTitle>{t('settings.messages')}</CardTitle>
                         <CardDescription>{t('widget.messagesDesc')}</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <Tabs defaultValue="en" className="w-full">
-                            <TabsList className="grid w-full grid-cols-5 mb-4">
-                                <TabsTrigger value="tr">TR</TabsTrigger>
-                                <TabsTrigger value="en">EN</TabsTrigger>
-                                <TabsTrigger value="de">DE</TabsTrigger>
-                                <TabsTrigger value="fr">FR</TabsTrigger>
-                                <TabsTrigger value="es">ES</TabsTrigger>
+                    <CardContent className="space-y-6 pt-6">
+                        <Tabs defaultValue="en" value={activeTab} onValueChange={setActiveTab} className="w-full">
+                            <TabsList className="grid w-full grid-cols-5 mb-8 h-12">
+                                <TabsTrigger value="tr" className="text-sm font-medium">TR</TabsTrigger>
+                                <TabsTrigger value="en" className="text-sm font-medium">EN</TabsTrigger>
+                                <TabsTrigger value="de" className="text-sm font-medium">DE</TabsTrigger>
+                                <TabsTrigger value="fr" className="text-sm font-medium">FR</TabsTrigger>
+                                <TabsTrigger value="es" className="text-sm font-medium">ES</TabsTrigger>
                             </TabsList>
 
                             {/* Turkish */}
-                            <TabsContent value="tr" className="space-y-4">
+                            <TabsContent value="tr" className="space-y-6 mt-6">
                                 <div>
                                     <Label htmlFor="botNameTr">{t('settings.botDisplayName')} (TR)</Label>
                                     <Input
@@ -271,7 +273,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
                             </TabsContent>
 
                             {/* English */}
-                            <TabsContent value="en" className="space-y-4">
+                            <TabsContent value="en" className="space-y-6 mt-6">
                                 <div>
                                     <Label htmlFor="botNameEn">{t('settings.botDisplayName')} (EN)</Label>
                                     <Input
@@ -296,7 +298,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
                             </TabsContent>
 
                             {/* German */}
-                            <TabsContent value="de" className="space-y-4">
+                            <TabsContent value="de" className="space-y-6 mt-6">
                                 <div>
                                     <Label htmlFor="botNameDe">{t('settings.botDisplayName')} (DE)</Label>
                                     <Input
@@ -321,7 +323,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
                             </TabsContent>
 
                             {/* French */}
-                            <TabsContent value="fr" className="space-y-4">
+                            <TabsContent value="fr" className="space-y-6 mt-6">
                                 <div>
                                     <Label htmlFor="botNameFr">{t('settings.botDisplayName')} (FR)</Label>
                                     <Input
@@ -346,7 +348,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
                             </TabsContent>
 
                             {/* Spanish */}
-                            <TabsContent value="es" className="space-y-4">
+                            <TabsContent value="es" className="space-y-6 mt-6">
                                 <div>
                                     <Label htmlFor="botNameEs">{t('settings.botDisplayName')} (ES)</Label>
                                     <Input
@@ -519,8 +521,17 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
                                     primaryColor: settings.widgetPrimaryColor,
                                     buttonColor: settings.widgetButtonColor,
                                     textColor: settings.widgetTextColor,
-                                    botName: settings.botName,
-                                    welcomeMessage: settings.welcomeMessage,
+                                    // Dynamic preview based on active tab
+                                    botName: activeTab === 'tr' ? (settings.botNameTr || settings.botName) :
+                                        activeTab === 'de' ? (settings.botNameDe || settings.botName) :
+                                            activeTab === 'fr' ? (settings.botNameFr || settings.botName) :
+                                                activeTab === 'es' ? (settings.botNameEs || settings.botName) :
+                                                    (settings.botNameEn || settings.botName),
+                                    welcomeMessage: activeTab === 'tr' ? (settings.welcomeMessageTr || settings.welcomeMessage) :
+                                        activeTab === 'de' ? (settings.welcomeMessageDe || settings.welcomeMessage) :
+                                            activeTab === 'fr' ? (settings.welcomeMessageFr || settings.welcomeMessage) :
+                                                activeTab === 'es' ? (settings.welcomeMessageEs || settings.welcomeMessage) :
+                                                    (settings.welcomeMessageEn || settings.welcomeMessage),
                                     logoUrl: logoPreview,
                                     hideBranding: settings.hideBranding
                                 }}
