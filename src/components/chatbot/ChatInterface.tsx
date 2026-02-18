@@ -41,7 +41,7 @@ interface ChatInterfaceProps {
         whatsappNumber?: string | null;
     };
     translations: ChatTranslations;
-    language: 'tr' | 'en'; // Mevcut dili bilmemiz gerekiyor
+    language: string; // Supports 'tr' | 'en' | 'de' | 'fr' | 'es'
 }
 
 export default function ChatInterface({ chatbot, translations: t, language }: ChatInterfaceProps) {
@@ -57,7 +57,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
     const fileInputRef = useRef<HTMLInputElement>(null); // Gizli input referansı
 
     // Renk Ayarları
-    const userBubbleColor = '#18181b';
+    const userBubbleColor = chatbot.widgetPrimaryColor || '#18181b';
 
     useEffect(() => {
         if (chatbot.welcomeMessage && messages.length === 0) {
@@ -76,7 +76,11 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
 
     // --- DİL DEĞİŞTİRME FONKSİYONU ---
     const toggleLanguage = () => {
-        const newLang = language === 'tr' ? 'en' : 'tr';
+        const languages = ['en', 'tr', 'de', 'fr', 'es'];
+        const currentIndex = languages.indexOf(language);
+        const nextIndex = (currentIndex + 1) % languages.length;
+        const newLang = languages[nextIndex];
+
         // URL'i güncelle (Sayfa yenilenir ve yeni dille gelir)
         router.replace(`${pathname}?lang=${newLang}`);
     };
@@ -210,7 +214,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                         onClick={toggleLanguage}
                         title={t.changeLanguage}
                     >
-                        {language === 'tr' ? 'EN' : 'TR'}
+                        {language.toUpperCase()}
                     </Button>
 
                     <Button
@@ -332,7 +336,10 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                         size="icon"
                         disabled={(!inputValue.trim() && !selectedFile) || isLoading}
                         className="h-10 w-10 rounded-full shrink-0 transition-all disabled:opacity-50 disabled:scale-95"
-                        style={{ backgroundColor: (inputValue.trim() || selectedFile) ? '#18181b' : '#f4f4f5', color: (inputValue.trim() || selectedFile) ? 'white' : '#a1a1aa' }}
+                        style={{
+                            backgroundColor: (inputValue.trim() || selectedFile) ? userBubbleColor : '#f4f4f5',
+                            color: (inputValue.trim() || selectedFile) ? 'white' : '#a1a1aa'
+                        }}
                     >
                         {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 ml-0.5" />}
                     </Button>

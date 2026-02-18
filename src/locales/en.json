@@ -2896,9 +2896,17 @@
     "realEstateAssistant": "Real Estate Assistant",
     "educationAdvisor": "Education Advisor",
     "sources": "Sources",
+    "clearChat": "Clear Chat",
+    "today": "Today",
+    "you": "You",
+    "assistant": "Assistant",
+    "poweredBy": "Powered by AI",
+    "changeLanguage": "Change Language",
     "errors": {
       "noId": "Chatbot ID not found.",
-      "generic": "An error occurred."
+      "generic": "An error occurred.",
+      "reply": "No reply received.",
+      "network": "Connection error."
     }
   }
 }

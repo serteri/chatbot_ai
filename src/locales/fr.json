@@ -2683,9 +2683,17 @@
     "realEstateAssistant": "Assistant Immobilier",
     "educationAdvisor": "Conseiller Éducatif",
     "sources": "Sources",
+    "clearChat": "Effacer le chat",
+    "today": "Aujourd'hui",
+    "you": "Vous",
+    "assistant": "Assistant",
+    "poweredBy": "Propulsé par l'IA",
+    "changeLanguage": "Changer de langue",
     "errors": {
       "noId": "ID du chatbot introuvable.",
-      "generic": "Une erreur est survenue."
+      "generic": "Une erreur est survenue.",
+      "reply": "Aucune réponse reçue.",
+      "network": "Erreur de connexion."
     }
   }
 }

@@ -2805,9 +2805,17 @@
     "realEstateAssistant": "Immobilien-Assistent",
     "educationAdvisor": "Bildungsberater",
     "sources": "Quellen",
+    "clearChat": "Chat leeren",
+    "today": "Heute",
+    "you": "Sie",
+    "assistant": "Assistent",
+    "poweredBy": "Powered by AI",
+    "changeLanguage": "Sprache ändern",
     "errors": {
       "noId": "Chatbot-ID nicht gefunden.",
-      "generic": "Ein Fehler ist aufgetreten."
+      "generic": "Ein Fehler ist aufgetreten.",
+      "reply": "Keine Antwort erhalten.",
+      "network": "Verbindungsfehler."
     }
   }
 }

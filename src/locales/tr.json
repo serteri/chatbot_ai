@@ -2888,9 +2888,17 @@
     "realEstateAssistant": "Emlak Asistanı",
     "educationAdvisor": "Eğitim Danışmanı",
     "sources": "Kaynaklar",
+    "clearChat": "Sohbeti Temizle",
+    "today": "Bugün",
+    "you": "Siz",
+    "assistant": "Asistan",
+    "poweredBy": "Powered by AI",
+    "changeLanguage": "Dili Değiştir",
     "errors": {
       "noId": "Chatbot ID bulunamadı.",
-      "generic": "Bir hata oluştu."
+      "generic": "Bir hata oluştu.",
+      "reply": "Cevap alınamadı.",
+      "network": "Bağlantı hatası."
     }
   }
 }
