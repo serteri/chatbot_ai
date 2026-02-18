@@ -48,6 +48,7 @@ export default async function ChatbotPage(props: Props) {
             widgetPrimaryColor: true,
             widgetButtonColor: true,
             widgetTextColor: true,
+            hideBranding: true,
             enableLiveChat: true,
             liveSupportUrl: true,
             whatsappNumber: true,
@@ -114,7 +115,7 @@ export default async function ChatbotPage(props: Props) {
 
     // ChatInterface için formatla
     const t = {
-        displayName: fullTranslations.ChatWidget.aiPowered,
+        displayName: displayChatbot.name,
         subTitle: fullTranslations.ChatWidget.online,
         placeholder: fullTranslations.ChatWidget.placeholderGeneral,
         clearChat: fullTranslations.ChatWidget.clearChat,
