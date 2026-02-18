@@ -106,7 +106,232 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
         <div className="grid gap-6 md:grid-cols-2">
             {/* Settings Form */}
             <div className="space-y-6">
-                {/* ... (Previous Cards) ... */}
+                {/* Colors */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center">
+                            <Palette className="mr-2 h-5 w-5" />
+                            {t('widget.colors')}
+                        </CardTitle>
+                        <CardDescription>{t('widget.colorsDesc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div>
+                            <Label htmlFor="primaryColor">{t('widget.primaryColor')}</Label>
+                            <div className="flex space-x-2 mt-2">
+                                <Input
+                                    id="primaryColor"
+                                    type="color"
+                                    value={settings.widgetPrimaryColor}
+                                    onChange={(e) => setSettings({ ...settings, widgetPrimaryColor: e.target.value })}
+                                    className="w-20 h-10"
+                                />
+                                <Input
+                                    type="text"
+                                    value={settings.widgetPrimaryColor}
+                                    onChange={(e) => setSettings({ ...settings, widgetPrimaryColor: e.target.value })}
+                                    placeholder="#3B82F6"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <Label htmlFor="buttonColor">{t('widget.buttonColor')}</Label>
+                            <div className="flex space-x-2 mt-2">
+                                <Input
+                                    id="buttonColor"
+                                    type="color"
+                                    value={settings.widgetButtonColor}
+                                    onChange={(e) => setSettings({ ...settings, widgetButtonColor: e.target.value })}
+                                    className="w-20 h-10"
+                                />
+                                <Input
+                                    type="text"
+                                    value={settings.widgetButtonColor}
+                                    onChange={(e) => setSettings({ ...settings, widgetButtonColor: e.target.value })}
+                                    placeholder="#2563EB"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <Label htmlFor="textColor">{t('widget.textColor')}</Label>
+                            <div className="flex space-x-2 mt-2">
+                                <Input
+                                    id="textColor"
+                                    type="color"
+                                    value={settings.widgetTextColor}
+                                    onChange={(e) => setSettings({ ...settings, widgetTextColor: e.target.value })}
+                                    className="w-20 h-10"
+                                />
+                                <Input
+                                    type="text"
+                                    value={settings.widgetTextColor}
+                                    onChange={(e) => setSettings({ ...settings, widgetTextColor: e.target.value })}
+                                    placeholder="#FFFFFF"
+                                />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Layout */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('widget.appearance')}</CardTitle>
+                        <CardDescription>{t('widget.appearanceDesc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div>
+                            <Label>{t('widget.position')}</Label>
+                            <Select
+                                value={settings.widgetPosition}
+                                onValueChange={(value) => setSettings({ ...settings, widgetPosition: value })}
+                            >
+                                <SelectTrigger className="mt-2">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-white text-slate-900 border-slate-200">
+                                    <SelectItem value="bottom-right">{t('widget.bottomRight')}</SelectItem>
+                                    <SelectItem value="bottom-left">{t('widget.bottomLeft')}</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div>
+                            <Label>{t('widget.size')}</Label>
+                            <Select
+                                value={settings.widgetSize}
+                                onValueChange={(value) => setSettings({ ...settings, widgetSize: value })}
+                            >
+                                <SelectTrigger className="mt-2">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-white text-slate-900 border-slate-200">
+                                    <SelectItem value="small">{t('widget.small')}</SelectItem>
+                                    <SelectItem value="medium">{t('widget.medium')}</SelectItem>
+                                    <SelectItem value="large">{t('widget.large')}</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Messages */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('settings.messages')}</CardTitle>
+                        <CardDescription>{t('widget.messagesDesc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div>
+                            <Label htmlFor="botName">{t('settings.botDisplayName')}</Label>
+                            <Input
+                                id="botName"
+                                value={settings.botName}
+                                onChange={(e) => setSettings({ ...settings, botName: e.target.value })}
+                                placeholder={t('widget.botNamePlaceholder')}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <Label htmlFor="welcomeMessage">{t('settings.welcomeMessage')}</Label>
+                            <Textarea
+                                id="welcomeMessage"
+                                value={settings.welcomeMessage}
+                                onChange={(e) => setSettings({ ...settings, welcomeMessage: e.target.value })}
+                                placeholder={t('widget.welcomePlaceholder')}
+                                rows={3}
+                                className="mt-2"
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Logo */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center">
+                            <ImageIcon className="mr-2 h-5 w-5" />
+                            {t('widget.logo')}
+                        </CardTitle>
+                        <CardDescription>{t('widget.logoDesc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {logoPreview && (
+                                <div className="flex justify-center">
+                                    <img
+                                        src={logoPreview}
+                                        alt="Logo preview"
+                                        className="h-20 w-20 object-contain rounded-lg border"
+                                    />
+                                </div>
+                            )}
+                            <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleLogoChange}
+                            />
+                            <p className="text-xs text-gray-500">
+                                {t('widget.logoInfo')}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Branding / White Label */}
+                <Card className={!hasCustomBranding ? 'border-dashed border-2 border-purple-200' : ''}>
+                    <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                            <div className="flex items-center">
+                                {settings.hideBranding ? (
+                                    <EyeOff className="mr-2 h-5 w-5" />
+                                ) : (
+                                    <Eye className="mr-2 h-5 w-5" />
+                                )}
+                                {t('widget.branding')}
+                            </div>
+                            {!hasCustomBranding && (
+                                <span className="flex items-center text-xs font-normal text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
+                                    <Crown className="w-3 h-3 mr-1" />
+                                    Pro+
+                                </span>
+                            )}
+                        </CardTitle>
+                        <CardDescription>{t('widget.brandingDesc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {hasCustomBranding ? (
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-1">
+                                    <Label htmlFor="hideBranding">{t('widget.hideBranding')}</Label>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t('widget.hideBrandingDesc')}
+                                    </p>
+                                </div>
+                                <Switch
+                                    id="hideBranding"
+                                    checked={settings.hideBranding}
+                                    onCheckedChange={(checked) => setSettings({ ...settings, hideBranding: checked })}
+                                />
+                            </div>
+                        ) : (
+                            <div className="text-center py-4">
+                                <p className="text-sm text-muted-foreground mb-3">
+                                    {t('widget.brandingUpgradeMessage')}
+                                </p>
+                                <Link href={`/${locale}/dashboard/pricing`}>
+                                    <Button variant="outline" className="border-purple-200 text-purple-600 hover:bg-purple-50">
+                                        <Crown className="mr-2 h-4 w-4" />
+                                        {t('widget.upgradePlan')}
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
 
                 {/* Save Button */}
                 <div className="sticky bottom-4 z-10 bg-white/80 p-4 border rounded-xl shadow-lg backdrop-blur-sm">
@@ -127,7 +352,7 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
                         ) : hasChanges ? (
                             t('settings.save')
                         ) : (
-                            t('settings.noChanges') || "Save Changes" // Fallback text if key missing
+                            t('noChanges')
                         )}
                     </Button>
                 </div>
