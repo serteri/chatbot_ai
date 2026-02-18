@@ -31,6 +31,7 @@ interface ChatTranslations {
     errorReply: string;
     errorConnection: string;
     poweredBy: string;
+    aiPowered: string;
     changeLanguage: string;
 }
 
@@ -385,9 +386,10 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
 
                 {!chatbot.hideBranding && (
                     <div className="text-center mt-3">
-                        <span className="text-[10px] font-medium text-slate-300 flex items-center justify-center gap-1.5">
-                            <Sparkles className="w-3 h-3" /> {t.poweredBy}
-                        </span>
+                        <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
+                            {t.aiPowered} · Powered by
+                            <span style={{ color: primaryColor, fontWeight: 600 }}>PylonChat</span>
+                        </div>
                     </div>
                 )}
             </div>

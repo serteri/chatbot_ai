@@ -125,6 +125,7 @@ export default async function ChatbotPage(props: Props) {
         errorReply: fullTranslations.ChatWidget.errors.reply,
         errorConnection: fullTranslations.ChatWidget.errors.network,
         poweredBy: fullTranslations.ChatWidget.poweredBy,
+        aiPowered: fullTranslations.ChatWidget.aiPowered,
         changeLanguage: fullTranslations.ChatWidget.changeLanguage
     };
 
