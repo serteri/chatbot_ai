@@ -1,10 +1,16 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, X, RefreshCw, Paperclip, Loader2, Sparkles, Globe, FileText, XCircle, Headset } from 'lucide-react';
+import { Send, X, RefreshCw, Paperclip, Loader2, Sparkles, Globe, FileText, XCircle, Headset, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useRouter, usePathname } from 'next/navigation';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Message {
     id: string;
@@ -35,6 +41,7 @@ interface ChatInterfaceProps {
         welcomeMessage: string | null;
         widgetPrimaryColor: string | null;
         widgetButtonColor: string | null;
+        widgetTextColor: string | null;
         hideBranding?: boolean;
         enableLiveChat?: boolean;
         liveSupportUrl?: string | null;
@@ -57,7 +64,8 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
     const fileInputRef = useRef<HTMLInputElement>(null); // Gizli input referansı
 
     // Renk Ayarları
-    const userBubbleColor = chatbot.widgetPrimaryColor || '#18181b';
+    const primaryColor = chatbot.widgetPrimaryColor || '#18181b';
+    const textColor = chatbot.widgetTextColor || '#FFFFFF'; // Default text color for header
 
     useEffect(() => {
         if (chatbot.welcomeMessage && messages.length === 0) {
@@ -75,15 +83,18 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
     }, [messages, isLoading, selectedFile]);
 
     // --- DİL DEĞİŞTİRME FONKSİYONU ---
-    const toggleLanguage = () => {
-        const languages = ['en', 'tr', 'de', 'fr', 'es'];
-        const currentIndex = languages.indexOf(language);
-        const nextIndex = (currentIndex + 1) % languages.length;
-        const newLang = languages[nextIndex];
-
-        // URL'i güncelle (Sayfa yenilenir ve yeni dille gelir)
+    const changeLanguage = (newLang: string) => {
+        if (newLang === language) return;
         router.replace(`${pathname}?lang=${newLang}`);
     };
+
+    const languages = [
+        { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
+        { code: 'en', name: 'English', flag: '🇬🇧' },
+        { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+        { code: 'fr', name: 'Français', flag: '🇫🇷' },
+        { code: 'es', name: 'Español', flag: '🇪🇸' },
+    ];
 
     // --- DOSYA SEÇME FONKSİYONLARI ---
     const handlePaperclipClick = () => {
@@ -173,20 +184,23 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
     return (
         <div className="flex flex-col h-full bg-white font-sans overflow-hidden border-l border-slate-100">
             {/* --- HEADER --- */}
-            <div className="shrink-0 px-6 py-5 flex items-center justify-between bg-white border-b border-slate-100 sticky top-0 z-10">
+            <div
+                className="shrink-0 px-6 py-5 flex items-center justify-between border-b border-slate-100 sticky top-0 z-10 transition-colors duration-300"
+                style={{ backgroundColor: primaryColor, color: textColor }}
+            >
                 <div className="flex items-center gap-4">
                     <div className="relative">
-                        <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100">
-                            <Sparkles className="w-5 h-5 text-slate-800 fill-slate-800/20" />
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30 backdrop-blur-sm">
+                            <Sparkles className="w-5 h-5 fill-current opacity-90" style={{ color: textColor }} />
                         </div>
                         <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></span>
                     </div>
 
                     <div className="flex flex-col">
-                        <h1 className="font-bold text-slate-900 text-base leading-tight">
+                        <h1 className="font-bold text-base leading-tight" style={{ color: textColor }}>
                             {t.displayName}
                         </h1>
-                        <p className="text-xs text-slate-500 font-medium mt-0.5">
+                        <p className="text-xs font-medium mt-0.5 opacity-80" style={{ color: textColor }}>
                             {t.subTitle}
                         </p>
                     </div>
@@ -199,28 +213,51 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="text-slate-400 hover:text-green-600 hover:bg-green-50 h-9 w-9 rounded-full transition-colors"
+                            className="bg-white/10 hover:bg-white/20 h-9 w-9 rounded-full transition-colors backdrop-blur-sm border border-white/10"
+                            style={{ color: textColor }}
                             onClick={handleLiveSupport}
                             title="Live Support"
                         >
                             <Headset className="w-5 h-5" />
                         </Button>
                     )}
-                    {/* YENİ: Dil Değiştirme Butonu */}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-slate-400 hover:text-slate-700 hover:bg-slate-50 h-9 w-9 rounded-full transition-colors font-bold text-xs"
-                        onClick={toggleLanguage}
-                        title={t.changeLanguage}
-                    >
-                        {language.toUpperCase()}
-                    </Button>
+
+                    {/* YENİ: Dil Değiştirme Dropdown */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="bg-white/10 hover:bg-white/20 h-9 w-9 rounded-full transition-colors backdrop-blur-sm border border-white/10 font-bold text-xs"
+                                style={{ color: textColor }}
+                                title={t.changeLanguage}
+                            >
+                                {language.toUpperCase()}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40 z-50 bg-white">
+                            {languages.map((lang) => (
+                                <DropdownMenuItem
+                                    key={lang.code}
+                                    onClick={() => changeLanguage(lang.code)}
+                                    className={cn(
+                                        "flex items-center gap-2 cursor-pointer",
+                                        language === lang.code && "bg-slate-100 font-medium"
+                                    )}
+                                >
+                                    <span className="text-lg">{lang.flag}</span>
+                                    <span>{lang.name}</span>
+                                    {language === lang.code && <Check className="w-3 h-3 ml-auto opacity-70" />}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
 
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="text-slate-400 hover:text-slate-700 hover:bg-slate-50 h-9 w-9 rounded-full transition-colors"
+                        className="bg-white/10 hover:bg-white/20 h-9 w-9 rounded-full transition-colors backdrop-blur-sm border border-white/10"
+                        style={{ color: textColor }}
                         onClick={() => setMessages([])}
                         title={t.clearChat}
                     >
@@ -229,7 +266,8 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="text-slate-400 hover:text-slate-700 hover:bg-slate-50 h-9 w-9 rounded-full transition-colors"
+                        className="bg-white/10 hover:bg-white/20 h-9 w-9 rounded-full transition-colors backdrop-blur-sm border border-white/10"
+                        style={{ color: textColor }}
                         onClick={handleClose}
                     >
                         <X className="w-5 h-5" />
@@ -260,7 +298,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                                         ? "text-white rounded-[20px] rounded-tr-sm"
                                         : "bg-slate-50 text-slate-800 rounded-[20px] rounded-tl-sm border border-slate-100"
                                 )}
-                                style={msg.role === 'user' ? { backgroundColor: userBubbleColor } : {}}
+                                style={msg.role === 'user' ? { backgroundColor: primaryColor } : {}}
                             >
                                 {/* Eğer dosya eki varsa göster */}
                                 {msg.attachment && (
@@ -337,7 +375,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                         disabled={(!inputValue.trim() && !selectedFile) || isLoading}
                         className="h-10 w-10 rounded-full shrink-0 transition-all disabled:opacity-50 disabled:scale-95"
                         style={{
-                            backgroundColor: (inputValue.trim() || selectedFile) ? userBubbleColor : '#f4f4f5',
+                            backgroundColor: (inputValue.trim() || selectedFile) ? primaryColor : '#f4f4f5',
                             color: (inputValue.trim() || selectedFile) ? 'white' : '#a1a1aa'
                         }}
                     >

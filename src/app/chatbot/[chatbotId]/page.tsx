@@ -47,6 +47,7 @@ export default async function ChatbotPage(props: Props) {
             welcomeMessage: true,
             widgetPrimaryColor: true,
             widgetButtonColor: true,
+            widgetTextColor: true,
             enableLiveChat: true,
             liveSupportUrl: true,
             whatsappNumber: true,
