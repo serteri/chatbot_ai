@@ -1213,7 +1213,190 @@
     "hideBranding": "Markayı Gizle",
     "hideBrandingDesc": "Chat widget'ından 'Powered by PylonChat' yazısını kaldırın",
     "brandingUpgradeMessage": "Widget'ınızdan PylonChat markasını kaldırmak için Pro veya daha üst plana yükseltin",
-    "upgradePlan": "Planı Yükselt"
+    "upgradePlan": "Planı Yükselt",
+    "realestate": {
+      "title": "Emlak Asistanı",
+      "subtitle": "Ön Büro Asistanınız",
+      "online": "Çevrimiçi",
+      "placeholder": "Mesajınızı yazın...",
+      "welcome": "Merhaba! Ben dijital ön büro asistanınız. Size en uygun portföyü sunmak için birkaç hızlı soru soracağım.",
+      "quickReplies": {
+        "buy": "Ev almak istiyorum",
+        "rent": "Kiralık arıyorum",
+        "sell": "Evimi satmak istiyorum",
+        "value": "Evimin değerini öğreneyim",
+        "tenant": "Kiracı desteği"
+      },
+      "leadQualification": {
+        "propertyType": "Ne tür bir gayrimenkul arıyorsunuz?",
+        "purpose": "Yatırım için mi yoksa oturum için mi bakıyorsunuz?",
+        "purposeOptions": {
+          "investment": "Yatırım",
+          "residence": "Oturum",
+          "both": "Her ikisi de olabilir"
+        },
+        "budget": "Bütçe aralığınız nedir?",
+        "budgetNote": "Size en uygun portföyü sunmak için bütçenizi bilmem gerekiyor.",
+        "location": "Hangi bölgeleri tercih edersiniz?",
+        "timeline": "Ne zaman taşınmayı planlıyorsunuz?",
+        "timelineNote": "Bu bilgi, size öncelik vermemizi sağlar.",
+        "city": "Hangi şehirde arıyorsunuz?",
+        "cityNote": "Lokasyonu bilmem önemli, size yakın seçenekler sunacağım.",
+        "suburb": "Hangi semtte/ilçede arıyorsunuz?",
+        "suburbNote": "Belirli bir bölge tercihiniz var mı?",
+        "bedrooms": "Kaç yatak odası olmalı?",
+        "bedroomsNote": "Aile büyüklüğünüze göre seçin.",
+        "bathrooms": "Kaç banyo olmalı?",
+        "bathroomsNote": "Konfor tercihinizi belirtin.",
+        "preApproval": "Banka ön onayınız var mı?",
+        "preApprovalNote": "Ön onay, işlemleri çok hızlandırır.",
+        "contact": "Sizinle iletişime geçebilmemiz için bilgilerinizi paylaşır mısınız?",
+        "income": "Aylık net hane geliriniz ne kadar? (Örn: 50000)",
+        "incomeNote": "Kredi hesaplaması için gerekli",
+        "expenses": "Aylık kira ve kredi gibi düzenli giderleriniz ne kadar?",
+        "expensesNote": "Ödeme gücünüzü hesaplamak için kullanacağız.",
+        "downPayment": "Ne kadar peşinat ayırabilirsiniz?",
+        "downPaymentNote": "Mortgage hesaplaması için önemli",
+        "affordabilityResult": "💰 Hesaplamalarıma göre, yaklaşık {amount} tutarına kadar ev alabilirsiniz.",
+        "affordabilityNote": "Bu bütçe ile ilgilenir misiniz?",
+        "affordabilityWarning": "⚠️ Bütçeniz biraz kısıtlı görünüyor. Daha uygun fiyatlı seçeneklere bakabiliriz veya kredi başvurusu konusunda danışmanımız yardımcı olabilir.",
+        "affordabilitySuccess": "✅ Bütçeniz gayet uygun görünüyor!"
+      },
+      "propertyTypes": {
+        "apartment": "Daire",
+        "villa": "Villa",
+        "house": "Müstakil Ev",
+        "land": "Arsa",
+        "commercial": "Ticari"
+      },
+      "budgetRanges": {
+        "label1": "1-3 Milyon TL",
+        "label2": "3-5 Milyon TL",
+        "label3": "5-10 Milyon TL",
+        "label4": "10-20 Milyon TL",
+        "label5": "20+ Milyon TL"
+      },
+      "rentBudgetRanges": {
+        "label1": "10.000 - 20.000 TL",
+        "label2": "20.000 - 35.000 TL",
+        "label3": "35.000 - 50.000 TL",
+        "label4": "50.000 - 75.000 TL",
+        "label5": "75.000+ TL"
+      },
+      "timelines": {
+        "immediate": "Hemen (Bu ay)",
+        "soon": "1-3 ay içinde",
+        "later": "3-6 ay içinde",
+        "browsing": "Sadece piyasayı araştırıyorum"
+      },
+      "bedroomOptions": {
+        "1": "1 Yatak Odası",
+        "2": "2 Yatak Odası",
+        "3": "3 Yatak Odası",
+        "4": "4 Yatak Odası",
+        "5plus": "5+ Yatak Odası",
+        "any": "Farketmez"
+      },
+      "bathroomOptions": {
+        "1": "1 Banyo",
+        "2": "2 Banyo",
+        "3plus": "3+ Banyo",
+        "any": "Farketmez"
+      },
+      "yesNo": {
+        "yes": "Evet, var",
+        "no": "Hayır, yok",
+        "apply": "Başvuracağım"
+      },
+      "appointmentSlots": {
+        "title": "Danışmanımız bu saatlerde müsait:",
+        "select": "Randevu Seç"
+      },
+      "valuation": {
+        "title": "Ücretsiz Değerleme",
+        "subtitle": "Yapay zeka destekli tahmini değer",
+        "address": "Adres (İlçe, Mahalle)",
+        "area": "Metrekare (m²)",
+        "rooms": "Oda Sayısı",
+        "buildingAge": "Bina Yaşı",
+        "submit": "Değerleme Al",
+        "result": "Tahmini Değer Aralığı"
+      },
+      "tenant": {
+        "title": "Kiracı Destek",
+        "greeting": "Size nasıl yardımcı olabilirim?",
+        "options": {
+          "issue": "Arıza Bildirimi",
+          "payment": "Kira Ödeme Bilgisi",
+          "contract": "Sözleşme Sorusu",
+          "key": "Anahtar Teslimi",
+          "other": "Diğer"
+        },
+        "issueTypes": {
+          "plumbing": "Su Tesisatı",
+          "electrical": "Elektrik",
+          "heating": "Isıtma/Kombi",
+          "structural": "Yapısal Sorun",
+          "other": "Diğer"
+        },
+        "urgency": {
+          "emergency": "Acil (Su baskını, gaz kaçağı vb.)",
+          "normal": "Normal",
+          "low": "Acil değil"
+        },
+        "photoPrompt": "Sorunu daha iyi anlamamız için fotoğraf ekleyebilirsiniz:",
+        "photoButton": "Fotoğraf Yükle",
+        "submitted": "Talebiniz alındı! Anlaşmalı servisimiz en kısa sürede sizinle iletişime geçecek.",
+        "rentInfo": "Kira Ödeme Bilgileri:\n\nIBAN: TR00 0000 0000 0000 0000 0000 00\nAlıcı: Emlak Yönetimi A.Ş.\n\nÖdeme açıklamasına daire numaranızı yazmayı unutmayın.",
+        "contractInfo": "Sözleşme sorularınız için lütfen iletişim bilgilerinizi bırakın, müşteri temsilcimiz sizi arasın."
+      },
+      "leadScore": {
+        "hot": "Randevu Oluşturulabilir",
+        "warm": "Potansiyel Eşleşme",
+        "cold": "Araştırma Süreci",
+        "hotDesc": "Danışmanımızla görüşmek için uygunsunuz.",
+        "warmDesc": "Kriterlerinize uygun portföy araştırılacak.",
+        "coldDesc": "Size özel raporlar gönderebiliriz."
+      },
+      "messages": {
+        "hotLeadAlert": "🌟 Harika! Bilgileriniz başarıyla alındı.\n\nKıdemli emlak danışmanımız talebinizi inceleyip 30 dakika içinde sizinle iletişime geçecektir.\n\n📞 Telefonunuzu yanınızda bulundurun!",
+        "warmLeadAlert": "✅ Teşekkürler! Bilgileriniz kaydedildi.\n\nEmlak danışmanımız 24 saat içinde sizinle iletişime geçerek taleplerinizi görüşecek ve size en uygun mülkleri gösterecektir.\n\n💡 Bu süre zarfında ilanlarımıza göz atabilirsiniz.",
+        "coldLeadResponse": "Anlıyorum, henüz araştırma aşamasındasınız.\n\nSize yardımcı olabilecek bazı kaynaklarımız var:\n• Bölge fiyat rehberi\n• Yatırım analiz raporu\n• Piyasa trend raporu\n\nE-posta adresinizi bırakırsanız bu raporları size gönderelim.",
+        "searchingProperties": "Kriterlerinize uygun ilanları arıyorum...",
+        "propertiesFound": "Size uygun ilanlarımız:",
+        "noPropertiesFound": "Şu an kriterlerinize uygun aktif ilanımız bulunmuyor.\n\nAncak danışmanımız sizin için özel arama yapabilir. İletişim bilgilerinizi bırakır mısınız?",
+        "investmentMatch": "Yatırım için mükemmel seçim!\n\nYüksek kira getirisi olan lokasyonları arıyorum...",
+        "residenceMatch": "Oturum için en iyi seçeneklerimizi getiriyorum!\n\nSosyal olanaklar ve ulaşım kriterlerine göre arıyorum...",
+        "appointmentConfirmed": "Randevunuz onaylandı!\n\nAdres ve hatırlatma SMS olarak gönderilecektir.\n\n📍 Konum bilgisi randevudan 1 saat önce iletilecek.",
+        "valuationResult": "Yapay zeka değerleme sonucunuz hazır!",
+        "upsellHigherBudget": "💡 Bütçenizi biraz esnetirseniz şu harika seçeneklere bakabilirsiniz:",
+        "upsellDifferentType": "🏠 Farklı emlak türlerinde alternatiflerimiz var:",
+        "upsellNearby": "📍 Size yakın popüler ilanlarımız:",
+        "alternativeQuestion": "Bu seçeneklerden biri ilginizi çekti mi?",
+        "schedulePrompt": "Danışmanımız şu an müsait. Hemen bir online görüşme veya ofis randevusu planlamak ister misiniz?",
+        "scheduleYes": "📅 Randevu Oluştur",
+        "scheduleNo": "Hayır, teşekkürler",
+        "upsellYes": "Evet, ilgileniyorum",
+        "upsellNo": "Hayır, başka arayın"
+      },
+      "thankYou": "Teşekkürler, bilgileriniz alındı!\n\n✅ Danışmanımız kısa süre içinde sizinle iletişime geçecektir.\n\n🔍 Arama başlatıldı: Kriterlerinize uygun mülkleri sizin için tarayacağız ve en iyi seçenekleri sunacağız.\n\n📱 Telefonunuzu açık tutun, iyi günler!",
+      "viewDetails": "Detayları Gör",
+      "schedule": "Randevu Al",
+      "showMore": "Daha Fazla Göster",
+      "loading": "Yükleniyor...",
+      "contactForm": {
+        "title": "İletişim Bilgileri",
+        "namePlaceholder": "Ad Soyad *",
+        "phonePlaceholder": "Telefon *",
+        "emailPlaceholder": "E-posta",
+        "error": "Lütfen ad ve telefon bilgilerini giriniz."
+      },
+      "notificationBubble": {
+        "greeting": "Merhaba! Size yardımcı olabilir miyim?",
+        "subtitle": "Ön Büro Asistanınız",
+        "timestamp": "Az önce"
+      }
+    }
   },
   "common": {
     "loading": "Yükleniyor...",
@@ -2017,22 +2200,7 @@
       "France": "Fransa",
       "Spain": "İspanya",
       "Italy": "İtalya",
-      "Japan": "Japonya",
-      "South Korea": "Güney Kore",
-      "China": "Çin",
-      "Singapore": "Singapur",
-      "Turkey": "Türkiye",
-      "Unknown": "Bilinmeyen",
-      "Various": "Çeşitli",
-      "Multiple": "Çoklu"
-    },
-    "languages": {
-      "English": "İngilizce",
-      "Spanish": "İspanyolca",
-      "French": "Fransızca",
-      "German": "Almanca",
-      "Italian": "İtalyanca",
-      "Japanese": "Japonca",
+      "Japan": "Japonca",
       "Korean": "Korece",
       "Chinese": "Çince",
       "Chinese (Mandarin)": "Çince (Mandarin)",
@@ -2629,191 +2797,6 @@
     "role_admin": "Yönetici",
     "role_member": "Üye"
   },
-  "widget": {
-    "realestate": {
-      "title": "Emlak Asistanı",
-      "subtitle": "Ön Büro Asistanınız",
-      "online": "Çevrimiçi",
-      "placeholder": "Mesajınızı yazın...",
-      "welcome": "Merhaba! Ben dijital ön büro asistanınız. Size en uygun portföyü sunmak için birkaç hızlı soru soracağım.",
-      "quickReplies": {
-        "buy": "Ev almak istiyorum",
-        "rent": "Kiralık arıyorum",
-        "sell": "Evimi satmak istiyorum",
-        "value": "Evimin değerini öğreneyim",
-        "tenant": "Kiracı desteği"
-      },
-      "leadQualification": {
-        "propertyType": "Ne tür bir gayrimenkul arıyorsunuz?",
-        "purpose": "Yatırım için mi yoksa oturum için mi bakıyorsunuz?",
-        "purposeOptions": {
-          "investment": "Yatırım",
-          "residence": "Oturum",
-          "both": "Her ikisi de olabilir"
-        },
-        "budget": "Bütçe aralığınız nedir?",
-        "budgetNote": "Size en uygun portföyü sunmak için bütçenizi bilmem gerekiyor.",
-        "location": "Hangi bölgeleri tercih edersiniz?",
-        "timeline": "Ne zaman taşınmayı planlıyorsunuz?",
-        "timelineNote": "Bu bilgi, size öncelik vermemizi sağlar.",
-        "city": "Hangi şehirde arıyorsunuz?",
-        "cityNote": "Lokasyonu bilmem önemli, size yakın seçenekler sunacağım.",
-        "suburb": "Hangi semtte/ilçede arıyorsunuz?",
-        "suburbNote": "Belirli bir bölge tercihiniz var mı?",
-        "bedrooms": "Kaç yatak odası olmalı?",
-        "bedroomsNote": "Aile büyüklüğünüze göre seçin.",
-        "bathrooms": "Kaç banyo olmalı?",
-        "bathroomsNote": "Konfor tercihinizi belirtin.",
-        "preApproval": "Banka ön onayınız var mı?",
-        "preApprovalNote": "Ön onay, işlemleri çok hızlandırır.",
-        "contact": "Sizinle iletişime geçebilmemiz için bilgilerinizi paylaşır mısınız?",
-        "income": "Aylık net hane geliriniz ne kadar? (Örn: 50000)",
-        "incomeNote": "Kredi hesaplaması için gerekli",
-        "expenses": "Aylık kira ve kredi gibi düzenli giderleriniz ne kadar?",
-        "expensesNote": "Ödeme gücünüzü hesaplamak için kullanacağız.",
-        "downPayment": "Ne kadar peşinat ayırabilirsiniz?",
-        "downPaymentNote": "Mortgage hesaplaması için önemli",
-        "affordabilityResult": "💰 Hesaplamalarıma göre, yaklaşık {amount} tutarına kadar ev alabilirsiniz.",
-        "affordabilityNote": "Bu bütçe ile ilgilenir misiniz?",
-        "affordabilityWarning": "⚠️ Bütçeniz biraz kısıtlı görünüyor. Daha uygun fiyatlı seçeneklere bakabiliriz veya kredi başvurusu konusunda danışmanımız yardımcı olabilir.",
-        "affordabilitySuccess": "✅ Bütçeniz gayet uygun görünüyor!"
-      },
-      "propertyTypes": {
-        "apartment": "Daire",
-        "villa": "Villa",
-        "house": "Müstakil Ev",
-        "land": "Arsa",
-        "commercial": "Ticari"
-      },
-      "budgetRanges": {
-        "label1": "1-3 Milyon TL",
-        "label2": "3-5 Milyon TL",
-        "label3": "5-10 Milyon TL",
-        "label4": "10-20 Milyon TL",
-        "label5": "20+ Milyon TL"
-      },
-      "rentBudgetRanges": {
-        "label1": "10.000 - 20.000 TL",
-        "label2": "20.000 - 35.000 TL",
-        "label3": "35.000 - 50.000 TL",
-        "label4": "50.000 - 75.000 TL",
-        "label5": "75.000+ TL"
-      },
-      "timelines": {
-        "immediate": "Hemen (Bu ay)",
-        "soon": "1-3 ay içinde",
-        "later": "3-6 ay içinde",
-        "browsing": "Sadece piyasayı araştırıyorum"
-      },
-      "bedroomOptions": {
-        "1": "1 Yatak Odası",
-        "2": "2 Yatak Odası",
-        "3": "3 Yatak Odası",
-        "4": "4 Yatak Odası",
-        "5plus": "5+ Yatak Odası",
-        "any": "Farketmez"
-      },
-      "bathroomOptions": {
-        "1": "1 Banyo",
-        "2": "2 Banyo",
-        "3plus": "3+ Banyo",
-        "any": "Farketmez"
-      },
-      "yesNo": {
-        "yes": "Evet, var",
-        "no": "Hayır, yok",
-        "apply": "Başvuracağım"
-      },
-      "appointmentSlots": {
-        "title": "Danışmanımız bu saatlerde müsait:",
-        "select": "Randevu Seç"
-      },
-      "valuation": {
-        "title": "Ücretsiz Değerleme",
-        "subtitle": "Yapay zeka destekli tahmini değer",
-        "address": "Adres (İlçe, Mahalle)",
-        "area": "Metrekare (m²)",
-        "rooms": "Oda Sayısı",
-        "buildingAge": "Bina Yaşı",
-        "submit": "Değerleme Al",
-        "result": "Tahmini Değer Aralığı"
-      },
-      "tenant": {
-        "title": "Kiracı Destek",
-        "greeting": "Size nasıl yardımcı olabilirim?",
-        "options": {
-          "issue": "Arıza Bildirimi",
-          "payment": "Kira Ödeme Bilgisi",
-          "contract": "Sözleşme Sorusu",
-          "key": "Anahtar Teslimi",
-          "other": "Diğer"
-        },
-        "issueTypes": {
-          "plumbing": "Su Tesisatı",
-          "electrical": "Elektrik",
-          "heating": "Isıtma/Kombi",
-          "structural": "Yapısal Sorun",
-          "other": "Diğer"
-        },
-        "urgency": {
-          "emergency": "Acil (Su baskını, gaz kaçağı vb.)",
-          "normal": "Normal",
-          "low": "Acil değil"
-        },
-        "photoPrompt": "Sorunu daha iyi anlamamız için fotoğraf ekleyebilirsiniz:",
-        "photoButton": "Fotoğraf Yükle",
-        "submitted": "Talebiniz alındı! Anlaşmalı servisimiz en kısa sürede sizinle iletişime geçecek.",
-        "rentInfo": "Kira Ödeme Bilgileri:\n\nIBAN: TR00 0000 0000 0000 0000 0000 00\nAlıcı: Emlak Yönetimi A.Ş.\n\nÖdeme açıklamasına daire numaranızı yazmayı unutmayın.",
-        "contractInfo": "Sözleşme sorularınız için lütfen iletişim bilgilerinizi bırakın, müşteri temsilcimiz sizi arasın."
-      },
-      "leadScore": {
-        "hot": "Randevu Oluşturulabilir",
-        "warm": "Potansiyel Eşleşme",
-        "cold": "Araştırma Süreci",
-        "hotDesc": "Danışmanımızla görüşmek için uygunsunuz.",
-        "warmDesc": "Kriterlerinize uygun portföy araştırılacak.",
-        "coldDesc": "Size özel raporlar gönderebiliriz."
-      },
-      "messages": {
-        "hotLeadAlert": "🌟 Harika! Bilgileriniz başarıyla alındı.\n\nKıdemli emlak danışmanımız talebinizi inceleyip 30 dakika içinde sizinle iletişime geçecektir.\n\n📞 Telefonunuzu yanınızda bulundurun!",
-        "warmLeadAlert": "✅ Teşekkürler! Bilgileriniz kaydedildi.\n\nEmlak danışmanımız 24 saat içinde sizinle iletişime geçerek taleplerinizi görüşecek ve size en uygun mülkleri gösterecektir.\n\n💡 Bu süre zarfında ilanlarımıza göz atabilirsiniz.",
-        "coldLeadResponse": "Anlıyorum, henüz araştırma aşamasındasınız.\n\nSize yardımcı olabilecek bazı kaynaklarımız var:\n• Bölge fiyat rehberi\n• Yatırım analiz raporu\n• Piyasa trend raporu\n\nE-posta adresinizi bırakırsanız bu raporları size gönderelim.",
-        "searchingProperties": "Kriterlerinize uygun ilanları arıyorum...",
-        "propertiesFound": "Size uygun ilanlarımız:",
-        "noPropertiesFound": "Şu an kriterlerinize uygun aktif ilanımız bulunmuyor.\n\nAncak danışmanımız sizin için özel arama yapabilir. İletişim bilgilerinizi bırakır mısınız?",
-        "investmentMatch": "Yatırım için mükemmel seçim!\n\nYüksek kira getirisi olan lokasyonları arıyorum...",
-        "residenceMatch": "Oturum için en iyi seçeneklerimizi getiriyorum!\n\nSosyal olanaklar ve ulaşım kriterlerine göre arıyorum...",
-        "appointmentConfirmed": "Randevunuz onaylandı!\n\nAdres ve hatırlatma SMS olarak gönderilecektir.\n\n📍 Konum bilgisi randevudan 1 saat önce iletilecek.",
-        "valuationResult": "Yapay zeka değerleme sonucunuz hazır!",
-        "upsellHigherBudget": "💡 Bütçenizi biraz esnetirseniz şu harika seçeneklere bakabilirsiniz:",
-        "upsellDifferentType": "🏠 Farklı emlak türlerinde alternatiflerimiz var:",
-        "upsellNearby": "📍 Size yakın popüler ilanlarımız:",
-        "alternativeQuestion": "Bu seçeneklerden biri ilginizi çekti mi?",
-        "schedulePrompt": "Danışmanımız şu an müsait. Hemen bir online görüşme veya ofis randevusu planlamak ister misiniz?",
-        "scheduleYes": "📅 Randevu Oluştur",
-        "scheduleNo": "Hayır, teşekkürler",
-        "upsellYes": "Evet, ilgileniyorum",
-        "upsellNo": "Hayır, başka arayın"
-      },
-      "thankYou": "Teşekkürler, bilgileriniz alındı!\n\n✅ Danışmanımız kısa süre içinde sizinle iletişime geçecektir.\n\n🔍 Arama başlatıldı: Kriterlerinize uygun mülkleri sizin için tarayacağız ve en iyi seçenekleri sunacağız.\n\n📱 Telefonunuzu açık tutun, iyi günler!",
-      "viewDetails": "Detayları Gör",
-      "schedule": "Randevu Al",
-      "showMore": "Daha Fazla Göster",
-      "loading": "Yükleniyor...",
-      "contactForm": {
-        "title": "İletişim Bilgileri",
-        "namePlaceholder": "Ad Soyad *",
-        "phonePlaceholder": "Telefon *",
-        "emailPlaceholder": "E-posta",
-        "error": "Lütfen ad ve telefon bilgilerini giriniz."
-      },
-      "notificationBubble": {
-        "greeting": "Merhaba! Size yardımcı olabilir miyim?",
-        "subtitle": "Ön Büro Asistanınız",
-        "timestamp": "Az önce"
-      }
-    }
-  },
   "mortgage": {
     "title": "Mortgage Hesaplayıcı",
     "subtitle": "Aylık ödemenizi hesaplayın",
@@ -2894,36 +2877,6 @@
     "upgradeTitle": "Öncelikli Destek Alın",
     "upgradeDesc": "Daha hızlı yanıt süreleri ve canlı sohbet için Pro veya Business planına yükseltin.",
     "viewPlans": "Planları Görüntüle"
-  },
-  "widget": {
-    "colors": "Renkler",
-    "colorsDesc": "Widget renklerini özelleştirin",
-    "primaryColor": "Ana Renk",
-    "buttonColor": "Buton Rengi",
-    "textColor": "Metin Rengi",
-    "appearance": "Görünüm",
-    "appearanceDesc": "Widget görünümünü özelleştirin",
-    "position": "Pozisyon",
-    "right": "Sağ",
-    "left": "Sol",
-    "size": "Boyut",
-    "small": "Küçük",
-    "medium": "Orta",
-    "large": "Büyük",
-    "logo": "Chatbot Logosu",
-    "logoDesc": "Chatbotunuz için özel bir logo yükleyin",
-    "uploadLogo": "Logo Yükle",
-    "removeLogo": "Logoyu Kaldır",
-    "branding": "Markalama",
-    "brandingDesc": "PylonChat markalamasını yönetin",
-    "showBranding": "Markayı Göster",
-    "showBrandingDesc": "Chat widget üzerinde 'Powered by PylonChat' yazısını göster",
-    "hideBranding": "Markayı Gizle",
-    "hideBrandingDesc": "Chat widget üzerinden 'Powered by PylonChat' yazısını kaldır",
-    "brandingUpgradeMessage": "Widget üzerinden PylonChat markasını kaldırmak için Pro veya daha üst bir plana geçin",
-    "upgradePlan": "Planı Yükselt",
-    "previewSample": "Deneme Önizlemesi",
-    "saveError": "Kayıt başarısız"
   },
   "ChatWidget": {
     "online": "Çevrimiçi",

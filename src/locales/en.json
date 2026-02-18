@@ -1204,7 +1204,190 @@
     "brandingUpgradeMessage": "Upgrade to Pro or higher to remove PylonChat branding from your widget",
     "upgradePlan": "Upgrade Plan",
     "previewSample": "Trial Preview",
-    "saveError": "Save failed"
+    "saveError": "Save failed",
+    "realestate": {
+      "title": "Real Estate Assistant",
+      "subtitle": "Your Front Desk Assistant",
+      "online": "Online",
+      "placeholder": "Type your message...",
+      "welcome": "Hello! I'm your digital front desk assistant. I'll ask you a few quick questions to find the best properties for you.",
+      "quickReplies": {
+        "buy": "I want to buy",
+        "rent": "Looking to rent",
+        "sell": "I want to sell my property",
+        "value": "Get property valuation",
+        "tenant": "Tenant support"
+      },
+      "leadQualification": {
+        "propertyType": "What type of property are you looking for?",
+        "purpose": "Are you looking for investment or residence?",
+        "purposeOptions": {
+          "investment": "Investment",
+          "residence": "Residence",
+          "both": "Could be either"
+        },
+        "budget": "What is your budget range?",
+        "budgetNote": "I need to know your budget to show you the best options.",
+        "location": "Which areas do you prefer?",
+        "timeline": "When are you planning to move?",
+        "timelineNote": "This helps us prioritize your search.",
+        "city": "Which city are you searching in?",
+        "cityNote": "Knowing your location helps me find options nearby.",
+        "suburb": "Which suburb or district do you prefer?",
+        "suburbNote": "Do you have a specific area preference?",
+        "bedrooms": "How many bedrooms do you need?",
+        "bedroomsNote": "Select based on your family size.",
+        "bathrooms": "How many bathrooms do you need?",
+        "bathroomsNote": "Specify your comfort preference.",
+        "preApproval": "Do you have mortgage pre-approval?",
+        "preApprovalNote": "Pre-approval speeds up the process significantly.",
+        "contact": "Please share your contact info so we can reach you.",
+        "income": "What is your monthly household net income? (e.g. 5000)",
+        "incomeNote": "Required for loan calculation",
+        "expenses": "What are your total monthly expenses (rent + loans)?",
+        "expensesNote": "Used to calculate affordability",
+        "downPayment": "How much down payment can you afford?",
+        "downPaymentNote": "Important for mortgage calculation",
+        "affordabilityResult": "💰 Based on my calculations, you can afford a property up to {amount}.",
+        "affordabilityNote": "Would you like to see properties in this range?",
+        "affordabilityWarning": "⚠️ Your budget seems a bit tight. Shall we look at more affordable options?",
+        "affordabilitySuccess": "✅ Your budget looks great!"
+      },
+      "propertyTypes": {
+        "apartment": "Apartment",
+        "villa": "Villa",
+        "house": "House",
+        "land": "Land",
+        "commercial": "Commercial"
+      },
+      "budgetRanges": {
+        "label1": "$100K-$300K",
+        "label2": "$300K-$500K",
+        "label3": "$500K-$800K",
+        "label4": "$800K-$1.5M",
+        "label5": "$1.5M+"
+      },
+      "rentBudgetRanges": {
+        "label1": "$500 - $1,000",
+        "label2": "$1,000 - $2,000",
+        "label3": "$2,000 - $3,500",
+        "label4": "$3,500 - $5,000",
+        "label5": "$5,000+"
+      },
+      "timelines": {
+        "immediate": "Immediately (This month)",
+        "soon": "Within 1-3 months",
+        "later": "Within 3-6 months",
+        "browsing": "Just browsing the market"
+      },
+      "bedroomOptions": {
+        "1": "1 Bedroom",
+        "2": "2 Bedrooms",
+        "3": "3 Bedrooms",
+        "4": "4 Bedrooms",
+        "5plus": "5+ Bedrooms",
+        "any": "Any"
+      },
+      "bathroomOptions": {
+        "1": "1 Bathroom",
+        "2": "2 Bathrooms",
+        "3plus": "3+ Bathrooms",
+        "any": "Any"
+      },
+      "yesNo": {
+        "yes": "Yes, I have it",
+        "no": "No, not yet",
+        "apply": "Will apply soon"
+      },
+      "appointmentSlots": {
+        "title": "Our advisor is available at these times:",
+        "select": "Select Slot"
+      },
+      "valuation": {
+        "title": "Free Valuation",
+        "subtitle": "AI-powered estimate",
+        "address": "Address (District, Neighborhood)",
+        "area": "Square footage",
+        "rooms": "Bedrooms",
+        "buildingAge": "Building Age",
+        "submit": "Get Valuation",
+        "result": "Estimated Value Range"
+      },
+      "tenant": {
+        "title": "Tenant Support",
+        "greeting": "How can I help you?",
+        "options": {
+          "issue": "Report Issue",
+          "payment": "Rent Payment Info",
+          "contract": "Contract Question",
+          "key": "Key Handover",
+          "other": "Other"
+        },
+        "issueTypes": {
+          "plumbing": "Plumbing",
+          "electrical": "Electrical",
+          "heating": "Heating/HVAC",
+          "structural": "Structural Issue",
+          "other": "Other"
+        },
+        "urgency": {
+          "emergency": "Emergency (Flooding, gas leak, etc.)",
+          "normal": "Normal",
+          "low": "Not urgent"
+        },
+        "photoPrompt": "You can add photos to help us understand the issue:",
+        "photoButton": "Upload Photo",
+        "submitted": "Your request has been received! Our service team will contact you shortly.",
+        "rentInfo": "Rent Payment Information:\n\nBank: Example Bank\nAccount: 1234567890\nRouting: 123456789\n\nPlease include your unit number in the memo.",
+        "contractInfo": "For contract questions, please leave your contact info and our representative will call you."
+      },
+      "leadScore": {
+        "hot": "Appointment Available",
+        "warm": "Potential Match",
+        "cold": "Research Phase",
+        "hotDesc": "You are eligible for a consultation.",
+        "warmDesc": "We will search for properties matching your criteria.",
+        "coldDesc": "We can share market reports with you."
+      },
+      "messages": {
+        "hotLeadAlert": "🌟 Excellent! Your information has been received.\n\nOur senior property advisor will personally review your requirements and contact you within the next 30 minutes.\n\n📞 Keep your phone nearby!",
+        "warmLeadAlert": "✅ Thank you! Your details have been saved.\n\nOur property advisor will contact you within 24 hours to discuss your requirements and show you the best matching properties.\n\n💡 In the meantime, feel free to browse our listings.",
+        "coldLeadResponse": "I understand you're still in the research phase.\n\nWe have some helpful resources:\n• Area price guide\n• Investment analysis report\n• Market trend report\n\nLeave your email and we'll send these to you.",
+        "searchingProperties": "Searching for properties matching your criteria...",
+        "propertiesFound": "Here are properties matching your criteria:",
+        "noPropertiesFound": "We don't have active listings matching your criteria at the moment.\n\nHowever, our advisor can do a custom search for you. Would you like to leave your contact info?",
+        "investmentMatch": "Great choice for investment!\n\nSearching for high rental yield locations...",
+        "residenceMatch": "Getting the best options for your new home!\n\nSearching based on amenities and transportation...",
+        "appointmentConfirmed": "Your appointment is confirmed!\n\nAddress and reminder will be sent via SMS.\n\n📍 Location details will be shared 1 hour before.",
+        "valuationResult": "Your AI valuation is ready!",
+        "upsellHigherBudget": "💡 If you stretch your budget a bit, check out these great options:",
+        "upsellDifferentType": "🏠 We have alternatives in different property types:",
+        "upsellNearby": "📍 Popular listings near your preferred area:",
+        "alternativeQuestion": "Interested in any of these options?",
+        "schedulePrompt": "Our advisor is available. Would you like to schedule an online meeting or office visit now?",
+        "scheduleYes": "📅 Schedule Meeting",
+        "scheduleNo": "No, thanks",
+        "upsellYes": "Yes, interested",
+        "upsellNo": "No, keep searching"
+      },
+      "thankYou": "Thank you, your information has been received!\n\n✅ Our advisor will contact you shortly.\n\n🔍 Search started: We'll scan properties matching your criteria and present the best options.\n\n📱 Keep your phone handy, have a great day!",
+      "viewDetails": "View Details",
+      "schedule": "Schedule Viewing",
+      "showMore": "Show More",
+      "loading": "Loading...",
+      "contactForm": {
+        "title": "Contact Information",
+        "namePlaceholder": "Full Name *",
+        "phonePlaceholder": "Phone *",
+        "emailPlaceholder": "Email",
+        "error": "Please enter your name and phone number."
+      },
+      "notificationBubble": {
+        "greeting": "Hello! Can I help you?",
+        "subtitle": "Your Front Desk Assistant",
+        "timestamp": "Just now"
+      }
+    }
   },
   "common": {
     "loading": "Loading...",
@@ -2651,191 +2834,6 @@
     "email": "Email",
     "role_admin": "Admin",
     "role_member": "Member"
-  },
-  "widget": {
-    "realestate": {
-      "title": "Real Estate Assistant",
-      "subtitle": "Your Front Desk Assistant",
-      "online": "Online",
-      "placeholder": "Type your message...",
-      "welcome": "Hello! I'm your digital front desk assistant. I'll ask you a few quick questions to find the best properties for you.",
-      "quickReplies": {
-        "buy": "I want to buy",
-        "rent": "Looking to rent",
-        "sell": "I want to sell my property",
-        "value": "Get property valuation",
-        "tenant": "Tenant support"
-      },
-      "leadQualification": {
-        "propertyType": "What type of property are you looking for?",
-        "purpose": "Are you looking for investment or residence?",
-        "purposeOptions": {
-          "investment": "Investment",
-          "residence": "Residence",
-          "both": "Could be either"
-        },
-        "budget": "What is your budget range?",
-        "budgetNote": "I need to know your budget to show you the best options.",
-        "location": "Which areas do you prefer?",
-        "timeline": "When are you planning to move?",
-        "timelineNote": "This helps us prioritize your search.",
-        "city": "Which city are you searching in?",
-        "cityNote": "Knowing your location helps me find options nearby.",
-        "suburb": "Which suburb or district do you prefer?",
-        "suburbNote": "Do you have a specific area preference?",
-        "bedrooms": "How many bedrooms do you need?",
-        "bedroomsNote": "Select based on your family size.",
-        "bathrooms": "How many bathrooms do you need?",
-        "bathroomsNote": "Specify your comfort preference.",
-        "preApproval": "Do you have mortgage pre-approval?",
-        "preApprovalNote": "Pre-approval speeds up the process significantly.",
-        "contact": "Please share your contact info so we can reach you.",
-        "income": "What is your monthly household net income? (e.g. 5000)",
-        "incomeNote": "Required for loan calculation",
-        "expenses": "What are your total monthly expenses (rent + loans)?",
-        "expensesNote": "Used to calculate affordability",
-        "downPayment": "How much down payment can you afford?",
-        "downPaymentNote": "Important for mortgage calculation",
-        "affordabilityResult": "💰 Based on my calculations, you can afford a property up to {amount}.",
-        "affordabilityNote": "Would you like to see properties in this range?",
-        "affordabilityWarning": "⚠️ Your budget seems a bit tight. Shall we look at more affordable options?",
-        "affordabilitySuccess": "✅ Your budget looks great!"
-      },
-      "propertyTypes": {
-        "apartment": "Apartment",
-        "villa": "Villa",
-        "house": "House",
-        "land": "Land",
-        "commercial": "Commercial"
-      },
-      "budgetRanges": {
-        "label1": "$100K-$300K",
-        "label2": "$300K-$500K",
-        "label3": "$500K-$800K",
-        "label4": "$800K-$1.5M",
-        "label5": "$1.5M+"
-      },
-      "rentBudgetRanges": {
-        "label1": "$500 - $1,000",
-        "label2": "$1,000 - $2,000",
-        "label3": "$2,000 - $3,500",
-        "label4": "$3,500 - $5,000",
-        "label5": "$5,000+"
-      },
-      "timelines": {
-        "immediate": "Immediately (This month)",
-        "soon": "Within 1-3 months",
-        "later": "Within 3-6 months",
-        "browsing": "Just browsing the market"
-      },
-      "bedroomOptions": {
-        "1": "1 Bedroom",
-        "2": "2 Bedrooms",
-        "3": "3 Bedrooms",
-        "4": "4 Bedrooms",
-        "5plus": "5+ Bedrooms",
-        "any": "Any"
-      },
-      "bathroomOptions": {
-        "1": "1 Bathroom",
-        "2": "2 Bathrooms",
-        "3plus": "3+ Bathrooms",
-        "any": "Any"
-      },
-      "yesNo": {
-        "yes": "Yes, I have it",
-        "no": "No, not yet",
-        "apply": "Will apply soon"
-      },
-      "appointmentSlots": {
-        "title": "Our advisor is available at these times:",
-        "select": "Select Slot"
-      },
-      "valuation": {
-        "title": "Free Valuation",
-        "subtitle": "AI-powered estimate",
-        "address": "Address (District, Neighborhood)",
-        "area": "Square footage",
-        "rooms": "Bedrooms",
-        "buildingAge": "Building Age",
-        "submit": "Get Valuation",
-        "result": "Estimated Value Range"
-      },
-      "tenant": {
-        "title": "Tenant Support",
-        "greeting": "How can I help you?",
-        "options": {
-          "issue": "Report Issue",
-          "payment": "Rent Payment Info",
-          "contract": "Contract Question",
-          "key": "Key Handover",
-          "other": "Other"
-        },
-        "issueTypes": {
-          "plumbing": "Plumbing",
-          "electrical": "Electrical",
-          "heating": "Heating/HVAC",
-          "structural": "Structural Issue",
-          "other": "Other"
-        },
-        "urgency": {
-          "emergency": "Emergency (Flooding, gas leak, etc.)",
-          "normal": "Normal",
-          "low": "Not urgent"
-        },
-        "photoPrompt": "You can add photos to help us understand the issue:",
-        "photoButton": "Upload Photo",
-        "submitted": "Your request has been received! Our service team will contact you shortly.",
-        "rentInfo": "Rent Payment Information:\n\nBank: Example Bank\nAccount: 1234567890\nRouting: 123456789\n\nPlease include your unit number in the memo.",
-        "contractInfo": "For contract questions, please leave your contact info and our representative will call you."
-      },
-      "leadScore": {
-        "hot": "Appointment Available",
-        "warm": "Potential Match",
-        "cold": "Research Phase",
-        "hotDesc": "You are eligible for a consultation.",
-        "warmDesc": "We will search for properties matching your criteria.",
-        "coldDesc": "We can share market reports with you."
-      },
-      "messages": {
-        "hotLeadAlert": "🌟 Excellent! Your information has been received.\n\nOur senior property advisor will personally review your requirements and contact you within the next 30 minutes.\n\n📞 Keep your phone nearby!",
-        "warmLeadAlert": "✅ Thank you! Your details have been saved.\n\nOur property advisor will contact you within 24 hours to discuss your requirements and show you the best matching properties.\n\n💡 In the meantime, feel free to browse our listings.",
-        "coldLeadResponse": "I understand you're still in the research phase.\n\nWe have some helpful resources:\n• Area price guide\n• Investment analysis report\n• Market trend report\n\nLeave your email and we'll send these to you.",
-        "searchingProperties": "Searching for properties matching your criteria...",
-        "propertiesFound": "Here are properties matching your criteria:",
-        "noPropertiesFound": "We don't have active listings matching your criteria at the moment.\n\nHowever, our advisor can do a custom search for you. Would you like to leave your contact info?",
-        "investmentMatch": "Great choice for investment!\n\nSearching for high rental yield locations...",
-        "residenceMatch": "Getting the best options for your new home!\n\nSearching based on amenities and transportation...",
-        "appointmentConfirmed": "Your appointment is confirmed!\n\nAddress and reminder will be sent via SMS.\n\n📍 Location details will be shared 1 hour before.",
-        "valuationResult": "Your AI valuation is ready!",
-        "upsellHigherBudget": "💡 If you stretch your budget a bit, check out these great options:",
-        "upsellDifferentType": "🏠 We have alternatives in different property types:",
-        "upsellNearby": "📍 Popular listings near your preferred area:",
-        "alternativeQuestion": "Interested in any of these options?",
-        "schedulePrompt": "Our advisor is available. Would you like to schedule an online meeting or office visit now?",
-        "scheduleYes": "📅 Schedule Meeting",
-        "scheduleNo": "No, thanks",
-        "upsellYes": "Yes, interested",
-        "upsellNo": "No, keep searching"
-      },
-      "thankYou": "Thank you, your information has been received!\n\n✅ Our advisor will contact you shortly.\n\n🔍 Search started: We'll scan properties matching your criteria and present the best options.\n\n📱 Keep your phone handy, have a great day!",
-      "viewDetails": "View Details",
-      "schedule": "Schedule Viewing",
-      "showMore": "Show More",
-      "loading": "Loading...",
-      "contactForm": {
-        "title": "Contact Information",
-        "namePlaceholder": "Full Name *",
-        "phonePlaceholder": "Phone *",
-        "emailPlaceholder": "Email",
-        "error": "Please enter your name and phone number."
-      },
-      "notificationBubble": {
-        "greeting": "Hello! Can I help you?",
-        "subtitle": "Your Front Desk Assistant",
-        "timestamp": "Just now"
-      }
-    }
   },
   "mortgage": {
     "title": "Mortgage Calculator",

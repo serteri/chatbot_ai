@@ -2702,7 +2702,18 @@
     "brandingUpgradeMessage": "Actualice a Pro o superior para eliminar la marca PylonChat de su widget",
     "upgradePlan": "Actualizar Plan",
     "previewSample": "Vista Previa de Prueba",
-    "saveError": "Error al guardar"
+    "saveError": "Error al guardar",
+    "title": "Asistente Inmobiliario",
+    "subtitle": "Su Asistente de Recepción",
+    "online": "En línea",
+    "defaultWelcomeMessage": "¡Hola! ¿Cómo puedo ayudarte?",
+    "realEstateAssistant": "Asistente Inmobiliario",
+    "educationAdvisor": "Asesor Educativo",
+    "sources": "Fuentes",
+    "errors": {
+      "noId": "ID del chatbot no encontrado.",
+      "generic": "Ocurrió un error."
+    }
   },
   "ChatWidget": {
     "online": "En línea",

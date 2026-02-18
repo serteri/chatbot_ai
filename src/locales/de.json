@@ -1180,7 +1180,168 @@
     "hideBranding": "Branding ausblenden",
     "hideBrandingDesc": "'Powered by PylonChat' aus dem Chat-Widget entfernen",
     "brandingUpgradeMessage": "Upgraden Sie auf Pro oder höher, um das PylonChat-Branding aus Ihrem Widget zu entfernen",
-    "upgradePlan": "Plan upgraden"
+    "upgradePlan": "Plan upgraden",
+    "realestate": {
+      "title": "Immobilien-Assistent",
+      "subtitle": "Ihr Empfangs-Assistent",
+      "online": "Online",
+      "placeholder": "Schreiben Sie Ihre Nachricht...",
+      "welcome": "Hallo! Ich bin Ihr digitaler Empfangs-Assistent. Ich stelle Ihnen ein paar kurze Fragen, um die besten Immobilien für Sie zu finden.",
+      "quickReplies": {
+        "buy": "Ich möchte kaufen",
+        "rent": "Ich suche eine Mietwohnung",
+        "sell": "Ich möchte meine Immobilie verkaufen",
+        "value": "Immobilienbewertung erhalten",
+        "tenant": "Mieter-Support"
+      },
+      "leadQualification": {
+        "propertyType": "Welche Art von Immobilie suchen Sie?",
+        "purpose": "Suchen Sie eine Investition oder einen Wohnsitz?",
+        "purposeOptions": {
+          "investment": "Investition",
+          "residence": "Wohnsitz",
+          "both": "Beides möglich"
+        },
+        "budget": "Was ist Ihr Budgetrahmen?",
+        "budgetNote": "Ich muss Ihr Budget kennen, um Ihnen die besten Optionen zu zeigen.",
+        "location": "Welche Gebiete bevorzugen Sie?",
+        "timeline": "Wann planen Sie umzuziehen?",
+        "timelineNote": "Das hilft uns, Ihre Suche zu priorisieren.",
+        "preApproval": "Haben Sie eine Hypotheken-Vorabgenehmigung?",
+        "preApprovalNote": "Eine Vorabgenehmigung beschleunigt den Prozess erheblich.",
+        "contact": "Bitte teilen Sie Ihre Kontaktdaten mit, damit wir Sie erreichen können.",
+        "income": "Wie hoch ist Ihr monatliches Haushaltsnettoeinkommen? (z.B. 5000)",
+        "incomeNote": "Für die Kreditberechnung erforderlich",
+        "expenses": "Wie hoch sind Ihre monatlichen Gesamtausgaben (Miete + Kredite)?",
+        "expensesNote": "Wird zur Berechnung der Erschwinglichkeit verwendet",
+        "downPayment": "Wie viel Eigenkapital können Sie einbringen?",
+        "downPaymentNote": "Wichtig für die Hypothekenberechnung",
+        "affordabilityResult": "💰 Basierend auf meinen Berechnungen können Sie sich eine Immobilie bis zu {amount} leisten.",
+        "affordabilityNote": "Möchten Sie Immobilien in diesem Bereich sehen?",
+        "affordabilityWarning": "⚠️ Ihr Budget scheint etwas knapp zu sein. Sollen wir nach günstigeren Optionen suchen?",
+        "affordabilitySuccess": "✅ Ihr Budget sieht gut aus!"
+      },
+      "propertyTypes": {
+        "apartment": "Wohnung",
+        "villa": "Villa",
+        "house": "Haus",
+        "land": "Grundstück",
+        "commercial": "Gewerbe"
+      },
+      "budgetRanges": {
+        "label1": "100.000€ - 300.000€",
+        "label2": "300.000€ - 500.000€",
+        "label3": "500.000€ - 800.000€",
+        "label4": "800.000€ - 1,5M€",
+        "label5": "1,5M€+"
+      },
+      "rentBudgetRanges": {
+        "label1": "500€ - 1.000€",
+        "label2": "1.000€ - 2.000€",
+        "label3": "2.000€ - 3.500€",
+        "label4": "3.500€ - 5.000€",
+        "label5": "5.000€+"
+      },
+      "timelines": {
+        "immediate": "Sofort (Diesen Monat)",
+        "soon": "Innerhalb von 1-3 Monaten",
+        "later": "Innerhalb von 3-6 Monaten",
+        "browsing": "Ich schaue nur"
+      },
+      "yesNo": {
+        "yes": "Ja, habe ich",
+        "no": "Nein, noch nicht",
+        "apply": "Werde bald beantragen"
+      },
+      "appointmentSlots": {
+        "title": "Unser Berater ist zu diesen Zeiten verfügbar:",
+        "select": "Termin wählen"
+      },
+      "valuation": {
+        "title": "Kostenlose Bewertung",
+        "subtitle": "KI-gestützte Schätzung",
+        "address": "Adresse (Bezirk, Nachbarschaft)",
+        "area": "Quadratmeter",
+        "rooms": "Schlafzimmer",
+        "buildingAge": "Baujahr",
+        "submit": "Bewertung erhalten",
+        "result": "Geschätzte Wertspanne"
+      },
+      "tenant": {
+        "title": "Mieter-Support",
+        "greeting": "Wie kann ich Ihnen helfen?",
+        "options": {
+          "issue": "Problem melden",
+          "payment": "Mietzahlungsinfo",
+          "contract": "Vertragsfrage",
+          "key": "Schlüsselübergabe",
+          "other": "Sonstiges"
+        },
+        "issueTypes": {
+          "plumbing": "Sanitär",
+          "electrical": "Elektrik",
+          "heating": "Heizung/HVAC",
+          "structural": "Strukturelles Problem",
+          "other": "Sonstiges"
+        },
+        "urgency": {
+          "emergency": "Notfall (Überschwemmung, Gasleck, etc.)",
+          "normal": "Normal",
+          "low": "Nicht dringend"
+        },
+        "photoPrompt": "Sie können Fotos hinzufügen, damit wir das Problem besser verstehen:",
+        "photoButton": "Foto hochladen",
+        "submitted": "Ihre Anfrage wurde empfangen! Unser Service-Team wird sich in Kürze mit Ihnen in Verbindung setzen.",
+        "rentInfo": "Mietzahlungsinformationen:\\n\\nBank: Beispielbank\\nKonto: 1234567890\\nBLZ: 123456789\\n\\nBitte geben Sie Ihre Wohnungsnummer im Verwendungszweck an.",
+        "contractInfo": "Bei Vertragsfragen hinterlassen Sie bitte Ihre Kontaktdaten und unser Vertreter wird Sie anrufen."
+      },
+      "leadScore": {
+        "hot": "Termin verfügbar",
+        "warm": "Potenzielle Übereinstimmung",
+        "cold": "Recherchephase",
+        "hotDesc": "Sie sind für eine Beratung berechtigt.",
+        "warmDesc": "Wir werden nach Immobilien suchen, die Ihren Kriterien entsprechen.",
+        "coldDesc": "Wir können Marktberichte mit Ihnen teilen."
+      },
+      "messages": {
+        "hotLeadAlert": "Informationen erhalten.\\n\\nUnser Expertenberater wird Ihre Anfrage priorisieren und sich in Kürze mit Ihnen in Verbindung setzen.",
+        "warmLeadAlert": "Vielen Dank, Informationen erhalten.\\n\\nUnser Berater wird sich bald bei Ihnen melden.",
+        "coldLeadResponse": "Ich verstehe, dass Sie sich noch in der Recherchephase befinden.\\n\\nWir haben einige hilfreiche Ressourcen:\\n• Gebietspreisführer\\n• Investitionsanalysebericht\\n• Markttrendbericht\\n\\nHinterlassen Sie Ihre E-Mail und wir senden Ihnen diese zu.",
+        "searchingProperties": "Suche nach Immobilien, die Ihren Kriterien entsprechen...",
+        "propertiesFound": "Hier sind Immobilien, die Ihren Kriterien entsprechen:",
+        "noPropertiesFound": "Wir haben derzeit keine aktiven Angebote, die Ihren Kriterien entsprechen.\\n\\nUnser Berater kann jedoch eine individuelle Suche für Sie durchführen. Möchten Sie Ihre Kontaktdaten hinterlassen?",
+        "investmentMatch": "Tolle Wahl für Investitionen!\\n\\nSuche nach Standorten mit hoher Mietrendite...",
+        "residenceMatch": "Hole die besten Optionen für Ihr neues Zuhause!\\n\\nSuche basierend auf Ausstattung und Verkehrsanbindung...",
+        "appointmentConfirmed": "Ihr Termin ist bestätigt!\\n\\nAdresse und Erinnerung werden per SMS gesendet.\\n\\n📍 Standortdetails werden 1 Stunde vorher geteilt.",
+        "valuationResult": "Ihre KI-Bewertung ist fertig!",
+        "upsellHigherBudget": "💡 Wenn Sie Ihr Budget etwas erweitern, schauen Sie sich diese tollen Optionen an:",
+        "upsellDifferentType": "🏠 Wir haben Alternativen in verschiedenen Immobilientypen:",
+        "upsellNearby": "📍 Beliebte Angebote in der Nähe Ihres bevorzugten Gebiets:",
+        "alternativeQuestion": "Interessiert an einer dieser Optionen?",
+        "schedulePrompt": "Unser Berater ist verfügbar. Möchten Sie jetzt ein Online-Meeting oder einen Bürobesuch vereinbaren?",
+        "scheduleYes": "📅 Meeting planen",
+        "scheduleNo": "Nein, danke",
+        "upsellYes": "Ja, interessiert",
+        "upsellNo": "Nein, weiter suchen"
+      },
+      "thankYou": "Vielen Dank!",
+      "viewDetails": "Details anzeigen",
+      "schedule": "Besichtigung planen",
+      "showMore": "Mehr anzeigen",
+      "loading": "Laden...",
+      "contactForm": {
+        "title": "Kontaktinformationen",
+        "namePlaceholder": "Vollständiger Name *",
+        "phonePlaceholder": "Telefon *",
+        "emailPlaceholder": "E-Mail",
+        "error": "Bitte geben Sie Ihren Namen und Ihre Telefonnummer ein."
+      },
+      "notificationBubble": {
+        "greeting": "Hallo! Kann ich Ihnen helfen?",
+        "subtitle": "Ihr Empfangs-Assistent",
+        "timestamp": "Gerade eben"
+      }
+    }
   },
   "common": {
     "loading": "Lädt...",
@@ -2600,169 +2761,6 @@
     "role_admin": "Administrator",
     "role_member": "Mitglied"
   },
-  "widget": {
-    "realestate": {
-      "title": "Immobilien-Assistent",
-      "subtitle": "Ihr Empfangs-Assistent",
-      "online": "Online",
-      "placeholder": "Schreiben Sie Ihre Nachricht...",
-      "welcome": "Hallo! Ich bin Ihr digitaler Empfangs-Assistent. Ich stelle Ihnen ein paar kurze Fragen, um die besten Immobilien für Sie zu finden.",
-      "quickReplies": {
-        "buy": "Ich möchte kaufen",
-        "rent": "Ich suche eine Mietwohnung",
-        "sell": "Ich möchte meine Immobilie verkaufen",
-        "value": "Immobilienbewertung erhalten",
-        "tenant": "Mieter-Support"
-      },
-      "leadQualification": {
-        "propertyType": "Welche Art von Immobilie suchen Sie?",
-        "purpose": "Suchen Sie eine Investition oder einen Wohnsitz?",
-        "purposeOptions": {
-          "investment": "Investition",
-          "residence": "Wohnsitz",
-          "both": "Beides möglich"
-        },
-        "budget": "Was ist Ihr Budgetrahmen?",
-        "budgetNote": "Ich muss Ihr Budget kennen, um Ihnen die besten Optionen zu zeigen.",
-        "location": "Welche Gebiete bevorzugen Sie?",
-        "timeline": "Wann planen Sie umzuziehen?",
-        "timelineNote": "Das hilft uns, Ihre Suche zu priorisieren.",
-        "preApproval": "Haben Sie eine Hypotheken-Vorabgenehmigung?",
-        "preApprovalNote": "Eine Vorabgenehmigung beschleunigt den Prozess erheblich.",
-        "contact": "Bitte teilen Sie Ihre Kontaktdaten mit, damit wir Sie erreichen können.",
-        "income": "Wie hoch ist Ihr monatliches Haushaltsnettoeinkommen? (z.B. 5000)",
-        "incomeNote": "Für die Kreditberechnung erforderlich",
-        "expenses": "Wie hoch sind Ihre monatlichen Gesamtausgaben (Miete + Kredite)?",
-        "expensesNote": "Wird zur Berechnung der Erschwinglichkeit verwendet",
-        "downPayment": "Wie viel Eigenkapital können Sie einbringen?",
-        "downPaymentNote": "Wichtig für die Hypothekenberechnung",
-        "affordabilityResult": "💰 Basierend auf meinen Berechnungen können Sie sich eine Immobilie bis zu {amount} leisten.",
-        "affordabilityNote": "Möchten Sie Immobilien in diesem Bereich sehen?",
-        "affordabilityWarning": "⚠️ Ihr Budget scheint etwas knapp zu sein. Sollen wir nach günstigeren Optionen suchen?",
-        "affordabilitySuccess": "✅ Ihr Budget sieht gut aus!"
-      },
-      "propertyTypes": {
-        "apartment": "Wohnung",
-        "villa": "Villa",
-        "house": "Haus",
-        "land": "Grundstück",
-        "commercial": "Gewerbe"
-      },
-      "budgetRanges": {
-        "label1": "100.000€ - 300.000€",
-        "label2": "300.000€ - 500.000€",
-        "label3": "500.000€ - 800.000€",
-        "label4": "800.000€ - 1,5M€",
-        "label5": "1,5M€+"
-      },
-      "rentBudgetRanges": {
-        "label1": "500€ - 1.000€",
-        "label2": "1.000€ - 2.000€",
-        "label3": "2.000€ - 3.500€",
-        "label4": "3.500€ - 5.000€",
-        "label5": "5.000€+"
-      },
-      "timelines": {
-        "immediate": "Sofort (Diesen Monat)",
-        "soon": "Innerhalb von 1-3 Monaten",
-        "later": "Innerhalb von 3-6 Monaten",
-        "browsing": "Ich schaue nur"
-      },
-      "yesNo": {
-        "yes": "Ja, habe ich",
-        "no": "Nein, noch nicht",
-        "apply": "Werde bald beantragen"
-      },
-      "appointmentSlots": {
-        "title": "Unser Berater ist zu diesen Zeiten verfügbar:",
-        "select": "Termin wählen"
-      },
-      "valuation": {
-        "title": "Kostenlose Bewertung",
-        "subtitle": "KI-gestützte Schätzung",
-        "address": "Adresse (Bezirk, Nachbarschaft)",
-        "area": "Quadratmeter",
-        "rooms": "Schlafzimmer",
-        "buildingAge": "Baujahr",
-        "submit": "Bewertung erhalten",
-        "result": "Geschätzte Wertspanne"
-      },
-      "tenant": {
-        "title": "Mieter-Support",
-        "greeting": "Wie kann ich Ihnen helfen?",
-        "options": {
-          "issue": "Problem melden",
-          "payment": "Mietzahlungsinfo",
-          "contract": "Vertragsfrage",
-          "key": "Schlüsselübergabe",
-          "other": "Sonstiges"
-        },
-        "issueTypes": {
-          "plumbing": "Sanitär",
-          "electrical": "Elektrik",
-          "heating": "Heizung/HVAC",
-          "structural": "Strukturelles Problem",
-          "other": "Sonstiges"
-        },
-        "urgency": {
-          "emergency": "Notfall (Überschwemmung, Gasleck, etc.)",
-          "normal": "Normal",
-          "low": "Nicht dringend"
-        },
-        "photoPrompt": "Sie können Fotos hinzufügen, damit wir das Problem besser verstehen:",
-        "photoButton": "Foto hochladen",
-        "submitted": "Ihre Anfrage wurde empfangen! Unser Service-Team wird sich in Kürze mit Ihnen in Verbindung setzen.",
-        "rentInfo": "Mietzahlungsinformationen:\\n\\nBank: Beispielbank\\nKonto: 1234567890\\nBLZ: 123456789\\n\\nBitte geben Sie Ihre Wohnungsnummer im Verwendungszweck an.",
-        "contractInfo": "Bei Vertragsfragen hinterlassen Sie bitte Ihre Kontaktdaten und unser Vertreter wird Sie anrufen."
-      },
-      "leadScore": {
-        "hot": "Termin verfügbar",
-        "warm": "Potenzielle Übereinstimmung",
-        "cold": "Recherchephase",
-        "hotDesc": "Sie sind für eine Beratung berechtigt.",
-        "warmDesc": "Wir werden nach Immobilien suchen, die Ihren Kriterien entsprechen.",
-        "coldDesc": "Wir können Marktberichte mit Ihnen teilen."
-      },
-      "messages": {
-        "hotLeadAlert": "Informationen erhalten.\\n\\nUnser Expertenberater wird Ihre Anfrage priorisieren und sich in Kürze mit Ihnen in Verbindung setzen.",
-        "warmLeadAlert": "Vielen Dank, Informationen erhalten.\\n\\nUnser Berater wird sich bald bei Ihnen melden.",
-        "coldLeadResponse": "Ich verstehe, dass Sie sich noch in der Recherchephase befinden.\\n\\nWir haben einige hilfreiche Ressourcen:\\n• Gebietspreisführer\\n• Investitionsanalysebericht\\n• Markttrendbericht\\n\\nHinterlassen Sie Ihre E-Mail und wir senden Ihnen diese zu.",
-        "searchingProperties": "Suche nach Immobilien, die Ihren Kriterien entsprechen...",
-        "propertiesFound": "Hier sind Immobilien, die Ihren Kriterien entsprechen:",
-        "noPropertiesFound": "Wir haben derzeit keine aktiven Angebote, die Ihren Kriterien entsprechen.\\n\\nUnser Berater kann jedoch eine individuelle Suche für Sie durchführen. Möchten Sie Ihre Kontaktdaten hinterlassen?",
-        "investmentMatch": "Tolle Wahl für Investitionen!\\n\\nSuche nach Standorten mit hoher Mietrendite...",
-        "residenceMatch": "Hole die besten Optionen für Ihr neues Zuhause!\\n\\nSuche basierend auf Ausstattung und Verkehrsanbindung...",
-        "appointmentConfirmed": "Ihr Termin ist bestätigt!\\n\\nAdresse und Erinnerung werden per SMS gesendet.\\n\\n📍 Standortdetails werden 1 Stunde vorher geteilt.",
-        "valuationResult": "Ihre KI-Bewertung ist fertig!",
-        "upsellHigherBudget": "💡 Wenn Sie Ihr Budget etwas erweitern, schauen Sie sich diese tollen Optionen an:",
-        "upsellDifferentType": "🏠 Wir haben Alternativen in verschiedenen Immobilientypen:",
-        "upsellNearby": "📍 Beliebte Angebote in der Nähe Ihres bevorzugten Gebiets:",
-        "alternativeQuestion": "Interessiert an einer dieser Optionen?",
-        "schedulePrompt": "Unser Berater ist verfügbar. Möchten Sie jetzt ein Online-Meeting oder einen Bürobesuch vereinbaren?",
-        "scheduleYes": "📅 Meeting planen",
-        "scheduleNo": "Nein, danke",
-        "upsellYes": "Ja, interessiert",
-        "upsellNo": "Nein, weiter suchen"
-      },
-      "thankYou": "Vielen Dank!",
-      "viewDetails": "Details anzeigen",
-      "schedule": "Besichtigung planen",
-      "showMore": "Mehr anzeigen",
-      "loading": "Laden...",
-      "contactForm": {
-        "title": "Kontaktinformationen",
-        "namePlaceholder": "Vollständiger Name *",
-        "phonePlaceholder": "Telefon *",
-        "emailPlaceholder": "E-Mail",
-        "error": "Bitte geben Sie Ihren Namen und Ihre Telefonnummer ein."
-      },
-      "notificationBubble": {
-        "greeting": "Hallo! Kann ich Ihnen helfen?",
-        "subtitle": "Ihr Empfangs-Assistent",
-        "timestamp": "Gerade eben"
-      }
-    }
-  },
   "support": {
     "title": "Support-Center",
     "subtitle": "Hilfe erhalten, wenn Sie sie brauchen",
@@ -2796,36 +2794,6 @@
     "upgradeTitle": "Prioritäts-Support erhalten",
     "upgradeDesc": "Upgraden Sie auf Pro oder Business, um Prioritäts-Support mit schnelleren Reaktionszeiten und Live-Chat zu erhalten.",
     "viewPlans": "Pläne anzeigen"
-  },
-  "widget": {
-    "colors": "Farben",
-    "colorsDesc": "Widget-Farben anpassen",
-    "primaryColor": "Primärfarbe",
-    "buttonColor": "Button-Farbe",
-    "textColor": "Textfarbe",
-    "appearance": "Aussehen",
-    "appearanceDesc": "Widget-Aussehen anpassen",
-    "position": "Position",
-    "right": "Rechts",
-    "left": "Links",
-    "size": "Größe",
-    "small": "Klein",
-    "medium": "Mittel",
-    "large": "Groß",
-    "logo": "Chatbot-Logo",
-    "logoDesc": "Benutzerdefiniertes Logo für Ihren Chatbot hochladen",
-    "uploadLogo": "Logo hochladen",
-    "removeLogo": "Logo entfernen",
-    "branding": "Branding",
-    "brandingDesc": "PylonChat-Branding verwalten",
-    "showBranding": "Branding anzeigen",
-    "showBrandingDesc": "'Powered by PylonChat' im Chat-Widget anzeigen",
-    "hideBranding": "Branding ausblenden",
-    "hideBrandingDesc": "'Powered by PylonChat' aus dem Chat-Widget entfernen",
-    "brandingUpgradeMessage": "Upgraden Sie auf Pro oder höher, um das PylonChat-Branding zu entfernen",
-    "upgradePlan": "Plan upgraden",
-    "previewSample": "Testvorschau",
-    "saveError": "Speichern fehlgeschlagen"
   },
   "ChatWidget": {
     "online": "Online",

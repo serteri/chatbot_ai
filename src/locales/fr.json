@@ -1177,7 +1177,168 @@
     "hideBranding": "Masquer la Marque",
     "hideBrandingDesc": "Supprimer 'Powered by PylonChat' du widget de chat",
     "brandingUpgradeMessage": "Passez à Pro ou supérieur pour supprimer la marque PylonChat de votre widget",
-    "upgradePlan": "Mettre à Niveau"
+    "upgradePlan": "Mettre à Niveau",
+    "realestate": {
+      "title": "Assistant Immobilier",
+      "subtitle": "Votre Assistant d'Accueil",
+      "online": "En ligne",
+      "placeholder": "Écrivez votre message...",
+      "welcome": "Bonjour ! Je suis votre assistant d'accueil numérique. Je vais vous poser quelques questions rapides pour trouver les meilleures propriétés pour vous.",
+      "quickReplies": {
+        "buy": "Je veux acheter",
+        "rent": "Je cherche à louer",
+        "sell": "Je veux vendre ma propriété",
+        "value": "Obtenir une estimation",
+        "tenant": "Support locataire"
+      },
+      "leadQualification": {
+        "propertyType": "Quel type de propriété recherchez-vous ?",
+        "purpose": "Recherchez-vous un investissement ou une résidence ?",
+        "purposeOptions": {
+          "investment": "Investissement",
+          "residence": "Résidence",
+          "both": "Les deux sont possibles"
+        },
+        "budget": "Quelle est votre fourchette de budget ?",
+        "budgetNote": "J'ai besoin de connaître votre budget pour vous montrer les meilleures options.",
+        "location": "Quelles zones préférez-vous ?",
+        "timeline": "Quand prévoyez-vous de déménager ?",
+        "timelineNote": "Cela nous aide à prioriser votre recherche.",
+        "preApproval": "Avez-vous une pré-approbation hypothécaire ?",
+        "preApprovalNote": "La pré-approbation accélère considérablement le processus.",
+        "contact": "Veuillez partager vos coordonnées afin que nous puissions vous contacter.",
+        "income": "Quel est le revenu mensuel net de votre ménage ? (ex : 5000)",
+        "incomeNote": "Requis pour le calcul du prêt",
+        "expenses": "Quelles sont vos charges mensuelles totales (loyer + crédits) ?",
+        "expensesNote": "Utilisé pour calculer votre capacité d'emprunt",
+        "downPayment": "Quel apport personnel pouvez-vous fournir ?",
+        "downPaymentNote": "Important pour le calcul de l'hypothèque",
+        "affordabilityResult": "💰 D'après mes calculs, vous pouvez acheter un bien jusqu'à {amount}.",
+        "affordabilityNote": "Souhaitez-vous voir des biens dans cette fourchette ?",
+        "affordabilityWarning": "⚠️ Votre budget semble un peu serré. Devrions-nous regarder des options plus abordables ?",
+        "affordabilitySuccess": "✅ Votre budget semble excellent !"
+      },
+      "propertyTypes": {
+        "apartment": "Appartement",
+        "villa": "Villa",
+        "house": "Maison",
+        "land": "Terrain",
+        "commercial": "Commercial"
+      },
+      "budgetRanges": {
+        "label1": "100 000€ - 300 000€",
+        "label2": "300 000€ - 500 000€",
+        "label3": "500 000€ - 800 000€",
+        "label4": "800 000€ - 1,5M€",
+        "label5": "1,5M€+"
+      },
+      "rentBudgetRanges": {
+        "label1": "500€ - 1 000€",
+        "label2": "1 000€ - 2 000€",
+        "label3": "2 000€ - 3 500€",
+        "label4": "3 500€ - 5 000€",
+        "label5": "5 000€+"
+      },
+      "timelines": {
+        "immediate": "Immédiatement (Ce mois-ci)",
+        "soon": "Dans 1 à 3 mois",
+        "later": "Dans 3 à 6 mois",
+        "browsing": "Je regarde juste le marché"
+      },
+      "yesNo": {
+        "yes": "Oui, je l'ai",
+        "no": "Non, pas encore",
+        "apply": "Je vais bientôt faire une demande"
+      },
+      "appointmentSlots": {
+        "title": "Notre conseiller est disponible à ces heures :",
+        "select": "Choisir un créneau"
+      },
+      "valuation": {
+        "title": "Estimation Gratuite",
+        "subtitle": "Estimation par IA",
+        "address": "Adresse (Quartier, Voisinage)",
+        "area": "Superficie",
+        "rooms": "Chambres",
+        "buildingAge": "Âge du bâtiment",
+        "submit": "Obtenir l'estimation",
+        "result": "Fourchette de valeur estimée"
+      },
+      "tenant": {
+        "title": "Support Locataire",
+        "greeting": "Comment puis-je vous aider ?",
+        "options": {
+          "issue": "Signaler un problème",
+          "payment": "Info paiement loyer",
+          "contract": "Question contrat",
+          "key": "Remise des clés",
+          "other": "Autre"
+        },
+        "issueTypes": {
+          "plumbing": "Plomberie",
+          "electrical": "Électricité",
+          "heating": "Chauffage/HVAC",
+          "structural": "Problème structurel",
+          "other": "Autre"
+        },
+        "urgency": {
+          "emergency": "Urgence (Inondation, fuite de gaz, etc.)",
+          "normal": "Normal",
+          "low": "Pas urgent"
+        },
+        "photoPrompt": "Vous pouvez ajouter des photos pour nous aider à comprendre le problème :",
+        "photoButton": "Télécharger une photo",
+        "submitted": "Votre demande a été reçue ! Notre équipe de service vous contactera sous peu.",
+        "rentInfo": "Informations de paiement du loyer :\\n\\nBanque : Exemple Banque\\nCompte : 1234567890\\nCode : 123456789\\n\\nVeuillez inclure votre numéro d'appartement dans le mémo.",
+        "contractInfo": "Pour les questions contractuelles, veuillez laisser vos coordonnées et notre représentant vous appellera."
+      },
+      "leadScore": {
+        "hot": "Rendez-vous disponible",
+        "warm": "Correspondance potentielle",
+        "cold": "Phase de recherche",
+        "hotDesc": "Vous êtes éligible pour une consultation.",
+        "warmDesc": "Nous rechercherons des propriétés correspondant à vos critères.",
+        "coldDesc": "Nous pouvons partager des rapports de marché avec vous."
+      },
+      "messages": {
+        "hotLeadAlert": "Informations reçues.\\n\\nNotre conseiller expert priorisera votre demande et vous contactera sous peu.",
+        "warmLeadAlert": "Merci, informations reçues.\\n\\nNotre conseiller vous contactera bientôt.",
+        "coldLeadResponse": "Je comprends que vous êtes encore en phase de recherche.\\n\\nNous avons des ressources utiles :\\n• Guide des prix par zone\\n• Rapport d'analyse d'investissement\\n• Rapport sur les tendances du marché\\n\\nLaissez votre email et nous vous les enverrons.",
+        "searchingProperties": "Recherche de propriétés correspondant à vos critères...",
+        "propertiesFound": "Voici des propriétés correspondant à vos critères :",
+        "noPropertiesFound": "Nous n'avons pas d'annonces actives correspondant à vos critères pour le moment.\\n\\nCependant, notre conseiller peut effectuer une recherche personnalisée pour vous. Souhaitez-vous laisser vos coordonnées ?",
+        "investmentMatch": "Excellent choix pour l'investissement !\\n\\nRecherche de locations à haut rendement locatif...",
+        "residenceMatch": "Obtention des meilleures options pour votre nouvelle maison !\\n\\nRecherche basée sur les commodités et les transports...",
+        "appointmentConfirmed": "Votre rendez-vous est confirmé !\\n\\nL'adresse et le rappel seront envoyés par SMS.\\n\\n📍 Les détails de localisation seront partagés 1 heure avant.",
+        "valuationResult": "Votre estimation IA est prête !",
+        "upsellHigherBudget": "💡 Si vous étendez un peu votre budget, découvrez ces excellentes options :",
+        "upsellDifferentType": "🏠 Nous avons des alternatives dans différents types de propriétés :",
+        "upsellNearby": "📍 Annonces populaires près de votre zone préférée :",
+        "alternativeQuestion": "Intéressé par l'une de ces options ?",
+        "schedulePrompt": "Notre conseiller est disponible. Souhaitez-vous planifier une réunion en ligne ou une visite au bureau maintenant ?",
+        "scheduleYes": "📅 Planifier une réunion",
+        "scheduleNo": "Non, merci",
+        "upsellYes": "Oui, intéressé",
+        "upsellNo": "Non, continuer à chercher"
+      },
+      "thankYou": "Merci !",
+      "viewDetails": "Voir les détails",
+      "schedule": "Planifier une visite",
+      "showMore": "Voir plus",
+      "loading": "Chargement...",
+      "contactForm": {
+        "title": "Coordonnées",
+        "namePlaceholder": "Nom complet *",
+        "phonePlaceholder": "Téléphone *",
+        "emailPlaceholder": "Email",
+        "error": "Veuillez entrer votre nom et numéro de téléphone."
+      },
+      "notificationBubble": {
+        "greeting": "Bonjour ! Puis-je vous aider ?",
+        "subtitle": "Votre Assistant d'Accueil",
+        "timestamp": "À l'instant"
+      }
+    }
   },
   "common": {
     "loading": "Chargement...",
@@ -2478,169 +2639,6 @@
     "role_admin": "Administrateur",
     "role_member": "Membre"
   },
-  "widget": {
-    "realestate": {
-      "title": "Assistant Immobilier",
-      "subtitle": "Votre Assistant d'Accueil",
-      "online": "En ligne",
-      "placeholder": "Écrivez votre message...",
-      "welcome": "Bonjour ! Je suis votre assistant d'accueil numérique. Je vais vous poser quelques questions rapides pour trouver les meilleures propriétés pour vous.",
-      "quickReplies": {
-        "buy": "Je veux acheter",
-        "rent": "Je cherche à louer",
-        "sell": "Je veux vendre ma propriété",
-        "value": "Obtenir une estimation",
-        "tenant": "Support locataire"
-      },
-      "leadQualification": {
-        "propertyType": "Quel type de propriété recherchez-vous ?",
-        "purpose": "Recherchez-vous un investissement ou une résidence ?",
-        "purposeOptions": {
-          "investment": "Investissement",
-          "residence": "Résidence",
-          "both": "Les deux sont possibles"
-        },
-        "budget": "Quelle est votre fourchette de budget ?",
-        "budgetNote": "J'ai besoin de connaître votre budget pour vous montrer les meilleures options.",
-        "location": "Quelles zones préférez-vous ?",
-        "timeline": "Quand prévoyez-vous de déménager ?",
-        "timelineNote": "Cela nous aide à prioriser votre recherche.",
-        "preApproval": "Avez-vous une pré-approbation hypothécaire ?",
-        "preApprovalNote": "La pré-approbation accélère considérablement le processus.",
-        "contact": "Veuillez partager vos coordonnées afin que nous puissions vous contacter.",
-        "income": "Quel est le revenu mensuel net de votre ménage ? (ex : 5000)",
-        "incomeNote": "Requis pour le calcul du prêt",
-        "expenses": "Quelles sont vos charges mensuelles totales (loyer + crédits) ?",
-        "expensesNote": "Utilisé pour calculer votre capacité d'emprunt",
-        "downPayment": "Quel apport personnel pouvez-vous fournir ?",
-        "downPaymentNote": "Important pour le calcul de l'hypothèque",
-        "affordabilityResult": "💰 D'après mes calculs, vous pouvez acheter un bien jusqu'à {amount}.",
-        "affordabilityNote": "Souhaitez-vous voir des biens dans cette fourchette ?",
-        "affordabilityWarning": "⚠️ Votre budget semble un peu serré. Devrions-nous regarder des options plus abordables ?",
-        "affordabilitySuccess": "✅ Votre budget semble excellent !"
-      },
-      "propertyTypes": {
-        "apartment": "Appartement",
-        "villa": "Villa",
-        "house": "Maison",
-        "land": "Terrain",
-        "commercial": "Commercial"
-      },
-      "budgetRanges": {
-        "label1": "100 000€ - 300 000€",
-        "label2": "300 000€ - 500 000€",
-        "label3": "500 000€ - 800 000€",
-        "label4": "800 000€ - 1,5M€",
-        "label5": "1,5M€+"
-      },
-      "rentBudgetRanges": {
-        "label1": "500€ - 1 000€",
-        "label2": "1 000€ - 2 000€",
-        "label3": "2 000€ - 3 500€",
-        "label4": "3 500€ - 5 000€",
-        "label5": "5 000€+"
-      },
-      "timelines": {
-        "immediate": "Immédiatement (Ce mois-ci)",
-        "soon": "Dans 1 à 3 mois",
-        "later": "Dans 3 à 6 mois",
-        "browsing": "Je regarde juste le marché"
-      },
-      "yesNo": {
-        "yes": "Oui, je l'ai",
-        "no": "Non, pas encore",
-        "apply": "Je vais bientôt faire une demande"
-      },
-      "appointmentSlots": {
-        "title": "Notre conseiller est disponible à ces heures :",
-        "select": "Choisir un créneau"
-      },
-      "valuation": {
-        "title": "Estimation Gratuite",
-        "subtitle": "Estimation par IA",
-        "address": "Adresse (Quartier, Voisinage)",
-        "area": "Superficie",
-        "rooms": "Chambres",
-        "buildingAge": "Âge du bâtiment",
-        "submit": "Obtenir l'estimation",
-        "result": "Fourchette de valeur estimée"
-      },
-      "tenant": {
-        "title": "Support Locataire",
-        "greeting": "Comment puis-je vous aider ?",
-        "options": {
-          "issue": "Signaler un problème",
-          "payment": "Info paiement loyer",
-          "contract": "Question contrat",
-          "key": "Remise des clés",
-          "other": "Autre"
-        },
-        "issueTypes": {
-          "plumbing": "Plomberie",
-          "electrical": "Électricité",
-          "heating": "Chauffage/HVAC",
-          "structural": "Problème structurel",
-          "other": "Autre"
-        },
-        "urgency": {
-          "emergency": "Urgence (Inondation, fuite de gaz, etc.)",
-          "normal": "Normal",
-          "low": "Pas urgent"
-        },
-        "photoPrompt": "Vous pouvez ajouter des photos pour nous aider à comprendre le problème :",
-        "photoButton": "Télécharger une photo",
-        "submitted": "Votre demande a été reçue ! Notre équipe de service vous contactera sous peu.",
-        "rentInfo": "Informations de paiement du loyer :\\n\\nBanque : Exemple Banque\\nCompte : 1234567890\\nCode : 123456789\\n\\nVeuillez inclure votre numéro d'appartement dans le mémo.",
-        "contractInfo": "Pour les questions contractuelles, veuillez laisser vos coordonnées et notre représentant vous appellera."
-      },
-      "leadScore": {
-        "hot": "Rendez-vous disponible",
-        "warm": "Correspondance potentielle",
-        "cold": "Phase de recherche",
-        "hotDesc": "Vous êtes éligible pour une consultation.",
-        "warmDesc": "Nous rechercherons des propriétés correspondant à vos critères.",
-        "coldDesc": "Nous pouvons partager des rapports de marché avec vous."
-      },
-      "messages": {
-        "hotLeadAlert": "Informations reçues.\\n\\nNotre conseiller expert priorisera votre demande et vous contactera sous peu.",
-        "warmLeadAlert": "Merci, informations reçues.\\n\\nNotre conseiller vous contactera bientôt.",
-        "coldLeadResponse": "Je comprends que vous êtes encore en phase de recherche.\\n\\nNous avons des ressources utiles :\\n• Guide des prix par zone\\n• Rapport d'analyse d'investissement\\n• Rapport sur les tendances du marché\\n\\nLaissez votre email et nous vous les enverrons.",
-        "searchingProperties": "Recherche de propriétés correspondant à vos critères...",
-        "propertiesFound": "Voici des propriétés correspondant à vos critères :",
-        "noPropertiesFound": "Nous n'avons pas d'annonces actives correspondant à vos critères pour le moment.\\n\\nCependant, notre conseiller peut effectuer une recherche personnalisée pour vous. Souhaitez-vous laisser vos coordonnées ?",
-        "investmentMatch": "Excellent choix pour l'investissement !\\n\\nRecherche de locations à haut rendement locatif...",
-        "residenceMatch": "Obtention des meilleures options pour votre nouvelle maison !\\n\\nRecherche basée sur les commodités et les transports...",
-        "appointmentConfirmed": "Votre rendez-vous est confirmé !\\n\\nL'adresse et le rappel seront envoyés par SMS.\\n\\n📍 Les détails de localisation seront partagés 1 heure avant.",
-        "valuationResult": "Votre estimation IA est prête !",
-        "upsellHigherBudget": "💡 Si vous étendez un peu votre budget, découvrez ces excellentes options :",
-        "upsellDifferentType": "🏠 Nous avons des alternatives dans différents types de propriétés :",
-        "upsellNearby": "📍 Annonces populaires près de votre zone préférée :",
-        "alternativeQuestion": "Intéressé par l'une de ces options ?",
-        "schedulePrompt": "Notre conseiller est disponible. Souhaitez-vous planifier une réunion en ligne ou une visite au bureau maintenant ?",
-        "scheduleYes": "📅 Planifier une réunion",
-        "scheduleNo": "Non, merci",
-        "upsellYes": "Oui, intéressé",
-        "upsellNo": "Non, continuer à chercher"
-      },
-      "thankYou": "Merci !",
-      "viewDetails": "Voir les détails",
-      "schedule": "Planifier une visite",
-      "showMore": "Voir plus",
-      "loading": "Chargement...",
-      "contactForm": {
-        "title": "Coordonnées",
-        "namePlaceholder": "Nom complet *",
-        "phonePlaceholder": "Téléphone *",
-        "emailPlaceholder": "Email",
-        "error": "Veuillez entrer votre nom et numéro de téléphone."
-      },
-      "notificationBubble": {
-        "greeting": "Bonjour ! Puis-je vous aider ?",
-        "subtitle": "Votre Assistant d'Accueil",
-        "timestamp": "À l'instant"
-      }
-    }
-  },
   "support": {
     "title": "Centre de Support",
     "subtitle": "Obtenez de l'aide quand vous en avez besoin",
@@ -2674,36 +2672,6 @@
     "upgradeTitle": "Obtenez le Support Prioritaire",
     "upgradeDesc": "Passez à Pro ou Business pour accéder au support prioritaire avec des temps de réponse plus rapides et un chat en direct.",
     "viewPlans": "Voir les Plans"
-  },
-  "widget": {
-    "colors": "Couleurs",
-    "colorsDesc": "Personnaliser les couleurs du widget",
-    "primaryColor": "Couleur Principale",
-    "buttonColor": "Couleur du Bouton",
-    "textColor": "Couleur du Texte",
-    "appearance": "Apparence",
-    "appearanceDesc": "Personnaliser l'apparence du widget",
-    "position": "Position",
-    "right": "Droite",
-    "left": "Gauche",
-    "size": "Taille",
-    "small": "Petit",
-    "medium": "Moyen",
-    "large": "Grand",
-    "logo": "Logo du Chatbot",
-    "logoDesc": "Télécharger un logo personnalisé pour votre chatbot",
-    "uploadLogo": "Télécharger Logo",
-    "removeLogo": "Supprimer Logo",
-    "branding": "Marque",
-    "brandingDesc": "Gérer la marque PylonChat",
-    "showBranding": "Afficher la Marque",
-    "showBrandingDesc": "Afficher 'Propulsé par PylonChat' sur le widget de chat",
-    "hideBranding": "Masquer la Marque",
-    "hideBrandingDesc": "Supprimer 'Propulsé par PylonChat' du widget de chat",
-    "brandingUpgradeMessage": "Passez à Pro ou supérieur pour supprimer la marque PylonChat de votre widget",
-    "upgradePlan": "Mettre à Niveau le Plan",
-    "previewSample": "Aperçu de l'Essai",
-    "saveError": "Échec de l'enregistrement"
   },
   "ChatWidget": {
     "online": "En ligne",
