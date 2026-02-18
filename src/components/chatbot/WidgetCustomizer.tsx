@@ -50,7 +50,6 @@ export function WidgetCustomizer({ chatbotId, initialSettings, hasCustomBranding
     const [saving, setSaving] = useState(false)
     const [settings, setSettings] = useState(initialSettings)
     const [logoFile, setLogoFile] = useState<File | null>(null)
-    const [logoFile, setLogoFile] = useState<File | null>(null)
     const [logoPreview, setLogoPreview] = useState<string | null>(initialSettings.widgetLogoUrl)
     const [activeTab, setActiveTab] = useState('en')
 
