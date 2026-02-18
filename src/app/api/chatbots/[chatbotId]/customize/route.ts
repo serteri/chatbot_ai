@@ -49,17 +49,18 @@ export async function POST(
             }
         })
 
-        chatbot: updatedChatbot
-    })
+        console.log('✅ Chatbot updated successfully:', updatedChatbot.widgetPrimaryColor);
 
-    console.log('✅ Chatbot updated successfully:', updatedChatbot.widgetPrimaryColor);
-    return response;
+        return NextResponse.json({
+            success: true,
+            chatbot: updatedChatbot
+        })
 
-} catch (error) {
-    console.error('Customize error:', error)
-    return NextResponse.json(
-        { error: 'Bir hata oluştu' },
-        { status: 500 }
-    )
-}
+    } catch (error) {
+        console.error('Customize error:', error)
+        return NextResponse.json(
+            { error: 'Bir hata oluştu' },
+            { status: 500 }
+        )
+    }
 }
