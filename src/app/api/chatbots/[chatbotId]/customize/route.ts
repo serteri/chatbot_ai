@@ -18,6 +18,7 @@ export async function POST(
         }
 
         const data = await request.json()
+        console.log('📝 Customize API Request:', { chatbotId, data });
 
         // Chatbot sahiplik kontrolü
         const chatbot = await prisma.chatbot.findUnique({
@@ -25,6 +26,7 @@ export async function POST(
         })
 
         if (!chatbot || chatbot.userId !== session.user.id) {
+            console.log('❌ Unauthorized or Chatbot not found:', { chatbotId, userId: session.user.id });
             return NextResponse.json(
                 { error: 'Chatbot bulunamadı' },
                 { status: 404 }
@@ -47,16 +49,17 @@ export async function POST(
             }
         })
 
-        return NextResponse.json({
-            success: true,
-            chatbot: updatedChatbot
-        })
+        chatbot: updatedChatbot
+    })
 
-    } catch (error) {
-        console.error('Customize error:', error)
-        return NextResponse.json(
-            { error: 'Bir hata oluştu' },
-            { status: 500 }
-        )
-    }
+    console.log('✅ Chatbot updated successfully:', updatedChatbot.widgetPrimaryColor);
+    return response;
+
+} catch (error) {
+    console.error('Customize error:', error)
+    return NextResponse.json(
+        { error: 'Bir hata oluştu' },
+        { status: 500 }
+    )
+}
 }
