@@ -160,7 +160,8 @@ export async function GET(request: NextRequest) {
     var iframe = document.createElement('iframe');
     iframe.id = 'pylon-chatbot-iframe';
     iframe.src = appUrl + '/chatbot/' + chatbotId;
-    iframe.style.cssText = 'position:absolute;bottom:70px;${isLeft ? 'left' : 'right'}:0;width:380px;height:600px;border:none;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.2);display:none;background:white;';
+    // OPTIMIZATION: Use visibility:hidden instead of display:none to allow background rendering
+    iframe.style.cssText = 'position:absolute;bottom:70px;${isLeft ? 'left' : 'right'}:0;width:380px;height:600px;border:none;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.2);visibility:hidden;opacity:0;pointer-events:none;transform:translateY(20px) scale(0.95);transition:opacity 0.3s ease, transform 0.3s ease;background:white;';
     iframe.allow = 'microphone';
 
     // Mobile responsive
@@ -171,20 +172,32 @@ export async function GET(request: NextRequest) {
         iframe.style.${isLeft ? 'left' : 'right'} = '0';
         iframe.style.borderRadius = '0';
         iframe.style.position = 'fixed';
+        // Mobile-specific transition reset if needed
+    }
     }
 
     var isOpen = false;
 
     function openChat() {
         isOpen = true;
-        iframe.style.display = 'block';
+        // iframe.style.display = 'block';
+        iframe.style.visibility = 'visible';
+        iframe.style.opacity = '1';
+        iframe.style.pointerEvents = 'auto';
+        iframe.style.transform = 'translateY(0) scale(1)';
+        
         bubble.style.display = 'none';
         btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + textColor + '" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
     }
 
     function closeChat() {
         isOpen = false;
-        iframe.style.display = 'none';
+        // iframe.style.display = 'none';
+        iframe.style.visibility = 'hidden';
+        iframe.style.opacity = '0';
+        iframe.style.pointerEvents = 'none';
+        iframe.style.transform = 'translateY(20px) scale(0.95)';
+        
         btn.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="' + textColor + '" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
     }
 
