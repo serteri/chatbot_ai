@@ -160,9 +160,7 @@ export async function GET(request: NextRequest) {
     var iframe = document.createElement('iframe');
     iframe.id = 'pylon-chatbot-iframe';
     iframe.src = appUrl + '/chatbot/' + chatbotId;
-    iframe.src = appUrl + '/chatbot/' + chatbotId;
     iframe.style.cssText = 'position:absolute;bottom:70px;${isLeft ? 'left' : 'right'}:0;width:380px;height:600px;border:none;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.2);display:none;background:white;';
-    iframe.allow = 'microphone';
     iframe.allow = 'microphone';
 
     // Mobile responsive
