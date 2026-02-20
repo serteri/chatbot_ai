@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db/prisma'
 import { google, calendar_v3 } from 'googleapis'
 import { sendAppointmentConfirmation } from '@/lib/sms/notifications'
 import { sendAppointmentEmailToAgent, sendAppointmentEmailToCustomer } from '@/lib/email/notifications'
+import crypto from 'crypto'
 
 // Helper to get OAuth2 client with tokens
 async function getAuthenticatedClient(userId: string) {
@@ -48,7 +49,7 @@ async function getAuthenticatedClient(userId: string) {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
-        const { identifier, date, time, name, phone, email, notes, type } = body
+        const { identifier, date, time, name, phone, email, notes, type, locale } = body
 
         if (!identifier || !date || !time || !name || !phone) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
                 id: true,
                 userId: true,
                 name: true,
+                language: true,
                 calendarConnected: true,
                 googleCalendarId: true,
                 customSettings: true,
@@ -95,6 +97,32 @@ export async function POST(request: NextRequest) {
         const endDate = new Date(appointmentDate)
         endDate.setHours(endDate.getHours() + 1) // 1 hour appointment
 
+        // Check for existing appointment at the same time (slot blocking)
+        const existingAppointment = await prisma.lead.findFirst({
+            where: {
+                chatbotId: chatbot.id,
+                appointmentDate: {
+                    gte: appointmentDate,
+                    lt: endDate
+                },
+                status: {
+                    notIn: ['appointment-cancelled', 'lost']
+                }
+            }
+        })
+
+        if (existingAppointment) {
+            return NextResponse.json({
+                error: 'Time slot is already booked',
+                message: locale === 'tr'
+                    ? 'Bu saat dilimi zaten dolu. Lütfen başka bir saat seçin.'
+                    : 'This time slot is already booked. Please select a different time.'
+            }, { status: 409 })
+        }
+
+        // Generate cancellation token
+        const cancellationToken = crypto.randomBytes(32).toString('hex')
+
         let googleEventId = null
 
         // Create event in Google Calendar if connected
@@ -105,11 +133,16 @@ export async function POST(request: NextRequest) {
                 try {
                     const calendar = google.calendar({ version: 'v3', auth: oauth2Client })
 
+                    const summaryText = locale === 'tr' ? `Mülk Görüntüleme - ${name}` : `Property Viewing - ${name}`
+                    const descText = locale === 'tr'
+                        ? `Müşteri: ${name}\nTelefon: ${phone}\n${email ? `Email: ${email}\n` : ''}${notes ? `Not: ${notes}` : ''}\n\nRandevu Türü: ${type || 'viewing'}\nChatbot: ${chatbot.name}`
+                        : `Customer: ${name}\nPhone: ${phone}\n${email ? `Email: ${email}\n` : ''}${notes ? `Notes: ${notes}` : ''}\n\nAppointment Type: ${type || 'viewing'}\nChatbot: ${chatbot.name}`
+
                     const event = await calendar.events.insert({
                         calendarId: chatbot.googleCalendarId,
                         requestBody: {
-                            summary: `Mülk Görüntüleme - ${name}`,
-                            description: `Müşteri: ${name}\nTelefon: ${phone}\n${email ? `Email: ${email}\n` : ''}${notes ? `Not: ${notes}` : ''}\n\nRandevu Türü: ${type || 'viewing'}\nChatbot: ${chatbot.name}`,
+                            summary: summaryText,
+                            description: descText,
                             start: {
                                 dateTime: appointmentDate.toISOString(),
                                 timeZone: 'Europe/Istanbul'
@@ -148,6 +181,11 @@ export async function POST(request: NextRequest) {
             }
         })
 
+        // Store locale + cancellation token in requirements JSON
+        const requirementsData = lead?.requirements
+            ? { ...(lead.requirements as any), locale: locale || 'en', cancellationToken, googleEventId }
+            : { locale: locale || 'en', cancellationToken, googleEventId }
+
         if (lead) {
             lead = await prisma.lead.update({
                 where: { id: lead.id },
@@ -157,7 +195,8 @@ export async function POST(request: NextRequest) {
                     appointmentNote: notes || `${type || 'viewing'} appointment`,
                     status: 'appointment-scheduled',
                     name,
-                    email: email || lead.email
+                    email: email || lead.email,
+                    requirements: requirementsData
                 }
             })
         } else {
@@ -174,7 +213,8 @@ export async function POST(request: NextRequest) {
                     status: 'appointment-scheduled',
                     appointmentDate,
                     appointmentTime: time,
-                    appointmentNote: notes || `${type || 'viewing'} appointment`
+                    appointmentNote: notes || `${type || 'viewing'} appointment`,
+                    requirements: requirementsData
                 }
             })
         }
@@ -183,19 +223,25 @@ export async function POST(request: NextRequest) {
         const formattedDate = `${appointmentDate.getDate().toString().padStart(2, '0')}/${(appointmentDate.getMonth() + 1).toString().padStart(2, '0')}/${appointmentDate.getFullYear()}`
 
         const settings = (chatbot.customSettings as any) || {}
-        const agentName = settings.agentName || chatbot.user?.name || 'Danışmanımız'
+        const agentName = settings.agentName || chatbot.user?.name || (locale === 'tr' ? 'Danışmanımız' : 'Our Consultant')
 
-        // Send SMS confirmation to customer
-        console.log('📱 Sending SMS to customer:', { phone, name })
+        // Customer locale for customer-facing messages
+        const customerLocale = locale || 'en'
+        // Agent locale from chatbot language
+        const agentLocale = chatbot.language || 'tr'
+
+        // Send SMS confirmation to customer (in CUSTOMER language)
+        console.log('📱 Sending SMS to customer:', { phone, name, locale: customerLocale })
         await sendAppointmentConfirmation(
             phone,
             name,
             formattedDate,
             time,
             agentName,
-            chatbot.id
+            chatbot.id,
+            customerLocale
         ).then(() => console.log('✅ SMS sent to customer:', phone))
-        .catch(err => console.error('❌ Failed to send SMS:', err))
+            .catch(err => console.error('❌ Failed to send SMS:', err))
 
         // Prepare appointment email data
         const appointmentEmailData = {
@@ -206,22 +252,24 @@ export async function POST(request: NextRequest) {
             appointmentTime: time,
             agentName,
             chatbotName: chatbot.name,
-            type: type || 'Mülk Görüntüleme'
+            type: type || (customerLocale === 'tr' ? 'Mülk Görüntüleme' : 'Property Viewing'),
+            locale: customerLocale,
+            cancellationToken
         }
 
-        // Send email notification to agent
+        // Send email notification to agent (in AGENT language)
         if (chatbot.user?.email && chatbot.user?.emailNotifications !== false) {
             const agentEmail = settings.notificationEmail || chatbot.user.email
             console.log('📧 Sending appointment email to agent:', agentEmail)
-            sendAppointmentEmailToAgent(appointmentEmailData, agentEmail)
+            sendAppointmentEmailToAgent(appointmentEmailData, agentEmail, agentLocale)
                 .then(() => console.log('✅ Appointment email sent to agent'))
                 .catch(err => console.error('❌ Failed to send appointment email to agent:', err))
         }
 
-        // Send email confirmation to customer (if they provided email)
+        // Send email confirmation to customer (in CUSTOMER language)
         console.log('📧 Customer email provided:', email ? email : 'NO EMAIL PROVIDED')
         if (email) {
-            console.log('📧 Sending appointment email to customer:', email)
+            console.log('📧 Sending appointment email to customer:', email, 'locale:', customerLocale)
             sendAppointmentEmailToCustomer(appointmentEmailData, email)
                 .then(() => console.log('✅ Appointment email sent to customer:', email))
                 .catch(err => console.error('❌ Failed to send appointment email to customer:', err))
@@ -238,7 +286,7 @@ export async function POST(request: NextRequest) {
                 type: type || 'viewing',
                 googleEventId
             },
-            message: 'Randevu başarıyla oluşturuldu'
+            message: customerLocale === 'tr' ? 'Randevu başarıyla oluşturuldu' : 'Appointment created successfully'
         }, { status: 201 })
 
     } catch (error) {
@@ -331,23 +379,19 @@ export async function GET(request: NextRequest) {
                     })
 
                     // Sync: Clear appointments that no longer exist in Google Calendar
-                    // Check each DB appointment - if it was supposed to be in this time range but isn't in Google, mark as cancelled
                     for (const dbAppt of dbAppointments) {
                         if (dbAppt.appointmentDate) {
                             const apptDate = new Date(dbAppt.appointmentDate)
 
                             // Only check appointments within our sync time range
                             if (apptDate >= timeMin && apptDate <= timeMax) {
-                                // Check if there's a matching event in Google Calendar
                                 const hasMatchingEvent = googleEvents.some((event: calendar_v3.Schema$Event) => {
                                     if (!event.start?.dateTime) return false
                                     const eventDate = new Date(event.start.dateTime)
-                                    // Match by date and time (within 1 hour tolerance)
                                     const timeDiff = Math.abs(eventDate.getTime() - apptDate.getTime())
                                     return timeDiff < 60 * 60 * 1000 && event.status !== 'cancelled'
                                 })
 
-                                // If no matching event found, this appointment was cancelled in Google Calendar
                                 if (!hasMatchingEvent) {
                                     await prisma.lead.update({
                                         where: { id: dbAppt.id },
@@ -392,7 +436,6 @@ export async function GET(request: NextRequest) {
 
                 } catch (calendarError) {
                     console.error('Failed to fetch Google Calendar events:', calendarError)
-                    // Return database appointments without sync
                     return NextResponse.json({
                         appointments: dbAppointments,
                         synced: false,

@@ -85,10 +85,10 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: 'Chatbot not found' }, { status: 404 })
         }
 
-        // If calendar not connected, return hardcoded slots
+        // If calendar not connected, return slots with DB-based blocking
         if (!chatbot.calendarConnected || !chatbot.googleCalendarId) {
             return NextResponse.json({
-                slots: generateDefaultSlots(daysAhead, locale),
+                slots: await generateDefaultSlots(daysAhead, locale, chatbot.id),
                 source: 'default'
             })
         }
@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
         const oauth2Client = await getAuthenticatedClient(chatbot.userId)
         if (!oauth2Client) {
             return NextResponse.json({
-                slots: generateDefaultSlots(daysAhead, locale),
+                slots: await generateDefaultSlots(daysAhead, locale, chatbot.id),
                 source: 'default'
             })
         }
@@ -150,17 +150,54 @@ export async function GET(request: NextRequest) {
         console.error('Error fetching calendar availability:', error)
         // Fallback to default slots on error
         return NextResponse.json({
-            slots: generateDefaultSlots(7, 'en'),
+            slots: await generateDefaultSlots(7, 'en'),
             source: 'default',
             error: 'Calendar unavailable'
         })
     }
 }
 
-// Generate default slots when calendar is not connected
-function generateDefaultSlots(daysAhead: number, locale: string) {
+// Generate default slots when calendar is not connected - checks DB for booked appointments
+async function generateDefaultSlots(daysAhead: number, locale: string, chatbotId?: string) {
     const slots: any[] = []
     const today = new Date()
+
+    // Fetch existing booked appointments from DB to block those slots
+    let bookedSlots: Set<string> = new Set()
+    if (chatbotId) {
+        const startDate = new Date(today)
+        startDate.setDate(startDate.getDate() + 1)
+        startDate.setHours(0, 0, 0, 0)
+
+        const endDate = new Date(today)
+        endDate.setDate(endDate.getDate() + daysAhead + 1)
+        endDate.setHours(23, 59, 59, 999)
+
+        const existingAppointments = await prisma.lead.findMany({
+            where: {
+                chatbotId,
+                appointmentDate: {
+                    gte: startDate,
+                    lte: endDate
+                },
+                status: {
+                    notIn: ['appointment-cancelled', 'lost']
+                }
+            },
+            select: {
+                appointmentDate: true,
+                appointmentTime: true
+            }
+        })
+
+        // Build a set of "date|time" keys for quick lookup
+        existingAppointments.forEach(appt => {
+            if (appt.appointmentDate && appt.appointmentTime) {
+                const dateStr = formatDate(appt.appointmentDate)
+                bookedSlots.add(`${dateStr}|${appt.appointmentTime}`)
+            }
+        })
+    }
 
     for (let i = 1; i <= daysAhead; i++) {
         const date = new Date(today)
@@ -174,22 +211,20 @@ function generateDefaultSlots(daysAhead: number, locale: string) {
         const dateStr = formatDate(date)
         const isoDate = date.toISOString().split('T')[0]
 
-        if (dayOfWeek === 6) {
-            // Saturday - limited hours
-            slots.push(
-                { date: dateStr, isoDate, time: '10:00', label: getTimeLabel(10, locale), type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '11:00', label: getTimeLabel(11, locale), type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '14:00', label: getTimeLabel(14, locale), type: 'viewing', available: true }
-            )
-        } else {
-            // Weekdays
-            slots.push(
-                { date: dateStr, isoDate, time: '10:00', label: getTimeLabel(10, locale), type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '11:00', label: getTimeLabel(11, locale), type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '14:00', label: getTimeLabel(14, locale), type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '15:00', label: getTimeLabel(15, locale), type: 'viewing', available: true },
-                { date: dateStr, isoDate, time: '16:00', label: getTimeLabel(16, locale), type: 'viewing', available: true }
-            )
+        const timeSlots = dayOfWeek === 6
+            ? ['10:00', '11:00', '14:00'] // Saturday - limited hours
+            : ['10:00', '11:00', '14:00', '15:00', '16:00'] // Weekdays
+
+        for (const time of timeSlots) {
+            const isBooked = bookedSlots.has(`${dateStr}|${time}`)
+            slots.push({
+                date: dateStr,
+                isoDate,
+                time,
+                label: getTimeLabel(parseInt(time.split(':')[0]), locale),
+                type: 'viewing',
+                available: !isBooked
+            })
         }
     }
 

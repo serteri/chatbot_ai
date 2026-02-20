@@ -2486,12 +2486,15 @@ function AppointmentSlotPicker({
         return slots.slice(0, 6) // Limit to 6 slots
     }
 
+    const [bookingError, setBookingError] = useState('')
+
     const handleBookSlot = async () => {
         if (!selectedSlot || !bookingName || !bookingPhone) return
 
+        setBookingError('')
         setBooking(true)
         try {
-            // Use new calendar events API
+            // Use new calendar events API - pass locale for multi-language notifications
             const response = await fetch('/api/calendar/events', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -2502,15 +2505,26 @@ function AppointmentSlotPicker({
                     name: bookingName,
                     phone: bookingPhone,
                     email: bookingEmail || undefined,
-                    type: selectedSlot.type || 'viewing'
+                    type: selectedSlot.type || 'viewing',
+                    locale
                 })
             })
 
             if (response.ok) {
                 onSlotSelected(selectedSlot)
+            } else if (response.status === 409) {
+                // Slot already taken
+                const data = await response.json()
+                setBookingError(data.message || (locale === 'tr' ? 'Bu saat dolu. Başka saat seçin.' : 'This time slot is taken. Please select another.'))
+                setSelectedSlot(null)
+                // Refresh slots to show updated availability
+                fetchSlots()
+            } else {
+                setBookingError(locale === 'tr' ? 'Randevu oluşturulamadı. Tekrar deneyin.' : 'Failed to create appointment. Please try again.')
             }
         } catch (error) {
             console.error('Error booking appointment:', error)
+            setBookingError(locale === 'tr' ? 'Bir hata oluştu. Tekrar deneyin.' : 'An error occurred. Please try again.')
         } finally {
             setBooking(false)
         }
@@ -2579,6 +2593,9 @@ function AppointmentSlotPicker({
                             placeholder={locale === 'tr' ? 'Email (isteğe bağlı)' : 'Email (optional)'}
                             className="w-full px-3 py-1.5 text-sm border rounded-lg focus:outline-none focus:border-amber-400"
                         />
+                    )}
+                    {bookingError && (
+                        <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{bookingError}</p>
                     )}
                     <button
                         onClick={handleBookSlot}

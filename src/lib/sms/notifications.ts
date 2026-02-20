@@ -11,10 +11,73 @@ interface SmsPayload {
     chatbotId?: string
 }
 
-/**
- * Send SMS notification via the SMS API
- * This is a utility function for internal use
- */
+// ─── SMS Translation Maps ────────────────────────────────────────────────
+
+const smsTranslations: Record<string, Record<string, string>> = {
+    tr: {
+        hotLeadTitle: '🔥 SICAK MÜŞTERİ!',
+        name: 'Ad',
+        phone: 'Tel',
+        email: 'Email',
+        interest: 'İlgi',
+        intentBuy: 'Satın alma',
+        intentRent: 'Kiralama',
+        budget: 'Bütçe',
+        preApprovalYes: '✅ Kredi Ön Onayı VAR',
+        score: 'Puan',
+        chatbot: 'Chatbot',
+        contactNow: 'Hemen iletişime geçin!',
+        reminderTitle: '📅 Randevu Hatırlatma',
+        dear: 'Bey/Hanım',
+        tomorrowAppt: 'Yarınki randevunuz',
+        at: 'saat',
+        property: 'Mülk',
+        seeYou: 'Görüşmek üzere!',
+        confirmTitle: '✅ Randevu Onaylandı!',
+        hi: 'Merhaba',
+        appointmentConfirmed: 'Randevunuz onaylandı:',
+        date: 'Tarih',
+        time: 'Saat',
+        agent: 'Danışman',
+        addressInfo: 'Randevudan 1 saat önce adres ve detay bilgileri SMS ile gönderilecektir.',
+        contactUs: 'Sorularınız için bize ulaşın.',
+    },
+    en: {
+        hotLeadTitle: '🔥 HOT LEAD!',
+        name: 'Name',
+        phone: 'Phone',
+        email: 'Email',
+        interest: 'Interest',
+        intentBuy: 'Purchase',
+        intentRent: 'Rental',
+        budget: 'Budget',
+        preApprovalYes: '✅ Has Pre-Approval',
+        score: 'Score',
+        chatbot: 'Chatbot',
+        contactNow: 'Contact immediately!',
+        reminderTitle: '📅 Appointment Reminder',
+        dear: '',
+        tomorrowAppt: 'Your appointment tomorrow',
+        at: 'at',
+        property: 'Property',
+        seeYou: 'See you there!',
+        confirmTitle: '✅ Appointment Confirmed!',
+        hi: 'Hi',
+        appointmentConfirmed: 'Your appointment is confirmed:',
+        date: 'Date',
+        time: 'Time',
+        agent: 'Agent',
+        addressInfo: 'Address details will be sent 1 hour before your appointment.',
+        contactUs: 'Contact us if you have any questions.',
+    }
+}
+
+function t(locale: string, key: string): string {
+    return smsTranslations[locale]?.[key] || smsTranslations['en'][key] || key
+}
+
+// ─── Core SMS Sender ─────────────────────────────────────────────────────
+
 export async function sendSmsNotification(payload: SmsPayload): Promise<{ success: boolean; messageId?: string }> {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
@@ -39,9 +102,8 @@ export async function sendSmsNotification(payload: SmsPayload): Promise<{ succes
     }
 }
 
-/**
- * Send hot lead alert to agent
- */
+// ─── Hot Lead Alert (to Agent) ───────────────────────────────────────────
+
 export async function notifyHotLead(leadId: string, chatbotId: string): Promise<void> {
     try {
         const [lead, chatbot] = await Promise.all([
@@ -50,6 +112,7 @@ export async function notifyHotLead(leadId: string, chatbotId: string): Promise<
                 where: { id: chatbotId },
                 select: {
                     name: true,
+                    language: true,
                     customSettings: true,
                     user: {
                         select: {
@@ -73,25 +136,28 @@ export async function notifyHotLead(leadId: string, chatbotId: string): Promise<
             return
         }
 
-        // Only block if SMS notifications are explicitly disabled
         if (chatbotSettings.smsNotifications === false) {
             console.log('SMS notifications disabled for chatbot:', chatbot.name)
             return
         }
 
-        const message = `🔥 SICAK MÜŞTERİ!
+        // Agent SMS uses chatbot language
+        const lang = chatbot.language || 'tr'
+        const intentText = lead.intent === 'buy' ? t(lang, 'intentBuy') : lead.intent === 'rent' ? t(lang, 'intentRent') : lead.intent || ''
 
-Ad: ${lead.name}
-Tel: ${lead.phone}
-${lead.email ? `Email: ${lead.email}` : ''}
-${lead.intent ? `İlgi: ${lead.intent === 'buy' ? 'Satın alma' : lead.intent === 'rent' ? 'Kiralama' : lead.intent}` : ''}
-${lead.budget ? `Bütçe: ${lead.budget}` : ''}
-${lead.hasPreApproval ? '✅ Kredi Ön Onayı VAR' : ''}
+        const message = `${t(lang, 'hotLeadTitle')}
 
-Puan: ${lead.score}/100
-Chatbot: ${chatbot.name}
+${t(lang, 'name')}: ${lead.name}
+${t(lang, 'phone')}: ${lead.phone}
+${lead.email ? `${t(lang, 'email')}: ${lead.email}` : ''}
+${lead.intent ? `${t(lang, 'interest')}: ${intentText}` : ''}
+${lead.budget ? `${t(lang, 'budget')}: ${lead.budget}` : ''}
+${lead.hasPreApproval ? t(lang, 'preApprovalYes') : ''}
 
-Hemen iletişime geçin!`
+${t(lang, 'score')}: ${lead.score}/100
+${t(lang, 'chatbot')}: ${chatbot.name}
+
+${t(lang, 'contactNow')}`
 
         await sendSmsNotification({
             to: notificationPhone,
@@ -108,9 +174,8 @@ Hemen iletişime geçin!`
     }
 }
 
-/**
- * Send appointment reminder SMS
- */
+// ─── Appointment Reminder (to Customer, 1hr Before) ──────────────────────
+
 export async function sendAppointmentReminder(
     leadId: string,
     appointmentDate: Date,
@@ -124,6 +189,7 @@ export async function sendAppointmentReminder(
                 chatbot: {
                     select: {
                         name: true,
+                        language: true,
                         customSettings: true
                     }
                 }
@@ -135,20 +201,24 @@ export async function sendAppointmentReminder(
             return
         }
 
-        const dateStr = appointmentDate.toLocaleDateString('tr-TR', {
+        // Reminder SMS uses the lead's locale if stored, otherwise chatbot language
+        const settings = (lead.chatbot.customSettings as any) || {}
+        const lang = (lead.requirements as any)?.locale || lead.chatbot.language || 'en'
+
+        const dateStr = appointmentDate.toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US', {
             weekday: 'long',
             day: 'numeric',
             month: 'long'
         })
 
-        const message = `📅 Randevu Hatırlatma
+        const message = `${t(lang, 'reminderTitle')}
 
-${lead.name} Bey/Hanım,
+${lead.name}${lang === 'tr' ? ` ${t(lang, 'dear')}` : ''},
 
-Yarınki randevunuz: ${dateStr} saat ${appointmentTime}
-${propertyTitle ? `Mülk: ${propertyTitle}` : ''}
+${t(lang, 'tomorrowAppt')}: ${dateStr} ${t(lang, 'at')} ${appointmentTime}
+${propertyTitle ? `${t(lang, 'property')}: ${propertyTitle}` : ''}
 
-Görüşmek üzere!
+${t(lang, 'seeYou')}
 ${lead.chatbot.name}`
 
         await sendSmsNotification({
@@ -166,29 +236,32 @@ ${lead.chatbot.name}`
     }
 }
 
-/**
- * Send appointment confirmation SMS to customer
- */
+// ─── Appointment Confirmation (to Customer) ──────────────────────────────
+
 export async function sendAppointmentConfirmation(
     leadPhone: string,
     leadName: string,
     appointmentDate: string,
     appointmentTime: string,
     agentName: string,
-    chatbotId: string
+    chatbotId: string,
+    locale?: string
 ): Promise<void> {
-    const message = `Appointment Confirmed!
+    // Customer SMS uses the form locale
+    const lang = locale || 'en'
 
-Hi ${leadName},
+    const message = `${t(lang, 'confirmTitle')}
 
-Your appointment is confirmed:
-Date: ${appointmentDate}
-Time: ${appointmentTime}
-Agent: ${agentName}
+${t(lang, 'hi')} ${leadName},
 
-Address details will be sent 1 hour before your appointment.
+${t(lang, 'appointmentConfirmed')}
+${t(lang, 'date')}: ${appointmentDate}
+${t(lang, 'time')}: ${appointmentTime}
+${t(lang, 'agent')}: ${agentName}
 
-Contact us if you have any questions.`
+${t(lang, 'addressInfo')}
+
+${t(lang, 'contactUs')}`
 
     await sendSmsNotification({
         to: leadPhone,
