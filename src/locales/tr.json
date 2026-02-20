@@ -1260,7 +1260,17 @@
         "affordabilityResult": "💰 Hesaplamalarıma göre, yaklaşık {amount} tutarına kadar ev alabilirsiniz.",
         "affordabilityNote": "Bu bütçe ile ilgilenir misiniz?",
         "affordabilityWarning": "⚠️ Bütçeniz biraz kısıtlı görünüyor. Daha uygun fiyatlı seçeneklere bakabiliriz veya kredi başvurusu konusunda danışmanımız yardımcı olabilir.",
-        "affordabilitySuccess": "✅ Bütçeniz gayet uygun görünüyor!"
+        "affordabilitySuccess": "✅ Bütçeniz gayet uygun görünüyor!",
+        "parking": "Kaç araçlık otopark ihtiyacınız var?",
+        "parkingNote": "Otopark imkanı mülk değerini önemli ölçüde etkiler.",
+        "features": "Sizin için hangi özellikler önemli?",
+        "featuresNote": "Uygun olanları seçin — en iyi eşleşmeleri bulmamıza yardımcı olur.",
+        "propertySize": "Minimum mülk büyüklüğü ne olmalı?",
+        "propertySizeNote": "Metrekare (m²) olarak girin veya esnek iseniz 'farketmez' yazın.",
+        "floorPreference": "Hangi kat tercih edersiniz?",
+        "floorPreferenceNote": "Kat seviyesi güneş ışığı, manzara ve gürültü seviyesini etkiler.",
+        "hasPropertyToSell": "Önce satmanız gereken bir mülkünüz var mı?",
+        "hasPropertyToSellNote": "Bu bilgi zaman çizelgenizi ve finansmanınızı daha iyi anlamamıza yardımcı olur."
       },
       "propertyTypes": {
         "apartment": "Daire",
@@ -1307,6 +1317,35 @@
         "yes": "Evet, var",
         "no": "Hayır, yok",
         "apply": "Başvuracağım"
+      },
+      "parkingOptions": {
+        "none": "Otopark gerekmez",
+        "1": "1 Araçlık",
+        "2": "2 Araçlık",
+        "3plus": "3+ Araçlık"
+      },
+      "featureOptions": {
+        "pool": "🏊 Havuz",
+        "garden": "🌳 Bahçe",
+        "balcony": "🏗️ Balkon/Teras",
+        "aircon": "❄️ Klima",
+        "security": "🔒 Güvenlik/Site",
+        "gym": "💪 Spor Salonu",
+        "storage": "📦 Depo/Kiler",
+        "none": "Özel bir tercihim yok"
+      },
+      "floorOptions": {
+        "ground": "Zemin Kat",
+        "low": "Alt Katlar (1-3)",
+        "mid": "Orta Katlar (4-8)",
+        "high": "Üst Katlar (9+)",
+        "penthouse": "Çatı Katı/Penthouse",
+        "any": "Farketmez"
+      },
+      "hasPropertyOptions": {
+        "yes": "Evet, önce satmam gerek",
+        "no": "Hayır, ilk defa alıyorum",
+        "already": "Zaten satıldı / Geçerli değil"
       },
       "appointmentSlots": {
         "title": "Danışmanımız bu saatlerde müsait:",

@@ -1252,7 +1252,17 @@
         "affordabilityResult": "💰 Based on my calculations, you can afford a property up to {amount}.",
         "affordabilityNote": "Would you like to see properties in this range?",
         "affordabilityWarning": "⚠️ Your budget seems a bit tight. Shall we look at more affordable options?",
-        "affordabilitySuccess": "✅ Your budget looks great!"
+        "affordabilitySuccess": "✅ Your budget looks great!",
+        "parking": "How many parking spaces do you need?",
+        "parkingNote": "Parking availability can significantly affect property value.",
+        "features": "Which features are important to you?",
+        "featuresNote": "Select all that apply — this helps us narrow down the best matches.",
+        "propertySize": "What is the minimum property size you are looking for?",
+        "propertySizeNote": "Enter in square meters (m²) or type 'any' if flexible.",
+        "floorPreference": "Which floor level do you prefer?",
+        "floorPreferenceNote": "Floor level affects sunlight, view, and noise levels.",
+        "hasPropertyToSell": "Do you have a current property to sell first?",
+        "hasPropertyToSellNote": "This helps us understand your timeline and financing better."
       },
       "propertyTypes": {
         "apartment": "Apartment",
@@ -1299,6 +1309,35 @@
         "yes": "Yes, I have it",
         "no": "No, not yet",
         "apply": "Will apply soon"
+      },
+      "parkingOptions": {
+        "none": "No parking needed",
+        "1": "1 Space",
+        "2": "2 Spaces",
+        "3plus": "3+ Spaces"
+      },
+      "featureOptions": {
+        "pool": "🏊 Pool",
+        "garden": "🌳 Garden",
+        "balcony": "🏗️ Balcony/Terrace",
+        "aircon": "❄️ Air Conditioning",
+        "security": "🔒 Security/Gated",
+        "gym": "💪 Gym/Fitness",
+        "storage": "📦 Storage Room",
+        "none": "No specific preference"
+      },
+      "floorOptions": {
+        "ground": "Ground Floor",
+        "low": "Low (1-3)",
+        "mid": "Mid (4-8)",
+        "high": "High (9+)",
+        "penthouse": "Penthouse/Top Floor",
+        "any": "No Preference"
+      },
+      "hasPropertyOptions": {
+        "yes": "Yes, I need to sell first",
+        "no": "No, I'm a first-time buyer",
+        "already": "Already sold / Not applicable"
       },
       "appointmentSlots": {
         "title": "Our advisor is available at these times:",

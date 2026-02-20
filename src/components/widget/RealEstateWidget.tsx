@@ -81,6 +81,11 @@ interface LeadData {
     monthlyExpenses?: number
     downPayment?: number
     calculatedMaxBudget?: number
+    parking?: string
+    features?: string[]
+    propertySize?: string
+    floorPreference?: string
+    hasPropertyToSell?: string
 }
 
 interface TenantIssue {
@@ -258,7 +263,17 @@ export function RealEstateWidget({
             expenses: tRaw('leadQualification.expenses'),
             expensesNote: tRaw('leadQualification.expensesNote'),
             downPayment: tRaw('leadQualification.downPayment'),
-            downPaymentNote: tRaw('leadQualification.downPaymentNote')
+            downPaymentNote: tRaw('leadQualification.downPaymentNote'),
+            parking: tRaw('leadQualification.parking'),
+            parkingNote: tRaw('leadQualification.parkingNote'),
+            features: tRaw('leadQualification.features'),
+            featuresNote: tRaw('leadQualification.featuresNote'),
+            propertySize: tRaw('leadQualification.propertySize'),
+            propertySizeNote: tRaw('leadQualification.propertySizeNote'),
+            floorPreference: tRaw('leadQualification.floorPreference'),
+            floorPreferenceNote: tRaw('leadQualification.floorPreferenceNote'),
+            hasPropertyToSell: tRaw('leadQualification.hasPropertyToSell'),
+            hasPropertyToSellNote: tRaw('leadQualification.hasPropertyToSellNote')
         },
         propertyTypes: [
             tRaw('propertyTypes.apartment'),
@@ -305,6 +320,35 @@ export function RealEstateWidget({
             tRaw('yesNo.yes'),
             tRaw('yesNo.no'),
             tRaw('yesNo.apply')
+        ],
+        parkingOptions: [
+            { label: tRaw('parkingOptions.none'), value: 'none' },
+            { label: tRaw('parkingOptions.1'), value: '1' },
+            { label: tRaw('parkingOptions.2'), value: '2' },
+            { label: tRaw('parkingOptions.3plus'), value: '3+' }
+        ],
+        featureOptions: [
+            tRaw('featureOptions.pool'),
+            tRaw('featureOptions.garden'),
+            tRaw('featureOptions.balcony'),
+            tRaw('featureOptions.aircon'),
+            tRaw('featureOptions.security'),
+            tRaw('featureOptions.gym'),
+            tRaw('featureOptions.storage'),
+            tRaw('featureOptions.none')
+        ],
+        floorOptions: [
+            { label: tRaw('floorOptions.ground'), value: 'ground' },
+            { label: tRaw('floorOptions.low'), value: 'low' },
+            { label: tRaw('floorOptions.mid'), value: 'mid' },
+            { label: tRaw('floorOptions.high'), value: 'high' },
+            { label: tRaw('floorOptions.penthouse'), value: 'penthouse' },
+            { label: tRaw('floorOptions.any'), value: 'any' }
+        ],
+        hasPropertyOptions: [
+            tRaw('hasPropertyOptions.yes'),
+            tRaw('hasPropertyOptions.no'),
+            tRaw('hasPropertyOptions.already')
         ],
         appointmentSlots: {
             title: tRaw('appointmentSlots.title'),
@@ -802,6 +846,107 @@ export function RealEstateWidget({
         if (limitReached) return
 
         setLeadData(prev => ({ ...prev, suburb: suburb.trim() }))
+        // After suburb, go to deep qualifying questions starting with parking
+        setCurrentStep('parking')
+        setTimeout(() => {
+            addBotMessage(`${t.leadQualification.parking}\n\n🅿️ ${t.leadQualification.parkingNote}`, 'quick-replies', {
+                replies: t.parkingOptions.map((p: any) => p.label)
+            })
+        }, 300)
+    }
+
+    const handleParkingSelect = async (parking: string) => {
+        await addUserMessage(parking)
+        if (limitReached) return
+
+        const parkingValue = t.parkingOptions.find((p: any) => p.label === parking)?.value || parking
+        setLeadData(prev => ({ ...prev, parking: parkingValue }))
+        setCurrentStep('features')
+        setTimeout(() => {
+            addBotMessage(`${t.leadQualification.features}\n\n✨ ${t.leadQualification.featuresNote}`, 'quick-replies', {
+                replies: t.featureOptions
+            })
+        }, 300)
+    }
+
+    const handleFeaturesSelect = async (feature: string) => {
+        await addUserMessage(feature)
+        if (limitReached) return
+
+        // If they selected "no preference", skip features collection
+        const noPreference = t.featureOptions[t.featureOptions.length - 1]
+        if (feature === noPreference) {
+            setLeadData(prev => ({ ...prev, features: [] }))
+        } else {
+            setLeadData(prev => ({ ...prev, features: [...(prev.features || []), feature] }))
+        }
+
+        // Move to property size
+        setCurrentStep('propertySize')
+        setTimeout(() => {
+            addBotMessage(`${t.leadQualification.propertySize}\n\n📐 ${t.leadQualification.propertySizeNote}`)
+        }, 300)
+    }
+
+    const handlePropertySizeInput = async (size: string) => {
+        await addUserMessage(size)
+        if (limitReached) return
+
+        setLeadData(prev => ({ ...prev, propertySize: size.trim() }))
+
+        // If property type is apartment/daire, ask floor preference
+        const isApartment = leadData.propertyType === 'apartment' || leadData.propertyType === 'daire'
+        if (isApartment) {
+            setCurrentStep('floorPreference')
+            setTimeout(() => {
+                addBotMessage(`${t.leadQualification.floorPreference}\n\n🏢 ${t.leadQualification.floorPreferenceNote}`, 'quick-replies', {
+                    replies: t.floorOptions.map((f: any) => f.label)
+                })
+            }, 300)
+        } else if (leadData.intent === 'buy') {
+            // For non-apartment buy, ask if they have property to sell
+            setCurrentStep('hasPropertyToSell')
+            setTimeout(() => {
+                addBotMessage(`${t.leadQualification.hasPropertyToSell}\n\n🏠 ${t.leadQualification.hasPropertyToSellNote}`, 'quick-replies', {
+                    replies: t.hasPropertyOptions
+                })
+            }, 300)
+        } else {
+            // Rental non-apartment — go to budget
+            goToBudgetStep()
+        }
+    }
+
+    const handleFloorPreferenceSelect = async (floor: string) => {
+        await addUserMessage(floor)
+        if (limitReached) return
+
+        const floorValue = t.floorOptions.find((f: any) => f.label === floor)?.value || floor
+        setLeadData(prev => ({ ...prev, floorPreference: floorValue }))
+
+        // If buying, ask if they have a property to sell
+        if (leadData.intent === 'buy') {
+            setCurrentStep('hasPropertyToSell')
+            setTimeout(() => {
+                addBotMessage(`${t.leadQualification.hasPropertyToSell}\n\n🏠 ${t.leadQualification.hasPropertyToSellNote}`, 'quick-replies', {
+                    replies: t.hasPropertyOptions
+                })
+            }, 300)
+        } else {
+            // Rental — go to budget
+            goToBudgetStep()
+        }
+    }
+
+    const handleHasPropertyToSellSelect = async (answer: string) => {
+        await addUserMessage(answer)
+        if (limitReached) return
+
+        setLeadData(prev => ({ ...prev, hasPropertyToSell: answer }))
+        goToBudgetStep()
+    }
+
+    const goToBudgetStep = () => {
         setCurrentStep('budget')
         setTimeout(() => {
             const isRent = leadData.intent === 'rent'
@@ -1332,6 +1477,11 @@ export function RealEstateWidget({
             setInput('')
             return
         }
+        if (currentStep === 'propertySize') {
+            handlePropertySizeInput(input.trim())
+            setInput('')
+            return
+        }
 
         addUserMessage(input.trim())
 
@@ -1429,6 +1579,10 @@ export function RealEstateWidget({
                                         else if (currentStep === 'budget') handleBudgetSelect(reply)
                                         else if (currentStep === 'timeline') handleTimelineSelect(reply)
                                         else if (currentStep === 'preApproval') handlePreApprovalSelect(reply)
+                                        else if (currentStep === 'parking') handleParkingSelect(reply)
+                                        else if (currentStep === 'features') handleFeaturesSelect(reply)
+                                        else if (currentStep === 'floorPreference') handleFloorPreferenceSelect(reply)
+                                        else if (currentStep === 'hasPropertyToSell') handleHasPropertyToSellSelect(reply)
                                         else if (currentStep === 'tenant') handleTenantOption(reply)
                                         else if (currentStep === 'tenantIssueType') handleTenantIssueType(reply)
                                         else if (currentStep === 'tenantUrgency') handleTenantUrgency(reply)
