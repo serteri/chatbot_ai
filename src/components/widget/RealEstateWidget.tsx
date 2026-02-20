@@ -1968,6 +1968,153 @@ export function RealEstateWidget({
     )
 }
 
+// Comprehensive worldwide country codes
+const COUNTRY_CODES = [
+    // Popular / Most Used
+    { code: '+1', flag: '🇺🇸', iso: 'US', name: 'United States', phoneFmt: '10' },
+    { code: '+1', flag: '🇨🇦', iso: 'CA', name: 'Canada', phoneFmt: '10' },
+    { code: '+44', flag: '🇬🇧', iso: 'GB', name: 'United Kingdom', phoneFmt: '10-11' },
+    { code: '+61', flag: '🇦🇺', iso: 'AU', name: 'Australia', phoneFmt: '9' },
+    { code: '+90', flag: '🇹🇷', iso: 'TR', name: 'Turkey', phoneFmt: '10' },
+    { code: '+49', flag: '🇩🇪', iso: 'DE', name: 'Germany', phoneFmt: '10-11' },
+    { code: '+33', flag: '🇫🇷', iso: 'FR', name: 'France', phoneFmt: '9' },
+    { code: '+34', flag: '🇪🇸', iso: 'ES', name: 'Spain', phoneFmt: '9' },
+    { code: '+39', flag: '🇮🇹', iso: 'IT', name: 'Italy', phoneFmt: '9-10' },
+    { code: '+31', flag: '🇳🇱', iso: 'NL', name: 'Netherlands', phoneFmt: '9' },
+    { code: '+32', flag: '🇧🇪', iso: 'BE', name: 'Belgium', phoneFmt: '9' },
+    { code: '+41', flag: '🇨🇭', iso: 'CH', name: 'Switzerland', phoneFmt: '9' },
+    { code: '+43', flag: '🇦🇹', iso: 'AT', name: 'Austria', phoneFmt: '10-11' },
+    { code: '+46', flag: '🇸🇪', iso: 'SE', name: 'Sweden', phoneFmt: '9-10' },
+    { code: '+47', flag: '🇳🇴', iso: 'NO', name: 'Norway', phoneFmt: '8' },
+    { code: '+45', flag: '🇩🇰', iso: 'DK', name: 'Denmark', phoneFmt: '8' },
+    { code: '+358', flag: '🇫🇮', iso: 'FI', name: 'Finland', phoneFmt: '9-10' },
+    { code: '+48', flag: '🇵🇱', iso: 'PL', name: 'Poland', phoneFmt: '9' },
+    { code: '+420', flag: '🇨🇿', iso: 'CZ', name: 'Czech Republic', phoneFmt: '9' },
+    { code: '+36', flag: '🇭🇺', iso: 'HU', name: 'Hungary', phoneFmt: '9' },
+    { code: '+40', flag: '🇷🇴', iso: 'RO', name: 'Romania', phoneFmt: '9' },
+    { code: '+30', flag: '🇬🇷', iso: 'GR', name: 'Greece', phoneFmt: '10' },
+    { code: '+351', flag: '🇵🇹', iso: 'PT', name: 'Portugal', phoneFmt: '9' },
+    { code: '+353', flag: '🇮🇪', iso: 'IE', name: 'Ireland', phoneFmt: '9' },
+    { code: '+354', flag: '🇮🇸', iso: 'IS', name: 'Iceland', phoneFmt: '7' },
+    { code: '+352', flag: '🇱🇺', iso: 'LU', name: 'Luxembourg', phoneFmt: '9' },
+    { code: '+370', flag: '🇱🇹', iso: 'LT', name: 'Lithuania', phoneFmt: '8' },
+    { code: '+371', flag: '🇱🇻', iso: 'LV', name: 'Latvia', phoneFmt: '8' },
+    { code: '+372', flag: '🇪🇪', iso: 'EE', name: 'Estonia', phoneFmt: '7-8' },
+    { code: '+380', flag: '🇺🇦', iso: 'UA', name: 'Ukraine', phoneFmt: '9' },
+    { code: '+385', flag: '🇭🇷', iso: 'HR', name: 'Croatia', phoneFmt: '9' },
+    { code: '+381', flag: '🇷🇸', iso: 'RS', name: 'Serbia', phoneFmt: '9' },
+    { code: '+386', flag: '🇸🇮', iso: 'SI', name: 'Slovenia', phoneFmt: '8' },
+    { code: '+387', flag: '🇧🇦', iso: 'BA', name: 'Bosnia', phoneFmt: '8' },
+    { code: '+389', flag: '🇲🇰', iso: 'MK', name: 'North Macedonia', phoneFmt: '8' },
+    { code: '+355', flag: '🇦🇱', iso: 'AL', name: 'Albania', phoneFmt: '9' },
+    { code: '+359', flag: '🇧🇬', iso: 'BG', name: 'Bulgaria', phoneFmt: '9' },
+    { code: '+373', flag: '🇲🇩', iso: 'MD', name: 'Moldova', phoneFmt: '8' },
+    { code: '+374', flag: '🇦🇲', iso: 'AM', name: 'Armenia', phoneFmt: '8' },
+    { code: '+995', flag: '🇬🇪', iso: 'GE', name: 'Georgia', phoneFmt: '9' },
+    { code: '+994', flag: '🇦🇿', iso: 'AZ', name: 'Azerbaijan', phoneFmt: '9' },
+    { code: '+375', flag: '🇧🇾', iso: 'BY', name: 'Belarus', phoneFmt: '9-10' },
+    { code: '+7', flag: '🇷🇺', iso: 'RU', name: 'Russia', phoneFmt: '10' },
+    // Middle East
+    { code: '+971', flag: '🇦🇪', iso: 'AE', name: 'UAE', phoneFmt: '9' },
+    { code: '+966', flag: '🇸🇦', iso: 'SA', name: 'Saudi Arabia', phoneFmt: '9' },
+    { code: '+974', flag: '🇶🇦', iso: 'QA', name: 'Qatar', phoneFmt: '8' },
+    { code: '+973', flag: '🇧🇭', iso: 'BH', name: 'Bahrain', phoneFmt: '8' },
+    { code: '+968', flag: '🇴🇲', iso: 'OM', name: 'Oman', phoneFmt: '8' },
+    { code: '+965', flag: '🇰🇼', iso: 'KW', name: 'Kuwait', phoneFmt: '8' },
+    { code: '+962', flag: '🇯🇴', iso: 'JO', name: 'Jordan', phoneFmt: '9' },
+    { code: '+961', flag: '🇱🇧', iso: 'LB', name: 'Lebanon', phoneFmt: '7-8' },
+    { code: '+972', flag: '🇮🇱', iso: 'IL', name: 'Israel', phoneFmt: '9' },
+    { code: '+964', flag: '🇮🇶', iso: 'IQ', name: 'Iraq', phoneFmt: '10' },
+    { code: '+98', flag: '🇮🇷', iso: 'IR', name: 'Iran', phoneFmt: '10' },
+    { code: '+963', flag: '🇸🇾', iso: 'SY', name: 'Syria', phoneFmt: '9' },
+    { code: '+967', flag: '🇾🇪', iso: 'YE', name: 'Yemen', phoneFmt: '9' },
+    // Asia Pacific
+    { code: '+64', flag: '🇳🇿', iso: 'NZ', name: 'New Zealand', phoneFmt: '9' },
+    { code: '+65', flag: '🇸🇬', iso: 'SG', name: 'Singapore', phoneFmt: '8' },
+    { code: '+60', flag: '🇲🇾', iso: 'MY', name: 'Malaysia', phoneFmt: '9-10' },
+    { code: '+62', flag: '🇮🇩', iso: 'ID', name: 'Indonesia', phoneFmt: '10-12' },
+    { code: '+63', flag: '🇵🇭', iso: 'PH', name: 'Philippines', phoneFmt: '10' },
+    { code: '+66', flag: '🇹🇭', iso: 'TH', name: 'Thailand', phoneFmt: '9' },
+    { code: '+84', flag: '🇻🇳', iso: 'VN', name: 'Vietnam', phoneFmt: '9-10' },
+    { code: '+81', flag: '🇯🇵', iso: 'JP', name: 'Japan', phoneFmt: '10' },
+    { code: '+82', flag: '🇰🇷', iso: 'KR', name: 'South Korea', phoneFmt: '10-11' },
+    { code: '+86', flag: '🇨🇳', iso: 'CN', name: 'China', phoneFmt: '11' },
+    { code: '+852', flag: '🇭🇰', iso: 'HK', name: 'Hong Kong', phoneFmt: '8' },
+    { code: '+886', flag: '🇹🇼', iso: 'TW', name: 'Taiwan', phoneFmt: '9' },
+    { code: '+91', flag: '🇮🇳', iso: 'IN', name: 'India', phoneFmt: '10' },
+    { code: '+92', flag: '🇵🇰', iso: 'PK', name: 'Pakistan', phoneFmt: '10' },
+    { code: '+94', flag: '🇱🇰', iso: 'LK', name: 'Sri Lanka', phoneFmt: '9' },
+    { code: '+880', flag: '🇧🇩', iso: 'BD', name: 'Bangladesh', phoneFmt: '10' },
+    { code: '+977', flag: '🇳🇵', iso: 'NP', name: 'Nepal', phoneFmt: '10' },
+    { code: '+93', flag: '🇦🇫', iso: 'AF', name: 'Afghanistan', phoneFmt: '9' },
+    { code: '+855', flag: '🇰🇭', iso: 'KH', name: 'Cambodia', phoneFmt: '9' },
+    { code: '+856', flag: '🇱🇦', iso: 'LA', name: 'Laos', phoneFmt: '9-10' },
+    { code: '+95', flag: '🇲🇲', iso: 'MM', name: 'Myanmar', phoneFmt: '9-10' },
+    { code: '+976', flag: '🇲🇳', iso: 'MN', name: 'Mongolia', phoneFmt: '8' },
+    { code: '+996', flag: '🇰🇬', iso: 'KG', name: 'Kyrgyzstan', phoneFmt: '9' },
+    { code: '+998', flag: '🇺🇿', iso: 'UZ', name: 'Uzbekistan', phoneFmt: '9' },
+    { code: '+992', flag: '🇹🇯', iso: 'TJ', name: 'Tajikistan', phoneFmt: '9' },
+    { code: '+993', flag: '🇹🇲', iso: 'TM', name: 'Turkmenistan', phoneFmt: '8' },
+    { code: '+7', flag: '🇰🇿', iso: 'KZ', name: 'Kazakhstan', phoneFmt: '10' },
+    // Americas
+    { code: '+52', flag: '🇲🇽', iso: 'MX', name: 'Mexico', phoneFmt: '10' },
+    { code: '+55', flag: '🇧🇷', iso: 'BR', name: 'Brazil', phoneFmt: '10-11' },
+    { code: '+54', flag: '🇦🇷', iso: 'AR', name: 'Argentina', phoneFmt: '10' },
+    { code: '+56', flag: '🇨🇱', iso: 'CL', name: 'Chile', phoneFmt: '9' },
+    { code: '+57', flag: '🇨🇴', iso: 'CO', name: 'Colombia', phoneFmt: '10' },
+    { code: '+58', flag: '🇻🇪', iso: 'VE', name: 'Venezuela', phoneFmt: '10' },
+    { code: '+51', flag: '🇵🇪', iso: 'PE', name: 'Peru', phoneFmt: '9' },
+    { code: '+593', flag: '🇪🇨', iso: 'EC', name: 'Ecuador', phoneFmt: '9' },
+    { code: '+591', flag: '🇧🇴', iso: 'BO', name: 'Bolivia', phoneFmt: '8' },
+    { code: '+595', flag: '🇵🇾', iso: 'PY', name: 'Paraguay', phoneFmt: '9' },
+    { code: '+598', flag: '🇺🇾', iso: 'UY', name: 'Uruguay', phoneFmt: '8' },
+    { code: '+506', flag: '🇨🇷', iso: 'CR', name: 'Costa Rica', phoneFmt: '8' },
+    { code: '+507', flag: '🇵🇦', iso: 'PA', name: 'Panama', phoneFmt: '8' },
+    { code: '+502', flag: '🇬🇹', iso: 'GT', name: 'Guatemala', phoneFmt: '8' },
+    { code: '+503', flag: '🇸🇻', iso: 'SV', name: 'El Salvador', phoneFmt: '8' },
+    { code: '+504', flag: '🇭🇳', iso: 'HN', name: 'Honduras', phoneFmt: '8' },
+    { code: '+505', flag: '🇳🇮', iso: 'NI', name: 'Nicaragua', phoneFmt: '8' },
+    { code: '+53', flag: '🇨🇺', iso: 'CU', name: 'Cuba', phoneFmt: '8' },
+    { code: '+1809', flag: '🇩🇴', iso: 'DO', name: 'Dominican Republic', phoneFmt: '10' },
+    // Africa
+    { code: '+27', flag: '🇿🇦', iso: 'ZA', name: 'South Africa', phoneFmt: '9' },
+    { code: '+20', flag: '🇪🇬', iso: 'EG', name: 'Egypt', phoneFmt: '10' },
+    { code: '+212', flag: '🇲🇦', iso: 'MA', name: 'Morocco', phoneFmt: '9' },
+    { code: '+213', flag: '🇩🇿', iso: 'DZ', name: 'Algeria', phoneFmt: '9' },
+    { code: '+216', flag: '🇹🇳', iso: 'TN', name: 'Tunisia', phoneFmt: '8' },
+    { code: '+218', flag: '🇱🇾', iso: 'LY', name: 'Libya', phoneFmt: '9' },
+    { code: '+234', flag: '🇳🇬', iso: 'NG', name: 'Nigeria', phoneFmt: '10' },
+    { code: '+233', flag: '🇬🇭', iso: 'GH', name: 'Ghana', phoneFmt: '9' },
+    { code: '+254', flag: '🇰🇪', iso: 'KE', name: 'Kenya', phoneFmt: '9' },
+    { code: '+255', flag: '🇹🇿', iso: 'TZ', name: 'Tanzania', phoneFmt: '9' },
+    { code: '+256', flag: '🇺🇬', iso: 'UG', name: 'Uganda', phoneFmt: '9' },
+    { code: '+251', flag: '🇪🇹', iso: 'ET', name: 'Ethiopia', phoneFmt: '9' },
+    { code: '+237', flag: '🇨🇲', iso: 'CM', name: 'Cameroon', phoneFmt: '9' },
+    { code: '+225', flag: '🇨🇮', iso: 'CI', name: "Côte d'Ivoire", phoneFmt: '10' },
+    { code: '+221', flag: '🇸🇳', iso: 'SN', name: 'Senegal', phoneFmt: '9' },
+    { code: '+244', flag: '🇦🇴', iso: 'AO', name: 'Angola', phoneFmt: '9' },
+    { code: '+258', flag: '🇲🇿', iso: 'MZ', name: 'Mozambique', phoneFmt: '9' },
+    { code: '+260', flag: '🇿🇲', iso: 'ZM', name: 'Zambia', phoneFmt: '9' },
+    { code: '+263', flag: '🇿🇼', iso: 'ZW', name: 'Zimbabwe', phoneFmt: '9' },
+    // Caribbean & Islands
+    { code: '+1876', flag: '🇯🇲', iso: 'JM', name: 'Jamaica', phoneFmt: '10' },
+    { code: '+1868', flag: '🇹🇹', iso: 'TT', name: 'Trinidad & Tobago', phoneFmt: '10' },
+    { code: '+356', flag: '🇲🇹', iso: 'MT', name: 'Malta', phoneFmt: '8' },
+    { code: '+357', flag: '🇨🇾', iso: 'CY', name: 'Cyprus', phoneFmt: '8' },
+    { code: '+230', flag: '🇲🇺', iso: 'MU', name: 'Mauritius', phoneFmt: '8' },
+    { code: '+679', flag: '🇫🇯', iso: 'FJ', name: 'Fiji', phoneFmt: '7' },
+]
+
+// Phone validation helper
+function validatePhoneLength(phone: string, phoneFmt: string): boolean {
+    const digits = phone.replace(/\D/g, '')
+    if (!digits) return false
+    const parts = phoneFmt.split('-')
+    const minLen = parseInt(parts[0])
+    const maxLen = parts.length > 1 ? parseInt(parts[1]) : minLen
+    return digits.length >= minLen && digits.length <= maxLen
+}
+
 // Contact Form Component
 function ContactForm({
     onSubmit,
@@ -1983,19 +2130,18 @@ function ContactForm({
     const [phone, setPhone] = useState('')
     const [email, setEmail] = useState('')
     const [error, setError] = useState('')
+    const [codeSearch, setCodeSearch] = useState('')
+    const [showCodeDropdown, setShowCodeDropdown] = useState(false)
 
-    const countryCodes = [
-        { code: '+61', country: '🇦🇺 AU', name: 'Australia' },
-        { code: '+90', country: '🇹🇷 TR', name: 'Turkey' },
-        { code: '+1', country: '🇺🇸 US', name: 'USA/Canada' },
-        { code: '+44', country: '🇬🇧 UK', name: 'United Kingdom' },
-        { code: '+49', country: '🇩🇪 DE', name: 'Germany' },
-        { code: '+33', country: '🇫🇷 FR', name: 'France' },
-        { code: '+971', country: '🇦🇪 UAE', name: 'UAE' },
-        { code: '+966', country: '🇸🇦 SA', name: 'Saudi Arabia' },
-        { code: '+64', country: '🇳🇿 NZ', name: 'New Zealand' },
-        { code: '+65', country: '🇸🇬 SG', name: 'Singapore' },
-    ]
+    const selectedCountry = COUNTRY_CODES.find(c => c.code === countryCode) || COUNTRY_CODES[0]
+
+    const filteredCodes = codeSearch
+        ? COUNTRY_CODES.filter(c =>
+            c.name.toLowerCase().includes(codeSearch.toLowerCase()) ||
+            c.iso.toLowerCase().includes(codeSearch.toLowerCase()) ||
+            c.code.includes(codeSearch)
+        )
+        : COUNTRY_CODES
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -2003,8 +2149,20 @@ function ContactForm({
             setError(locale === 'tr' ? 'Lütfen ad ve telefon bilgilerini giriniz.' : 'Please enter your name and phone number.')
             return
         }
+        // Validate phone number length
+        const cleanPhone = phone.replace(/\D/g, '').replace(/^0+/, '')
+        if (!validatePhoneLength(cleanPhone, selectedCountry.phoneFmt)) {
+            const parts = selectedCountry.phoneFmt.split('-')
+            const expected = parts.length > 1 ? `${parts[0]}-${parts[1]}` : parts[0]
+            setError(
+                locale === 'tr'
+                    ? `${selectedCountry.name} için telefon numarası ${expected} haneli olmalıdır.`
+                    : `Phone number for ${selectedCountry.name} should be ${expected} digits.`
+            )
+            return
+        }
         // Combine country code with phone number
-        const fullPhone = `${countryCode}${phone.replace(/^0+/, '')}`
+        const fullPhone = `${countryCode}${cleanPhone}`
         onSubmit({ name, phone: fullPhone, email })
     }
 
@@ -2027,28 +2185,68 @@ function ContactForm({
                         className="flex-1 text-sm outline-none bg-transparent"
                     />
                 </div>
-                <div className="flex items-center gap-2 border rounded-lg px-2 py-2 bg-white focus-within:ring-2 focus-within:ring-amber-400">
+                <div className="flex items-center gap-1 border rounded-lg px-2 py-2 bg-white focus-within:ring-2 focus-within:ring-amber-400 relative">
                     <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                    <select
-                        value={countryCode}
-                        onChange={(e) => setCountryCode(e.target.value)}
-                        className="text-sm outline-none bg-transparent border-r border-gray-200 pr-1 cursor-pointer"
-                    >
-                        {countryCodes.map((c) => (
-                            <option key={c.code} value={c.code}>
-                                {c.country} {c.code}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="relative">
+                        <button
+                            type="button"
+                            onClick={() => setShowCodeDropdown(!showCodeDropdown)}
+                            className="flex items-center gap-1 text-sm border-r border-gray-200 pr-2 cursor-pointer hover:bg-gray-50 rounded py-0.5 px-1"
+                        >
+                            <span>{selectedCountry.flag}</span>
+                            <span className="text-gray-600">{selectedCountry.code}</span>
+                            <span className="text-gray-400 text-[10px]">▼</span>
+                        </button>
+                        {showCodeDropdown && (
+                            <div className="absolute top-8 left-0 z-50 bg-white border border-gray-200 rounded-lg shadow-xl w-56 max-h-60 overflow-hidden">
+                                <div className="p-2 border-b border-gray-100 sticky top-0 bg-white">
+                                    <input
+                                        type="text"
+                                        value={codeSearch}
+                                        onChange={(e) => setCodeSearch(e.target.value)}
+                                        placeholder={locale === 'tr' ? 'Ülke ara...' : 'Search country...'}
+                                        className="w-full text-xs px-2 py-1.5 border border-gray-200 rounded outline-none focus:border-amber-400"
+                                        autoFocus
+                                    />
+                                </div>
+                                <div className="overflow-y-auto max-h-48">
+                                    {filteredCodes.map((c, idx) => (
+                                        <button
+                                            key={`${c.iso}-${idx}`}
+                                            type="button"
+                                            onClick={() => {
+                                                setCountryCode(c.code)
+                                                setShowCodeDropdown(false)
+                                                setCodeSearch('')
+                                            }}
+                                            className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-amber-50 transition-colors text-left ${countryCode === c.code && c.iso === selectedCountry.iso ? 'bg-amber-50 font-medium' : ''}`}
+                                        >
+                                            <span>{c.flag}</span>
+                                            <span className="flex-1 truncate">{c.name}</span>
+                                            <span className="text-gray-400">{c.code}</span>
+                                        </button>
+                                    ))}
+                                    {filteredCodes.length === 0 && (
+                                        <p className="text-xs text-gray-400 px-3 py-2 text-center">
+                                            {locale === 'tr' ? 'Sonuç bulunamadı' : 'No results found'}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
                     <input
                         type="tel"
                         value={phone}
                         onChange={(e) => {
-                            setPhone(e.target.value)
+                            // Only allow digits, spaces, dashes
+                            const val = e.target.value.replace(/[^\d\s\-()]/g, '')
+                            setPhone(val)
                             setError('')
                         }}
                         placeholder={locale === 'tr' ? 'Telefon *' : 'Phone *'}
                         className="flex-1 text-sm outline-none bg-transparent min-w-0"
+                        onClick={() => setShowCodeDropdown(false)}
                     />
                 </div>
                 <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-amber-400">
