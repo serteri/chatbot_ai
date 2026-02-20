@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/db/prisma';
 import ChatInterface from '@/components/chatbot/ChatInterface';
+import RealEstateWidgetWrapper from '@/components/chatbot/RealEstateWidgetWrapper';
 import { Metadata } from 'next';
 import { getTranslations, Locale } from '@/lib/i18n';
 
@@ -48,10 +49,15 @@ export default async function ChatbotPage(props: Props) {
             widgetPrimaryColor: true,
             widgetButtonColor: true,
             widgetTextColor: true,
+            widgetPosition: true,
             hideBranding: true,
             enableLiveChat: true,
             liveSupportUrl: true,
             whatsappNumber: true,
+            industry: true,
+            calendlyUrl: true,
+            agentName: true,
+            identifier: true,
             // Dil ayarını da çekiyoruz
             language: true,
             botNameTr: true,
@@ -128,6 +134,27 @@ export default async function ChatbotPage(props: Props) {
         aiPowered: fullTranslations.ChatWidget.aiPowered,
         changeLanguage: fullTranslations.ChatWidget.changeLanguage
     };
+
+    // If this is a real estate chatbot, render the RealEstateWidget in embedded mode
+    if (chatbot.industry === 'realestate') {
+        // Load next-intl messages for the RealEstateWidget
+        const { getMessages } = await import('next-intl/server');
+        const messages = await getMessages({ locale });
+
+        return (
+            <div className="h-[100dvh] w-full overflow-hidden bg-white">
+                <RealEstateWidgetWrapper
+                    locale={locale}
+                    messages={messages as Record<string, any>}
+                    chatbotIdentifier={chatbot.identifier || chatbot.id}
+                    calendlyUrl={chatbot.calendlyUrl}
+                    primaryColor={chatbot.widgetPrimaryColor}
+                    agentName={chatbot.agentName || displayChatbot.name}
+                    position={chatbot.widgetPosition === 'bottom-left' ? 'bottom-left' : 'bottom-right'}
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="h-[100dvh] w-full overflow-hidden bg-white">

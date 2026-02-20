@@ -99,6 +99,7 @@ interface RealEstateWidgetProps {
     companyLogo?: string
     chatbotIdentifier?: string // Required for API calls
     calendlyUrl?: string // Calendly booking URL (e.g., https://calendly.com/username/event)
+    embedded?: boolean // When true, renders full-page without floating toggle button
     onLeadCapture?: (lead: LeadData) => void
     onHotLead?: (lead: LeadData) => void
     onTenantIssue?: (issue: TenantIssue) => void
@@ -106,23 +107,40 @@ interface RealEstateWidgetProps {
 }
 
 
-// Lead scoring function
+// Enhanced Lead scoring function with more qualification factors
 function calculateLeadScore(lead: LeadData): { score: number; category: 'hot' | 'warm' | 'cold' } {
     let score = 0
 
+    // Timeline urgency (max 40pts)
     if (lead.timelineUrgency === 'immediate') score += 40
     else if (lead.timelineUrgency === 'soon') score += 25
     else if (lead.timelineUrgency === 'later') score += 10
 
+    // Pre-approval status (max 30pts)
     if (lead.hasPreApproval === true) score += 30
     else if (lead.hasPreApproval === false) score += 5
 
+    // Budget level (max 20pts)
     if (lead.budgetLevel === 'premium') score += 20
     else if (lead.budgetLevel === 'high') score += 15
     else if (lead.budgetLevel === 'medium') score += 10
     else if (lead.budgetLevel === 'low') score += 5
 
+    // Contact info provided (max 15pts)
     if (lead.contactPhone) score += 10
+    if (lead.contactEmail) score += 5
+
+    // Location specificity (max 10pts)
+    if (lead.city) score += 5
+    if (lead.suburb) score += 5
+
+    // Property type specified (5pts)
+    if (lead.propertyType) score += 5
+
+    // Financial capacity matches or exceeds budget (10pts)
+    if (lead.calculatedMaxBudget && lead.budgetMax) {
+        if (lead.calculatedMaxBudget >= lead.budgetMax) score += 10
+    }
 
     let category: 'hot' | 'warm' | 'cold'
     if (score >= 70) category = 'hot'
@@ -160,13 +178,19 @@ export function RealEstateWidget({
     companyLogo,
     chatbotIdentifier,
     calendlyUrl,
+    embedded = false,
     onLeadCapture,
     onHotLead,
     onTenantIssue,
     onAppointmentBooked
 }: RealEstateWidgetProps) {
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(embedded)
     const [showCalendly, setShowCalendly] = useState(false)
+
+    // In embedded mode, always stay open
+    useEffect(() => {
+        if (embedded) setIsOpen(true)
+    }, [embedded])
     const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState('')
     const [isTyping, setIsTyping] = useState(false)
@@ -1006,8 +1030,11 @@ export function RealEstateWidget({
             labels: t.leadScore
         })
 
-        // If Hot or Warm Lead (score >= 60), offer Appointment
-        if (category === 'hot' || score >= 60) {
+        // Score-based routing:
+        // Hot leads (≥70) → Offer booking/appointment
+        // Warm leads (40-69) → Thank you, agent will contact
+        // Cold leads (<40) → Thank you only
+        if (category === 'hot') {
             setTimeout(() => {
                 addBotMessage(
                     t.messages.schedulePrompt,
@@ -1682,6 +1709,28 @@ export function RealEstateWidget({
                 return <p className="text-sm">{message.content}</p>
 
             case 'appointment':
+                // If Calendly URL is available, embed Calendly
+                if (calendlyUrl) {
+                    return (
+                        <div className="space-y-2">
+                            <p className="text-sm font-medium mb-2">{message.content}</p>
+                            <div className="rounded-lg overflow-hidden border border-gray-200" style={{ height: '400px' }}>
+                                <iframe
+                                    src={`${calendlyUrl}?hide_event_type_details=1&hide_gdpr_banner=1&primary_color=${primaryColor.replace('#', '')}`}
+                                    width="100%"
+                                    height="100%"
+                                    frameBorder="0"
+                                    title="Schedule Appointment"
+                                    style={{ minHeight: '400px' }}
+                                />
+                            </div>
+                            <p className="text-[10px] text-gray-400 text-center mt-1">
+                                {locale === 'tr' ? 'Uygun bir zaman seçin' : 'Select a convenient time'}
+                            </p>
+                        </div>
+                    )
+                }
+                // Fallback to built-in appointment slot picker
                 return <AppointmentSlotPicker
                     locale={locale}
                     identifier={chatbotIdentifier || ''}
@@ -1741,7 +1790,7 @@ export function RealEstateWidget({
 
     return (
         <>
-            {!isOpen && (
+            {!embedded && !isOpen && (
                 <div className={`fixed bottom-4 ${positionClass} z-50`}>
                     {showNotification && (
                         <div className="absolute -top-2 -right-2 flex items-center justify-center">
@@ -1792,7 +1841,7 @@ export function RealEstateWidget({
             )}
 
             {isOpen && (
-                <div className={`fixed bottom-4 ${positionClass} z-50 w-[360px] h-[540px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-slide-up`}>
+                <div className={`${embedded ? 'relative w-full h-full' : `fixed bottom-4 ${positionClass} z-50 w-[360px] h-[540px]`} bg-white ${embedded ? '' : 'rounded-2xl'} shadow-2xl flex flex-col overflow-hidden ${embedded ? '' : 'animate-slide-up'}`}>
                     <div
                         className="px-4 py-3 flex items-center justify-between"
                         style={{ backgroundColor: primaryColor }}
@@ -1823,12 +1872,14 @@ export function RealEstateWidget({
                                     {remainingMessages}/{demoChatLimit}
                                 </span>
                             )}
-                            <button
-                                onClick={() => setIsOpen(false)}
-                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-                            >
-                                <X className="w-5 h-5 text-white" />
-                            </button>
+                            {!embedded && (
+                                <button
+                                    onClick={() => setIsOpen(false)}
+                                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                                >
+                                    <X className="w-5 h-5 text-white" />
+                                </button>
+                            )}
                         </div>
                     </div>
 
