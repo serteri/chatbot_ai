@@ -731,7 +731,12 @@ export function RealEstateWidget({
                         monthlyExpenses: leadInfo.monthlyExpenses,
                         downPayment: leadInfo.downPayment,
                         calculatedMaxBudget: leadInfo.calculatedMaxBudget,
-                        housingType: leadInfo.propertyType // Add redundant for clarity
+                        parking: leadInfo.parking,
+                        features: leadInfo.features,
+                        propertySize: leadInfo.propertySize,
+                        floorPreference: leadInfo.floorPreference,
+                        hasPropertyToSell: leadInfo.hasPropertyToSell,
+                        housingType: leadInfo.propertyType
                     }
                 })
             })

@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db/prisma'
 import { z } from 'zod'
 import { notifyHotLead } from '@/lib/sms/notifications'
 import { sendLeadNotificationToAgent } from '@/lib/email/notifications'
+import { forwardLeadToCRM } from '@/lib/crm/webhook'
 
 // Validation schema for lead
 const leadSchema = z.object({
@@ -89,9 +90,10 @@ export async function POST(request: NextRequest) {
 
         // Find chatbot by identifier
         let chatbotId = validatedData.chatbotId
+        let chatbot: any = null
 
         if (!chatbotId && validatedData.identifier) {
-            const chatbot = await prisma.chatbot.findUnique({
+            chatbot = await prisma.chatbot.findUnique({
                 where: { identifier: validatedData.identifier }
             })
 
@@ -174,6 +176,30 @@ export async function POST(request: NextRequest) {
                 }).catch(err => console.error('Failed to send updated lead email notification:', err))
             }
 
+            // Forward updated lead to CRM
+            if (chatbot) {
+                forwardLeadToCRM({
+                    id: updatedLead.id,
+                    name: updatedLead.name,
+                    phone: updatedLead.phone,
+                    email: updatedLead.email,
+                    intent: updatedLead.intent,
+                    propertyType: updatedLead.propertyType,
+                    purpose: updatedLead.purpose,
+                    budget: updatedLead.budget,
+                    budgetMin: updatedLead.budgetMin,
+                    budgetMax: updatedLead.budgetMax,
+                    location: updatedLead.location,
+                    timeline: updatedLead.timeline,
+                    hasPreApproval: updatedLead.hasPreApproval,
+                    score: finalScore,
+                    category: finalCategory,
+                    requirements: updatedLead.requirements as any,
+                    source: updatedLead.source || 'chatbot',
+                    createdAt: updatedLead.createdAt,
+                }, chatbot).catch(err => console.error('CRM forwarding failed for updated lead:', err))
+            }
+
             return NextResponse.json({
                 lead: updatedLead,
                 isNew: false,
@@ -233,6 +259,30 @@ export async function POST(request: NextRequest) {
             notifyHotLead(lead.id, chatbotId).catch(err =>
                 console.error('Failed to send hot lead SMS notification:', err)
             )
+        }
+
+        // Forward new lead to CRM
+        if (chatbot) {
+            forwardLeadToCRM({
+                id: lead.id,
+                name: lead.name,
+                phone: lead.phone,
+                email: lead.email,
+                intent: lead.intent,
+                propertyType: lead.propertyType,
+                purpose: lead.purpose,
+                budget: lead.budget,
+                budgetMin: lead.budgetMin,
+                budgetMax: lead.budgetMax,
+                location: lead.location,
+                timeline: lead.timeline,
+                hasPreApproval: lead.hasPreApproval,
+                score,
+                category,
+                requirements: lead.requirements as any,
+                source: lead.source || 'chatbot',
+                createdAt: lead.createdAt,
+            }, chatbot).catch(err => console.error('CRM forwarding failed for new lead:', err))
         }
 
         return NextResponse.json({

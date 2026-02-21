@@ -22,6 +22,7 @@ import ApiAccessPage from '@/app/[locale]/dashboard/chatbots/[chatbotId]/api-acc
 import EmbedCodeGenerator from '@/components/dashboard/EmbedCodeGenerator'
 import { CopyButton } from '@/components/common/CopyButton'
 import CustomDomainSettings from '@/components/dashboard/CustomDomainSettings'
+import CRMSettings from '@/components/realestate/CRMSettings'
 
 export default async function ChatbotDetailPage({
     params,
@@ -409,6 +410,12 @@ export default async function ChatbotDetailPage({
                                 agentEmail: chatbot.agentEmail
                             }}
                         />
+
+                        {chatbot.industry === 'realestate' && (
+                            <div className="mt-6">
+                                <CRMSettings chatbotId={chatbotId} />
+                            </div>
+                        )}
 
                         {hasCustomBranding && (
                             <CustomDomainSettings
