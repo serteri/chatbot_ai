@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import { prisma } from '@/lib/db/prisma'
+import { analyzeLeadData, formatAnalysisForEmail } from '@/lib/crm/lead-analyzer'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -152,12 +153,19 @@ interface LeadEmailData {
     requirements?: {
         bedrooms?: string
         bathrooms?: string
+        parking?: string
+        features?: string[]
+        propertySize?: string
+        floorPreference?: string
+        hasPropertyToSell?: string
         monthlyIncome?: number
         monthlyExpenses?: number
         downPayment?: number
         calculatedMaxBudget?: number
         housingType?: string
+        [key: string]: any
     }
+    purpose?: string
 }
 
 interface AppointmentEmailData {
@@ -353,6 +361,22 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
                 ` : ''}
             </div>
             ` : ''}
+
+            ${(() => {
+                const analysis = analyzeLeadData({
+                    intent: data.intent,
+                    purpose: data.purpose,
+                    hasPreApproval: data.hasPreApproval,
+                    timeline: data.timeline,
+                    budget: data.budget,
+                    propertyType: data.propertyType,
+                    location: data.location,
+                    requirements: data.requirements,
+                    score: data.score,
+                    category: data.category,
+                })
+                return formatAnalysisForEmail(analysis, lang as 'tr' | 'en')
+            })()}
 
             <div style="text-align: center;">
                 <a href="tel:${data.phone}" class="cta">📞 ${t(lang, 'callNow')}</a>
