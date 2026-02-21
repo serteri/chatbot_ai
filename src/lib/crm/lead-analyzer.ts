@@ -1,26 +1,33 @@
 /**
- * Lead Analyzer — Actionable Summary Generator
+ * Lead Analyzer v2 — Scoring-Based Profiling Engine
  * 
- * Analyzes raw chatbot lead data and produces a strategic summary
- * for the real estate agent. Rules-based, no LLM needed.
+ * Changes from v1:
+ * - Scoring algorithm replaces if-else profiling (handles overlapping profiles)
+ * - Priority hierarchy: Seller > Urgent Buyer > Investor > Renter > Undecided > Browser
+ * - Dynamic heat: includes budget-location fit, not just timeline/preApproval
+ * - "Data Completeness" replaces misleading "Data Confidence"
+ * - Follow-up urgency timing added
+ * - Mobile-responsive email HTML (no ━━ box chars, div+padding layout)
  */
 
+// ─── Types ───────────────────────────────────────────────────────────────
+
 export interface LeadAnalysis {
-    // Profile classification
-    profile: 'urgent_buyer' | 'investor' | 'undecided' | 'seller_candidate' | 'renter' | 'browser'
+    profile: ProfileType
     profileLabel: { tr: string; en: string }
-    // Heat level
+    profileScores: Record<ProfileType, number> // transparency: show all scores
     heat: 'hot' | 'warm' | 'cold'
+    heatScore: number // 0-100 raw score
     heatEmoji: string
-    // 1-sentence strategic comment
     situationAnalysis: { tr: string; en: string }
-    // Critical blocker (if any)
     criticalNote: { tr: string; en: string } | null
-    // First call recommendation
     recommendation: { tr: string; en: string }
-    // Confidence score 0-100
-    confidence: number
+    followUp: { tr: string; en: string }
+    followUpUrgency: 'immediate' | 'today' | 'week'
+    dataCompleteness: number // 0-100
 }
+
+type ProfileType = 'seller_candidate' | 'urgent_buyer' | 'investor' | 'renter' | 'undecided' | 'browser'
 
 interface AnalyzerInput {
     intent?: string | null
@@ -50,328 +57,449 @@ interface AnalyzerInput {
     category?: string
 }
 
+// ─── Profile Labels ──────────────────────────────────────────────────────
+
+const PROFILE_LABELS: Record<ProfileType, { tr: string; en: string }> = {
+    seller_candidate: { tr: '🏠 Satıcı Adayı', en: '🏠 Seller Candidate' },
+    urgent_buyer: { tr: '⚡ Acil Alıcı', en: '⚡ Urgent Buyer' },
+    investor: { tr: '📊 Yatırımcı', en: '📊 Investor' },
+    renter: { tr: '🔑 Kiracı', en: '🔑 Renter' },
+    undecided: { tr: '🤔 Kararsız', en: '🤔 Undecided' },
+    browser: { tr: '👀 Araştırmacı', en: '👀 Browser' },
+}
+
+// Priority tiebreaker: higher = wins when scores are close (within 10pts)
+const PROFILE_PRIORITY: Record<ProfileType, number> = {
+    seller_candidate: 60, // Highest LTV — double transaction potential
+    urgent_buyer: 50,
+    investor: 40,
+    renter: 30,
+    undecided: 20,
+    browser: 10,
+}
+
+// ─── Main Entry Point ────────────────────────────────────────────────────
+
 export function analyzeLeadData(data: AnalyzerInput): LeadAnalysis {
     const req = data.requirements || {}
-    const intent = data.intent || 'buy'
     const hasPropertyToSell = req.hasPropertyToSell || data.hasPropertyToSell
-    const hasPreApproval = data.hasPreApproval
-    const timeline = data.timeline || ''
-    const purpose = data.purpose
+    const needsToSell = checkNeedsToSell(hasPropertyToSell)
 
-    // --- 1. Profile Classification ---
-    const profile = classifyProfile(intent, purpose, timeline, hasPropertyToSell, hasPreApproval, data)
+    // 1. Score every profile
+    const profileScores = scoreAllProfiles(data, needsToSell)
 
-    // --- 2. Heat Level ---
-    const heat = determineHeat(intent, timeline, hasPreApproval, hasPropertyToSell, data)
+    // 2. Pick winner with priority tiebreaker
+    const profile = pickWinningProfile(profileScores)
 
-    // --- 3. Situation Analysis ---
-    const situationAnalysis = buildSituationAnalysis(profile, intent, timeline, hasPreApproval, hasPropertyToSell, data)
+    // 3. Dynamic heat scoring
+    const heatScore = calculateHeatScore(data, needsToSell)
+    const heat: 'hot' | 'warm' | 'cold' = heatScore >= 60 ? 'hot' : heatScore >= 30 ? 'warm' : 'cold'
 
-    // --- 4. Critical Note ---
-    const criticalNote = identifyCriticalBlocker(intent, hasPreApproval, hasPropertyToSell, timeline, req)
-
-    // --- 5. Recommendation ---
-    const recommendation = buildRecommendation(profile, intent, hasPreApproval, hasPropertyToSell, timeline, data)
-
-    // --- 6. Confidence ---
-    const confidence = calculateConfidence(data)
+    // 4. Analysis outputs
+    const situationAnalysis = buildSituationAnalysis(profile, data, needsToSell)
+    const criticalNote = identifyCriticalBlockers(data, needsToSell)
+    const recommendation = buildRecommendation(profile, data, needsToSell)
+    const { followUp, followUpUrgency } = buildFollowUp(heat)
+    const dataCompleteness = calculateDataCompleteness(data)
 
     return {
-        profile: profile.id,
-        profileLabel: profile.label,
+        profile,
+        profileLabel: PROFILE_LABELS[profile],
+        profileScores,
         heat,
+        heatScore,
         heatEmoji: heat === 'hot' ? '🔥' : heat === 'warm' ? '🟡' : '🔵',
         situationAnalysis,
         criticalNote,
         recommendation,
-        confidence,
+        followUp,
+        followUpUrgency,
+        dataCompleteness,
     }
 }
 
-// --- Profile Classification ---
+// ─── Scoring Algorithm ───────────────────────────────────────────────────
 
-function classifyProfile(
-    intent: string, purpose: string | null | undefined, timeline: string,
-    hasPropertyToSell: string | null | undefined, hasPreApproval: boolean | null | undefined,
-    data: AnalyzerInput
-) {
-    const timelineLC = timeline.toLowerCase()
-    const isUrgent = timelineLC.includes('hemen') || timelineLC.includes('immediately') ||
-        timelineLC.includes('bu ay') || timelineLC.includes('this month')
-    const isSoon = timelineLC.includes('1-3') || timelineLC.includes('soon')
-    const isBrowsing = timelineLC.includes('browsing') || timelineLC.includes('araştır') ||
-        timelineLC.includes('later') || timelineLC.includes('sonra')
+function scoreAllProfiles(data: AnalyzerInput, needsToSell: boolean): Record<ProfileType, number> {
+    const intent = (data.intent || '').toLowerCase()
+    const purpose = (data.purpose || '').toLowerCase()
+    const timeline = (data.timeline || '').toLowerCase()
+    const hasPreApproval = data.hasPreApproval
 
-    if (intent === 'sell' || intent === 'value') {
-        return { id: 'seller_candidate' as const, label: { tr: '🏠 Satıcı Adayı', en: '🏠 Seller Candidate' } }
+    const isUrgentTimeline = timeline.includes('hemen') || timeline.includes('immediately') ||
+        timeline.includes('bu ay') || timeline.includes('this month')
+    const isSoonTimeline = timeline.includes('1-3') || timeline.includes('soon')
+    const isBrowsingTimeline = timeline.includes('browsing') || timeline.includes('araştır') ||
+        timeline.includes('later') || timeline.includes('sonra')
+
+    const scores: Record<ProfileType, number> = {
+        seller_candidate: 0,
+        urgent_buyer: 0,
+        investor: 0,
+        renter: 0,
+        undecided: 0,
+        browser: 0,
     }
 
-    if (intent === 'rent') {
-        return { id: 'renter' as const, label: { tr: '🔑 Kiracı', en: '🔑 Renter' } }
-    }
+    // === Seller Candidate ===
+    if (intent === 'sell' || intent === 'value') scores.seller_candidate += 80
+    if (needsToSell) scores.seller_candidate += 30 // Has property to sell = potential listing
+    if (intent === 'buy' && needsToSell) scores.seller_candidate += 20 // Sell-to-buy = double deal
 
-    if (purpose === 'investment') {
-        return { id: 'investor' as const, label: { tr: '📊 Yatırımcı', en: '📊 Investor' } }
-    }
+    // === Urgent Buyer ===
+    if (intent === 'buy') scores.urgent_buyer += 20
+    if (isUrgentTimeline) scores.urgent_buyer += 35
+    if (isSoonTimeline) scores.urgent_buyer += 20
+    if (hasPreApproval === true) scores.urgent_buyer += 30
+    if (data.budgetMax && data.budgetMax > 0) scores.urgent_buyer += 10
+    if (needsToSell) scores.urgent_buyer -= 15 // Selling dependency slows urgency
 
-    if ((isUrgent || isSoon) && hasPreApproval) {
-        return { id: 'urgent_buyer' as const, label: { tr: '⚡ Acil Alıcı', en: '⚡ Urgent Buyer' } }
-    }
+    // === Investor ===
+    if (purpose === 'investment' || purpose === 'yatırım') scores.investor += 60
+    if (intent === 'buy' && purpose !== 'residence') scores.investor += 15
+    if (data.budgetMax && data.budgetMax > 500000) scores.investor += 10 // Higher budget = investor signal
 
-    if (isBrowsing || (!hasPreApproval && !isUrgent)) {
-        if (isBrowsing) {
-            return { id: 'browser' as const, label: { tr: '👀 Araştırmacı', en: '👀 Browser' } }
+    // === Renter ===
+    if (intent === 'rent' || intent === 'kiralık') scores.renter += 80
+
+    // === Browser ===
+    if (isBrowsingTimeline) scores.browser += 50
+    if (!hasPreApproval && !isUrgentTimeline && !isSoonTimeline && intent === 'buy') scores.browser += 15
+    if (!data.budget && !data.budgetMax) scores.browser += 10 // No budget info = less serious
+
+    // === Undecided ===
+    if (!intent || intent === '') scores.undecided += 30
+    if (hasPreApproval === false && intent === 'buy') scores.undecided += 25
+    if (!isUrgentTimeline && !isSoonTimeline && !isBrowsingTimeline) scores.undecided += 15
+
+    return scores
+}
+
+function pickWinningProfile(scores: Record<ProfileType, number>): ProfileType {
+    const TIEBREAKER_MARGIN = 10
+
+    let bestProfile: ProfileType = 'undecided'
+    let bestEffectiveScore = -1
+
+    for (const [profile, score] of Object.entries(scores) as [ProfileType, number][]) {
+        // Effective score = raw score + priority bonus (used only for tiebreaking)
+        const effectiveScore = score + (PROFILE_PRIORITY[profile] / 10) // Priority adds max 6pts
+
+        if (score > 0 && effectiveScore > bestEffectiveScore) {
+            bestProfile = profile
+            bestEffectiveScore = effectiveScore
         }
-        return { id: 'undecided' as const, label: { tr: '🤔 Kararsız', en: '🤔 Undecided' } }
     }
 
-    // Default: urgent if pre-approval + reasonable timeline
-    if (hasPreApproval) {
-        return { id: 'urgent_buyer' as const, label: { tr: '⚡ Acil Alıcı', en: '⚡ Urgent Buyer' } }
-    }
-
-    return { id: 'undecided' as const, label: { tr: '🤔 Kararsız', en: '🤔 Undecided' } }
+    return bestProfile
 }
 
-// --- Heat Level ---
+// ─── Dynamic Heat Scoring ────────────────────────────────────────────────
 
-function determineHeat(
-    intent: string, timeline: string, hasPreApproval: boolean | null | undefined,
-    hasPropertyToSell: string | null | undefined, data: AnalyzerInput
-): 'hot' | 'warm' | 'cold' {
-    let heatScore = 0
-    const timelineLC = timeline.toLowerCase()
+function calculateHeatScore(data: AnalyzerInput, needsToSell: boolean): number {
+    let score = 0
+    const timeline = (data.timeline || '').toLowerCase()
 
-    // Timeline
-    if (timelineLC.includes('hemen') || timelineLC.includes('immediately') || timelineLC.includes('bu ay')) heatScore += 40
-    else if (timelineLC.includes('1-3') || timelineLC.includes('soon')) heatScore += 25
-    else if (timelineLC.includes('3-6') || timelineLC.includes('later')) heatScore += 10
+    // Timeline (0-35 pts)
+    if (timeline.includes('hemen') || timeline.includes('immediately') || timeline.includes('bu ay')) score += 35
+    else if (timeline.includes('1-3') || timeline.includes('soon')) score += 22
+    else if (timeline.includes('3-6') || timeline.includes('later')) score += 10
+    else if (timeline.includes('browsing') || timeline.includes('araştır')) score += 2
 
-    // Pre-approval
-    if (hasPreApproval === true) heatScore += 30
-    else if (hasPreApproval === false) heatScore += 5
+    // Pre-approval (0-25 pts)
+    if (data.hasPreApproval === true) score += 25
+    else if (data.hasPreApproval === false) score += 3
 
-    // Budget specificity
-    if (data.budgetMax && data.budgetMax > 0) heatScore += 10
+    // Budget specificity (0-15 pts)
+    if (data.budgetMax && data.budgetMax > 0) score += 10
+    if (data.budget) score += 5
 
-    // Intent
-    if (intent === 'buy') heatScore += 5
-    if (intent === 'sell') heatScore += 15
+    // Intent signals (0-10 pts)
+    if (data.intent === 'sell') score += 10
+    if (data.intent === 'buy') score += 5
 
-    // Property to sell blocker reduces heat
-    if (hasPropertyToSell && (hasPropertyToSell.includes('Evet') || hasPropertyToSell.includes('Yes') || hasPropertyToSell.includes('satmam'))) {
-        heatScore -= 10
+    // Contact completeness (0-5 pts)
+    if (data.requirements?.bedrooms) score += 2
+    if (data.requirements?.features?.length) score += 3
+
+    // === PENALTIES (negative adjustments) ===
+
+    // Selling dependency: slows everything
+    if (needsToSell && data.intent === 'buy') score -= 12
+
+    // Budget-location mismatch penalty
+    // If budget seems very low for a buyer with aggressive timeline
+    if (data.intent === 'buy' && data.budgetMax && data.budgetMax > 0) {
+        // If they have a calculated max budget from mortgage calc, compare with stated
+        const calc = data.requirements?.calculatedMaxBudget
+        if (calc && data.budgetMax > calc * 1.3) {
+            // Budget expectation 30%+ above what they qualify for
+            score -= 10
+        }
     }
 
-    if (heatScore >= 60) return 'hot'
-    if (heatScore >= 30) return 'warm'
-    return 'cold'
+    // Browsing penalty — even with high data, browsing = cold
+    if (timeline.includes('browsing') || timeline.includes('araştır')) {
+        score = Math.min(score, 28) // Cap at warm max
+    }
+
+    return Math.max(0, Math.min(100, score))
 }
 
-// --- Situation Analysis ---
+// ─── Situation Analysis ──────────────────────────────────────────────────
 
 function buildSituationAnalysis(
-    profile: { id: string }, intent: string, timeline: string,
-    hasPreApproval: boolean | null | undefined, hasPropertyToSell: string | null | undefined,
-    data: AnalyzerInput
+    profile: ProfileType, data: AnalyzerInput, needsToSell: boolean
 ): { tr: string; en: string } {
-    const budgetStr = data.budget || ''
-    const location = data.location || ''
-    const propertyType = data.propertyType || ''
-    const needsToSell = hasPropertyToSell && (hasPropertyToSell.includes('Evet') || hasPropertyToSell.includes('Yes') || hasPropertyToSell.includes('satmam'))
+    const hasBudget = !!(data.budget || data.budgetMax)
+    const hasPreApproval = data.hasPreApproval
 
-    switch (profile.id) {
-        case 'urgent_buyer':
-            if (needsToSell) {
+    switch (profile) {
+        case 'seller_candidate':
+            if (data.intent === 'buy' && needsToSell) {
                 return {
-                    tr: `Acil alıcı ama önce mevcut mülkünü satması gerekiyor — çift taraflı işlem fırsatı.`,
-                    en: `Urgent buyer but needs to sell current property first — double transaction opportunity.`
+                    tr: 'Hem satış hem alım potansiyeli — çift taraflı işlem fırsatı, emlakçı için yüksek LTV.',
+                    en: 'Both sale and purchase potential — double transaction opportunity, high LTV for agent.'
                 }
             }
             return {
-                tr: `Kredi onaylı ve hızlı hareket etmek istiyor — öncelikli müşteri.`,
-                en: `Pre-approved and wants to move fast — priority client.`
+                tr: 'Mülk satmak veya değerleme istiyor — listeleme fırsatı, hızlı aksiyon önemli.',
+                en: 'Wants to sell or get valuation — listing opportunity, fast action matters.'
+            }
+
+        case 'urgent_buyer':
+            if (hasPreApproval && hasBudget) {
+                return {
+                    tr: 'Kredi onaylı, bütçesi net, hızlı hareket etmek istiyor — öncelikli müşteri.',
+                    en: 'Pre-approved, clear budget, wants to move fast — priority client.'
+                }
+            }
+            if (hasPreApproval) {
+                return {
+                    tr: 'Kredi onaylı ve acil arıyor — bütçeye uygun seçenekleri hızla sunun.',
+                    en: 'Pre-approved and looking urgently — present matching options quickly.'
+                }
+            }
+            return {
+                tr: 'Acil alıcı ama kredi onayı henüz yok — finansman sürecini paralel yürütün.',
+                en: 'Urgent buyer but no pre-approval yet — run financing process in parallel.'
             }
 
         case 'investor':
             return {
-                tr: `Yatırım amaçlı arıyor${budgetStr ? `, bütçe ${budgetStr}` : ''} — getiri analizi ile yaklaşın.`,
-                en: `Looking for investment${budgetStr ? `, budget ${budgetStr}` : ''} — approach with ROI analysis.`
-            }
-
-        case 'seller_candidate':
-            return {
-                tr: `Mülk satmak veya değerleme istiyor — listeleme fırsatı.`,
-                en: `Wants to sell or get valuation — listing opportunity.`
+                tr: 'Yatırım odaklı — getiri analizi, kira verimi ve değer artış projeksiyonu ile yaklaşın.',
+                en: 'Investment-focused — approach with ROI analysis, rental yield, and value appreciation projections.'
             }
 
         case 'renter':
             return {
-                tr: `Kiralık arıyor${location ? ` ${location} bölgesinde` : ''} — hızlı eşleştirme öncelikli.`,
-                en: `Looking for rental${location ? ` in ${location}` : ''} — quick matching is priority.`
+                tr: 'Kiralık arıyor — hızlı eşleştirme ve gösterim önceliği ile ilerleyin.',
+                en: 'Looking for rental — proceed with quick matching and viewing priority.'
             }
 
         case 'browser':
             return {
-                tr: `Henüz araştırma aşamasında — uzun vadeli takip ve bilgilendirme stratejisi uygulayın.`,
-                en: `Still in research phase — apply long-term nurturing and information strategy.`
+                tr: 'Henüz araştırma aşamasında — baskı yapmadan bilgilendirici içerik ve uzun vadeli takip stratejisi.',
+                en: 'Still in research phase — informational content without pressure, long-term nurture strategy.'
             }
 
         case 'undecided':
         default:
-            if (!hasPreApproval) {
+            if (!hasPreApproval && data.intent === 'buy') {
                 return {
-                    tr: `Kredi onayı yok, henüz bütçesini netleştirmemiş — finansman rehberliği ile güven kazanın.`,
-                    en: `No pre-approval yet, budget unclear — build trust with financing guidance.`
+                    tr: 'Almak istiyor ama finansman belirsiz — kredi danışmanı yönlendirmesi ile güven inşa edin.',
+                    en: 'Wants to buy but financing unclear — build trust with mortgage advisor referral.'
                 }
             }
             return {
-                tr: `İlgileniyor ama henüz net bir zaman çizelgesi belirlenmemiş — ihtiyaç analizi derinleştirilmeli.`,
-                en: `Interested but no clear timeline yet — needs deeper qualification.`
+                tr: 'İlgileniyor ama henüz net bir karar yok — ihtiyaç analizi derinleştirilmeli.',
+                en: 'Interested but no clear decision yet — needs deeper qualification.'
             }
     }
 }
 
-// --- Critical Blocker ---
+// ─── Critical Blockers ───────────────────────────────────────────────────
 
-function identifyCriticalBlocker(
-    intent: string, hasPreApproval: boolean | null | undefined,
-    hasPropertyToSell: string | null | undefined, timeline: string,
-    req: Record<string, any>
+function identifyCriticalBlockers(
+    data: AnalyzerInput, needsToSell: boolean
 ): { tr: string; en: string } | null {
-    const blockers: { tr: string; en: string }[] = []
-    const needsToSell = hasPropertyToSell && (hasPropertyToSell.includes('Evet') || hasPropertyToSell.includes('Yes') || hasPropertyToSell.includes('satmam'))
-
-    if (intent === 'buy' && needsToSell) {
-        blockers.push({
-            tr: '⚠️ Mevcut mülkünü önce satması gerekiyor — süreç buna bağlı.',
-            en: '⚠️ Needs to sell current property first — timeline depends on this.'
-        })
+    // Priority order: highest-impact blocker first
+    if (data.intent === 'buy' && needsToSell) {
+        return {
+            tr: 'Mevcut mülkünü önce satması gerekiyor — alım süreci buna bağlı.',
+            en: 'Needs to sell current property first — purchase timeline depends on this.'
+        }
     }
 
-    if (intent === 'buy' && hasPreApproval === false) {
-        blockers.push({
-            tr: '⚠️ Kredi ön onayı yok — finansman belirsizliği mevcut.',
-            en: '⚠️ No mortgage pre-approval — financing uncertainty exists.'
-        })
+    if (data.intent === 'buy' && data.hasPreApproval === false) {
+        // Check if budget seems unrealistic
+        const calc = data.requirements?.calculatedMaxBudget
+        if (calc && data.budgetMax && data.budgetMax > calc * 1.3) {
+            return {
+                tr: 'Kredi onayı yok ve bütçe beklentisi hesaplanan kapasiteyi aşıyor — finansman engeli.',
+                en: 'No pre-approval and budget expectation exceeds calculated capacity — financing blocker.'
+            }
+        }
+        return {
+            tr: 'Kredi ön onayı yok — finansman belirsizliği mevcut.',
+            en: 'No mortgage pre-approval — financing uncertainty exists.'
+        }
     }
 
-    const timelineLC = timeline.toLowerCase()
-    if (intent === 'buy' && (timelineLC.includes('browsing') || timelineLC.includes('araştır'))) {
-        blockers.push({
-            tr: '⚠️ Sadece araştırma yapıyor — acil aksiyon beklemeyin.',
-            en: '⚠️ Just browsing — don\'t expect immediate action.'
-        })
+    const timeline = (data.timeline || '').toLowerCase()
+    if (data.intent === 'buy' && (timeline.includes('browsing') || timeline.includes('araştır'))) {
+        return {
+            tr: 'Sadece araştırma yapıyor — kısa vadede aksiyon beklemeyin.',
+            en: 'Just browsing — don\'t expect action in the short term.'
+        }
     }
 
-    if (blockers.length === 0) return null
-
-    // Return the most critical one
-    return blockers[0]
+    return null
 }
 
-// --- Recommendation ---
+// ─── Recommendation ──────────────────────────────────────────────────────
 
 function buildRecommendation(
-    profile: { id: string }, intent: string,
-    hasPreApproval: boolean | null | undefined, hasPropertyToSell: string | null | undefined,
-    timeline: string, data: AnalyzerInput
+    profile: ProfileType, data: AnalyzerInput, needsToSell: boolean
 ): { tr: string; en: string } {
-    const needsToSell = hasPropertyToSell && (hasPropertyToSell.includes('Evet') || hasPropertyToSell.includes('Yes') || hasPropertyToSell.includes('satmam'))
-
-    switch (profile.id) {
-        case 'urgent_buyer':
-            if (needsToSell) {
+    switch (profile) {
+        case 'seller_candidate':
+            if (data.intent === 'buy' && needsToSell) {
                 return {
-                    tr: '📞 İlk aramada mevcut mülkün durumunu sorun: ilan verildi mi, ekspertiz yapıldı mı? Çift taraflı hizmet teklif edin.',
-                    en: '📞 First call: ask status of current property — is it listed, has it been appraised? Offer dual-service.'
+                    tr: 'Mevcut mülkün durumunu sorun: ilan var mı, ekspertiz yapıldı mı? Çift taraflı hizmet teklif edin.',
+                    en: 'Ask current property status: is it listed, appraised? Offer dual-service package.'
                 }
             }
             return {
-                tr: '📞 İlk aramada: hemen gösterim için 2-3 uygun mülk hazırlayın, bugün veya yarın randevu teklif edin.',
-                en: '📞 First call: prepare 2-3 matching properties for immediate viewing, offer appointment today/tomorrow.'
+                tr: 'Ücretsiz mülk değerleme teklif edin, bölgedeki güncel satış verilerini paylaşın.',
+                en: 'Offer free property valuation, share recent comparable sales data.'
+            }
+
+        case 'urgent_buyer':
+            return {
+                tr: 'Hemen gösterim için 2-3 uygun mülk hazırlayın, bugün/yarın randevu teklif edin.',
+                en: 'Prepare 2-3 matching properties for immediate viewing, offer today/tomorrow appointment.'
             }
 
         case 'investor':
             return {
-                tr: '📞 İlk aramada: bölgedeki kira getirisi ve değer artış oranlarını paylaşın. Yatırım odaklı portföy sunumu hazırlayın.',
-                en: '📞 First call: share rental yield and capital growth data for the area. Prepare investment-focused portfolio.'
-            }
-
-        case 'seller_candidate':
-            return {
-                tr: '📞 İlk aramada: ücretsiz mülk değerleme teklif edin ve bölgedeki güncel satış verilerini paylaşın.',
-                en: '📞 First call: offer free property valuation and share recent comparable sales data.'
+                tr: 'Bölgedeki kira getirisi ve değer artış verileriyle yaklaşın. Yatırım portföyü sunumu hazırlayın.',
+                en: 'Approach with rental yield and capital growth data. Prepare investment portfolio presentation.'
             }
 
         case 'renter':
             return {
-                tr: '📞 İlk aramada: taşınma tarihini ve mutlak gereksinimleri netleştirin, 3 uygun kiralık gönderin.',
-                en: '📞 First call: clarify move-in date and absolute requirements, send 3 matching rentals.'
+                tr: 'Taşınma tarihini ve mutlak gereksinimleri netleştirin, 3 uygun kiralık gönderin.',
+                en: 'Clarify move-in date and must-have requirements, send 3 matching rentals.'
             }
 
         case 'browser':
             return {
-                tr: '📞 İlk aramada: baskı yapmayın, bölge hakkında bilgi paylaşın ve "ihtiyacınız olursa buradayım" mesajı verin. 2 hafta sonra takip edin.',
-                en: '📞 First call: don\'t pressure, share area info and convey "I\'m here when you\'re ready". Follow up in 2 weeks.'
+                tr: 'Baskı yapmayın, bölge hakkında bilgi paylaşın. "İhtiyacınız olursa buradayım" mesajı verin.',
+                en: 'Don\'t pressure. Share area insights. Convey "I\'m here when you\'re ready" message.'
             }
 
         case 'undecided':
         default:
-            if (!hasPreApproval && intent === 'buy') {
+            if (data.hasPreApproval === false && data.intent === 'buy') {
                 return {
-                    tr: '📞 İlk aramada: kredi danışmanı yönlendirmesi yapın, bütçe netleşince tekrar konuşmayı planlayın.',
-                    en: '📞 First call: refer to mortgage advisor, plan follow-up once budget is clarified.'
+                    tr: 'Kredi danışmanına yönlendirin, bütçe netleşince tekrar konuşmayı planlayın.',
+                    en: 'Refer to mortgage advisor, plan follow-up once budget is clarified.'
                 }
             }
             return {
-                tr: '📞 İlk aramada: ihtiyaçlarını derinlemesine dinleyin, zaman çizelgesini ve motivasyonu netleştirin.',
-                en: '📞 First call: deeply listen to needs, clarify timeline and motivation.'
+                tr: 'İhtiyaçlarını derinlemesine dinleyin, zaman çizelgesini ve motivasyonu netleştirin.',
+                en: 'Deeply listen to needs, clarify timeline and underlying motivation.'
             }
     }
 }
 
-// --- Confidence Score ---
+// ─── Follow-up Urgency ───────────────────────────────────────────────────
 
-function calculateConfidence(data: AnalyzerInput): number {
-    let filled = 0
-    let total = 10
-
-    if (data.intent) filled++
-    if (data.budget || data.budgetMax) filled++
-    if (data.timeline) filled++
-    if (data.hasPreApproval !== null && data.hasPreApproval !== undefined) filled++
-    if (data.propertyType) filled++
-    if (data.location) filled++
-    if (data.requirements?.bedrooms) filled++
-    if (data.requirements?.parking) filled++
-    if (data.requirements?.features?.length) filled++
-    if (data.requirements?.propertySize) filled++
-
-    return Math.round((filled / total) * 100)
+function buildFollowUp(heat: 'hot' | 'warm' | 'cold'): {
+    followUp: { tr: string; en: string }
+    followUpUrgency: 'immediate' | 'today' | 'week'
+} {
+    switch (heat) {
+        case 'hot':
+            return {
+                followUp: {
+                    tr: '⏰ Hemen arayın — ilk 15 dakika içinde iletişime geçin.',
+                    en: '⏰ Call immediately — reach out within the first 15 minutes.'
+                },
+                followUpUrgency: 'immediate'
+            }
+        case 'warm':
+            return {
+                followUp: {
+                    tr: '⏰ Bugün içinde arayın — iş saatlerinde iletişime geçin.',
+                    en: '⏰ Call today — reach out during business hours.'
+                },
+                followUpUrgency: 'today'
+            }
+        case 'cold':
+        default:
+            return {
+                followUp: {
+                    tr: '⏰ Haftalık bültene ekleyin — 3 gün içinde takip araması yapın.',
+                    en: '⏰ Add to weekly newsletter — follow up with a call within 3 days.'
+                },
+                followUpUrgency: 'week'
+            }
+    }
 }
 
-// --- Format for display ---
+// ─── Data Completeness ───────────────────────────────────────────────────
+
+function calculateDataCompleteness(data: AnalyzerInput): number {
+    const fields = [
+        !!data.intent,
+        !!(data.budget || data.budgetMax),
+        !!data.timeline,
+        data.hasPreApproval !== null && data.hasPreApproval !== undefined,
+        !!data.propertyType,
+        !!data.location,
+        !!data.requirements?.bedrooms,
+        !!data.requirements?.bathrooms,
+        !!data.requirements?.parking,
+        !!(data.requirements?.features?.length),
+        !!data.requirements?.propertySize,
+    ]
+
+    const filled = fields.filter(Boolean).length
+    return Math.round((filled / fields.length) * 100)
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────
+
+function checkNeedsToSell(value: string | null | undefined): boolean {
+    if (!value) return false
+    const v = value.toLowerCase()
+    return v.includes('evet') || v.includes('yes') || v.includes('satmam') || v === 'true'
+}
+
+// ─── Plain Text Format ──────────────────────────────────────────────────
 
 export function formatAnalysisForAgent(analysis: LeadAnalysis, locale: 'tr' | 'en' = 'tr'): string {
     const lines: string[] = []
 
-    lines.push(`━━━━ HAREKETe GEÇİRİCİ ÖZET ━━━━`)
-    lines.push(``)
-    lines.push(`${analysis.heatEmoji} Profil: ${analysis.profileLabel[locale]}`)
-    lines.push(`📊 Durum: ${analysis.situationAnalysis[locale]}`)
+    lines.push(locale === 'tr' ? '-- HAREKETe GECİRİCİ ÖZET --' : '-- ACTIONABLE SUMMARY --')
+    lines.push('')
+    lines.push(`${analysis.heatEmoji} ${locale === 'tr' ? 'Profil' : 'Profile'}: ${analysis.profileLabel[locale]}`)
+    lines.push(`${locale === 'tr' ? 'Durum' : 'Status'}: ${analysis.situationAnalysis[locale]}`)
 
     if (analysis.criticalNote) {
-        lines.push(`🚩 Kritik: ${analysis.criticalNote[locale]}`)
+        lines.push(`${locale === 'tr' ? 'Kritik' : 'Critical'}: ${analysis.criticalNote[locale]}`)
     }
 
-    lines.push(`💡 Tavsiye: ${analysis.recommendation[locale]}`)
-    lines.push(`📈 Veri Güveni: %${analysis.confidence}`)
+    lines.push(`${locale === 'tr' ? 'Tavsiye' : 'Advice'}: ${analysis.recommendation[locale]}`)
+    lines.push(`${analysis.followUp[locale]}`)
+    lines.push(`${locale === 'tr' ? 'Veri Tamlığı' : 'Data Completeness'}: %${analysis.dataCompleteness}`)
 
     return lines.join('\n')
 }
 
-// --- Format for email HTML ---
+// ─── Mobile-Responsive Email HTML ────────────────────────────────────────
 
 export function formatAnalysisForEmail(analysis: LeadAnalysis, locale: 'tr' | 'en' = 'tr'): string {
     const heatColor = analysis.heat === 'hot' ? '#ef4444' : analysis.heat === 'warm' ? '#f59e0b' : '#3b82f6'
@@ -381,41 +509,73 @@ export function formatAnalysisForEmail(analysis: LeadAnalysis, locale: 'tr' | 'e
             ? (locale === 'tr' ? 'ILIMAN' : 'WARM')
             : (locale === 'tr' ? 'SOĞUK' : 'COLD')
 
+    const urgencyColor = analysis.followUpUrgency === 'immediate' ? '#dc2626'
+        : analysis.followUpUrgency === 'today' ? '#f59e0b' : '#6b7280'
+
     return `
-    <div style="background: #f8fafc; border-left: 4px solid ${heatColor}; padding: 16px; margin: 16px 0; border-radius: 0 8px 8px 0;">
-        <h3 style="margin: 0 0 12px 0; color: #1e293b; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
-            ${analysis.heatEmoji} ${locale === 'tr' ? 'Harekete Geçirici Özet' : 'Actionable Summary'}
-            <span style="background: ${heatColor}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px;">${heatLabel}</span>
-        </h3>
-        <table style="width: 100%; border-collapse: collapse; font-size: 13px; color: #334155;">
-            <tr>
-                <td style="padding: 6px 0; font-weight: 600; width: 80px; vertical-align: top;">
-                    ${locale === 'tr' ? 'Profil' : 'Profile'}:
-                </td>
-                <td style="padding: 6px 0;">${analysis.profileLabel[locale]}</td>
-            </tr>
-            <tr>
-                <td style="padding: 6px 0; font-weight: 600; vertical-align: top;">
-                    ${locale === 'tr' ? 'Durum' : 'Status'}:
-                </td>
-                <td style="padding: 6px 0;">${analysis.situationAnalysis[locale]}</td>
-            </tr>
+    <div style="margin: 16px 0; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+        <!-- Header -->
+        <div style="background: ${heatColor}; color: white; padding: 12px 16px;">
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.5px; margin: 0;">
+                ${analysis.heatEmoji} ${locale === 'tr' ? 'HAREKETe GECİRİCİ ÖZET' : 'ACTIONABLE SUMMARY'}
+                <span style="background: rgba(255,255,255,0.25); padding: 2px 8px; border-radius: 8px; font-size: 11px; margin-left: 6px;">${heatLabel}</span>
+            </div>
+        </div>
+        <!-- Body -->
+        <div style="padding: 0; background: #ffffff;">
+            <!-- Profile -->
+            <div style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                <div style="font-size: 11px; color: #94a3b8; margin-bottom: 2px;">
+                    ${locale === 'tr' ? 'PROFİL' : 'PROFILE'}
+                </div>
+                <div style="font-size: 14px; font-weight: 600; color: #1e293b;">
+                    ${analysis.profileLabel[locale]}
+                </div>
+            </div>
+            <!-- Situation -->
+            <div style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                <div style="font-size: 11px; color: #94a3b8; margin-bottom: 2px;">
+                    ${locale === 'tr' ? 'DURUM ANALİZİ' : 'SITUATION'}
+                </div>
+                <div style="font-size: 13px; color: #334155; line-height: 1.5;">
+                    ${analysis.situationAnalysis[locale]}
+                </div>
+            </div>
             ${analysis.criticalNote ? `
-            <tr>
-                <td style="padding: 6px 0; font-weight: 600; color: #dc2626; vertical-align: top;">
-                    ${locale === 'tr' ? 'Kritik' : 'Critical'}:
-                </td>
-                <td style="padding: 6px 0; color: #dc2626;">${analysis.criticalNote[locale]}</td>
-            </tr>` : ''}
-            <tr style="background: #f1f5f9; border-radius: 4px;">
-                <td style="padding: 8px 6px; font-weight: 600; vertical-align: top;">
-                    ${locale === 'tr' ? 'Tavsiye' : 'Advice'}:
-                </td>
-                <td style="padding: 8px 6px; font-weight: 500;">${analysis.recommendation[locale]}</td>
-            </tr>
-        </table>
-        <div style="margin-top: 8px; font-size: 11px; color: #94a3b8;">
-            ${locale === 'tr' ? 'Veri güveni' : 'Data confidence'}: ${analysis.confidence}%
+            <!-- Critical -->
+            <div style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; background: #fef2f2;">
+                <div style="font-size: 11px; color: #dc2626; font-weight: 600; margin-bottom: 2px;">
+                    ${locale === 'tr' ? 'KRİTİK ENGEL' : 'CRITICAL BLOCKER'}
+                </div>
+                <div style="font-size: 13px; color: #991b1b; line-height: 1.5;">
+                    ${analysis.criticalNote[locale]}
+                </div>
+            </div>` : ''}
+            <!-- Recommendation -->
+            <div style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; background: #f0fdf4;">
+                <div style="font-size: 11px; color: #16a34a; font-weight: 600; margin-bottom: 2px;">
+                    ${locale === 'tr' ? 'İLK ARAMADA' : 'FIRST CALL'}
+                </div>
+                <div style="font-size: 13px; color: #166534; line-height: 1.5;">
+                    ${analysis.recommendation[locale]}
+                </div>
+            </div>
+            <!-- Follow-up Timing -->
+            <div style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; background: #fffbeb;">
+                <div style="font-size: 11px; color: ${urgencyColor}; font-weight: 600; margin-bottom: 2px;">
+                    ${locale === 'tr' ? 'TAKİP ZAMANI' : 'FOLLOW-UP TIMING'}
+                </div>
+                <div style="font-size: 13px; color: #92400e; line-height: 1.5;">
+                    ${analysis.followUp[locale]}
+                </div>
+            </div>
+            <!-- Data Completeness -->
+            <div style="padding: 10px 16px; background: #f8fafc;">
+                <div style="font-size: 11px; color: #94a3b8;">
+                    ${locale === 'tr' ? 'Veri Tamlığı' : 'Data Completeness'}: ${analysis.dataCompleteness}% 
+                    (${Math.round(analysis.dataCompleteness * 11 / 100)}/${11} ${locale === 'tr' ? 'alan dolduruldu' : 'fields filled'})
+                </div>
+            </div>
         </div>
     </div>`
 }
