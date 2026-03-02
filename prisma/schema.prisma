@@ -18,6 +18,7 @@ model User {
   website                 String?
   language                String                   @default("tr")
   timezone                String                   @default("Europe/Istanbul")
+  region                  String                   @default("ap-southeast-2") // Data sovereignty: Sydney, AU
   stripeCustomerId        String?                  @unique
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
@@ -25,6 +26,7 @@ model User {
   notificationEmail       String?
   customSettings          Json?
   accounts                Account[]
+  auditLogs               AuditLog[]
   chatbots                Chatbot[]
   scholarshipApplications ScholarshipApplication[]
   sessions                Session[]
@@ -35,6 +37,7 @@ model User {
   templateReviews         TemplateReview[]
 
   @@index([email])
+  @@index([region])
 }
 
 model Account {
@@ -328,6 +331,12 @@ model Conversation {
   country            String?
   referrer           String?
   currentPage        String?
+
+  // NDIS Compliance & CALD Audit Fields
+  originalLanguage   String?               // ISO 639-1 code of the participant's spoken language (e.g. "tr", "ar", "vi")
+  translatedText     Json?                 // Structured English translation of the full conversation for audit trail
+  isSensitive        Boolean               @default(false) // Flag for conversations containing medical/personal info
+
   startedAt          DateTime              @default(now())
   endedAt            DateTime?
   updatedAt          DateTime              @updatedAt
@@ -342,6 +351,7 @@ model Conversation {
   @@index([status])
   @@index([startedAt])
   @@index([chatbotId, startedAt])
+  @@index([isSensitive])
 }
 
 model ConversationMessage {
@@ -933,4 +943,30 @@ model JobPosting {
   @@index([locationType])
   @@index([employmentType])
   @@index([expiresAt])
+}
+
+// ========================================
+// NDIS COMPLIANCE & AUDIT MODULE
+// ========================================
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  action      String   // e.g. "VIEW_PATIENT_DATA", "EXPORT_REPORT", "CHAT_STARTED", "LOGIN", "DATA_EXPORT"
+  actorId     String   // Staff member / user who performed the action
+  resourceId  String?  // ID of the document, conversation, or patient record involved
+  resourceType String? // e.g. "Conversation", "Document", "User"
+  metadata    Json?    // Additional context (e.g. export format, filter criteria)
+  ipAddress   String?
+  userAgent   String?
+  region      String   @default("ap-southeast-2") // Data sovereignty tracking
+  createdAt   DateTime @default(now())
+
+  actor       User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([actorId])
+  @@index([action])
+  @@index([resourceId])
+  @@index([createdAt])
+  @@index([actorId, createdAt])
+  @@index([action, createdAt])
 }
