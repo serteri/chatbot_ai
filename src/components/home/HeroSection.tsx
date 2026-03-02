@@ -12,7 +12,11 @@ import {
     TrendingUp,
 } from 'lucide-react'
 
-export function HeroSection() {
+interface HeroSectionProps {
+    locale: string
+}
+
+export function HeroSection({ locale }: HeroSectionProps) {
     return (
         <section className="relative bg-gradient-to-b from-slate-50 via-white to-slate-50/50 overflow-hidden">
             {/* Subtle background pattern */}
@@ -59,14 +63,14 @@ export function HeroSection() {
                         {/* CTAs */}
                         <div className="flex flex-col sm:flex-row gap-3 mb-8">
                             <Link
-                                href="/en/contact?type=demo"
+                                href={`/${locale}/contact?type=demo`}
                                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-semibold shadow-lg shadow-teal-500/25 hover:shadow-xl hover:shadow-teal-500/30 hover:-translate-y-0.5 transition-all duration-300 text-sm"
                             >
                                 <CalendarCheck className="h-5 w-5" />
                                 Book a 15-Min Demo
                             </Link>
                             <Link
-                                href="/en/#sample-audit"
+                                href={`/${locale}/#sample-audit`}
                                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 border-slate-300 text-slate-700 font-semibold hover:border-teal-400 hover:text-teal-700 hover:bg-teal-50/40 transition-all duration-200 text-sm"
                             >
                                 <FileSearch className="h-5 w-5" />
@@ -174,7 +178,7 @@ export function HeroSection() {
                                             <span className="text-[10px] font-bold text-blue-700">P</span>
                                         </div>
                                         <div className="bg-white rounded-lg px-3 py-2 text-xs text-slate-600 border border-slate-200 max-w-[200px]">
-                                            Merhaba, NDIS planım hakkında bilgi alabilir miyim?
+                                            Merhaba, NDIS plan&#305;m hakk&#305;nda bilgi alabilir miyim?
                                         </div>
                                     </div>
                                     <div className="flex gap-2 justify-end">
@@ -188,7 +192,7 @@ export function HeroSection() {
                                     <div className="flex items-center gap-1.5 pt-1 border-t border-slate-200">
                                         <CheckCircle className="h-3 w-3 text-emerald-500" />
                                         <span className="text-[10px] text-emerald-600 font-medium">
-                                            Audit trail auto-generated • English log saved
+                                            Audit trail auto-generated &#8226; English log saved
                                         </span>
                                     </div>
                                 </div>
@@ -202,7 +206,7 @@ export function HeroSection() {
                             </div>
                             <div>
                                 <p className="text-[10px] font-semibold text-slate-500 uppercase">Data Centre</p>
-                                <p className="text-xs font-bold text-slate-800">Sydney, AU 🇦🇺</p>
+                                <p className="text-xs font-bold text-slate-800">Sydney, AU</p>
                             </div>
                         </div>
                     </div>

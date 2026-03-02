@@ -29,7 +29,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
             <main className="flex-1">
                 {/* Hero Section */}
-                <HeroSection />
+                <HeroSection locale={locale} />
 
                 {/* Features Section — NDIS-focused */}
                 <div id="audit-features" className="bg-white py-20 lg:py-28">
@@ -202,14 +202,14 @@ export default async function HomePage({ params }: HomePageProps) {
 
                         <div className="flex flex-wrap justify-center gap-4 mb-12">
                             <Link
-                                href="/en/contact?type=demo"
+                                href={`/${locale}/contact?type=demo`}
                                 className="h-14 px-8 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-semibold shadow-lg shadow-teal-500/25 hover:shadow-xl hover:shadow-teal-500/30 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
                             >
                                 Book a Demo
                                 <ArrowRight className="h-5 w-5" />
                             </Link>
                             <Link
-                                href="/en/auth/login"
+                                href={`/${locale}/auth/login`}
                                 className="h-14 px-8 rounded-xl border-2 border-white/30 text-white font-semibold hover:bg-white hover:text-slate-900 transition-all duration-300 flex items-center gap-2"
                             >
                                 Login to Dashboard
