@@ -1,243 +1,123 @@
 'use client'
 
 import Link from 'next/link'
-import { useParams, usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { useTranslations } from 'next-intl'
 import {
     MessageSquare,
     Menu,
     X,
-    Globe,
+    Shield,
+    ClipboardCheck,
+    Server,
     DollarSign,
-    Info,
-    Mail,
-    GraduationCap,
-    ShoppingCart,
-    ChevronDown,
-    Building2
+    Lock,
+    CalendarCheck
 } from 'lucide-react'
 
+const NAV_LINKS = [
+    {
+        label: 'Audit Features',
+        href: '/en/#audit-features',
+        icon: ClipboardCheck,
+    },
+    {
+        label: 'Data Sovereignty (Sydney)',
+        href: '/en/#data-sovereignty',
+        icon: Server,
+    },
+    {
+        label: 'Pricing',
+        href: '/en/pricing',
+        icon: DollarSign,
+    },
+]
+
 export function PublicNav() {
-    const params = useParams()
-    const pathname = usePathname()
-    const locale = params?.locale as string || 'tr'
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const t = useTranslations('home.navbar')
-
-    // Mevcut sayfanın locale olmayan kısmını al
-    const getLocalizedPath = (newLocale: string) => {
-        if (!pathname) return `/${newLocale}`
-
-        const supportedLocales = ['tr', 'en', 'de', 'es', 'fr']
-        const segments = pathname.split('/').filter(Boolean)
-
-        // Check if first segment is a locale
-        if (segments.length > 0 && supportedLocales.includes(segments[0])) {
-            // Replace existing locale
-            segments[0] = newLocale
-        } else {
-            // No locale in URL, prepend new locale
-            segments.unshift(newLocale)
-        }
-
-        return `/${segments.join('/')}`
-    }
-
-    const getLanguageName = (langCode: string) => {
-        switch (langCode) {
-            case 'tr': return 'Türkçe'
-            case 'en': return 'English'
-            case 'de': return 'Deutsch'
-            case 'es': return 'Español'
-            case 'fr': return 'Français'
-            default: return langCode.toUpperCase()
-        }
-    }
-
-    const getLanguageFlag = (langCode: string) => {
-        switch (langCode) {
-            case 'tr': return '🇹🇷'
-            case 'en': return '🇺🇸'
-            case 'de': return '🇩🇪'
-            case 'es': return '🇪🇸'
-            case 'fr': return '🇫🇷'
-            default: return '🌐'
-        }
-    }
 
     return (
-        <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
-                    <Link href={`/${locale}`} className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <MessageSquare className="h-5 w-5 text-white" />
+                    <Link href="/en" className="flex items-center space-x-2.5 group">
+                        <div className="w-9 h-9 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center shadow-md shadow-teal-500/20 group-hover:shadow-lg group-hover:shadow-teal-500/30 transition-all duration-300">
+                            <Shield className="h-5 w-5 text-white" />
                         </div>
-                        <span className="text-xl font-bold text-gray-900">PylonChat</span>
+                        <div className="flex flex-col">
+                            <span className="text-lg font-bold text-slate-900 leading-tight tracking-tight">
+                                PylonChat
+                            </span>
+                            <span className="text-[10px] font-medium text-teal-700 uppercase tracking-widest leading-none">
+                                NDIS Compliance
+                            </span>
+                        </div>
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden lg:flex items-center space-x-8">
-                        <Link
-                            href={`/${locale}`}
-                            className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
-                        >
-                            {t('home')}
-                        </Link>
-
-                        <Link
-                            href={`/${locale}/pricing`}
-                            className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors font-medium"
-                        >
-                            <DollarSign className="h-4 w-4" />
-                            <span>{t('pricing')}</span>
-                        </Link>
-
-                        <Link
-                            href={`/${locale}/about`}
-                            className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors font-medium"
-                        >
-                            <Info className="h-4 w-4" />
-                            <span>{t('about')}</span>
-                        </Link>
-
-                        <Link
-                            href={`/${locale}/contact`}
-                            className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors font-medium"
-                        >
-                            <Mail className="h-4 w-4" />
-                            <span>{t('contact')}</span>
-                        </Link>
-
-                        {/* Demos Dropdown */}
-                        <div className="relative group">
-                            <button className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors font-medium">
-                                <span>
-                                    {locale === 'tr' ? 'Demolar'
-                                        : locale === 'en' ? 'Demos'
-                                            : locale === 'de' ? 'Demos'
-                                                : locale === 'es' ? 'Demos'
-                                                    : locale === 'fr' ? 'Démos'
-                                                        : 'Demos'}
-                                </span>
-                                <ChevronDown className="w-4 h-4" />
-                            </button>
-                            <div className="absolute left-0 mt-2 w-72 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100">
-                                <div className="py-2">
-                                    <Link
-                                        href={`/${locale}/demo/education`}
-                                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                                    >
-                                        <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
-                                            <GraduationCap className="h-5 w-5 text-white" />
-                                        </div>
-                                        <div>
-                                            <div className="font-medium">
-                                                {t('educationDemo')}
-                                            </div>
-                                            <div className="text-xs text-gray-500">
-                                                {t('educationDemo')}
-                                            </div>
-                                        </div>
-                                    </Link>
-                                    <Link
-                                        href={`/${locale}/demo/ecommerce`}
-                                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors"
-                                    >
-                                        <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mr-3">
-                                            <ShoppingCart className="h-5 w-5 text-white" />
-                                        </div>
-                                        <div>
-                                            <div className="font-medium">
-                                                {t('ecommerceDemo')}
-                                            </div>
-                                            <div className="text-xs text-gray-500">
-                                                {t('ecommerceDemo')}
-                                            </div>
-                                        </div>
-                                    </Link>
-                                    <Link
-                                        href={`/${locale}/demo/realestate`}
-                                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                                    >
-                                        <div className="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center mr-3">
-                                            <Building2 className="h-5 w-5 text-white" />
-                                        </div>
-                                        <div>
-                                            <div className="font-medium">
-                                                {t('realestateDemo')}
-                                            </div>
-                                            <div className="text-xs text-gray-500">
-                                                {t.raw('realestateChatbotDesc') || t('realestateDemo')}
-                                            </div>
-                                        </div>
-                                    </Link>
-                                    <Link
-                                        href={`/${locale}/demo/general`}
-                                        className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-600 transition-colors"
-                                    >
-                                        <div className="w-10 h-10 bg-gray-600 rounded-lg flex items-center justify-center mr-3">
-                                            <MessageSquare className="h-5 w-5 text-white" />
-                                        </div>
-                                        <div>
-                                            <div className="font-medium">
-                                                {t('generalDemo')}
-                                            </div>
-                                            <div className="text-xs text-gray-500">
-                                                {t('generalDemo')}
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="hidden lg:flex items-center space-x-1">
+                        {NAV_LINKS.map((link) => {
+                            const Icon = link.icon
+                            return (
+                                <Link
+                                    key={link.label}
+                                    href={link.href}
+                                    className="flex items-center space-x-1.5 px-3 py-2 rounded-lg text-slate-600 hover:text-teal-700 hover:bg-teal-50/60 transition-all duration-200 font-medium text-sm"
+                                >
+                                    <Icon className="h-4 w-4" />
+                                    <span>{link.label}</span>
+                                </Link>
+                            )
+                        })}
                     </div>
 
-                    {/* Right Side */}
-                    <div className="flex items-center space-x-4">
-                        {/* Language Switcher */}
+                    {/* Right Side — CTAs */}
+                    <div className="flex items-center space-x-3">
+                        {/* Language Switcher — COMMENTED OUT for English-only public marketing site
                         <div className="relative group">
                             <button className="flex items-center space-x-1 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors">
                                 <Globe className="h-4 w-4" />
-                                <span className="uppercase text-sm font-medium">{locale}</span>
+                                <span className="uppercase text-sm font-medium">en</span>
                             </button>
                             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100">
                                 <div className="py-1">
                                     {['tr', 'en', 'de', 'es', 'fr'].map((langCode) => (
                                         <Link
                                             key={langCode}
-                                            href={getLocalizedPath(langCode)}
+                                            href={`/${langCode}`}
                                             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                                         >
-                                            {getLanguageFlag(langCode)} {getLanguageName(langCode)}
+                                            {langCode.toUpperCase()}
                                         </Link>
                                     ))}
                                 </div>
                             </div>
                         </div>
+                        */}
 
-                        {/* Auth Links - Desktop */}
-                        <div className="hidden md:flex items-center space-x-4">
+                        {/* Auth / CTA — Desktop */}
+                        <div className="hidden md:flex items-center space-x-3">
                             <Link
-                                href={`/${locale}/auth/login`}
-                                className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                                href="/en/auth/login"
+                                className="flex items-center space-x-1.5 px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:border-teal-400 hover:text-teal-700 hover:bg-teal-50/40 transition-all duration-200 font-medium text-sm"
                             >
-                                {t('login')}
+                                <Lock className="h-4 w-4" />
+                                <span>Login</span>
                             </Link>
                             <Link
-                                href={`/${locale}/auth/register`}
-                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium"
+                                href="/en/contact?type=demo"
+                                className="flex items-center space-x-1.5 px-5 py-2.5 rounded-lg bg-gradient-to-r from-teal-600 to-emerald-600 text-white hover:from-teal-700 hover:to-emerald-700 shadow-md shadow-teal-500/20 hover:shadow-lg hover:shadow-teal-500/30 transition-all duration-300 font-semibold text-sm"
                             >
-                                {t('register')}
+                                <CalendarCheck className="h-4 w-4" />
+                                <span>Book a Demo</span>
                             </Link>
                         </div>
 
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="lg:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
+                            className="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
+                            aria-label="Toggle navigation menu"
                         >
                             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                         </button>
@@ -246,83 +126,39 @@ export function PublicNav() {
 
                 {/* Mobile Menu */}
                 {isMenuOpen && (
-                    <div className="lg:hidden border-t border-gray-200">
-                        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                            <Link
-                                href={`/${locale}`}
-                                className="flex items-center px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
-                            >
-                                {t('home')}
-                            </Link>
+                    <div className="lg:hidden border-t border-slate-200 bg-white">
+                        <div className="px-3 pt-3 pb-4 space-y-1">
+                            {NAV_LINKS.map((link) => {
+                                const Icon = link.icon
+                                return (
+                                    <Link
+                                        key={link.label}
+                                        href={link.href}
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="flex items-center px-3 py-2.5 text-slate-700 hover:text-teal-700 hover:bg-teal-50/60 rounded-lg transition-colors font-medium text-sm"
+                                    >
+                                        <Icon className="h-4 w-4 mr-2.5" />
+                                        {link.label}
+                                    </Link>
+                                )
+                            })}
 
-                            <Link
-                                href={`/${locale}/pricing`}
-                                className="flex items-center px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
-                            >
-                                <DollarSign className="h-4 w-4 mr-2" />
-                                {t('pricing')}
-                            </Link>
-
-                            <Link
-                                href={`/${locale}/about`}
-                                className="flex items-center px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
-                            >
-                                <Info className="h-4 w-4 mr-2" />
-                                {t('about')}
-                            </Link>
-
-                            <Link
-                                href={`/${locale}/contact`}
-                                className="flex items-center px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
-                            >
-                                <Mail className="h-4 w-4 mr-2" />
-                                {t('contact')}
-                            </Link>
-
-                            <Link
-                                href={`/${locale}/demo/education`}
-                                className="flex items-center px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
-                            >
-                                <GraduationCap className="h-4 w-4 mr-2" />
-                                {t('educationDemo')}
-                            </Link>
-
-                            <Link
-                                href={`/${locale}/demo/ecommerce`}
-                                className="flex items-center px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
-                            >
-                                <ShoppingCart className="h-4 w-4 mr-2" />
-                                {t('ecommerceDemo')}
-                            </Link>
-
-                            <Link
-                                href={`/${locale}/demo/realestate`}
-                                className="flex items-center px-3 py-2 text-gray-700 hover:text-amber-600 hover:bg-gray-50 rounded-md transition-colors"
-                            >
-                                <Building2 className="h-4 w-4 mr-2" />
-                                {t('realestateDemo')}
-                            </Link>
-
-                            <Link
-                                href={`/${locale}/demo/general`}
-                                className="flex items-center px-3 py-2 text-gray-700 hover:text-purple-600 hover:bg-gray-50 rounded-md transition-colors"
-                            >
-                                <MessageSquare className="h-4 w-4 mr-2" />
-                                {t('generalDemo')}
-                            </Link>
-
-                            <div className="pt-4 border-t border-gray-200">
+                            <div className="pt-3 mt-2 border-t border-slate-200 space-y-2">
                                 <Link
-                                    href={`/${locale}/auth/login`}
-                                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
+                                    href="/en/auth/login"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center justify-center px-3 py-2.5 border border-slate-300 text-slate-700 hover:border-teal-400 hover:text-teal-700 hover:bg-teal-50/40 rounded-lg transition-colors font-medium text-sm"
                                 >
-                                    {t('login')}
+                                    <Lock className="h-4 w-4 mr-2" />
+                                    Login
                                 </Link>
                                 <Link
-                                    href={`/${locale}/auth/register`}
-                                    className="block px-3 py-2 mt-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-center"
+                                    href="/en/contact?type=demo"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center justify-center px-3 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-lg hover:from-teal-700 hover:to-emerald-700 transition-colors font-semibold text-sm shadow-md shadow-teal-500/20"
                                 >
-                                    {t('register')}
+                                    <CalendarCheck className="h-4 w-4 mr-2" />
+                                    Book a Demo
                                 </Link>
                             </div>
                         </div>
