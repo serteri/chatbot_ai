@@ -23,12 +23,12 @@ export function PublicNav() {
     const NAV_LINKS = [
         {
             label: 'Audit Features',
-            href: `/${locale}/#audit-features`,
+            href: `/${locale}/audit-features`,
             icon: ClipboardCheck,
         },
         {
             label: 'Data Sovereignty (Sydney)',
-            href: `/${locale}/#data-sovereignty`,
+            href: `/${locale}/data-sovereignty`,
             icon: Server,
         },
         {
@@ -77,8 +77,8 @@ export function PublicNav() {
                                     key={link.label}
                                     href={link.href}
                                     className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-200 font-medium text-sm ${active
-                                            ? 'text-teal-700 bg-teal-50/80'
-                                            : 'text-slate-600 hover:text-teal-700 hover:bg-teal-50/60'
+                                        ? 'text-teal-700 bg-teal-50/80'
+                                        : 'text-slate-600 hover:text-teal-700 hover:bg-teal-50/60'
                                         }`}
                                 >
                                     <Icon className="h-4 w-4" />
@@ -154,8 +154,8 @@ export function PublicNav() {
                                         href={link.href}
                                         onClick={() => setIsMenuOpen(false)}
                                         className={`flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${active
-                                                ? 'text-teal-700 bg-teal-50/80'
-                                                : 'text-slate-700 hover:text-teal-700 hover:bg-teal-50/60'
+                                            ? 'text-teal-700 bg-teal-50/80'
+                                            : 'text-slate-700 hover:text-teal-700 hover:bg-teal-50/60'
                                             }`}
                                     >
                                         <Icon className="h-4 w-4 mr-2.5" />
