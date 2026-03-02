@@ -1,11 +1,12 @@
 import { getRequestConfig } from 'next-intl/server'
-// Force recompile 1
 
-export default getRequestConfig(async ({ locale }) => {
-    const finalLocale = locale || 'en'
+// next-intl v4 API: uses `requestLocale` instead of the deprecated `locale` parameter.
+// This fixes Vercel edge runtime compatibility issues.
+export default getRequestConfig(async ({ requestLocale }) => {
+    const locale = (await requestLocale) || 'en'
 
     return {
-        locale: finalLocale,
-        messages: (await import(`../locales/${finalLocale}.json`)).default
+        locale,
+        messages: (await import(`../locales/${locale}.json`)).default
     }
 })
