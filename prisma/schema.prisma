@@ -1,63 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in docs: https://pris.ly/d/auth-schema
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgresql" // Make sure your env uses the Neon URL.
   url      = env("DATABASE_URL")
 }
 
-// ========================================
-// AUTH MODULE
-// ========================================
+// -----------------------------------------------------------------------------
+// CORE & AUTH (Standard NextAuth configuration)
+// -----------------------------------------------------------------------------
 
 model User {
-  id                 String         @id @default(cuid())
-  email              String         @unique
+  id                 String           @id @default(cuid())
+  email              String           @unique
   name               String?
   emailVerified      DateTime?
   image              String?
-  password           String?
   companyName        String?
   website            String?
-  language           String         @default("en")
-  timezone           String         @default("Australia/Sydney")
-  region             String         @default("ap-southeast-2") // Data sovereignty: Sydney, AU
-  stripeCustomerId   String?        @unique
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-  emailNotifications Boolean        @default(true)
-  notificationEmail  String?
-  customSettings     Json?
+  language           String           @default("en-AU") // English AU native.
+  timezone           String           @default("Australia/Sydney")
+  dataRegion         String           @default("ap-southeast-2")
+  complianceScore    Float            @default(100.0)
+  stripeCustomerId   String?          @unique
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 
-  accounts     Account[]
-  auditLogs    AuditLog[]
-  chatbots     Chatbot[]
-  sessions     Session[]
-  subscription Subscription?
-  teamMembers  TeamMember[]
+  accounts           Account[]
+  sessions           Session[]
+  subscription       Subscription?
+  teamMembers        TeamMember[]
+  chatbots           Chatbot[]
+  auditLogsActed     AuditLog[]      // Actions performed BY this user
 
   @@index([email])
-  @@index([region])
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id                 String     @id @default(cuid())
+  userId             String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  user               User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
   @@unique([provider, providerAccountId])
-  @@index([userId])
 }
 
 model Session {
@@ -66,348 +60,159 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
 }
 
 model TeamMember {
   id        String   @id @default(cuid())
   userId    String
-  invitedBy String
-  role      String   @default("member") // admin, member, viewer
+  role      String   @default("member")
   joinedAt  DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
 }
 
-// ========================================
-// BILLING MODULE (Stripe)
-// ========================================
+// -----------------------------------------------------------------------------
+// SUBSCRIPTION & BILLING
+// -----------------------------------------------------------------------------
 
 model Subscription {
   id                   String    @id @default(cuid())
   userId               String    @unique
-  stripeCustomerId     String?   @unique
-  stripeSubscriptionId String?   @unique
-  stripePriceId        String?
-  planType             String    @default("free") // free, professional, enterprise
-  status               String    @default("active") // active, past_due, canceled, trialing
-  maxChatbots          Int       @default(1)
-  maxDocuments         Int       @default(10)
-  maxConversations     Int       @default(100)
-  conversationsUsed    Int       @default(0)
-  storageLimit         Int       @default(100) // MB
-  storageUsed          Int       @default(0)
+  planType             String    @default("free")
+  status               String    @default("active")
   currentPeriodStart   DateTime  @default(now())
   currentPeriodEnd     DateTime?
-  cancelAtPeriodEnd    Boolean   @default(false)
+  maxChatbots          Int       @default(1)
+  hasAdvancedAnalytics Boolean   @default(false)
+  
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
-  lastResetDate        DateTime?
-
-  // Feature flags
-  hasAnalytics         Boolean   @default(false)
-  hasAdvancedAnalytics Boolean   @default(false)
-  hasApiAccess         Boolean   @default(false)
-  hasCustomBranding    Boolean   @default(false)
-  hasCustomDomain      Boolean   @default(false)
-  hasPrioritySupport   Boolean   @default(false)
-  hasTeamCollaboration Boolean   @default(false)
-  hasWhiteLabel        Boolean   @default(false)
-  hasLiveSupport       Boolean   @default(false)
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// ========================================
-// CHAT ENGINE MODULE
-// ========================================
+// -----------------------------------------------------------------------------
+// AI COMPLIANCE ENGINE (CHATBOTS)
+// -----------------------------------------------------------------------------
 
 model Chatbot {
-  id                 String             @id @default(cuid())
-  userId             String
-  name               String
-  identifier         String             @unique
+  id              String         @id @default(cuid())
+  userId          String
+  name            String         // E.g., "NDIS Support Bot"
+  identifier      String         @unique // Public URL slug
+  primaryColor    String         @default("#0f766e")
+  botName         String         @default("AI Assistant")
+  welcomeMessage  String         @default("Welcome. How can we assist with your NDIS plan today?")
+  fallbackMessage String         @default("I cannot process that request. Let me connect you with a coordinator.")
+  language        String         @default("en") // Default
+  aiModel         String         @default("gpt-4-turbo-preview") // Better accuracy for audits
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 
-  // Branding
-  primaryColor       String             @default("#0d9488") // teal-600
-  botAvatar          String?
-  botName            String             @default("NDIS Compliance Assistant")
-  position           String             @default("bottom-right")
-
-  // Messages (English-only for NDIS)
-  welcomeMessage     String             @default("Hello! I'm your NDIS compliance assistant. How can I help you today?")
-  placeholderText    String             @default("Type your message...")
-  fallbackMessage    String             @default("I couldn't find an answer. Would you like to speak with a compliance officer?")
-  offlineMessage     String?
-
-  // AI Configuration
-  language           String             @default("en")
-  aiModel            String             @default("gpt-4o-mini")
-  temperature        Float              @default(0.3) // Lower for compliance accuracy
-  responseStyle      String             @default("professional")
-
-  // Widget Appearance
-  widgetPrimaryColor String             @default("#0d9488")
-  widgetButtonColor  String             @default("#0f766e")
-  widgetTextColor    String             @default("#FFFFFF")
-  widgetPosition     String             @default("bottom-right")
-  widgetSize         String             @default("medium")
-  widgetLogoUrl      String?
-  widgetBubbleIcon   String             @default("shield")
-
-  // Features
-  enableLiveChat     Boolean            @default(true)
-  enableEmailCapture Boolean            @default(true)
-  enableRating       Boolean            @default(true)
-  enableSources      Boolean            @default(true)
-  hideBranding       Boolean            @default(false)
-
-  // Domain & Integration
-  allowedDomains     String[]           @default([])
-  customDomain       String?            @unique
-  liveChatWebhook    String?
-  emailNotification  String?
-  supportEmail       String?
-  calendlyUrl        String?
-
-  // Status
-  isActive           Boolean            @default(true)
-  isPublished        Boolean            @default(false)
-  industry           String             @default("healthcare") // healthcare, ndis, disability
-  totalConversations Int                @default(0)
-  totalMessages      Int                @default(0)
-  avgRating          Float?
-
-  // Extensible settings (replaces per-language hardcoded fields)
-  customSettings     Json?
-
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-
-  user          User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  analytics     ChatbotAnalytics[]
-  conversations Conversation[]
-  documents     Document[]
-  leads         Lead[]
-  apiKeys       ApiKey[]
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversations   Conversation[]
+  documents       Document[]
+  leads           Lead[]
 
   @@index([userId])
-  @@index([identifier])
 }
 
 model Document {
   id           String          @id @default(cuid())
   chatbotId    String
-  name         String
-  type         String          // pdf, docx, txt, url
+  name         String          // e.g. "Pricing_Arrangements_2026.pdf"
+  type         String
   url          String?
-  size         Int?
-  status       String          @default("processing") // processing, ready, error
-  errorMessage String?
-  rawContent   String?
-  totalChunks  Int             @default(0)
-  totalTokens  Int             @default(0)
-  content      String?
-  metadata     Json?
+  status       String          @default("processing")
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
+
   chatbot      Chatbot         @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
   chunks       DocumentChunk[]
 
   @@index([chatbotId])
-  @@index([status])
 }
 
 model DocumentChunk {
-  id         String                 @id @default(cuid())
+  id         String   @id @default(cuid())
   documentId String
   content    String
   chunkIndex Int
-  tokenCount Int
-  pageNumber Int?
-  createdAt  DateTime               @default(now())
-  embedding  Unsupported("vector")?
-  document   Document               @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  @@index([documentId])
+  createdAt  DateTime @default(now())
+  // embedding Unsupported("vector")? // Uncomment once PgVector is fully setup
+  
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 }
 
+// -----------------------------------------------------------------------------
+// CONVERSATIONS & LEADS (THE AUDIT DATA)
+// -----------------------------------------------------------------------------
+
 model Conversation {
-  id                 String                @id @default(cuid())
-  chatbotId          String
-  visitorId          String
-  visitorEmail       String?
-  visitorName        String?
-  visitorPhone       String?
-  status             String                @default("active") // active, ended, escalated
-  rating             Int?
-  feedback           String?
-  userAgent          String?
-  ipAddress          String?
-  country            String?
-  referrer           String?
-  currentPage        String?
+  id               String                @id @default(cuid())
+  chatbotId        String
+  visitorId        String                // Anonymous tracking until verified
+  status           String                @default("active")
+  
+  // -- NDIS AUDIT CORE FIELDS --
+  originalLanguage String?               // ISO code of patient language
+  translatedText   Json?                 // Translated log to English for auditors
+  isSensitive      Boolean               @default(false) // Flag for PHI
+  auditReady       Boolean               @default(true)
+  // -----------------------------
 
-  // NDIS Compliance & CALD Audit Fields
-  originalLanguage   String?               // ISO 639-1 code (e.g. "tr", "ar", "vi")
-  translatedText     Json?                 // Structured English translation for audit trail
-  isSensitive        Boolean               @default(false) // Flag for medical/personal info
+  startedAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
 
-  startedAt          DateTime              @default(now())
-  endedAt            DateTime?
-  updatedAt          DateTime              @updatedAt
-  createdAt          DateTime              @default(now())
-
-  chatbot  Chatbot               @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-  messages ConversationMessage[]
-  leads    Lead[]
+  chatbot          Chatbot               @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  messages         ConversationMessage[]
+  leads            Lead[]
 
   @@index([chatbotId])
-  @@index([visitorId])
-  @@index([status])
-  @@index([startedAt])
-  @@index([chatbotId, startedAt])
-  @@index([isSensitive])
 }
 
 model ConversationMessage {
-  id              String       @id @default(cuid())
-  conversationId  String
-  role            String       // user, assistant, system
-  content         String
-  aiModel         String?
-  tokens          Int?
-  confidence      Float?
-  sources         Json?
-  isHumanResponse Boolean      @default(false)
-  humanAgentId    String?
-  createdAt       DateTime     @default(now())
-  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-
-  @@index([conversationId])
-  @@index([createdAt])
-  @@index([conversationId, createdAt])
+  id             String       @id @default(cuid())
+  conversationId String
+  role           String       // 'user' or 'assistant'
+  content        String
+  sources        Json?        // To track which NDIS document was cited
+  createdAt      DateTime     @default(now())
+  
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 }
 
-model ChatbotAnalytics {
-  id                    String   @id @default(cuid())
-  chatbotId             String
-  date                  DateTime @db.Date
-  totalConversations    Int      @default(0)
-  totalMessages         Int      @default(0)
-  uniqueVisitors        Int      @default(0)
-  resolvedByAI          Int      @default(0)
-  escalatedToHuman      Int      @default(0)
-  avgConfidence         Float?
-  avgRating             Float?
-  avgResponseTime       Int?
-  avgConversationLength Int?
-  topQueries            Json?
-  chatbot               Chatbot  @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+model Lead {
+  id             String        @id @default(cuid())
+  chatbotId      String
+  conversationId String?
+  name           String
+  email          String?
+  phone          String
+  status         String        @default("new") // e.g., 'new', 'contacted'
+  createdAt      DateTime      @default(now())
 
-  @@unique([chatbotId, date])
-  @@index([date])
+  chatbot        Chatbot       @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
 }
 
-model ApiKey {
-  id         String    @id @default(cuid())
-  key        String    @unique
-  name       String
-  chatbotId  String
-  createdAt  DateTime  @default(now())
-  lastUsed   DateTime?
-  expiresAt  DateTime?
-  isActive   Boolean   @default(true)
-  allowedIps String[]  @default([])
-  scopes     String[]  @default(["chat:read", "chat:write"])
-  rateLimit  Int?
-  chatbot    Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-
-  @@index([chatbotId])
-}
-
-// ========================================
-// NDIS COMPLIANCE & AUDIT MODULE
-// ========================================
+// -----------------------------------------------------------------------------
+// 🛡️ NDIS AUDIT LOG (THE MOAT) 🛡️
+// -----------------------------------------------------------------------------
 
 model AuditLog {
   id           String   @id @default(cuid())
-  action       String   // VIEW_PATIENT_DATA, EXPORT_REPORT, CHAT_STARTED, LOGIN, DATA_EXPORT
-  actorId      String   // Staff member / user who performed the action
-  resourceId   String?  // ID of the document, conversation, or patient record
-  resourceType String?  // Conversation, Document, User
-  metadata     Json?    // Additional context (export format, filter criteria)
+  action       String   // e.g. "VIEW_PATIENT_DATA", "CHAT_SESSION_STARTED"
+  actorId      String   // Staff member who performed the action
+  resourceId   String?  // ID of the accessed resource
+  resourceType String?  // e.g., "Conversation", "Document"
+  metadata     Json?    // Context specifics
   ipAddress    String?
   userAgent    String?
-  region       String   @default("ap-southeast-2") // Data sovereignty tracking
   createdAt    DateTime @default(now())
 
-  actor User @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  actor        User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
 
   @@index([actorId])
   @@index([action])
-  @@index([resourceId])
   @@index([createdAt])
-  @@index([actorId, createdAt])
-  @@index([action, createdAt])
-}
-
-// ========================================
-// LEAD GENERATION MODULE
-// ========================================
-
-model Lead {
-  id              String    @id @default(cuid())
-  chatbotId       String
-  conversationId  String?
-
-  // Contact Info
-  name            String
-  email           String?
-  phone           String
-
-  // Qualification
-  intent          String?   // enquiry, demo_request, support, complaint
-  serviceType     String?   // plan_management, support_coordination, therapy, accommodation
-  ndisNumber      String?   // NDIS participant number (encrypted/hashed in practice)
-  budget          String?
-  timeline        String?   // immediate, 1-3months, exploring
-  notes           String?
-  requirements    Json?
-
-  // Scoring
-  score           Int       @default(0)
-  category        String    @default("cold") // hot, warm, cold
-
-  // Status
-  status          String    @default("new") // new, contacted, qualified, converted, lost
-
-  // Source
-  source          String    @default("chatbot") // chatbot, website, referral, demo
-
-  // Timestamps
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  contactedAt     DateTime?
-  convertedAt     DateTime?
-
-  chatbot      Chatbot       @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-  conversation Conversation? @relation(fields: [conversationId], references: [id])
-
-  @@index([chatbotId])
-  @@index([category])
-  @@index([status])
-  @@index([conversationId])
 }
