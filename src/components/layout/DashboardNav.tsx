@@ -93,85 +93,21 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                                 {t('nav.dashboard')}
                             </Link>
 
-                            {/* Chatbot Selection Dropdown */}
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <button className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-1 group outline-none">
-                                        <Bot className="h-4 w-4" />
-                                        <span>{t('chatbots.title')}</span>
-                                        <ChevronDown className="h-3 w-3 text-gray-400 group-hover:text-blue-600 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-                                    </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="bg-white border border-gray-200 shadow-xl z-[999] min-w-[240px] animate-in fade-in-0 zoom-in-95 mt-2">
-                                    <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/chatbots`} className="cursor-pointer font-medium flex items-center gap-2 py-2.5">
-                                            <span>🤖</span> {t('dashboard.generalChatbots')}
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator className="bg-gray-100" />
-                                    <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/education`} className="cursor-pointer flex items-center gap-2 py-2.5 text-gray-600 hover:text-blue-600">
-                                            <div className="p-1 bg-blue-100 rounded text-blue-600">
-                                                <GraduationCap className="h-4 w-4" />
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="font-medium">Eğitim Asistanları</span>
-                                                <span className="text-xs text-gray-400 font-normal">Üniversite & Vize</span>
-                                            </div>
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/ecommerce`} className="cursor-pointer flex items-center gap-2 py-2.5 text-gray-600 hover:text-blue-600">
-                                            <div className="p-1 bg-green-100 rounded text-green-600">
-                                                <ShoppingCart className="h-4 w-4" />
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="font-medium">
-                                                    {locale === 'tr' ? 'E-Ticaret Asistanları'
-                                                        : locale === 'en' ? 'E-Commerce Assistants'
-                                                            : locale === 'de' ? 'E-Commerce-Assistenten'
-                                                                : locale === 'es' ? 'Asistentes de E-Commerce'
-                                                                    : locale === 'fr' ? 'Assistants E-Commerce'
-                                                                        : 'E-Commerce Assistants'}
-                                                </span>
-                                                <span className="text-xs text-gray-400 font-normal">
-                                                    {locale === 'tr' ? 'Satış & Destek'
-                                                        : locale === 'en' ? 'Sales & Support'
-                                                            : locale === 'de' ? 'Vertrieb & Support'
-                                                                : locale === 'es' ? 'Ventas y Soporte'
-                                                                    : locale === 'fr' ? 'Ventes et Support'
-                                                                        : 'Sales & Support'}
-                                                </span>
-                                            </div>
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href={`/${currentLocale}/dashboard/realestate`} className="cursor-pointer flex items-center gap-2 py-2.5 text-gray-600 hover:text-amber-600">
-                                            <div className="p-1 bg-amber-100 rounded text-amber-600">
-                                                <Building2 className="h-4 w-4" />
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="font-medium">
-                                                    {locale === 'tr' ? 'Emlak Asistanları'
-                                                        : locale === 'en' ? 'Real Estate Assistants'
-                                                            : locale === 'de' ? 'Immobilien-Assistenten'
-                                                                : locale === 'es' ? 'Asistentes Inmobiliarios'
-                                                                    : locale === 'fr' ? 'Assistants Immobiliers'
-                                                                        : 'Real Estate Assistants'}
-                                                </span>
-                                                <span className="text-xs text-gray-400 font-normal">
-                                                    {locale === 'tr' ? 'Lead Eleme & Randevu'
-                                                        : locale === 'en' ? 'Lead Qualification & Booking'
-                                                            : locale === 'de' ? 'Lead-Qualifizierung & Buchung'
-                                                                : locale === 'es' ? 'Calificación de Leads y Reservas'
-                                                                    : locale === 'fr' ? 'Qualification de Leads et Réservation'
-                                                                        : 'Lead Qualification & Booking'}
-                                                </span>
-                                            </div>
-                                        </Link>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            <Link
+                                href={`/${currentLocale}/dashboard/validator`}
+                                className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
+                            >
+                                <FileText className="h-4 w-4" />
+                                {t('nav.validator', { fallback: 'Validator' })}
+                            </Link>
+
+                            <Link
+                                href={`/${currentLocale}/dashboard/chatbots`}
+                                className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
+                            >
+                                <Bot className="h-4 w-4" />
+                                {t('nav.aiAgents', { fallback: 'AI Agents' })}
+                            </Link>
 
                             <Link
                                 href={`/${currentLocale}/dashboard/conversations`}
