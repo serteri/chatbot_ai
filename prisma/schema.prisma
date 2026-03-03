@@ -7,34 +7,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ========================================
+// AUTH MODULE
+// ========================================
+
 model User {
-  id                      String                   @id @default(cuid())
-  email                   String                   @unique
-  name                    String?
-  emailVerified           DateTime?
-  image                   String?
-  password                String?
-  companyName             String?
-  website                 String?
-  language                String                   @default("tr")
-  timezone                String                   @default("Europe/Istanbul")
-  region                  String                   @default("ap-southeast-2") // Data sovereignty: Sydney, AU
-  stripeCustomerId        String?                  @unique
-  createdAt               DateTime                 @default(now())
-  updatedAt               DateTime                 @updatedAt
-  emailNotifications      Boolean                  @default(true)
-  notificationEmail       String?
-  customSettings          Json?
-  accounts                Account[]
-  auditLogs               AuditLog[]
-  chatbots                Chatbot[]
-  scholarshipApplications ScholarshipApplication[]
-  sessions                Session[]
-  studentProfile          StudentProfile?
-  subscription            Subscription?
-  teamMembers             TeamMember[]
-  templatePurchases       TemplatePurchase[]
-  templateReviews         TemplateReview[]
+  id                 String         @id @default(cuid())
+  email              String         @unique
+  name               String?
+  emailVerified      DateTime?
+  image              String?
+  password           String?
+  companyName        String?
+  website            String?
+  language           String         @default("en")
+  timezone           String         @default("Australia/Sydney")
+  region             String         @default("ap-southeast-2") // Data sovereignty: Sydney, AU
+  stripeCustomerId   String?        @unique
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  emailNotifications Boolean        @default(true)
+  notificationEmail  String?
+  customSettings     Json?
+
+  accounts     Account[]
+  auditLogs    AuditLog[]
+  chatbots     Chatbot[]
+  sessions     Session[]
+  subscription Subscription?
+  teamMembers  TeamMember[]
 
   @@index([email])
   @@index([region])
@@ -77,19 +78,34 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model TeamMember {
+  id        String   @id @default(cuid())
+  userId    String
+  invitedBy String
+  role      String   @default("member") // admin, member, viewer
+  joinedAt  DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ========================================
+// BILLING MODULE (Stripe)
+// ========================================
+
 model Subscription {
   id                   String    @id @default(cuid())
   userId               String    @unique
   stripeCustomerId     String?   @unique
   stripeSubscriptionId String?   @unique
   stripePriceId        String?
-  planType             String    @default("free")
-  status               String    @default("active")
+  planType             String    @default("free") // free, professional, enterprise
+  status               String    @default("active") // active, past_due, canceled, trialing
   maxChatbots          Int       @default(1)
   maxDocuments         Int       @default(10)
   maxConversations     Int       @default(100)
   conversationsUsed    Int       @default(0)
-  storageLimit         Int       @default(100)
+  storageLimit         Int       @default(100) // MB
   storageUsed          Int       @default(0)
   currentPeriodStart   DateTime  @default(now())
   currentPeriodEnd     DateTime?
@@ -97,8 +113,10 @@ model Subscription {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
   lastResetDate        DateTime?
-  hasAdvancedAnalytics Boolean   @default(false)
+
+  // Feature flags
   hasAnalytics         Boolean   @default(false)
+  hasAdvancedAnalytics Boolean   @default(false)
   hasApiAccess         Boolean   @default(false)
   hasCustomBranding    Boolean   @default(false)
   hasCustomDomain      Boolean   @default(false)
@@ -106,174 +124,84 @@ model Subscription {
   hasTeamCollaboration Boolean   @default(false)
   hasWhiteLabel        Boolean   @default(false)
   hasLiveSupport       Boolean   @default(false)
-  valuationsUsed       Int       @default(0)
-  maxValuations        Int       @default(5)
-  demoChatUsed         Int       @default(0)
-  maxDemoChat          Int       @default(5)
-  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
-model ChatbotTemplate {
-  id                   String             @id @default(cuid())
-  name                 String
-  slug                 String             @unique
-  description          String
-  category             String
-  price                Float              @default(0)
-  currency             String             @default("USD")
-  icon                 String?
-  thumbnail            String?
-  features             String[]
-  systemPrompt         String
-  welcomeMessages      Json
-  fallbackMessages     Json
-  sampleQuestions      String[]
-  defaultSettings      Json?
-  requiredIntegrations String[]
-  includesUniversities Boolean            @default(false)
-  includesScholarships Boolean            @default(false)
-  includesFAQs         Boolean            @default(false)
-  isActive             Boolean            @default(true)
-  isFeatured           Boolean            @default(false)
-  popularity           Int                @default(0)
-  tags                 String[]
-  totalSales           Int                @default(0)
-  totalRevenue         Float              @default(0)
-  avgRating            Float?
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-  purchases            TemplatePurchase[]
-  reviews              TemplateReview[]
-
-  @@index([category])
-  @@index([slug])
-  @@index([isActive])
-}
-
-model TemplatePurchase {
-  id              String          @id @default(cuid())
-  userId          String
-  templateId      String
-  chatbotId       String?
-  amount          Float
-  currency        String
-  stripePaymentId String?         @unique
-  status          String          @default("completed")
-  isApplied       Boolean         @default(false)
-  appliedAt       DateTime?
-  purchasedAt     DateTime        @default(now())
-  chatbot         Chatbot?        @relation(fields: [chatbotId], references: [id])
-  template        ChatbotTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([templateId])
-  @@index([chatbotId])
-}
-
-model TemplateReview {
-  id                 String          @id @default(cuid())
-  userId             String
-  templateId         String
-  rating             Int
-  comment            String?
-  isVerifiedPurchase Boolean         @default(false)
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
-  template           ChatbotTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, templateId])
-  @@index([templateId])
-}
+// ========================================
+// CHAT ENGINE MODULE
+// ========================================
 
 model Chatbot {
-  id                 String               @id @default(cuid())
+  id                 String             @id @default(cuid())
   userId             String
   name               String
-  identifier         String               @unique
-  primaryColor       String               @default("#3b82f6")
-  secondaryColor     String               @default("#1e40af")
+  identifier         String             @unique
+
+  // Branding
+  primaryColor       String             @default("#0d9488") // teal-600
   botAvatar          String?
-  botName            String               @default("AI Assistant")
-  position           String               @default("bottom-right")
-  botNameTr          String               @default("AI Asistan")
-  botNameEn          String               @default("AI Assistant")
-  botNameDe          String               @default("KI-Assistent")
-  botNameFr          String               @default("Assistant IA")
-  botNameEs          String               @default("Asistente IA")
-  appliedTemplateId  String?
-  welcomeMessageTr   String               @default("Merhaba! Size nasıl yardımcı olabilirim?")
-  welcomeMessageEn   String               @default("Hello! How can I help you?")
-  welcomeMessageDe   String               @default("Hallo! Wie kann ich Ihnen helfen?")
-  welcomeMessageFr   String               @default("Bonjour! Comment puis-je vous aider?")
-  welcomeMessageEs   String               @default("¡Hola! ¿Cómo puedo ayudarte?")
-  fallbackMessageTr  String               @default("Üzgünüm, bu konuda yardımcı olamıyorum.")
-  fallbackMessageEn  String               @default("Sorry, I cannot help with that.")
-  fallbackMessageDe  String               @default("Entschuldigung, dabei kann ich nicht helfen.")
-  fallbackMessageFr  String               @default("Désolé, je ne peux pas vous aider avec ça.")
-  fallbackMessageEs  String               @default("Lo siento, no puedo ayudar con eso.")
-  placeholderTr      String               @default("Mesajınızı yazın...")
-  placeholderEn      String               @default("Type your message...")
-  placeholderDe      String               @default("Geben Sie Ihre Nachricht ein...")
-  placeholderFr      String               @default("Écrivez votre message...")
-  placeholderEs      String               @default("Escribe tu mensaje...")
-  welcomeMessage     String               @default("Hello! How can I help you today?")
-  placeholderText    String               @default("Type your message...")
-  fallbackMessage    String               @default("I couldn't find an answer. Would you like to speak with a human?")
+  botName            String             @default("NDIS Compliance Assistant")
+  position           String             @default("bottom-right")
+
+  // Messages (English-only for NDIS)
+  welcomeMessage     String             @default("Hello! I'm your NDIS compliance assistant. How can I help you today?")
+  placeholderText    String             @default("Type your message...")
+  fallbackMessage    String             @default("I couldn't find an answer. Would you like to speak with a compliance officer?")
   offlineMessage     String?
-  language           String               @default("en")
-  aiModel            String               @default("gpt-3.5-turbo")
-  temperature        Float                @default(0.7)
-  responseStyle      String               @default("professional")
-  widgetPrimaryColor String               @default("#3B82F6")
-  widgetButtonColor  String               @default("#2563EB")
-  widgetTextColor    String               @default("#FFFFFF")
-  widgetPosition     String               @default("bottom-right")
-  widgetSize         String               @default("medium")
+
+  // AI Configuration
+  language           String             @default("en")
+  aiModel            String             @default("gpt-4o-mini")
+  temperature        Float              @default(0.3) // Lower for compliance accuracy
+  responseStyle      String             @default("professional")
+
+  // Widget Appearance
+  widgetPrimaryColor String             @default("#0d9488")
+  widgetButtonColor  String             @default("#0f766e")
+  widgetTextColor    String             @default("#FFFFFF")
+  widgetPosition     String             @default("bottom-right")
+  widgetSize         String             @default("medium")
   widgetLogoUrl      String?
-  widgetBubbleIcon   String               @default("bot")
-  enableLiveChat     Boolean              @default(true)
-  enableEmailCapture Boolean              @default(true)
-  enableRating       Boolean              @default(true)
-  enableSources      Boolean              @default(true)
-  hideBranding       Boolean              @default(false)
-  allowedDomains     String[]             @default([])
-  customDomain       String?              @unique
+  widgetBubbleIcon   String             @default("shield")
+
+  // Features
+  enableLiveChat     Boolean            @default(true)
+  enableEmailCapture Boolean            @default(true)
+  enableRating       Boolean            @default(true)
+  enableSources      Boolean            @default(true)
+  hideBranding       Boolean            @default(false)
+
+  // Domain & Integration
+  allowedDomains     String[]           @default([])
+  customDomain       String?            @unique
   liveChatWebhook    String?
   emailNotification  String?
-  isActive           Boolean              @default(true)
-  isPublished        Boolean              @default(false)
-  totalConversations Int                  @default(0)
-  totalMessages      Int                  @default(0)
-  avgRating          Float?
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  whatsappNumber     String?
   supportEmail       String?
-  liveSupport        Boolean              @default(false)
-  liveSupportUrl     String?
-  calendlyUrl        String?              // Calendly booking link for appointments
-  agentName          String?              // Agent/Realtor name for display
-  agentPhone         String?              // Agent phone number
-  agentEmail         String?              // Agent email address
-  industry           String               @default("general")
-  googleCalendarId   String?              // Connected Google Calendar ID
-  calendarConnected  Boolean              @default(false)
+  calendlyUrl        String?
+
+  // Status
+  isActive           Boolean            @default(true)
+  isPublished        Boolean            @default(false)
+  industry           String             @default("healthcare") // healthcare, ndis, disability
+  totalConversations Int                @default(0)
+  totalMessages      Int                @default(0)
+  avgRating          Float?
+
+  // Extensible settings (replaces per-language hardcoded fields)
   customSettings     Json?
-  model              String?
-  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  analytics          ChatbotAnalytics[]
-  conversations      Conversation[]
-  documents          Document[]
-  liveSupportRequest LiveSupportRequest[]
-  templatePurchases  TemplatePurchase[]
-  apiKeys            ApiKey[]
-  properties         Property[]
-  leads              Lead[]
-  tenantRequests     TenantRequest[]
+
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user          User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analytics     ChatbotAnalytics[]
+  conversations Conversation[]
+  documents     Document[]
+  leads         Lead[]
+  apiKeys       ApiKey[]
 
   @@index([userId])
   @@index([identifier])
@@ -283,10 +211,10 @@ model Document {
   id           String          @id @default(cuid())
   chatbotId    String
   name         String
-  type         String
+  type         String          // pdf, docx, txt, url
   url          String?
   size         Int?
-  status       String          @default("processing")
+  status       String          @default("processing") // processing, ready, error
   errorMessage String?
   rawContent   String?
   totalChunks  Int             @default(0)
@@ -323,7 +251,7 @@ model Conversation {
   visitorEmail       String?
   visitorName        String?
   visitorPhone       String?
-  status             String                @default("active")
+  status             String                @default("active") // active, ended, escalated
   rating             Int?
   feedback           String?
   userAgent          String?
@@ -333,18 +261,18 @@ model Conversation {
   currentPage        String?
 
   // NDIS Compliance & CALD Audit Fields
-  originalLanguage   String?               // ISO 639-1 code of the participant's spoken language (e.g. "tr", "ar", "vi")
-  translatedText     Json?                 // Structured English translation of the full conversation for audit trail
-  isSensitive        Boolean               @default(false) // Flag for conversations containing medical/personal info
+  originalLanguage   String?               // ISO 639-1 code (e.g. "tr", "ar", "vi")
+  translatedText     Json?                 // Structured English translation for audit trail
+  isSensitive        Boolean               @default(false) // Flag for medical/personal info
 
   startedAt          DateTime              @default(now())
   endedAt            DateTime?
   updatedAt          DateTime              @updatedAt
   createdAt          DateTime              @default(now())
-  chatbot            Chatbot               @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-  messages           ConversationMessage[]
-  liveSupportRequest LiveSupportRequest[]
-  leads              Lead[]
+
+  chatbot  Chatbot               @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  messages ConversationMessage[]
+  leads    Lead[]
 
   @@index([chatbotId])
   @@index([visitorId])
@@ -357,7 +285,7 @@ model Conversation {
 model ConversationMessage {
   id              String       @id @default(cuid())
   conversationId  String
-  role            String
+  role            String       // user, assistant, system
   content         String
   aiModel         String?
   tokens          Int?
@@ -393,556 +321,21 @@ model ChatbotAnalytics {
   @@index([date])
 }
 
-model TeamMember {
-  id        String   @id @default(cuid())
-  userId    String
-  invitedBy String
-  role      String   @default("member")
-  joinedAt  DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model University {
-  id                    String               @id @default(cuid())
-  name                  String
-  country               String
-  city                  String
-  ranking               Int?
-  tuitionMin            Float?
-  tuitionMax            Float?
-  programs              String[]
-  requirements          Json?
-  website               String?
-  description           String?
-  createdAt             DateTime             @default(now())
-  updatedAt             DateTime             @updatedAt
-  programEmbeddings     Json?
-  tuitionFee            String?
-  type                  String?
-  founded               Int?
-  internationalStudents Int?
-  logo                  String?
-  studentCount          Int?
-  applications          Application[]
-  wishlistedBy          UniversityWishlist[]
-
-  @@index([country])
-  @@index([ranking])
-}
-
-model VisaInfo {
-  id             String   @id @default(cuid())
-  country        String
-  visaType       String
-  duration       String
-  cost           Int?
-  requirements   Json
-  processingTime String
-  multiLanguage  Json
-  website        String?
-  description    String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  @@index([country])
-}
-
-model LanguageSchool {
-  id             String   @id @default(cuid())
-  name           String
-  country        String
-  city           String?
-  languages      String[]
-  courseDuration String
-  pricePerWeek   Int?
-  intensity      String?
-  accommodation  Boolean  @default(false)
-  certifications String[]
-  website        String?
-  description    String?
-  multiLanguage  Json?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  @@index([country])
-  @@index([languages])
-}
-
-model CostOfLiving {
-  id            String   @id @default(cuid())
-  country       String
-  city          String
-  rent          Int?
-  food          Int?
-  transport     Int?
-  utilities     Int?
-  insurance     Int?
-  miscellaneous Int?
-  total         Int
-  currency      String   @default("USD")
-  multiLanguage Json?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@unique([country, city])
-  @@index([country])
-}
-
-model ApplicationGuide {
-  id            String   @id @default(cuid())
-  country       String
-  title         String
-  steps         Json
-  timeline      String
-  documents     String[]
-  tips          String[]
-  deadlines     Json?
-  multiLanguage Json
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@index([country])
-}
-
-model StudentProfile {
-  id                  String               @id @default(cuid())
-  userId              String               @unique
-  firstName           String
-  lastName            String
-  dateOfBirth         DateTime?
-  nationality         String?
-  phoneNumber         String?
-  currentCountry      String?
-  currentCity         String?
-  highestDegree       String?
-  fieldOfStudy        String?
-  gpa                 Float?
-  graduationYear      Int?
-  institution         String?
-  toeflScore          Int?
-  ieltsScore          Float?
-  satScore            Int?
-  greScore            Int?
-  gmatScore           Int?
-  preferredCountries  String[]
-  preferredCities     String[]
-  preferredFields     String[]
-  budgetMin           Int?
-  budgetMax           Int?
-  intakeYear          Int?
-  intakeSemester      String?
-  workExperience      String?
-  hasScholarship      Boolean              @default(false)
-  needsVisa           Boolean              @default(true)
-  languageProficiency Json?
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  applications        Application[]
-  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  wishlist            UniversityWishlist[]
-
-  @@index([userId])
-}
-
-model UniversityWishlist {
-  id           String         @id @default(cuid())
-  studentId    String
-  universityId String
-  notes        String?
-  priority     Int            @default(1)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  student      StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  university   University     @relation(fields: [universityId], references: [id], onDelete: Cascade)
-
-  @@unique([studentId, universityId])
-  @@index([studentId])
-  @@index([universityId])
-}
-
-model Application {
-  id           String         @id @default(cuid())
-  studentId    String
-  universityId String
-  program      String
-  degree       String
-  intake       String
-  status       String         @default("draft")
-  appliedAt    DateTime?
-  decidedAt    DateTime?
-  deadline     DateTime?
-  documents    Json?
-  notes        String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  student      StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  university   University     @relation(fields: [universityId], references: [id], onDelete: Cascade)
-
-  @@index([studentId])
-  @@index([universityId])
-  @@index([status])
-}
-
-model LiveSupportRequest {
-  id             String       @id @default(cuid())
-  chatbotId      String
-  conversationId String
-  visitorId      String
-  email          String?
-  phone          String?
-  message        String
-  status         String       @default("pending")
-  priority       String       @default("normal")
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  chatbot        Chatbot      @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-
-  @@index([chatbotId])
-  @@index([status])
-  @@index([chatbotId, status])
-}
-
-model Scholarship {
-  id             String                   @id @default(cuid())
-  title          String
-  description    String
-  provider       String
-  amount         String
-  currency       String                   @default("USD")
-  minGPA         Float?
-  maxAge         Int?
-  nationality    String[]
-  studyLevel     String[]
-  fieldOfStudy   String[]
-  deadline       DateTime
-  startDate      DateTime?
-  endDate        DateTime?
-  applicationUrl String?
-  requirements   String[]
-  country        String
-  city           String?
-  universities   String[]
-  isActive       Boolean                  @default(true)
-  tags           String[]
-  createdAt      DateTime                 @default(now())
-  updatedAt      DateTime                 @updatedAt
-  externalId     String?                  @unique
-  source         String?
-  lastSynced     DateTime?
-  applications   ScholarshipApplication[]
-
-  @@index([country])
-  @@index([deadline])
-  @@index([provider])
-  @@index([currency])
-  @@index([isActive])
-  @@index([externalId])
-}
-
-model ScholarshipApplication {
-  id                 String      @id @default(cuid())
-  userId             String
-  scholarshipId      String
-  status             String      @default("draft")
-  appliedAt          DateTime?
-  personalStatement  String?
-  documents          Json?
-  notes              String?
-  milestones         Json?
-  createdAt          DateTime    @default(now())
-  alternativeEmail   String?
-  contactEmail       String?
-  contactPhone       String?
-  currentInstitution String?
-  currentProgram     String?
-  decisionDate       DateTime?
-  decisionResult     String?
-  essayQuestions     Json?
-  familyIncome       String?
-  financialNeed      Boolean     @default(false)
-  gpa                Float?
-  graduationDate     DateTime?
-  internalRating     Int?
-  reminders          Json?
-  updatedAt          DateTime    @updatedAt
-  scholarship        Scholarship @relation(fields: [scholarshipId], references: [id], onDelete: Cascade)
-  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, scholarshipId])
-  @@index([userId])
-  @@index([status])
-  @@index([appliedAt])
-  @@index([decisionDate])
-}
-
-model ApplicationReminder {
-  id           String   @id @default(cuid())
-  userId       String
-  type         String
-  referenceId  String
-  reminderDate DateTime
-  message      String
-  isCompleted  Boolean  @default(false)
-  createdAt    DateTime @default(now())
-
-  @@index([isCompleted])
-}
-
 model ApiKey {
-  id          String    @id @default(cuid())
-  key         String    @unique
-  name        String
-  chatbotId   String
-  createdAt   DateTime  @default(now())
-  lastUsed    DateTime?
-  expiresAt   DateTime?
-  isActive    Boolean   @default(true)
-
-  // Enterprise Security Features
-  allowedIps  String[]  @default([]) // Empty means all IPs allowed
-  scopes      String[]  @default(["chat:read", "chat:write"]) // Default scopes
-  rateLimit   Int?      // Requests per minute, null means unlimited
-
-  chatbot     Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  id         String    @id @default(cuid())
+  key        String    @unique
+  name       String
+  chatbotId  String
+  createdAt  DateTime  @default(now())
+  lastUsed   DateTime?
+  expiresAt  DateTime?
+  isActive   Boolean   @default(true)
+  allowedIps String[]  @default([])
+  scopes     String[]  @default(["chat:read", "chat:write"])
+  rateLimit  Int?
+  chatbot    Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
 
   @@index([chatbotId])
-}
-
-// ========================================
-// REAL ESTATE MODULE
-// ========================================
-
-model Property {
-  id              String    @id @default(cuid())
-  chatbotId       String
-  externalId      String?   // ID from external system (XML, API)
-
-  // Basic Info
-  title           String
-  description     String?
-  propertyType    String    // apartment, villa, house, land, commercial
-  listingType     String    // sale, rent
-
-  // Pricing
-  price           Float
-  currency        String    @default("TRY")
-  pricePerSqm     Float?
-  monthlyRent     Float?    // For rental properties
-
-  // Location
-  address         String?
-  district        String?
-  city            String
-  country         String    @default("Turkey")
-  latitude        Float?
-  longitude       Float?
-
-  // Property Details
-  rooms           String?   // 1+1, 2+1, 3+1, etc.
-  bedrooms        Int?
-  bathrooms       Int?
-  area            Float?    // Square meters
-  floorNumber     Int?
-  totalFloors     Int?
-  buildingAge     Int?
-
-  // Features
-  hasGarage       Boolean   @default(false)
-  hasPool         Boolean   @default(false)
-  hasGarden       Boolean   @default(false)
-  hasBalcony      Boolean   @default(false)
-  hasElevator     Boolean   @default(false)
-  hasSecurity     Boolean   @default(false)
-  isFurnished     Boolean   @default(false)
-  heatingType     String?   // natural gas, central, electric
-
-  // Investment Info
-  estimatedRoi    Float?    // Annual ROI percentage
-  rentalYield     Float?    // Annual rental yield
-
-  // Media
-  images          String[]  // Array of image URLs
-  videoUrl        String?
-  virtualTourUrl  String?
-
-  // Status
-  status          String    @default("active") // active, sold, rented, inactive
-  isFeatured      Boolean   @default(false)
-  viewCount       Int       @default(0)
-
-  // Source
-  source          String    @default("manual") // manual, xml, api
-  sourceUrl       String?
-
-  // Inspection Times (Australia - Open House)
-  inspectionTimes   Json?     // Array of { date: string, startTime: string, endTime: string, notes?: string }
-  nextInspection    DateTime? // Cached next inspection date for quick queries
-  
-  // Import Metadata
-  rawMetadata       Json?     // Original source data for debugging imports
-
-  // Timestamps
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  chatbot         Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-  leads           Lead[]
-
-  @@index([chatbotId])
-  @@index([city])
-  @@index([propertyType])
-  @@index([listingType])
-  @@index([price])
-  @@index([status])
-}
-
-model Lead {
-  id              String    @id @default(cuid())
-  chatbotId       String
-  conversationId  String?
-  propertyId      String?   // If interested in specific property
-
-  // Contact Info
-  name            String
-  email           String?
-  phone           String
-
-  // Qualification Data
-  intent          String?   // buy, rent, sell, value, tenant
-  propertyType    String?   // What type they're looking for
-  purpose         String?   // investment, residence
-  budget          String?   // Budget range
-  budgetMin       Float?
-  budgetMax       Float?
-  location        String?   // Preferred location
-  timeline        String?   // immediate, 1-3months, 3-6months, browsing
-  hasPreApproval  Boolean?  // Mortgage pre-approval
-
-  // Scoring
-  score           Int       @default(0)
-  category        String    @default("cold") // hot, warm, cold
-
-  // Notes
-  notes           String?
-  requirements    Json?     // Detailed requirements
-
-  // Status
-  status          String    @default("new") // new, contacted, qualified, appointment, converted, lost
-
-  // Appointments
-  appointmentDate DateTime?
-  appointmentTime String?
-  appointmentNote String?
-
-  // Source
-  source          String    @default("chatbot") // chatbot, website, referral
-
-  // Timestamps
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  contactedAt     DateTime?
-  convertedAt     DateTime?
-
-  chatbot         Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-  conversation    Conversation? @relation(fields: [conversationId], references: [id])
-  property        Property? @relation(fields: [propertyId], references: [id])
-
-  @@index([chatbotId])
-  @@index([category])
-  @@index([status])
-  @@index([conversationId])
-}
-
-model TenantRequest {
-  id              String    @id @default(cuid())
-  chatbotId       String
-
-  // Tenant Info
-  name            String
-  email           String?
-  phone           String
-  unitNumber      String?
-
-  // Request Details
-  requestType     String    // maintenance, rent_payment, contract, key_handover, other
-  issueType       String?   // plumbing, electrical, heating, structural, other
-  description     String?
-  urgency         String    @default("normal") // emergency, normal, low
-
-  // Media
-  photos          String[]  // Issue photos
-
-  // Status
-  status          String    @default("pending") // pending, in_progress, resolved, cancelled
-  assignedTo      String?   // Service provider or staff
-
-  // Resolution
-  resolution      String?
-  resolvedAt      DateTime?
-
-  // Timestamps
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  chatbot         Chatbot   @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
-
-  @@index([chatbotId])
-  @@index([status])
-  @@index([requestType])
-}
-
-// ========================================
-// JOB POSTINGS MODULE
-// ========================================
-
-model JobPosting {
-  id              String    @id @default(cuid())
-
-  // Basic Info
-  title           String
-  department      String    // Engineering, Marketing, Sales, etc.
-  location        String    // Remote, Istanbul, New York, etc.
-  locationType    String    @default("remote") // remote, onsite, hybrid
-  employmentType  String    @default("full-time") // full-time, part-time, contract, internship
-
-  // Salary (Optional)
-  salaryMin       Int?
-  salaryMax       Int?
-  salaryCurrency  String    @default("USD")
-  salaryPeriod    String    @default("yearly") // yearly, monthly, hourly
-  showSalary      Boolean   @default(false)
-
-  // Job Details
-  description     String    // Main job description (HTML/Markdown)
-  responsibilities String?   // Key responsibilities (HTML/Markdown)
-  requirements    String?   // Required qualifications (HTML/Markdown)
-  niceToHave      String?   // Nice to have qualifications (HTML/Markdown)
-  benefits        String?   // Benefits and perks (HTML/Markdown)
-
-  // Application
-  applicationUrl  String?   // External application URL
-  applicationEmail String?  // Email for applications
-
-  // Meta
-  language        String    @default("en") // Language the posting is written in
-  isPublished     Boolean   @default(false)
-  isFeatured      Boolean   @default(false)
-  viewCount       Int       @default(0)
-
-  // Dates
-  publishedAt     DateTime?
-  expiresAt       DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  @@index([isPublished])
-  @@index([department])
-  @@index([locationType])
-  @@index([employmentType])
-  @@index([expiresAt])
 }
 
 // ========================================
@@ -950,18 +343,18 @@ model JobPosting {
 // ========================================
 
 model AuditLog {
-  id          String   @id @default(cuid())
-  action      String   // e.g. "VIEW_PATIENT_DATA", "EXPORT_REPORT", "CHAT_STARTED", "LOGIN", "DATA_EXPORT"
-  actorId     String   // Staff member / user who performed the action
-  resourceId  String?  // ID of the document, conversation, or patient record involved
-  resourceType String? // e.g. "Conversation", "Document", "User"
-  metadata    Json?    // Additional context (e.g. export format, filter criteria)
-  ipAddress   String?
-  userAgent   String?
-  region      String   @default("ap-southeast-2") // Data sovereignty tracking
-  createdAt   DateTime @default(now())
+  id           String   @id @default(cuid())
+  action       String   // VIEW_PATIENT_DATA, EXPORT_REPORT, CHAT_STARTED, LOGIN, DATA_EXPORT
+  actorId      String   // Staff member / user who performed the action
+  resourceId   String?  // ID of the document, conversation, or patient record
+  resourceType String?  // Conversation, Document, User
+  metadata     Json?    // Additional context (export format, filter criteria)
+  ipAddress    String?
+  userAgent    String?
+  region       String   @default("ap-southeast-2") // Data sovereignty tracking
+  createdAt    DateTime @default(now())
 
-  actor       User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  actor User @relation(fields: [actorId], references: [id], onDelete: Cascade)
 
   @@index([actorId])
   @@index([action])
@@ -969,4 +362,52 @@ model AuditLog {
   @@index([createdAt])
   @@index([actorId, createdAt])
   @@index([action, createdAt])
+}
+
+// ========================================
+// LEAD GENERATION MODULE
+// ========================================
+
+model Lead {
+  id              String    @id @default(cuid())
+  chatbotId       String
+  conversationId  String?
+
+  // Contact Info
+  name            String
+  email           String?
+  phone           String
+
+  // Qualification
+  intent          String?   // enquiry, demo_request, support, complaint
+  serviceType     String?   // plan_management, support_coordination, therapy, accommodation
+  ndisNumber      String?   // NDIS participant number (encrypted/hashed in practice)
+  budget          String?
+  timeline        String?   // immediate, 1-3months, exploring
+  notes           String?
+  requirements    Json?
+
+  // Scoring
+  score           Int       @default(0)
+  category        String    @default("cold") // hot, warm, cold
+
+  // Status
+  status          String    @default("new") // new, contacted, qualified, converted, lost
+
+  // Source
+  source          String    @default("chatbot") // chatbot, website, referral, demo
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  contactedAt     DateTime?
+  convertedAt     DateTime?
+
+  chatbot      Chatbot       @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  conversation Conversation? @relation(fields: [conversationId], references: [id])
+
+  @@index([chatbotId])
+  @@index([category])
+  @@index([status])
+  @@index([conversationId])
 }
