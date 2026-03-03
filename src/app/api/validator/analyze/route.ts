@@ -10,53 +10,37 @@ import OpenAI from 'openai'
 // Returns: Structured JSON compliance analysis
 // ---------------------------------------------------------------------------
 
-const SYSTEM_PROMPT = `You are an expert NDIS Compliance Analyst for Australian disability service providers. 
+const SYSTEM_PROMPT = `You are an NDIS Support Coordinator. Analyze the text of this Service Agreement.
 
-When given the text of an NDIS Service Agreement, you must:
+Return a JSON object containing:
+- "participantName": string or null (the participant's full name)
+- "totalFunding": number (total plan funding in AUD)
+- "startDate": string (plan start date, e.g. "2025-07-01")
+- "endDate": string (plan end date, e.g. "2026-06-30")
+- "lineItems": array of objects, each with:
+  - "code": string (NDIS line item code, e.g. "04_590_0125_6_1")
+  - "description": string (what the line item covers)
+  - "budget": number (allocated budget in AUD)
+- "complianceScore": number between 0 and 100 (based on required clauses present)
+- "warnings": array of strings (each warning describes a missing or non-compliant element)
+- "summary": string (2-3 sentence overview of the agreement)
 
-1. Extract and return:
-   - Participant name (if present)
-   - NDIS Number (if present, partially redact for privacy: e.g., "####-####-12")
-   - Total plan funding amount
-   - Plan start and end dates
-   - All line items with their codes, descriptions, and allocated budgets
-   - Registration groups covered
-
-2. Identify compliance issues:
-   - Missing cancellation policy (required under NDIS Terms of Business)
-   - Missing incident reporting procedures
-   - Missing consent clauses
-   - Pricing that exceeds NDIS Price Guide 2025/26 limits
-   - Missing ABN or provider registration details
-
-3. Calculate an overall compliance score (0-100%) based on the number of required clauses present.
-
-4. Return your analysis as a JSON object with this EXACT structure:
-{
-  "participantName": "string or null",
-  "ndisNumber": "string or null (redacted)",
-  "totalFunding": "number",
-  "planStart": "string (date)",
-  "planEnd": "string (date)",
-  "lineItems": [
-    { "code": "string", "description": "string", "budget": "number" }
-  ],
-  "complianceFlags": [
-    { "severity": "warning|critical", "message": "string", "recommendation": "string" }
-  ],
-  "complianceScore": "number (0-100)",
-  "summary": "string (2-3 sentence overview)",
-  "auditTrailId": "string (generate as AT-XXXXX)"
-}
+Check for these common compliance issues and add them to "warnings":
+- Missing cancellation policy (required under NDIS Terms of Business)
+- Missing incident reporting procedures
+- Missing consent clauses for data collection
+- Pricing exceeding NDIS Price Guide 2025/26 limits
+- Missing ABN or provider registration number
+- Missing participant goals or outcomes
+- Missing nominated representative details
 
 If the document is NOT an NDIS Service Agreement, return:
 { "error": "This document does not appear to be an NDIS Service Agreement.", "complianceScore": 0 }
 
 Be thorough and precise. Australian NDIS providers rely on your analysis for audit readiness.`
 
-// Helper to parse PDF server-side
+// Helper: extract text from PDF buffer
 async function extractTextFromPDF(buffer: Buffer): Promise<string> {
-    // pdf-parse is CommonJS, dynamic import for ESM compatibility
     const pdfParse = (await import('pdf-parse')).default
     const data = await pdfParse(buffer)
     return data.text
@@ -64,7 +48,7 @@ async function extractTextFromPDF(buffer: Buffer): Promise<string> {
 
 export async function POST(request: NextRequest) {
     try {
-        // ── Auth Check ──
+        // ── Auth ──
         const session = await auth()
         if (!session?.user?.id) {
             return NextResponse.json(
@@ -91,7 +75,6 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // 20MB limit
         if (file.size > 20 * 1024 * 1024) {
             return NextResponse.json(
                 { error: 'File exceeds 20MB limit.' },
@@ -120,7 +103,7 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // ── Truncate to fit within token limits (approx 15k words) ──
+        // ── Truncate for token limits (~15k words) ──
         const truncatedText = extractedText.slice(0, 60000)
 
         // ── Call OpenAI GPT-4o ──
@@ -149,7 +132,7 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // ── Parse AI Response ──
+        // ── Parse AI JSON ──
         let analysis: Record<string, unknown>
         try {
             analysis = JSON.parse(aiResponse)
@@ -160,20 +143,20 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // ── Audit Log: Success ──
+        // ── Audit Log ──
         await createAuditLog({
-            action: 'DOCUMENT_ANALYSIS_SUCCESS',
+            action: 'DOCUMENT_ANALYZED',
             actorId: session.user.id,
             metadata: {
                 fileName: file.name,
                 fileSize: file.size,
                 complianceScore: analysis.complianceScore,
-                auditTrailId: analysis.auditTrailId,
+                warningsCount: Array.isArray(analysis.warnings) ? analysis.warnings.length : 0,
                 model: 'gpt-4o',
             },
         })
 
-        // ── Return structured response ──
+        // ── Return ──
         return NextResponse.json({
             success: true,
             fileName: file.name,
@@ -183,7 +166,6 @@ export async function POST(request: NextRequest) {
         })
     } catch (error) {
         console.error('[Validator API] Unexpected error:', error)
-
         return NextResponse.json(
             { error: 'An unexpected error occurred during analysis. Please try again.' },
             { status: 500 }

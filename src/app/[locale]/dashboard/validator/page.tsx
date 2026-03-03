@@ -37,23 +37,15 @@ interface LineItem {
     budget: number
 }
 
-interface ComplianceFlag {
-    severity: 'warning' | 'critical'
-    message: string
-    recommendation: string
-}
-
 interface AnalysisResult {
     participantName?: string | null
-    ndisNumber?: string | null
     totalFunding?: number
-    planStart?: string
-    planEnd?: string
+    startDate?: string
+    endDate?: string
     lineItems?: LineItem[]
-    complianceFlags?: ComplianceFlag[]
     complianceScore?: number
+    warnings?: string[]
     summary?: string
-    auditTrailId?: string
     error?: string
 }
 
@@ -68,7 +60,6 @@ function formatAnalysisToChat(data: AnalysisResult, fileName: string): string {
 
     const lines: string[] = []
     lines.push(`✅ **Analysis Complete.** NDIS Price Guide 2025/26 applied.`)
-    if (data.auditTrailId) lines.push(`**Audit Trail ID:** #${data.auditTrailId}`)
     lines.push('')
     if (data.summary) lines.push(data.summary)
     lines.push('')
@@ -76,9 +67,8 @@ function formatAnalysisToChat(data: AnalysisResult, fileName: string): string {
     // Participant Overview
     lines.push('**Participant Overview:**')
     if (data.participantName) lines.push(`- Name: **${data.participantName}**`)
-    if (data.ndisNumber) lines.push(`- NDIS Number: \`${data.ndisNumber}\``)
     if (data.totalFunding) lines.push(`- Total Plan Funding: **$${data.totalFunding.toLocaleString()}**`)
-    if (data.planStart && data.planEnd) lines.push(`- Plan Period: ${data.planStart} – ${data.planEnd}`)
+    if (data.startDate && data.endDate) lines.push(`- Plan Period: ${data.startDate} – ${data.endDate}`)
     lines.push('')
 
     // Line Items
@@ -90,13 +80,11 @@ function formatAnalysisToChat(data: AnalysisResult, fileName: string): string {
         lines.push('')
     }
 
-    // Compliance Flags
-    if (data.complianceFlags && data.complianceFlags.length > 0) {
-        lines.push('**⚠️ Compliance Flags:**')
-        data.complianceFlags.forEach((flag) => {
-            const icon = flag.severity === 'critical' ? '🔴' : '🟡'
-            lines.push(`- ${icon} ${flag.message}`)
-            if (flag.recommendation) lines.push(`  → ${flag.recommendation}`)
+    // Warnings
+    if (data.warnings && data.warnings.length > 0) {
+        lines.push('**⚠️ Compliance Warnings:**')
+        data.warnings.forEach((warning) => {
+            lines.push(`- 🟡 ${warning}`)
         })
         lines.push('')
     }
