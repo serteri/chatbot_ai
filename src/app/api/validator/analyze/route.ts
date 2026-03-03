@@ -4,10 +4,9 @@ import { createAuditLog } from '@/lib/services/audit'
 import OpenAI from 'openai'
 
 // ---------------------------------------------------------------------------
-// NDIS Service Agreement Analyzer — API Route
+// NDIS Service Agreement Analyzer — Azure OpenAI Sydney
 // POST /api/validator/analyze
-// Accepts: FormData with a PDF file
-// Returns: Structured JSON compliance analysis
+// Infrastructure: Azure OpenAI (ap-southeast-2, Sydney)
 // ---------------------------------------------------------------------------
 
 const SYSTEM_PROMPT = `You are an NDIS Support Coordinator. Analyze the text of this Service Agreement.
@@ -39,12 +38,46 @@ If the document is NOT an NDIS Service Agreement, return:
 
 Be thorough and precise. Australian NDIS providers rely on your analysis for audit readiness.`
 
-// Helper: extract text from PDF buffer
+// ---------------------------------------------------------------------------
+// Azure OpenAI Client (Sydney — ap-southeast-2)
+// ---------------------------------------------------------------------------
+
+function getAzureOpenAIClient(): OpenAI {
+    const apiKey = process.env.AZURE_OPENAI_API_KEY
+    const endpoint = process.env.AZURE_OPENAI_ENDPOINT
+    const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME
+
+    if (!apiKey || !endpoint || !deploymentName) {
+        throw new Error(
+            'Azure OpenAI environment variables are not configured. ' +
+            'Set AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, and AZURE_OPENAI_DEPLOYMENT_NAME.'
+        )
+    }
+
+    // Remove trailing slash from endpoint if present
+    const cleanEndpoint = endpoint.replace(/\/+$/, '')
+
+    return new OpenAI({
+        apiKey,
+        baseURL: `${cleanEndpoint}/openai/deployments/${deploymentName}`,
+        defaultQuery: { 'api-version': process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview' },
+        defaultHeaders: { 'api-key': apiKey },
+    })
+}
+
+// ---------------------------------------------------------------------------
+// PDF Text Extraction
+// ---------------------------------------------------------------------------
+
 async function extractTextFromPDF(buffer: Buffer): Promise<string> {
     const pdfParse = (await import('pdf-parse')).default
     const data = await pdfParse(buffer)
     return data.text
 }
+
+// ---------------------------------------------------------------------------
+// POST Handler
+// ---------------------------------------------------------------------------
 
 export async function POST(request: NextRequest) {
     try {
@@ -103,16 +136,14 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // ── Truncate for token limits (~15k words) ──
+        // ── Truncate for token limits ──
         const truncatedText = extractedText.slice(0, 60000)
 
-        // ── Call OpenAI GPT-4o ──
-        const openai = new OpenAI({
-            apiKey: process.env.OPENAI_API_KEY,
-        })
+        // ── Call Azure OpenAI (Sydney) ──
+        const azureClient = getAzureOpenAIClient()
 
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4o',
+        const completion = await azureClient.chat.completions.create({
+            model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'pylonchat-v1',
             temperature: 0.1,
             response_format: { type: 'json_object' },
             messages: [
@@ -152,7 +183,9 @@ export async function POST(request: NextRequest) {
                 fileSize: file.size,
                 complianceScore: analysis.complianceScore,
                 warningsCount: Array.isArray(analysis.warnings) ? analysis.warnings.length : 0,
-                model: 'gpt-4o',
+                region: 'Sydney (ap-southeast-2)',
+                provider: 'Azure OpenAI',
+                deployment: process.env.AZURE_OPENAI_DEPLOYMENT_NAME,
             },
         })
 
@@ -163,6 +196,11 @@ export async function POST(request: NextRequest) {
             fileSize: file.size,
             analysis,
             analyzedAt: new Date().toISOString(),
+            infrastructure: {
+                provider: 'Azure OpenAI',
+                region: 'Australia East (Sydney)',
+                dataResidency: 'ap-southeast-2',
+            },
         })
     } catch (error) {
         console.error('[Validator API] Unexpected error:', error)
