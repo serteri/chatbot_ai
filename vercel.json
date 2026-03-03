@@ -9,5 +9,8 @@
       "path": "/api/scholarships/balance-countries",
       "schedule": "0 3 * * 0"
     }
-  ]
+  ],
+  "github": {
+    "silent": true
+  }
 }
