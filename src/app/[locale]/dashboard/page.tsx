@@ -183,9 +183,9 @@ export default async function DashboardPage({
                         </CardHeader>
                         <CardContent>
                             <div className="text-sm font-medium text-slate-700">
-                                {recentAudits.length > 0 ? (
+                                {recentAudits?.length > 0 ? (
                                     <ul className="space-y-2">
-                                        {recentAudits.map(log => (
+                                        {recentAudits.map((log: any) => (
                                             <li key={log.id} className="flex justify-between items-center bg-slate-50 p-2 rounded border border-slate-100">
                                                 <span className="truncate text-xs text-slate-600">{log.action.replace(/_/g, ' ')}</span>
                                                 <span className="text-[10px] text-slate-400 shrink-0 ml-2">

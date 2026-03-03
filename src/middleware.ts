@@ -5,7 +5,7 @@ const intlMiddleware = createMiddleware({
   locales: ['en', 'tr', 'de', 'fr', 'es'],
   defaultLocale: 'en',
   localeDetection: false,
-  localePrefix: 'as-needed'
+  localePrefix: 'always' // Changed to always strictly keep locale in URL
 });
 
 export default async function middleware(req: NextRequest) {
