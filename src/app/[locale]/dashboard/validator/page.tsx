@@ -31,46 +31,89 @@ interface ChatMessage {
     timestamp: Date
 }
 
+interface LineItem {
+    code: string
+    description: string
+    budget: number
+}
+
+interface ComplianceFlag {
+    severity: 'warning' | 'critical'
+    message: string
+    recommendation: string
+}
+
+interface AnalysisResult {
+    participantName?: string | null
+    ndisNumber?: string | null
+    totalFunding?: number
+    planStart?: string
+    planEnd?: string
+    lineItems?: LineItem[]
+    complianceFlags?: ComplianceFlag[]
+    complianceScore?: number
+    summary?: string
+    auditTrailId?: string
+    error?: string
+}
+
 // ---------------------------------------------------------------------------
-// Mock AI Responses
+// Helpers
 // ---------------------------------------------------------------------------
 
-const INITIAL_ANALYSIS_MESSAGE = `✅ **Analysis Complete.** NDIS Price Guide 2025/26 applied.
-**Audit Trail ID:** #AT-992
+function formatAnalysisToChat(data: AnalysisResult, fileName: string): string {
+    if (data.error) {
+        return `⚠️ **Analysis Issue:** ${data.error}`
+    }
 
-Here is a summary of compliance findings:
+    const lines: string[] = []
+    lines.push(`✅ **Analysis Complete.** NDIS Price Guide 2025/26 applied.`)
+    if (data.auditTrailId) lines.push(`**Audit Trail ID:** #${data.auditTrailId}`)
+    lines.push('')
+    if (data.summary) lines.push(data.summary)
+    lines.push('')
 
-**Participant Overview:**
-- Total Plan Funding: **$54,000**
-- Plan Period: 01 Jul 2025 – 30 Jun 2026
-- Registration Group: Core Supports + Capacity Building
+    // Participant Overview
+    lines.push('**Participant Overview:**')
+    if (data.participantName) lines.push(`- Name: **${data.participantName}**`)
+    if (data.ndisNumber) lines.push(`- NDIS Number: \`${data.ndisNumber}\``)
+    if (data.totalFunding) lines.push(`- Total Plan Funding: **$${data.totalFunding.toLocaleString()}**`)
+    if (data.planStart && data.planEnd) lines.push(`- Plan Period: ${data.planStart} – ${data.planEnd}`)
+    lines.push('')
 
-**Key Line Items:**
-| Line Item | Description | Budget |
-|---|---|---|
-| 04_590_0125_6_1 | Weekend Transport | $4,200 |
-| 01_011_0107_1_1 | Assistance with Daily Life | $28,500 |
-| 15_037_0117_1_3 | Improved Learning | $12,800 |
-| 03_021_0120_6_1 | Plan Management | $8,500 |
+    // Line Items
+    if (data.lineItems && data.lineItems.length > 0) {
+        lines.push('**Key Line Items:**')
+        data.lineItems.forEach((item) => {
+            lines.push(`- \`${item.code}\` — ${item.description}: **$${item.budget.toLocaleString()}**`)
+        })
+        lines.push('')
+    }
 
-**⚠️ Compliance Flags:**
-- No cancellation policy found — **add Clause 7.2** per NDIS Terms of Business.
-- Weekend transport: ensure activity logs are maintained for \`04_590_0125_6_1\`.
+    // Compliance Flags
+    if (data.complianceFlags && data.complianceFlags.length > 0) {
+        lines.push('**⚠️ Compliance Flags:**')
+        data.complianceFlags.forEach((flag) => {
+            const icon = flag.severity === 'critical' ? '🔴' : '🟡'
+            lines.push(`- ${icon} ${flag.message}`)
+            if (flag.recommendation) lines.push(`  → ${flag.recommendation}`)
+        })
+        lines.push('')
+    }
 
-**Overall Compliance Score: 87%** — 2 items need attention before the next audit.
+    // Score
+    if (data.complianceScore !== undefined) {
+        const emoji = data.complianceScore >= 90 ? '🟢' : data.complianceScore >= 70 ? '🟡' : '🔴'
+        lines.push(`${emoji} **Overall Compliance Score: ${data.complianceScore}%**`)
+    }
 
-You can now ask me any question about this Service Agreement.`
+    lines.push('')
+    lines.push(`📎 Source: **${fileName}**`)
+    lines.push('')
+    lines.push('You can now ask me any question about this Service Agreement.')
 
-const FOLLOWUP_RESPONSE = `Based on my analysis of this Service Agreement:
-
-**Weekend Transport (Line Item 04_590_0125_6_1):**
-- Budget Allocated: **$4,200/year** (~$80.77/week)
-- Rate Applied: NDIS Price Guide 2025/26 — $0.97/km (modified vehicle) or $59.95/hr (non-standard)
-- **Status:** ✅ Covered — but you must maintain participant-signed activity logs per NDIS Practice Standard 2.3
-
-**Recommendation:** Implement a digital log sheet to auto-capture trip details. This will strengthen your compliance posture from 87% to an estimated **94%**.
-
-Need me to check anything else?`
+    return lines.join('\n')
+}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -84,6 +127,8 @@ export default function ValidatorPage() {
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
     const [chatInput, setChatInput] = useState('')
     const [isAiTyping, setIsAiTyping] = useState(false)
+    const [analysisData, setAnalysisData] = useState<AnalysisResult | null>(null)
+    const [error, setError] = useState<string | null>(null)
     const chatEndRef = useRef<HTMLDivElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -107,27 +152,59 @@ export default function ValidatorPage() {
             return
         }
 
+        if (file.size > 20 * 1024 * 1024) {
+            alert('File exceeds the 20MB limit.')
+            return
+        }
+
         setFileName(file.name)
         setFileSize(file.size)
+        setError(null)
         setStep('uploaded')
 
-        // Audit log
+        // Audit log (server action)
         await logDocumentUploadAttempt(file.name)
 
-        // Simulate: Security Scan
-        setTimeout(() => setStep('scanning'), 800)
+        // Transition to scanning state
+        setStep('scanning')
 
-        // Simulate: Audit Ready + initial AI message
-        setTimeout(() => {
+        try {
+            // Send PDF to API for real analysis
+            const formData = new FormData()
+            formData.append('file', file)
+
+            const response = await fetch('/api/validator/analyze', {
+                method: 'POST',
+                body: formData,
+            })
+
+            const result = await response.json()
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Analysis failed. Please try again.')
+            }
+
+            // Store structured data for follow-up queries
+            setAnalysisData(result.analysis)
+
+            // Format AI response into a readable chat message
+            const chatContent = formatAnalysisToChat(result.analysis, file.name)
+
             setStep('audit-ready')
             setChatMessages([
                 {
                     role: 'assistant',
-                    content: INITIAL_ANALYSIS_MESSAGE,
+                    content: chatContent,
                     timestamp: new Date(),
                 },
             ])
-        }, 3500)
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'An unexpected error occurred.'
+            setError(message)
+            setStep('waiting')
+            setFileName(null)
+            setFileSize(0)
+        }
     }, [])
 
     const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -173,14 +250,21 @@ export default function ValidatorPage() {
         ])
 
         setIsAiTyping(true)
-        await new Promise((r) => setTimeout(r, 2000))
-        setIsAiTyping(false)
 
+        // TODO: Replace with a real follow-up chat API endpoint
+        // For now, generate a contextual response based on the analysis data
+        await new Promise((r) => setTimeout(r, 1500))
+
+        const contextInfo = analysisData
+            ? `Based on the analysis (Compliance Score: ${analysisData.complianceScore}%, Total Funding: $${analysisData.totalFunding?.toLocaleString() ?? 'N/A'}):\n\nI can help you with specific line items, compliance flags, or recommendations. What would you like to know more about?`
+            : 'I can help answer questions about the uploaded document. Could you be more specific?'
+
+        setIsAiTyping(false)
         setChatMessages((prev) => [
             ...prev,
-            { role: 'assistant', content: FOLLOWUP_RESPONSE, timestamp: new Date() },
+            { role: 'assistant', content: contextInfo, timestamp: new Date() },
         ])
-    }, [chatInput, step])
+    }, [chatInput, step, analysisData])
 
     const handleReset = useCallback(() => {
         setStep('waiting')
@@ -188,6 +272,8 @@ export default function ValidatorPage() {
         setFileSize(0)
         setChatMessages([])
         setChatInput('')
+        setAnalysisData(null)
+        setError(null)
     }, [])
 
     // -----------------------------------------------------------------------
@@ -246,10 +332,10 @@ export default function ValidatorPage() {
                                 <div className="flex items-center gap-3">
                                     <div
                                         className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${status === 'complete'
-                                                ? 'bg-teal-600 border-teal-600 text-white'
-                                                : status === 'active'
-                                                    ? 'bg-teal-50 border-teal-500 text-teal-700 animate-pulse'
-                                                    : 'bg-slate-50 border-slate-200 text-slate-400'
+                                            ? 'bg-teal-600 border-teal-600 text-white'
+                                            : status === 'active'
+                                                ? 'bg-teal-50 border-teal-500 text-teal-700 animate-pulse'
+                                                : 'bg-slate-50 border-slate-200 text-slate-400'
                                             }`}
                                     >
                                         {status === 'complete' ? (
@@ -263,8 +349,8 @@ export default function ValidatorPage() {
                                     <div className="hidden sm:block">
                                         <p
                                             className={`text-sm font-semibold transition-colors ${status !== 'pending'
-                                                    ? 'text-slate-900'
-                                                    : 'text-slate-400'
+                                                ? 'text-slate-900'
+                                                : 'text-slate-400'
                                                 }`}
                                         >
                                             {status === 'active' || status === 'complete'
@@ -281,8 +367,8 @@ export default function ValidatorPage() {
                                         <div className="h-0.5 bg-slate-200 rounded-full overflow-hidden">
                                             <div
                                                 className={`h-full bg-teal-500 rounded-full transition-all duration-700 ease-out ${getStepStatus(statusSteps[idx + 1].key) !== 'pending'
-                                                        ? 'w-full'
-                                                        : 'w-0'
+                                                    ? 'w-full'
+                                                    : 'w-0'
                                                     }`}
                                             />
                                         </div>
@@ -295,6 +381,23 @@ export default function ValidatorPage() {
             </div>
 
             {/* ── Drag & Drop Upload ── */}
+            {/* ── Error Banner ── */}
+            {error && step === 'waiting' && (
+                <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 flex items-start gap-3">
+                    <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                        <p className="text-sm font-semibold text-red-800">Analysis Failed</p>
+                        <p className="text-sm text-red-600 mt-0.5">{error}</p>
+                        <button
+                            onClick={() => setError(null)}
+                            className="text-xs text-red-500 underline mt-1"
+                        >
+                            Dismiss
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {step === 'waiting' && (
                 <div
                     onDragOver={handleDragOver}
@@ -302,8 +405,8 @@ export default function ValidatorPage() {
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
                     className={`bg-white rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer p-12 sm:p-16 text-center group ${isDragging
-                            ? 'border-teal-500 bg-teal-50/50 scale-[1.01]'
-                            : 'border-slate-300 hover:border-teal-400 hover:bg-teal-50/20'
+                        ? 'border-teal-500 bg-teal-50/50 scale-[1.01]'
+                        : 'border-slate-300 hover:border-teal-400 hover:bg-teal-50/20'
                         }`}
                 >
                     <input
@@ -316,8 +419,8 @@ export default function ValidatorPage() {
                     <div className="flex flex-col items-center gap-4">
                         <div
                             className={`w-16 h-16 rounded-2xl flex items-center justify-center border transition-all duration-300 ${isDragging
-                                    ? 'bg-teal-100 border-teal-300 scale-110'
-                                    : 'bg-slate-100 border-slate-200 group-hover:bg-teal-50 group-hover:border-teal-200'
+                                ? 'bg-teal-100 border-teal-300 scale-110'
+                                : 'bg-slate-100 border-slate-200 group-hover:bg-teal-50 group-hover:border-teal-200'
                                 }`}
                         >
                             <Upload
@@ -445,8 +548,8 @@ export default function ValidatorPage() {
                                 )}
                                 <div
                                     className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === 'user'
-                                            ? 'bg-teal-600 text-white rounded-br-md'
-                                            : 'bg-slate-100 text-slate-800 rounded-bl-md'
+                                        ? 'bg-teal-600 text-white rounded-br-md'
+                                        : 'bg-slate-100 text-slate-800 rounded-bl-md'
                                         }`}
                                 >
                                     <div
