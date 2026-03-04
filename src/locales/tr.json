@@ -3,6 +3,7 @@
   "test": "Test Et",
   "nav": {
     "dashboard": "Dashboard",
+    "validator": "Validator",
     "chatbots": "Chatbotlar",
     "aiAgents": "Yapay Zeka Ajanları",
     "allChatbots": "Tüm Chatbot'lar",

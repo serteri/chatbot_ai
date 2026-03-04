@@ -3,6 +3,14 @@ import { auth } from '@/lib/auth/auth'
 import { createAuditLog } from '@/lib/services/audit'
 import OpenAI from 'openai'
 
+// Polyfill for DOMMatrix (Needed for pdf-parse in Node/Server environments)
+if (typeof global.DOMMatrix === 'undefined') {
+    global.DOMMatrix = class DOMMatrix {
+        matrix: any;
+        constructor(arg?: any) { this.matrix = arg; }
+    } as any;
+}
+
 // ---------------------------------------------------------------------------
 // NDIS Service Agreement Analyzer — Azure OpenAI Sydney
 // POST /api/validator/analyze
