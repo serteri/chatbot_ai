@@ -1,4 +1,13 @@
 {
+  "validator": {
+    "remediation": {
+      "fixSuggestion": "Düzeltme Önerisi",
+      "fixSuggestionModalTitle": "Önerilen Uyumluluk Metni",
+      "copyToClipboard": "Panoya Kopyala",
+      "copied": "Kopyalandı!",
+      "disclaimer": "Yasal Uyarı: Bu önerilen metin yalnızca bilgi amaçlıdır ve yasal tavsiye niteliği taşımaz."
+    }
+  },
   "manage": "Yönet",
   "test": "Test Et",
   "nav": {

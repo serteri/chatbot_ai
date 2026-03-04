@@ -1,4 +1,13 @@
 {
+  "validator": {
+    "remediation": {
+      "fixSuggestion": "Fix Suggestion",
+      "fixSuggestionModalTitle": "Suggested Compliance Wording",
+      "copyToClipboard": "Copy to Clipboard",
+      "copied": "Copied!",
+      "disclaimer": "Disclaimer: This suggested wording is provided for informational purposes only and does not constitute legal advice."
+    }
+  },
   "nav": {
     "dashboard": "Dashboard",
     "validator": "Validator",

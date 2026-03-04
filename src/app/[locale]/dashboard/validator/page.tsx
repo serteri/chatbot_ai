@@ -18,6 +18,7 @@ import {
     BadgeCheck,
 } from 'lucide-react'
 import { logValidatorPageView, logDocumentUploadAttempt } from './actions'
+import RemediationPlan from '@/components/dashboard/RemediationPlan'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -116,6 +117,8 @@ export default function ValidatorPage() {
     const [chatInput, setChatInput] = useState('')
     const [isAiTyping, setIsAiTyping] = useState(false)
     const [analysisData, setAnalysisData] = useState<AnalysisResult | null>(null)
+    const [remediations, setRemediations] = useState<Record<string, string> | null>(null)
+    const [isGeneratingRemediations, setIsGeneratingRemediations] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const chatEndRef = useRef<HTMLDivElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -174,6 +177,25 @@ export default function ValidatorPage() {
 
             // Store structured data for follow-up queries
             setAnalysisData(result.analysis)
+
+            // Background fetch for remediations
+            if (result.analysis.warnings && result.analysis.warnings.length > 0) {
+                setIsGeneratingRemediations(true)
+                fetch('/api/validator/remediate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        warnings: result.analysis.warnings,
+                        summary: result.analysis.summary || ''
+                    })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.remediations) setRemediations(data.remediations)
+                    })
+                    .catch(err => console.error('Remediation fetch error:', err))
+                    .finally(() => setIsGeneratingRemediations(false))
+            }
 
             // Format AI response into a readable chat message
             const chatContent = formatAnalysisToChat(result.analysis, file.name)
@@ -615,6 +637,15 @@ export default function ValidatorPage() {
                         </p>
                     </div>
                 </div>
+            )}
+
+            {/* ── Remediation Plan & Warnings ── */}
+            {step === 'audit-ready' && analysisData?.warnings && analysisData.warnings.length > 0 && (
+                <RemediationPlan
+                    warnings={analysisData.warnings}
+                    remediations={remediations}
+                    isGenerating={isGeneratingRemediations}
+                />
             )}
         </div>
     )
