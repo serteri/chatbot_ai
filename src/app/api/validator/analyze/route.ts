@@ -115,16 +115,19 @@ export async function POST(request: NextRequest) {
             )
         }
 
+        console.log('File received:', { name: file.name, size: file.size, type: file.type })
+
         // ── Extract PDF Text ──
-        const arrayBuffer = await file.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
         let extractedText: string
 
         try {
+            const arrayBuffer = await file.arrayBuffer()
+            const buffer = Buffer.from(arrayBuffer)
             extractedText = await extractTextFromPDF(buffer)
-        } catch {
+        } catch (err: any) {
+            console.error('PDF Parsing Error:', err?.message || err)
             return NextResponse.json(
-                { error: 'Failed to read PDF. The file may be corrupted or password-protected.' },
+                { error: `Failed to read PDF. ${err?.message || 'The file may be corrupted or password-protected.'}` },
                 { status: 422 }
             )
         }

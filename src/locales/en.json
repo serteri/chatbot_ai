@@ -2,6 +2,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "chatbots": "Chatbots",
+    "aiAgents": "AI Agents",
     "allChatbots": "All Chatbots",
     "educationChatbot": "Education Chatbot",
     "ecommerceChatbot": "E-commerce Chatbot",
