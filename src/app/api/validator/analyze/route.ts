@@ -3,14 +3,6 @@ import { auth } from '@/lib/auth/auth'
 import { createAuditLog } from '@/lib/services/audit'
 import OpenAI from 'openai'
 
-// Polyfill for DOMMatrix (Needed for pdf-parse in Node/Server environments)
-if (typeof global.DOMMatrix === 'undefined') {
-    global.DOMMatrix = class DOMMatrix {
-        matrix: any;
-        constructor(arg?: any) { this.matrix = arg; }
-    } as any;
-}
-
 // ---------------------------------------------------------------------------
 // NDIS Service Agreement Analyzer — Azure OpenAI Sydney
 // POST /api/validator/analyze
@@ -33,7 +25,7 @@ Return a JSON object containing:
 - "summary": string (2-3 sentence overview of the agreement)
 
 Check for these common compliance issues and add them to "warnings":
-- Missing cancellation policy (required under NDIS Terms of Business)
+- Missing cancellation policy (Required under NDIS Terms of Business. Specifically look for "Cancellation of Bookings" clauses, e.g. around page 8 for Hireup)
 - Missing incident reporting procedures
 - Missing consent clauses for data collection
 - Pricing exceeding NDIS Price Guide 2025/26 limits
@@ -78,7 +70,7 @@ function getAzureOpenAIClient(): OpenAI {
 // ---------------------------------------------------------------------------
 
 async function extractTextFromPDF(buffer: Buffer): Promise<string> {
-    const pdfParse = (await import('pdf-parse')).default
+    const pdfParse = (await import('pdf-parse-fork')).default
     const data = await pdfParse(buffer)
     return data.text
 }
@@ -133,10 +125,10 @@ export async function POST(request: NextRequest) {
             const buffer = Buffer.from(arrayBuffer)
             extractedText = await extractTextFromPDF(buffer)
         } catch (err: any) {
-            console.error('PDF Parsing Error:', err?.message || err)
+            console.error('PDF Engine Error:', err?.message || err)
             return NextResponse.json(
-                { error: `Failed to read PDF. ${err?.message || 'The file may be corrupted or password-protected.'}` },
-                { status: 422 }
+                { error: `PDF Engine Error: ${err?.message || 'Failed to extract text from this specific document format.'}` },
+                { status: 500 } // Changed to 500 to clearly separate from 422 user errors
             )
         }
 

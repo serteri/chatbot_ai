@@ -64,7 +64,6 @@
     "node-cron": "^4.2.1",
     "node-fetch": "^3.3.2",
     "openai": "^6.7.0",
-    "pdf-parse": "^2.4.5",
     "pdf-parse-fork": "^1.2.0",
     "puppeteer": "^24.30.0",
     "react": "19.2.0",
