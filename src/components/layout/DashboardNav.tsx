@@ -27,7 +27,8 @@ import {
     BarChart3,
     CreditCard,
     Building2,
-    HeadphonesIcon
+    HeadphonesIcon,
+    FileText
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
