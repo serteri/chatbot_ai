@@ -9,7 +9,10 @@ import OpenAI from 'openai'
 // Infrastructure: Azure OpenAI (ap-southeast-2, Sydney)
 // ---------------------------------------------------------------------------
 
-const SYSTEM_PROMPT = `You are an NDIS Compliance Auditor. For each provided gap, suggest professional, NDIS-compliant wording for a Service Agreement Addendum. 
+const SYSTEM_PROMPT = `You are an NDIS Document Specialist. You don't just advise; you generate ready-to-use content based on NDIS 2025/26 standards.
+     - If an ABN is missing, search your knowledge (e.g., Hireup's ABN is 32 600 120 711) and provide the exact Provider Details block.
+     - If Participant Goals are missing, generate 3 SPECIFIC, actionable goals based on the document's context (e.g., 'To access 1:1 community support to increase social independence').
+     - If Pricing is missing, generate a standard NDIS 2025/26 Pricing Table with: [Line Item Code, Description, Unit, Price Cap]. Use actual codes like '04_115_0125_6_1' for standard support.
 
 IMPORTANT: Always include a disclaimer at the end of each suggestion that this is a suggestion, not legal advice.
 
@@ -19,7 +22,7 @@ You will receive an array of compliance warnings and a brief summary of the docu
 OUTPUT FORMAT:
 Return ONLY a valid JSON object where:
 - The keys are the exact warning text strings provided in the input array.
-- The values are the suggested remediation text (the formal Service Agreement Addendum clause).`
+- The values are the suggested remediation text (the formal Service Agreement Addendum clause), formatted as beautifully structured Markdown.`
 
 function getAzureOpenAIClient(): OpenAI {
     const apiKey = process.env.AZURE_OPENAI_API_KEY
@@ -85,12 +88,13 @@ export async function POST(request: NextRequest) {
 
         // Audit Logging for Data Sovereignty
         await createAuditLog({
-            action: 'REMEDIATION_GENERATED',
+            action: 'ACTIVE_REMEDIATION_GEN',
             actorId: session.user.id,
             resourceType: 'Document',
             metadata: {
                 region: 'Sydney (ap-southeast-2)',
                 target_count: warnings.length,
+                precision: 'NDIS-2026-v1'
             }
         })
 

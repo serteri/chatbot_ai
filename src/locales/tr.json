@@ -3,9 +3,12 @@
     "remediation": {
       "fixSuggestion": "Düzeltme Önerisi",
       "fixSuggestionModalTitle": "Önerilen Uyumluluk Metni",
+      "addExactText": "Bu metni sözleşmenize doğrudan ekleyin:",
       "copyToClipboard": "Panoya Kopyala",
       "copied": "Kopyalandı!",
-      "disclaimer": "Yasal Uyarı: Bu önerilen metin yalnızca bilgi amaçlıdır ve yasal tavsiye niteliği taşımaz."
+      "generateMasterAddendum": "Ana Ek Belge Oluştur (PDF)",
+      "generatingPdf": "PDF Oluşturma Motoru Sidney'de (ap-southeast-2) başlatılıyor...",
+      "disclaimer": "*Yasal Uyarı: Yalnızca önerilen metindir. Yasal tavsiye değildir.*"
     }
   },
   "manage": "Yönet",

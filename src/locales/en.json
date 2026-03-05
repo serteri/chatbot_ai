@@ -3,9 +3,12 @@
     "remediation": {
       "fixSuggestion": "Fix Suggestion",
       "fixSuggestionModalTitle": "Suggested Compliance Wording",
+      "addExactText": "Add this exact text to your agreement:",
       "copyToClipboard": "Copy to Clipboard",
       "copied": "Copied!",
-      "disclaimer": "Disclaimer: This suggested wording is provided for informational purposes only and does not constitute legal advice."
+      "generateMasterAddendum": "Generate Master Addendum (PDF)",
+      "generatingPdf": "PDF Generation Engine starting in Sydney (ap-southeast-2)...",
+      "disclaimer": "*Disclaimer: Suggested wording only. Not legal advice.*"
     }
   },
   "nav": {

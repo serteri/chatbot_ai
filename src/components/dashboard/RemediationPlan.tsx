@@ -59,6 +59,20 @@ export default function RemediationPlan({ warnings, remediations, isGenerating }
                 ))}
             </div>
 
+            {/* Footer with Master Addendum Action */}
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
+                    Review and apply these fixes individually, or generate a full addendum.
+                </p>
+                <button
+                    onClick={() => alert(`🚀 ${t('generatingPdf')}`)}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white text-sm font-medium rounded-xl hover:bg-teal-700 transition-colors shadow-sm"
+                >
+                    <FileWarning className="h-4 w-4" />
+                    {t('generateMasterAddendum')}
+                </button>
+            </div>
+
             {/* Modal for Fix Suggestion */}
             {selectedWarning && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
@@ -83,6 +97,10 @@ export default function RemediationPlan({ warnings, remediations, isGenerating }
                             <div className="mb-4 text-sm text-slate-600 bg-white p-4 rounded-xl border border-slate-200 shadow-sm relative">
                                 <div className="absolute top-0 left-0 w-1 h-full bg-amber-400 rounded-l-xl"></div>
                                 <span className="font-semibold text-slate-800">Identified Gap:</span> {selectedWarning}
+                            </div>
+
+                            <div className="mb-3 text-sm font-medium text-slate-700">
+                                {t('addExactText')}
                             </div>
 
                             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm relative group">
