@@ -29,3 +29,17 @@ export async function logDocumentUploadAttempt(fileName: string) {
         // Fail silently
     }
 }
+
+export async function logPdfExport() {
+    try {
+        const session = await auth()
+        const actorId = session?.user?.id ?? 'anonymous'
+        await createAuditLog({
+            action: 'PDF_DOCUMENT_EXPORTED', // Custom string OK since AuditAction takes string
+            actorId,
+            metadata: { format: 'PDF', sovereignty: 'AU-East' },
+        })
+    } catch {
+        // Fail silently
+    }
+}

@@ -645,6 +645,7 @@ export default function ValidatorPage() {
                     warnings={analysisData.warnings}
                     remediations={remediations}
                     isGenerating={isGeneratingRemediations}
+                    summary={analysisData.summary || ''}
                 />
             )}
         </div>

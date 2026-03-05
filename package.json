@@ -53,6 +53,8 @@
     "fast-xml-parser": "^5.3.3",
     "framer-motion": "^12.23.24",
     "googleapis": "^170.1.0",
+    "jspdf": "^4.2.0",
+    "jspdf-autotable": "^5.0.7",
     "langchain": "^1.0.2",
     "lucide-react": "^0.548.0",
     "mammoth": "^1.11.0",

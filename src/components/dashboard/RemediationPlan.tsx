@@ -3,17 +3,21 @@
 import React, { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Copy, Check, ShieldAlert, FileWarning, X, Loader2 } from 'lucide-react'
+import { generateNDISAddendum } from '@/lib/pdf-generator'
+import { logPdfExport } from '@/app/[locale]/dashboard/validator/actions'
 
 interface RemediationPlanProps {
     warnings: string[]
+    summary: string
     remediations: Record<string, string> | null
     isGenerating: boolean
 }
 
-export default function RemediationPlan({ warnings, remediations, isGenerating }: RemediationPlanProps) {
+export default function RemediationPlan({ warnings, summary, remediations, isGenerating }: RemediationPlanProps) {
     const t = useTranslations('validator.remediation')
     const [selectedWarning, setSelectedWarning] = useState<string | null>(null)
     const [isCopied, setIsCopied] = useState(false)
+    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
 
     if (!warnings || warnings.length === 0) return null
 
@@ -28,6 +32,26 @@ export default function RemediationPlan({ warnings, remediations, isGenerating }
             setTimeout(() => setIsCopied(false), 2000)
         } catch (err) {
             console.error('Failed to copy text', err)
+        }
+    }
+
+    const handleGeneratePDF = async () => {
+        if (!remediations) return
+
+        try {
+            setIsGeneratingPdf(true)
+
+            // Allow state to update and show spinner before heavy JS execution blocks the main thread
+            await new Promise(resolve => setTimeout(resolve, 50))
+
+            generateNDISAddendum({ summary, warnings, remediations })
+
+            // Fire-and-forget server action for audit trail
+            logPdfExport()
+        } catch (err) {
+            console.error('Failed to generate PDF:', err)
+        } finally {
+            setIsGeneratingPdf(false)
         }
     }
 
@@ -65,10 +89,15 @@ export default function RemediationPlan({ warnings, remediations, isGenerating }
                     Review and apply these fixes individually, or generate a full addendum.
                 </p>
                 <button
-                    onClick={() => alert(`🚀 ${t('generatingPdf')}`)}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white text-sm font-medium rounded-xl hover:bg-teal-700 transition-colors shadow-sm"
+                    onClick={handleGeneratePDF}
+                    disabled={isGeneratingPdf || !remediations || Object.keys(remediations).length === 0}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white text-sm font-medium rounded-xl hover:bg-teal-700 transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                    <FileWarning className="h-4 w-4" />
+                    {isGeneratingPdf ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <FileWarning className="h-4 w-4" />
+                    )}
                     {t('generateMasterAddendum')}
                 </button>
             </div>
