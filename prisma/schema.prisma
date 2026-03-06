@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // Make sure your env uses the Neon URL.
-  url      = env("DATABASE_URL")
+  provider  = "postgresql" // Make sure your env uses the Neon URL.
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // -----------------------------------------------------------------------------
