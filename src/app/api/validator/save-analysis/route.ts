@@ -3,9 +3,8 @@ import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 import { createAuditLog } from '@/lib/services/audit'
 
-// Optionally import Supabase client if you want to store the exact PDF
-// For now, we store the data in Postgres to render the Vault History
-import { createClient } from '@supabase/supabase-js'
+// Azure Blob Storage for sovereign vault storage
+import { uploadPdfToAzure } from '@/lib/azure-storage'
 
 export async function POST(request: NextRequest) {
     try {
@@ -28,33 +27,13 @@ export async function POST(request: NextRequest) {
 
         let pdfUrl = null
 
-        // If a Supabase bucket exists and a file was provided, upload it
-        if (file && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-            const supabase = createClient(
-                process.env.NEXT_PUBLIC_SUPABASE_URL,
-                process.env.SUPABASE_SERVICE_ROLE_KEY
-            )
-
+        // If an Azure Storage bucket exists and a file was provided, upload it
+        if (file) {
             const buffer = Buffer.from(await file.arrayBuffer())
             const safeFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
             const storagePath = `analyses/${session.user.id}/${Date.now()}_${safeFileName}`
 
-            const { data, error } = await supabase.storage
-                .from('sovereign-vault') // Ensure this bucket exists in Supabase
-                .upload(storagePath, buffer, {
-                    contentType: 'application/pdf',
-                    upsert: false
-                })
-
-            if (!error && data) {
-                const { data: publicUrlData } = supabase.storage
-                    .from('sovereign-vault')
-                    .getPublicUrl(storagePath)
-                pdfUrl = publicUrlData?.publicUrl
-            } else {
-                console.warn("Supabase Storage upload failed, proceeding without PDF URL:", error)
-                // Fallback: Proceed to just save the DB record without URL if bucket is missing
-            }
+            pdfUrl = await uploadPdfToAzure(buffer, storagePath)
         }
 
         // Save Analysis to Prisma Document Vault
@@ -80,7 +59,7 @@ export async function POST(request: NextRequest) {
             metadata: {
                 fileName,
                 complianceScore,
-                storage: pdfUrl ? 'Supabase' : 'Database Only',
+                storage: pdfUrl ? 'Azure Blob Storage' : 'Database Only',
                 region: 'ap-southeast-2'
             }
         })

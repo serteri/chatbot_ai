@@ -17,6 +17,7 @@
     "@ai-sdk/openai": "^2.0.54",
     "@anthropic-ai/sdk": "^0.67.0",
     "@auth/prisma-adapter": "^2.11.1",
+    "@azure/storage-blob": "^12.31.0",
     "@hookform/resolvers": "^5.2.2",
     "@langchain/community": "^1.0.0",
     "@langchain/core": "^1.0.2",
