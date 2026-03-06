@@ -14,7 +14,7 @@ export async function uploadPdfToAzure(buffer: Buffer, storagePath: string): Pro
         const containerClient = blobServiceClient.getContainerClient(AZURE_STORAGE_CONTAINER_NAME)
 
         // Ensure the container exists (useful for local dev or first run)
-        await containerClient.createIfNotExists({ access: 'blob' })
+        await containerClient.createIfNotExists()
 
         const blockBlobClient = containerClient.getBlockBlobClient(storagePath)
 

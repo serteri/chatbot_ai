@@ -1,6 +1,6 @@
 const DEFAULT_SITE_URL = 'http://localhost:3000'
 const DEFAULT_SITE_NAME = 'PylonChat'
-const DEFAULT_SITE_DESCRIPTION = 'AI-powered customer engagement platform.'
+const DEFAULT_SITE_DESCRIPTION = 'AI-powered NDIS Service Agreement Validator and Audit Compliance toolkit.'
 
 export const SITE_URL =
     process.env.NEXT_PUBLIC_SITE_URL ||

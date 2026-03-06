@@ -9,7 +9,7 @@ import OpenAI from 'openai'
 // Infrastructure: Azure OpenAI (ap-southeast-2, Sydney)
 // ---------------------------------------------------------------------------
 
-const SYSTEM_PROMPT = `You are an NDIS Support Coordinator. Analyze the text of this Service Agreement.
+const SYSTEM_PROMPT = `You are an NDIS Compliance and Audit Expert. Analyze the text of this Service Agreement strictly against the NDIS Practice Standards and the explicit rules of the NDIS Price Guide 2025/26.
 
 Return a JSON object containing:
 - "participantName": string or null (the participant's full name)
@@ -20,23 +20,23 @@ Return a JSON object containing:
   - "code": string (NDIS line item code, e.g. "04_590_0125_6_1")
   - "description": string (what the line item covers)
   - "budget": number (allocated budget in AUD)
-- "complianceScore": number between 0 and 100 (based on required clauses present)
-- "warnings": array of strings (each warning describes a missing or non-compliant element)
+- "complianceScore": number between 0 and 100 (based on required clauses present and strict NDIS Practice Standards adherence)
+- "warnings": array of strings (each warning describes a missing or non-compliant element according to NDIS 2025/26)
 - "summary": string (2-3 sentence overview of the agreement)
 
-Check for these common compliance issues and add them to "warnings":
-- Missing cancellation policy (Required under NDIS Terms of Business. Specifically look for "Cancellation of Bookings" clauses, e.g. around page 8 for Hireup)
-- Missing incident reporting procedures
-- Missing consent clauses for data collection
-- Pricing exceeding NDIS Price Guide 2025/26 limits
-- Missing ABN or provider registration number
-- Missing participant goals or outcomes
-- Missing nominated representative details
+Check for these critical NDIS compliance issues and add them to "warnings":
+- Missing or non-compliant cancellation policy (Must strictly follow NDIS Terms of Business 2025/26)
+- Missing incident management and reporting procedures
+- Missing explicit consent clauses for data collection and sharing
+- Pricing exceeding NDIS Price Guide 2025/26 maximum limits
+- Missing ABN or NDIS provider registration number
+- Missing explicit participant goals or outcomes aligned with their NDIS plan
+- Missing nominated representative or plan nominee details
 
 If the document is NOT an NDIS Service Agreement, return:
 { "error": "This document does not appear to be an NDIS Service Agreement.", "complianceScore": 0 }
 
-Be thorough and precise. Australian NDIS providers rely on your analysis for audit readiness.`
+Be extremely thorough and precise. Australian NDIS providers rely on your rigorous analysis for official government audit readiness.`
 
 // ---------------------------------------------------------------------------
 // Azure OpenAI Client (Sydney — ap-southeast-2)

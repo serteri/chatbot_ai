@@ -355,6 +355,7 @@
     }
   },
   "dashboard": {
+    "description": "NDIS Uyum Süreçlerinizi Yönetin",
     "generalChatbots": "Genel Chatbotlar",
     "backToDashboard": "Dashboard'a Dön",
     "noGeneralChatbots": "Henüz genel amaçlı chatbotunuz bulunmamaktadır.",

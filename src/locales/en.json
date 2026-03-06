@@ -354,6 +354,7 @@
     }
   },
   "dashboard": {
+    "description": "Manage your NDIS Compliance pipelines",
     "generalChatbots": "General Chatbots",
     "noGeneralChatbots": "You do not have any general purpose chatbots yet.",
     "noGeneralChatbotsDesc": "Create a general purpose bot now and start uploading your documents.",

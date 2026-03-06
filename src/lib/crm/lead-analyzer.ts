@@ -1,13 +1,15 @@
 /**
- * Lead Analyzer v2 — Scoring-Based Profiling Engine
+ * Lead Analyzer v3 — Scoring-Based Profiling Engine
  * 
- * Changes from v1:
- * - Scoring algorithm replaces if-else profiling (handles overlapping profiles)
- * - Priority hierarchy: Seller > Urgent Buyer > Investor > Renter > Undecided > Browser
- * - Dynamic heat: includes budget-location fit, not just timeline/preApproval
- * - "Data Completeness" replaces misleading "Data Confidence"
- * - Follow-up urgency timing added
- * - Mobile-responsive email HTML (no ━━ box chars, div+padding layout)
+ * v3 changes:
+ * - Hybrid profile: when top-2 scores within 15pts → combined label (e.g. "Seller & Buyer")
+ * - Business hours follow-up: checks local time, adjusts "call now" vs "call at 09:00"
+ * - Weighted data completeness: contact+budget = critical (high weight), details = bonus
+ * 
+ * v2 foundation:
+ * - Scoring algorithm with priority hierarchy (Seller > Urgent > Investor > Renter)
+ * - Dynamic heat scoring with budget-capacity penalty
+ * - Mobile-responsive email HTML
  */
 
 // ─── Types ───────────────────────────────────────────────────────────────
@@ -15,6 +17,8 @@
 export interface LeadAnalysis {
     profile: ProfileType
     profileLabel: { tr: string; en: string }
+    isHybrid: boolean // true when top-2 profiles are within 15pts
+    secondaryProfile?: ProfileType // the runner-up profile (if hybrid)
     profileScores: Record<ProfileType, number> // transparency: show all scores
     heat: 'hot' | 'warm' | 'cold'
     heatScore: number // 0-100 raw score
@@ -24,7 +28,7 @@ export interface LeadAnalysis {
     recommendation: { tr: string; en: string }
     followUp: { tr: string; en: string }
     followUpUrgency: 'immediate' | 'today' | 'week'
-    dataCompleteness: number // 0-100
+    dataCompleteness: number // 0-100, weighted (critical fields count more)
 }
 
 type ProfileType = 'seller_candidate' | 'urgent_buyer' | 'investor' | 'renter' | 'undecided' | 'browser'
@@ -40,6 +44,7 @@ interface AnalyzerInput {
     budgetMax?: number | null
     propertyType?: string | null
     location?: string | null
+    timezone?: string // agent's timezone, defaults to Europe/Istanbul
     requirements?: {
         bedrooms?: string
         bathrooms?: string
@@ -55,6 +60,9 @@ interface AnalyzerInput {
     } | null
     score?: number
     category?: string
+    name?: string
+    phone?: string
+    email?: string | null
 }
 
 // ─── Profile Labels ──────────────────────────────────────────────────────
@@ -88,23 +96,35 @@ export function analyzeLeadData(data: AnalyzerInput): LeadAnalysis {
     // 1. Score every profile
     const profileScores = scoreAllProfiles(data, needsToSell)
 
-    // 2. Pick winner with priority tiebreaker
-    const profile = pickWinningProfile(profileScores)
+    // 2. Pick winner + detect hybrid profile
+    const { primary, secondary, isHybrid } = pickWinningProfile(profileScores)
 
     // 3. Dynamic heat scoring
     const heatScore = calculateHeatScore(data, needsToSell)
     const heat: 'hot' | 'warm' | 'cold' = heatScore >= 60 ? 'hot' : heatScore >= 30 ? 'warm' : 'cold'
 
-    // 4. Analysis outputs
-    const situationAnalysis = buildSituationAnalysis(profile, data, needsToSell)
+    // 4. Profile label (hybrid combines two labels)
+    const profileLabel = isHybrid && secondary
+        ? {
+            tr: `${PROFILE_LABELS[primary].tr} & ${PROFILE_LABELS[secondary].tr}`,
+            en: `${PROFILE_LABELS[primary].en} & ${PROFILE_LABELS[secondary].en}`
+        }
+        : PROFILE_LABELS[primary]
+
+    // 5. Analysis outputs — hybrid gets merged situation analysis
+    const situationAnalysis = isHybrid && secondary
+        ? buildHybridSituationAnalysis(primary, secondary, data, needsToSell)
+        : buildSituationAnalysis(primary, data, needsToSell)
     const criticalNote = identifyCriticalBlockers(data, needsToSell)
-    const recommendation = buildRecommendation(profile, data, needsToSell)
-    const { followUp, followUpUrgency } = buildFollowUp(heat)
+    const recommendation = buildRecommendation(primary, data, needsToSell)
+    const { followUp, followUpUrgency } = buildFollowUp(heat, data.timezone)
     const dataCompleteness = calculateDataCompleteness(data)
 
     return {
-        profile,
-        profileLabel: PROFILE_LABELS[profile],
+        profile: primary,
+        profileLabel,
+        isHybrid,
+        secondaryProfile: isHybrid ? secondary : undefined,
         profileScores,
         heat,
         heatScore,
@@ -175,23 +195,42 @@ function scoreAllProfiles(data: AnalyzerInput, needsToSell: boolean): Record<Pro
     return scores
 }
 
-function pickWinningProfile(scores: Record<ProfileType, number>): ProfileType {
-    const TIEBREAKER_MARGIN = 10
+function pickWinningProfile(scores: Record<ProfileType, number>): {
+    primary: ProfileType
+    secondary?: ProfileType
+    isHybrid: boolean
+} {
+    const HYBRID_THRESHOLD = 15 // if gap between top-2 is ≤ this, mark as hybrid
 
-    let bestProfile: ProfileType = 'undecided'
-    let bestEffectiveScore = -1
+    // Sort profiles by effective score (raw + priority bonus)
+    const ranked = (Object.entries(scores) as [ProfileType, number][])
+        .filter(([, score]) => score > 0)
+        .map(([profile, score]) => ({
+            profile,
+            rawScore: score,
+            effectiveScore: score + (PROFILE_PRIORITY[profile] / 10)
+        }))
+        .sort((a, b) => b.effectiveScore - a.effectiveScore)
 
-    for (const [profile, score] of Object.entries(scores) as [ProfileType, number][]) {
-        // Effective score = raw score + priority bonus (used only for tiebreaking)
-        const effectiveScore = score + (PROFILE_PRIORITY[profile] / 10) // Priority adds max 6pts
+    if (ranked.length === 0) {
+        return { primary: 'undecided', isHybrid: false }
+    }
 
-        if (score > 0 && effectiveScore > bestEffectiveScore) {
-            bestProfile = profile
-            bestEffectiveScore = effectiveScore
+    const primary = ranked[0].profile
+
+    // Check for hybrid: runner-up within threshold
+    if (ranked.length >= 2) {
+        const gap = ranked[0].rawScore - ranked[1].rawScore
+        if (gap <= HYBRID_THRESHOLD && ranked[1].rawScore > 0) {
+            return {
+                primary,
+                secondary: ranked[1].profile,
+                isHybrid: true
+            }
         }
     }
 
-    return bestProfile
+    return { primary, isHybrid: false }
 }
 
 // ─── Dynamic Heat Scoring ────────────────────────────────────────────────
@@ -318,6 +357,57 @@ function buildSituationAnalysis(
     }
 }
 
+// ─── Hybrid Situation Analysis ───────────────────────────────────────────
+// When a lead matches two profiles closely, give a merged strategic view.
+
+type ProfilePairKey = `${ProfileType}+${ProfileType}`
+
+const HYBRID_COMBOS: Partial<Record<ProfilePairKey, { tr: string; en: string }>> = {
+    'seller_candidate+urgent_buyer': {
+        tr: 'Hibrit Profil: Evini satıp yenisini alacak (Upsizer/Downsizer) — çift taraflı işlem, en yüksek LTV müşteri tipi.',
+        en: 'Hybrid Profile: Selling to buy (Upsizer/Downsizer) — double transaction, highest LTV client type.'
+    },
+    'urgent_buyer+seller_candidate': {
+        tr: 'Hibrit Profil: Evini satıp yenisini alacak (Upsizer/Downsizer) — çift taraflı işlem, en yüksek LTV müşteri tipi.',
+        en: 'Hybrid Profile: Selling to buy (Upsizer/Downsizer) — double transaction, highest LTV client type.'
+    },
+    'investor+urgent_buyer': {
+        tr: 'Hibrit Profil: Hem yatırımcı hem acil alıcı — net bütçeli, getiri odaklı. Hızlı karar verebilir.',
+        en: 'Hybrid Profile: Both investor and urgent buyer — clear budget, ROI-focused. Can decide quickly.'
+    },
+    'urgent_buyer+investor': {
+        tr: 'Hibrit Profil: Hem yatırımcı hem acil alıcı — net bütçeli, getiri odaklı. Hızlı karar verebilir.',
+        en: 'Hybrid Profile: Both investor and urgent buyer — clear budget, ROI-focused. Can decide quickly.'
+    },
+    'seller_candidate+investor': {
+        tr: 'Hibrit Profil: Mülk satıp yatırıma yönelecek — portföy değişimi fırsatı.',
+        en: 'Hybrid Profile: Selling to reinvest — portfolio rotation opportunity.'
+    },
+    'investor+seller_candidate': {
+        tr: 'Hibrit Profil: Mülk satıp yatırıma yönelecek — portföy değişimi fırsatı.',
+        en: 'Hybrid Profile: Selling to reinvest — portfolio rotation opportunity.'
+    },
+}
+
+function buildHybridSituationAnalysis(
+    primary: ProfileType, secondary: ProfileType,
+    data: AnalyzerInput, needsToSell: boolean
+): { tr: string; en: string } {
+    const pairKey: ProfilePairKey = `${primary}+${secondary}`
+
+    // Check for known hybrid combo
+    if (HYBRID_COMBOS[pairKey]) {
+        return HYBRID_COMBOS[pairKey]!
+    }
+
+    // Generic fallback: combine the two analyses
+    const primaryAnalysis = buildSituationAnalysis(primary, data, needsToSell)
+    return {
+        tr: `Hibrit Profil: ${primaryAnalysis.tr}`,
+        en: `Hybrid Profile: ${primaryAnalysis.en}`
+    }
+}
+
 // ─── Critical Blockers ───────────────────────────────────────────────────
 
 function identifyCriticalBlockers(
@@ -414,20 +504,33 @@ function buildRecommendation(
     }
 }
 
-// ─── Follow-up Urgency ───────────────────────────────────────────────────
+// ─── Follow-up Urgency (Business Hours Aware) ───────────────────────────
 
-function buildFollowUp(heat: 'hot' | 'warm' | 'cold'): {
+function buildFollowUp(heat: 'hot' | 'warm' | 'cold', timezone?: string): {
     followUp: { tr: string; en: string }
     followUpUrgency: 'immediate' | 'today' | 'week'
 } {
+    const tz = timezone || 'Europe/Istanbul'
+    const isBusinessHours = checkBusinessHours(tz)
+
     switch (heat) {
         case 'hot':
-            return {
-                followUp: {
-                    tr: '⏰ Hemen arayın — ilk 15 dakika içinde iletişime geçin.',
-                    en: '⏰ Call immediately — reach out within the first 15 minutes.'
-                },
-                followUpUrgency: 'immediate'
+            if (isBusinessHours) {
+                return {
+                    followUp: {
+                        tr: '⏰ Hemen arayın — ilk 15 dakika içinde iletişime geçin.',
+                        en: '⏰ Call immediately — reach out within the first 15 minutes.'
+                    },
+                    followUpUrgency: 'immediate'
+                }
+            } else {
+                return {
+                    followUp: {
+                        tr: '⏰ Mesai dışı saatte geldi — yarın sabah ilk iş (09:00) arayın.',
+                        en: '⏰ Received outside business hours — call first thing tomorrow (09:00).'
+                    },
+                    followUpUrgency: 'today' // downgrade from immediate
+                }
             }
         case 'warm':
             return {
@@ -449,25 +552,54 @@ function buildFollowUp(heat: 'hot' | 'warm' | 'cold'): {
     }
 }
 
-// ─── Data Completeness ───────────────────────────────────────────────────
+function checkBusinessHours(timezone: string): boolean {
+    try {
+        const now = new Date()
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: timezone,
+            hour: 'numeric',
+            hour12: false
+        })
+        const hour = parseInt(formatter.format(now), 10)
+        // Business hours: 09:00 - 19:00
+        return hour >= 9 && hour < 19
+    } catch {
+        // If timezone is invalid, assume business hours (safe default)
+        return true
+    }
+}
+
+// ─── Weighted Data Completeness ──────────────────────────────────────────
+// Critical fields (contact+budget+intent) carry higher weight.
+// If phone+email+budget are filled, base completeness is already ~65%.
 
 function calculateDataCompleteness(data: AnalyzerInput): number {
-    const fields = [
-        !!data.intent,
-        !!(data.budget || data.budgetMax),
-        !!data.timeline,
-        data.hasPreApproval !== null && data.hasPreApproval !== undefined,
-        !!data.propertyType,
-        !!data.location,
-        !!data.requirements?.bedrooms,
-        !!data.requirements?.bathrooms,
-        !!data.requirements?.parking,
-        !!(data.requirements?.features?.length),
-        !!data.requirements?.propertySize,
+    // Critical fields: 15% each (total: 75%)
+    const criticalFields = [
+        { filled: !!data.phone, weight: 15 },             // Phone is essential
+        { filled: !!(data.email || data.name), weight: 15 }, // Name or email
+        { filled: !!data.intent, weight: 15 },              // What do they want?
+        { filled: !!(data.budget || data.budgetMax), weight: 15 }, // Can they afford it?
+        { filled: data.hasPreApproval !== null && data.hasPreApproval !== undefined, weight: 15 }, // Financial readiness
     ]
 
-    const filled = fields.filter(Boolean).length
-    return Math.round((filled / fields.length) * 100)
+    // Detail fields: ~4% each (total: 25%)
+    const detailFields = [
+        { filled: !!data.timeline, weight: 5 },
+        { filled: !!data.propertyType, weight: 4 },
+        { filled: !!data.location, weight: 4 },
+        { filled: !!data.requirements?.bedrooms, weight: 3 },
+        { filled: !!data.requirements?.bathrooms, weight: 3 },
+        { filled: !!data.requirements?.parking, weight: 2 },
+        { filled: !!(data.requirements?.features?.length), weight: 2 },
+        { filled: !!data.requirements?.propertySize, weight: 2 },
+    ]
+
+    const allFields = [...criticalFields, ...detailFields]
+    const totalWeight = allFields.reduce((sum, f) => sum + f.weight, 10) // 10 = rounding buffer to reach 100
+    const earnedWeight = allFields.reduce((sum, f) => sum + (f.filled ? f.weight : 0), 0)
+
+    return Math.min(100, Math.round((earnedWeight / totalWeight) * 110)) // 110 scaling so all-filled = 100%
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────
@@ -572,8 +704,8 @@ export function formatAnalysisForEmail(analysis: LeadAnalysis, locale: 'tr' | 'e
             <!-- Data Completeness -->
             <div style="padding: 10px 16px; background: #f8fafc;">
                 <div style="font-size: 11px; color: #94a3b8;">
-                    ${locale === 'tr' ? 'Veri Tamlığı' : 'Data Completeness'}: ${analysis.dataCompleteness}% 
-                    (${Math.round(analysis.dataCompleteness * 11 / 100)}/${11} ${locale === 'tr' ? 'alan dolduruldu' : 'fields filled'})
+                    ${locale === 'tr' ? 'Veri Tamlığı' : 'Data Completeness'}: ${analysis.dataCompleteness}%
+                    ${analysis.isHybrid ? `<span style="margin-left: 8px; color: #8b5cf6;">${locale === 'tr' ? '| Hibrit Profil' : '| Hybrid Profile'}</span>` : ''}
                 </div>
             </div>
         </div>
