@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
-import { analyzeNDISDocument } from '@/app/api/validator/analyze/route'
+import { SYSTEM_PROMPT, getAzureOpenAIClient, extractTextFromPDF } from '@/app/api/validator/analyze/route'
+import { downloadPdfFromAzure } from '@/lib/azure-storage'
 
 export async function POST(request: NextRequest) {
     try {
@@ -33,50 +34,64 @@ export async function POST(request: NextRequest) {
         })
 
         try {
-            // Note: In a production Vercel app with large files, Azure Blob raw data needs passing to LLM directly.
-            // For now, we simulate fetching the file from fileUrl, parsing it and sending it to our own logic.
-            // Calling analyzeNDISDocument requires a File/FormData, so we'll mock the extraction here for simplicity
-            // or we can reuse `analyzeNDISDocument` if we fetch the blob buffer.
+            console.log(`[Bulk Process] Starting task ${taskId} for file: ${task.fileName}`)
+            console.log(`[Bulk Process] Attempting to securely download blob from Azure Storage URL: ${task.fileUrl}`)
 
-            // Fetch file from Azure Blob
-            const response = await fetch(task.fileUrl!)
-            if (!response.ok) throw new Error('Failed to fetch file from Azure Sovereign Storage')
-
-            const blob = await response.blob()
-            const file = new File([blob], task.fileName, { type: 'application/pdf' })
-
-            // Reuse existing extraction logic
-            const formData = new FormData()
-            formData.append('file', file)
-
-            // Since `analyzeNDISDocument` is not natively exported, we'll build a direct internal mock call for now,
-            // or ideally we could just POST to our own `/api/validator/analyze` locally. 
-            // In a real next.js API call chaining scenario:
-
-            const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-            const analyzeRes = await fetch(`${appUrl}/api/validator/analyze`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    // Forward session cookie for Auth Context
-                    cookie: request.headers.get('cookie') || ''
-                }
-            })
-
-            const analysisResult = await analyzeRes.json()
-
-            if (!analyzeRes.ok) {
-                throw new Error(analysisResult.error || 'Failed Analysis Engine')
+            // Call our secure Azure SDK downloader:
+            const buffer = await downloadPdfFromAzure(task.fileUrl!)
+            if (!buffer) {
+                console.error(`[Bulk Process] Azure download returned null for URL: ${task.fileUrl}`)
+                throw new Error('Failed to fetch file from Azure Sovereign Storage')
             }
 
-            // After AI extraction, save the result to the main vault Analysis DB.
+            console.log(`[Bulk Process] Successfully downloaded ${buffer.length} bytes. Extracting text...`)
+
+            // 1. Extract Text
+            const extractedText = await extractTextFromPDF(buffer)
+            if (!extractedText || extractedText.trim().length < 50) {
+                throw new Error('The PDF appears to be empty or contains only images. Please upload a text-based PDF.')
+            }
+
+            // 2. Truncate for token limits
+            const truncatedText = extractedText.slice(0, 60000)
+
+            console.log(`[Bulk Process] Text extracted (${truncatedText.length} chars). Calling Azure OpenAI...`)
+
+            // 3. Call Azure OpenAI (Sydney)
+            const azureClient = getAzureOpenAIClient()
+            const completion = await azureClient.chat.completions.create({
+                model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'pylonchat-v1',
+                temperature: 0.1,
+                response_format: { type: 'json_object' },
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    {
+                        role: 'user',
+                        content: `Analyze this NDIS Service Agreement:\n\n---\n${truncatedText}\n---`,
+                    },
+                ],
+            })
+
+            const aiResponse = completion.choices[0]?.message?.content
+            if (!aiResponse) throw new Error('AI analysis failed to return a response.')
+
+            let analysisResult: Record<string, any>
+            try {
+                analysisResult = JSON.parse(aiResponse)
+            } catch {
+                throw new Error('AI returned malformed data. Please try again.')
+            }
+
+            console.log(`[Bulk Process] Completed AI Analysis for ${task.fileName}. Saving to DB...`)
+
+            // 4. After AI extraction, save the result to the main vault Analysis DB.
             const newAnalysis = await prisma.analysis.create({
                 data: {
                     userId: session.user.id,
                     fileName: task.fileName,
-                    participantName: analysisResult.analysis.participantName || 'Unknown',
-                    complianceScore: analysisResult.analysis.complianceScore || 0,
-                    warnings: analysisResult.analysis.warnings || [],
+                    participantName: analysisResult.participantName || 'Unknown',
+                    complianceScore: analysisResult.complianceScore || 0,
+                    warnings: analysisResult.warnings || [],
                     // Auto generate fixes for every warning (optional bulk param)
                     remediationText: null,
                     pdfUrl: task.fileUrl,

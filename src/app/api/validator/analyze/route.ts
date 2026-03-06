@@ -9,7 +9,7 @@ import OpenAI from 'openai'
 // Infrastructure: Azure OpenAI (ap-southeast-2, Sydney)
 // ---------------------------------------------------------------------------
 
-const SYSTEM_PROMPT = `You are an NDIS Compliance and Audit Expert. Analyze the text of this Service Agreement strictly against the NDIS Practice Standards and the explicit rules of the NDIS Price Guide 2025/26.
+export const SYSTEM_PROMPT = `You are a Pure NDIS Compliance Officer. Analyze the text of this Service Agreement strictly against the NDIS Practice Standards and the explicit rules of the NDIS Price Guide 2025/26.
 
 Return a JSON object containing:
 - "participantName": string or null (the participant's full name)
@@ -42,7 +42,7 @@ Be extremely thorough and precise. Australian NDIS providers rely on your rigoro
 // Azure OpenAI Client (Sydney — ap-southeast-2)
 // ---------------------------------------------------------------------------
 
-function getAzureOpenAIClient(): OpenAI {
+export function getAzureOpenAIClient(): OpenAI {
     const apiKey = process.env.AZURE_OPENAI_API_KEY
     const endpoint = process.env.AZURE_OPENAI_ENDPOINT
     const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME
@@ -69,7 +69,7 @@ function getAzureOpenAIClient(): OpenAI {
 // PDF Text Extraction
 // ---------------------------------------------------------------------------
 
-async function extractTextFromPDF(buffer: Buffer): Promise<string> {
+export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
     const pdfParse = (await import('pdf-parse-fork')).default
     const data = await pdfParse(buffer)
     return data.text
