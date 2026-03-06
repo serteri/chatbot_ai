@@ -9,6 +9,10 @@ export interface RemediationData {
 }
 
 export function generateNDISAddendum(data: RemediationData) {
+    // Robust fallbacks for client-side generation
+    const filename = data?.filename || 'Document'
+    const warnings = data?.warnings || []
+    const remediations = data?.remediations || {}
     // A4 document
     const doc = new jsPDF()
     const pageWidth = doc.internal.pageSize.getWidth()
@@ -51,7 +55,7 @@ export function generateNDISAddendum(data: RemediationData) {
     doc.setTextColor(51, 65, 85)
     doc.setFontSize(10)
 
-    const scopeText = `This addendum modifies the original Service Agreement (${data.filename || 'Original_Document.pdf'}) to meet NDIS 2025/26 requirements and immediate compliance standards.`
+    const scopeText = `This addendum modifies the original Service Agreement (${filename}.pdf) to meet NDIS 2025/26 requirements and immediate compliance standards.`
     const splitScope = doc.splitTextToSize(scopeText, maxLineWidth)
     doc.text(splitScope, margin, cursorY)
     cursorY += (splitScope.length * 5) + 6
@@ -81,12 +85,17 @@ export function generateNDISAddendum(data: RemediationData) {
     doc.text('Mandated Remediation Clauses', margin, cursorY)
     cursorY += 6
 
-    const tableBody = data.warnings
-        .filter(warning => data.remediations && data.remediations[warning])
+    const tableBody = warnings
+        .filter(warning => remediations && remediations[warning])
         .map((warning, idx) => {
-            const cleanRemediation = data.remediations[warning].replace(/\*\*(.*?)\*\*/g, '$1') // Strip markdown bold
+            const cleanRemediation = remediations[warning]?.replace(/\*\*(.*?)\*\*/g, '$1') || '' // Strip markdown bold
             return [`Gap ${idx + 1}:\n${warning}`, cleanRemediation]
         })
+
+    // Avoid throwing autotable error if there is no data
+    if (tableBody.length === 0) {
+        tableBody.push(['No critical gaps identified.', 'No remediation necessary.'])
+    }
 
     // @ts-ignore - jspdf-autotable attaches to doc
     doc.autoTable({

@@ -28,7 +28,8 @@ import {
     CreditCard,
     Building2,
     HeadphonesIcon,
-    FileText
+    FileText,
+    ShieldCheck
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 

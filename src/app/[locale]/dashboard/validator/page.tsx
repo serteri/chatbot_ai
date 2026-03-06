@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { logValidatorPageView, logDocumentUploadAttempt } from './actions'
 import RemediationPlan from '@/components/dashboard/RemediationPlan'
+import { ErrorBoundary } from '@/components/dashboard/ErrorBoundary'
 
 // ---------------------------------------------------------------------------
 // Types
