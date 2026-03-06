@@ -646,6 +646,7 @@ export default function ValidatorPage() {
                     remediations={remediations}
                     isGenerating={isGeneratingRemediations}
                     summary={analysisData.summary || ''}
+                    filename={fileName || ''}
                 />
             )}
         </div>

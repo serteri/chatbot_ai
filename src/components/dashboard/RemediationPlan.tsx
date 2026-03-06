@@ -11,9 +11,10 @@ interface RemediationPlanProps {
     summary: string
     remediations: Record<string, string> | null
     isGenerating: boolean
+    filename: string
 }
 
-export default function RemediationPlan({ warnings, summary, remediations, isGenerating }: RemediationPlanProps) {
+export default function RemediationPlan({ warnings, summary, remediations, isGenerating, filename }: RemediationPlanProps) {
     const t = useTranslations('validator.remediation')
     const [selectedWarning, setSelectedWarning] = useState<string | null>(null)
     const [isCopied, setIsCopied] = useState(false)
@@ -44,7 +45,7 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
             // Allow state to update and show spinner before heavy JS execution blocks the main thread
             await new Promise(resolve => setTimeout(resolve, 50))
 
-            generateNDISAddendum({ summary, warnings, remediations })
+            generateNDISAddendum({ summary, warnings, remediations, filename })
 
             // Fire-and-forget server action for audit trail
             logPdfExport()
