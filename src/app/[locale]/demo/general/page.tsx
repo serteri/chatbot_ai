@@ -105,12 +105,12 @@ export default function GeneralDemoPage() {
 Size platformumuz ve sunduğumuz hizmetler hakkında bilgi verebilirim.
 
 🤖 **Neler yapabilirim?**
-• Chatbot türlerimiz hakkında bilgi vermek (Eğitim, E-ticaret, Emlak)
+• Hizmet Sözleşmesi Analizi (NDIS)
+• Avustralya (Sydney) tabanlı güvenli veri politikamızı açıklamak
 • Fiyatlandırma politikalarımızı açıklamak
-• Teknik destek ve entegrasyon süreçlerini anlatmak
 
 **Örnek sorular:**
-"Hangi sektörlere hizmet veriyorsunuz?"
+"Hizmet Sözleşmesi Analizi nasıl çalışır?"
 "Fiyatlarınız nasıl?"
 "Kurulum ne kadar sürer?"
 
@@ -120,12 +120,12 @@ Nasıl yardımcı olabilirim?`
 I can help you with information about our platform and services.
 
 🤖 **What can I do?**
-• Explain our chatbot types (Education, E-commerce, Real Estate)
+• Highlight NDIS Service Agreement Validator features
+• Explain our Sovereign Data (Sydney) policies
 • Provide pricing information
-• Describe technical support and integration
 
 **Example questions:**
-"Which industries do you serve?"
+"How does the NDIS analysis work?"
 "How is your pricing?"
 "How long does setup take?"
 
@@ -180,20 +180,20 @@ How can I help you today?`
         // Sektörler / Industries
         if (input.match(/(sektör|tür|yapabilirim|neler|what|industries|types)/)) {
             return locale === 'tr'
-                ? `PylonChat olarak şu anda 3 ana sektörde özelleşmiş çözümler sunuyoruz:
+                ? `PylonChat olarak şu anda NDIS sağlayıcıları için özelleşmiş çözümler sunuyoruz:
 
-1. 🎓 **Eğitim:** Yurtdışı eğitim danışmanlığı, vize süreçleri ve dil okulları için.
-2. 🛒 **E-ticaret:** Ürün önerme, sipariş takibi ve müşteri desteği için.
-3. 🏠 **Emlak:** Mülk değerleme, randevu planlama ve portföy sunumu için.
+1. 📝 **Hizmet Sözleşmesi Analizi:** NDIS kurallarına uygunluk kontrolü.
+2. ⚡ **Otomatik İyileştirme:** NDIS Fiyat Rehberi 2025/26'ya uygun ek maddeler.
+3. 🔒 **Güvenli Depolama (Sovereign Vault):** Avustralya (Sydney) veri merkezli özel depolama.
 
-Her biri o sektöre özel eğitilmiş AI modelleri ile çalışır.`
-                : `At PylonChat, we currently offer specialized solutions for 3 main industries:
+Her biri NDIS altyapısına özel olarak denetlenebilir şekilde tasarlanmıştır.`
+                : `At PylonChat, we currently offer specialized solutions for NDIS Providers:
 
-1. 🎓 **Education:** For study abroad consulting, visa processes, and language schools.
-2. 🛒 **E-commerce:** For product recommendations, order tracking, and customer support.
-3. 🏠 **Real Estate:** For property valuation, appointment scheduling, and showcasing portfolios.
+1. 📝 **Service Agreement Analysis:** Full NDIS Practice Standards compliance checks.
+2. ⚡ **Auto-Remediation:** Instant addendums aligned with the 2025/26 NDIS Price Guide.
+3. 🔒 **Sovereign Vault:** Secure, private Australian (ap-southeast-2) data storage.
 
-Each operates with AI models specifically trained for that industry.`
+Each operates securely to keep you 100% audit-ready.`
         }
 
         // Fiyatlandırma / Pricing

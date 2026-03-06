@@ -32,3 +32,22 @@ export async function uploadPdfToAzure(buffer: Buffer, storagePath: string): Pro
         return null
     }
 }
+
+export async function downloadBlobAsBuffer(blobName: string): Promise<Buffer | null> {
+    if (!AZURE_STORAGE_CONNECTION_STRING) {
+        console.warn('Azure Storage Connection String is missing. Cannot download PDF.')
+        return null
+    }
+
+    try {
+        const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING)
+        const containerClient = blobServiceClient.getContainerClient(AZURE_STORAGE_CONTAINER_NAME)
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName)
+
+        console.log(`[Azure Storage] Downloading private blob to buffer: ${blobName}`)
+        return await blockBlobClient.downloadToBuffer()
+    } catch (error) {
+        console.error('Azure Storage downloadToBuffer error:', error)
+        return null
+    }
+}

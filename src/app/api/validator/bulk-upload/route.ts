@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
 
         const fileName = file.name
         const safeFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
-        const storagePath = `bulk-analyses/${session.user.id}/${Date.now()}_${safeFileName}`
+        const uniqueFileName = `${Date.now()}-${safeFileName}`
+        const storagePath = `bulk-analyses/${session.user.id}/${uniqueFileName}`
 
         // 1. Upload the raw PDF to Azure Blob Storage
         const buffer = Buffer.from(await file.arrayBuffer())

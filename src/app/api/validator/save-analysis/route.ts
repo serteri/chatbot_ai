@@ -31,7 +31,8 @@ export async function POST(request: NextRequest) {
         if (file) {
             const buffer = Buffer.from(await file.arrayBuffer())
             const safeFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
-            const storagePath = `analyses/${session.user.id}/${Date.now()}_${safeFileName}`
+            const uniqueFileName = `${Date.now()}-${safeFileName}`
+            const storagePath = `analyses/${session.user.id}/${uniqueFileName}`
 
             pdfUrl = await uploadPdfToAzure(buffer, storagePath)
         }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 import { SYSTEM_PROMPT, getAzureOpenAIClient, extractTextFromPDF } from '@/app/api/validator/analyze/route'
-import { downloadPdfFromAzure } from '@/lib/azure-storage'
+import { downloadBlobAsBuffer } from '@/lib/azure-storage'
 
 export async function POST(request: NextRequest) {
     try {
@@ -37,10 +37,17 @@ export async function POST(request: NextRequest) {
             console.log(`[Bulk Process] Starting task ${taskId} for file: ${task.fileName}`)
             console.log(`[Bulk Process] Attempting to securely download blob from Azure Storage URL: ${task.fileUrl}`)
 
+            // Extract the exact exact blob path for the SDK
+            const AZURE_STORAGE_CONTAINER_NAME = process.env.AZURE_STORAGE_CONTAINER_NAME || 'ndis-vault'
+            const urlParts = new URL(task.fileUrl!)
+            const blobName = decodeURIComponent(urlParts.pathname.substring(`/${AZURE_STORAGE_CONTAINER_NAME}/`.length))
+
+            console.log(`[Bulk Process] Extracted BlobName target: "${blobName}"`)
+
             // Call our secure Azure SDK downloader:
-            const buffer = await downloadPdfFromAzure(task.fileUrl!)
+            const buffer = await downloadBlobAsBuffer(blobName)
             if (!buffer) {
-                console.error(`[Bulk Process] Azure download returned null for URL: ${task.fileUrl}`)
+                console.error(`[Bulk Process] Azure SDK download returned null for BlobName: "${blobName}"`)
                 throw new Error('Failed to fetch file from Azure Sovereign Storage')
             }
 

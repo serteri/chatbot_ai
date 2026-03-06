@@ -75,7 +75,7 @@ export async function processDocument(buffer: Buffer, filename: string) {
 async function extractPdfText(buffer: Buffer): Promise<string> {
     try {
         // Dynamic import - sadece kullanılacağı zaman yükle
-        const pdf = await import('pdf-parse')
+        const pdf = await import('pdf-parse-fork')
         const data = await pdf.default(buffer)
         return data.text
     } catch (error) {
