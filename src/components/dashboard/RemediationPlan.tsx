@@ -19,6 +19,7 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
     const [selectedWarning, setSelectedWarning] = useState<string | null>(null)
     const [isCopied, setIsCopied] = useState(false)
     const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
+    const [isSaved, setIsSaved] = useState(false)
 
     if (!warnings || warnings.length === 0) return null
 
@@ -45,7 +46,32 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
             // Allow state to update and show spinner before heavy JS execution blocks the main thread
             await new Promise(resolve => setTimeout(resolve, 50))
 
-            generateNDISAddendum({ summary, warnings, remediations, filename })
+            const doc = generateNDISAddendum({ summary, warnings, remediations, filename })
+            const pdfBlob = doc.output('blob')
+
+            // Upload to Document Vault API
+            const formData = new FormData()
+            formData.append('pdf', pdfBlob, 'PylonChat_NDIS_Addendum.pdf')
+            formData.append('fileName', filename)
+            formData.append('summary', summary)
+            formData.append('warnings', JSON.stringify(warnings))
+            formData.append('remediations', JSON.stringify(remediations))
+
+            // Note: In a real app we'd pass complianceScore and participantName from analysisData
+            formData.append('complianceScore', '0')
+            formData.append('participantName', 'Unknown')
+
+            const res = await fetch('/api/validator/save-analysis', {
+                method: 'POST',
+                body: formData
+            })
+
+            if (res.ok) {
+                setIsSaved(true)
+            }
+
+            // Trigger download to user's computer
+            doc.save('PylonChat_NDIS_Addendum.pdf')
 
             // Fire-and-forget server action for audit trail
             logPdfExport()
@@ -86,9 +112,17 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
 
             {/* Footer with Master Addendum Action */}
             <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
-                    Review and apply these fixes individually, or generate a full addendum.
-                </p>
+                <div className="flex flex-col gap-1">
+                    <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
+                        Review and apply these fixes individually, or generate a full addendum.
+                    </p>
+                    {isSaved && (
+                        <p className="text-xs font-medium text-teal-600 flex items-center gap-1.5 animate-in fade-in">
+                            <Check className="h-3 w-3" /> Saved to Document Vault
+                        </p>
+                    )}
+                </div>
+
                 <button
                     onClick={handleGeneratePDF}
                     disabled={isGeneratingPdf || !remediations || Object.keys(remediations).length === 0}

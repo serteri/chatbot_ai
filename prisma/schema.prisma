@@ -35,6 +35,7 @@ model User {
   subscription       Subscription?
   teamMembers        TeamMember[]
   chatbots           Chatbot[]
+  analyses           Analysis[]
   auditLogsActed     AuditLog[]      // Actions performed BY this user
 
   @@index([email])
@@ -141,6 +142,28 @@ model DocumentChunk {
   // embedding Unsupported("vector")? // Uncomment once PgVector is fully setup
   
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+// -----------------------------------------------------------------------------
+// NDIS COMPLIANCE ANALYSES (DOCUMENT VAULT)
+// -----------------------------------------------------------------------------
+
+model Analysis {
+  id              String   @id @default(cuid())
+  userId          String
+  fileName        String
+  participantName String?  // Extracted from document automatically
+  complianceScore Float    @default(0.0)
+  warnings        Json     // Stores array of warning objects/strings
+  remediationText Json?    // Stores the Key-Value AI generated fixes
+  pdfUrl          String?  // Supabase bucket sovereign storage link
+  region          String   @default("ap-southeast-2") // Sovereignty proof
+  createdAt       DateTime @default(now())
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
 }
 
 // -----------------------------------------------------------------------------
