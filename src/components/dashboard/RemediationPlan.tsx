@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Copy, Check, ShieldAlert, FileWarning, X, Loader2 } from 'lucide-react'
-import { generateNDISAddendum } from '@/lib/pdf-generator'
+import { Copy, Check, ShieldAlert, FileWarning, X, Loader2, FileDown } from 'lucide-react'
 import { logPdfExport } from '@/app/[locale]/dashboard/validator/actions'
+import { toast } from 'sonner'
 
 interface RemediationPlanProps {
     warnings: string[]
@@ -12,9 +12,11 @@ interface RemediationPlanProps {
     remediations: Record<string, string> | null
     isGenerating: boolean
     filename: string
+    participantName?: string
+    complianceScore?: number
 }
 
-export default function RemediationPlan({ warnings, summary, remediations, isGenerating, filename }: RemediationPlanProps) {
+export default function RemediationPlan({ warnings, summary, remediations, isGenerating, filename, participantName, complianceScore }: RemediationPlanProps) {
     const t = useTranslations('validator.remediation')
     const [selectedWarning, setSelectedWarning] = useState<string | null>(null)
     const [isCopied, setIsCopied] = useState(false)
@@ -31,9 +33,11 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
         try {
             await navigator.clipboard.writeText(textToCopy)
             setIsCopied(true)
+            toast.success('Copied to clipboard')
             setTimeout(() => setIsCopied(false), 2000)
         } catch (err) {
             console.error('Failed to copy text', err)
+            toast.error('Failed to copy')
         }
     }
 
@@ -42,41 +46,65 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
 
         try {
             setIsGeneratingPdf(true)
+            toast.loading('Preparing your branded NDIS Addendum PDF...', { id: 'pdf-gen' })
 
-            // Allow state to update and show spinner before heavy JS execution blocks the main thread
-            await new Promise(resolve => setTimeout(resolve, 50))
-
-            const doc = generateNDISAddendum({ summary, warnings, remediations, filename })
-            const pdfBlob = doc.output('blob')
-
-            // Upload to Document Vault API
-            const formData = new FormData()
-            formData.append('pdf', pdfBlob, 'PylonChat_NDIS_Addendum.pdf')
-            formData.append('fileName', filename)
-            formData.append('summary', summary)
-            formData.append('warnings', JSON.stringify(warnings))
-            formData.append('remediations', JSON.stringify(remediations))
-
-            // Note: In a real app we'd pass complianceScore and participantName from analysisData
-            formData.append('complianceScore', '0')
-            formData.append('participantName', 'Unknown')
-
-            const res = await fetch('/api/validator/save-analysis', {
+            const res = await fetch('/api/validator/generate-addendum', {
                 method: 'POST',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fileName: filename,
+                    participantName: participantName || 'Not specified',
+                    complianceScore: complianceScore ?? 0,
+                    warnings,
+                    approverName: '',
+                    approverTitle: '',
+                }),
             })
 
-            if (res.ok) {
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}))
+                throw new Error(errData.error || 'PDF generation failed')
+            }
+
+            // Receive the PDF binary from the server
+            const pdfBlob = await res.blob()
+
+            // Also save to vault
+            const vaultForm = new FormData()
+            vaultForm.append('pdf', pdfBlob, 'PylonChat_NDIS_Addendum.pdf')
+            vaultForm.append('fileName', filename)
+            vaultForm.append('summary', summary)
+            vaultForm.append('warnings', JSON.stringify(warnings))
+            vaultForm.append('remediations', JSON.stringify(remediations))
+            vaultForm.append('complianceScore', String(complianceScore ?? 0))
+            vaultForm.append('participantName', participantName || 'Unknown')
+
+            const saveRes = await fetch('/api/validator/save-analysis', {
+                method: 'POST',
+                body: vaultForm,
+            })
+
+            if (saveRes.ok) {
                 setIsSaved(true)
             }
 
-            // Trigger download to user's computer
-            doc.save('PylonChat_NDIS_Addendum.pdf')
+            // Trigger download
+            const url = URL.createObjectURL(pdfBlob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `PylonChat_NDIS_Addendum_${filename.replace('.pdf', '')}.pdf`
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            URL.revokeObjectURL(url)
 
-            // Fire-and-forget server action for audit trail
+            toast.success('Branded Addendum PDF downloaded successfully!', { id: 'pdf-gen' })
+
+            // Fire audit log
             logPdfExport()
         } catch (err) {
             console.error('Failed to generate PDF:', err)
+            toast.error('PDF generation failed. Please try again.', { id: 'pdf-gen' })
         } finally {
             setIsGeneratingPdf(false)
         }
@@ -114,7 +142,7 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
             <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
                 <div className="flex flex-col gap-1">
                     <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
-                        Review and apply these fixes individually, or generate a full addendum.
+                        Review and apply these fixes individually, or generate a full branded addendum.
                     </p>
                     {isSaved && (
                         <p className="text-xs font-medium text-teal-600 flex items-center gap-1.5 animate-in fade-in">
@@ -131,7 +159,7 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
                     {isGeneratingPdf ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                        <FileWarning className="h-4 w-4" />
+                        <FileDown className="h-4 w-4" />
                     )}
                     {t('generateMasterAddendum')}
                 </button>
@@ -170,7 +198,6 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
                             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm relative group">
                                 {remediations?.[selectedWarning] ? (
                                     <div className="prose prose-sm prose-slate max-w-none">
-                                        {/* Simple formatting for bold asterisks */}
                                         <div
                                             className="whitespace-pre-wrap text-slate-700 leading-relaxed"
                                             dangerouslySetInnerHTML={{

@@ -16,11 +16,13 @@ import {
     Clock,
     ScanSearch,
     BadgeCheck,
+    UploadCloud,
 } from 'lucide-react'
-import { logValidatorPageView, logDocumentUploadAttempt } from './actions'
+import { logValidatorPageView, logDocumentUploadAttempt } from '@/app/[locale]/dashboard/validator/actions'
 import RemediationPlan from '@/components/dashboard/RemediationPlan'
 import { ErrorBoundary } from '@/components/dashboard/ErrorBoundary'
 import BulkValidator from '@/components/dashboard/BulkValidator'
+import { toast } from 'sonner'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -143,12 +145,12 @@ export default function ValidatorPage() {
 
     const handleFile = useCallback(async (file: File) => {
         if (!file.name.toLowerCase().endsWith('.pdf')) {
-            alert('Please upload a PDF document.')
+            toast.error('Please upload a PDF document.')
             return
         }
 
         if (file.size > 20 * 1024 * 1024) {
-            alert('File exceeds the 20MB limit.')
+            toast.error('File exceeds the 20MB limit.')
             return
         }
 
@@ -664,6 +666,24 @@ export default function ValidatorPage() {
                         </div>
                     )}
 
+                    {/* ── Non-NDIS Reset UX ── */}
+                    {step === 'audit-ready' && analysisData?.error && (
+                        <div className="bg-amber-50 rounded-2xl border border-amber-200 shadow-sm p-6 mb-6 text-center">
+                            <AlertTriangle className="h-10 w-10 text-amber-500 mx-auto mb-3" />
+                            <h3 className="text-lg font-semibold text-amber-800 mb-2">This doesn&apos;t appear to be an NDIS Agreement</h3>
+                            <p className="text-sm text-amber-700 mb-4 max-w-md mx-auto">
+                                The uploaded document was not recognised as a valid NDIS Service Agreement. Please upload a different file.
+                            </p>
+                            <button
+                                onClick={handleReset}
+                                className="inline-flex items-center gap-2 px-6 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-xl hover:bg-amber-700 transition-colors shadow-sm"
+                            >
+                                <UploadCloud className="h-4 w-4" />
+                                Upload Different Document
+                            </button>
+                        </div>
+                    )}
+
                     {/* ── Remediation Plan & Warnings ── */}
                     {step === 'audit-ready' && analysisData?.warnings && analysisData.warnings.length > 0 && (
                         <RemediationPlan
@@ -672,6 +692,8 @@ export default function ValidatorPage() {
                             isGenerating={isGeneratingRemediations}
                             summary={analysisData.summary || ''}
                             filename={fileName || ''}
+                            participantName={analysisData.participantName || undefined}
+                            complianceScore={analysisData.complianceScore}
                         />
                     )}
                 </>
