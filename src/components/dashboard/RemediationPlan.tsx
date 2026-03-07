@@ -27,6 +27,7 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
     const [finalParticipantName, setFinalParticipantName] = useState(participantName || '')
     const [providerName, setProviderName] = useState('')
     const [providerAbn, setProviderAbn] = useState('')
+    const [nomineeName, setNomineeName] = useState('')
     const [isLoadingBranding, setIsLoadingBranding] = useState(true)
 
     // Fetch branding data for auto-completion
@@ -81,6 +82,7 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
                     participantName: finalParticipantName || 'Not specified',
                     companyName: providerName,
                     abn: providerAbn,
+                    nomineeName: nomineeName,
                     complianceScore: complianceScore ?? 0,
                     warnings,
                     approverName: '',
@@ -167,11 +169,11 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
 
             {/* Smart Data Intake Form */}
             <div className="px-6 py-5 bg-white border-t border-rose-100">
-                <div className="flex items-center gap-2 mb-4">
+                <div className="bg-teal-50 px-4 py-2.5 flex items-center gap-2 border-b border-teal-100">
                     <AlertCircle className="h-4 w-4 text-teal-600" />
-                    <h4 className="font-medium text-sm text-slate-900">Information Required for Addendum</h4>
+                    <h4 className="text-sm font-semibold text-teal-900">Information Required for Addendum</h4>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
                             Participant Name *
@@ -181,7 +183,7 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
                             value={finalParticipantName}
                             onChange={e => setFinalParticipantName(e.target.value)}
                             placeholder="e.g. John Doe"
-                            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-white"
+                            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50"
                         />
                     </div>
                     <div>
@@ -194,9 +196,9 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
                                 value={providerName}
                                 onChange={e => setProviderName(e.target.value)}
                                 placeholder="Your Company Name"
-                                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-white"
+                                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50"
                             />
-                            {isLoadingBranding && <Loader2 className="h-3.5 w-3.5 animate-spin absolute right-3 top-2.5 text-slate-400" />}
+                            {isLoadingBranding && <Loader2 className="h-3 w-3 animate-spin absolute right-3 top-2.5 text-slate-400" />}
                         </div>
                     </div>
                     <div>
@@ -209,10 +211,22 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
                                 value={providerAbn}
                                 onChange={e => setProviderAbn(e.target.value)}
                                 placeholder="e.g. 12 345 678 901"
-                                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-white"
+                                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50"
                             />
-                            {isLoadingBranding && <Loader2 className="h-3.5 w-3.5 animate-spin absolute right-3 top-2.5 text-slate-400" />}
+                            {isLoadingBranding && <Loader2 className="h-3 w-3 animate-spin absolute right-3 top-2.5 text-slate-400" />}
                         </div>
+                    </div>
+                    <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider truncate">
+                            Nominee Name (Optional)
+                        </label>
+                        <input
+                            type="text"
+                            value={nomineeName}
+                            onChange={e => setNomineeName(e.target.value)}
+                            placeholder="Representative Name"
+                            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50"
+                        />
                     </div>
                 </div>
             </div>

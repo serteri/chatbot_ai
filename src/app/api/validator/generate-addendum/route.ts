@@ -20,6 +20,7 @@ interface AddendumRequest {
     warnings: string[]
     approverName: string
     approverTitle: string
+    nomineeName?: string
 }
 
 const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING || ''
@@ -178,31 +179,35 @@ export async function POST(request: NextRequest) {
         doc.text('2. Active Compliance Clauses (Replaces Identified Gaps)', margin, cursorY)
         cursorY += 4
 
+        const usedClauseCategories = new Set<string>()
+
         const tableBody = warnings.map((warning, idx) => {
             const warningText = typeof warning === 'string' ? warning : JSON.stringify(warning)
-
-            // Generate active compliant clauses injected with custom variables
-            let activeClause = `Clause ${idx + 1}.1: The parties agree to append this standard compliance item to the agreement.`
-
             const lowerWarning = warningText.toLowerCase()
-            if (lowerWarning.includes('abn') || lowerWarning.includes('provider') || lowerWarning.includes('name')) {
-                activeClause = `Clause ${idx + 1}.1: The Provider is formally recorded as ${brandName} with ABN ${providerAbn}. The Participant is ${subjectName}.`
-            } else if (lowerWarning.includes('cancellation') || lowerWarning.includes('cancel')) {
-                activeClause = `Clause ${idx + 1}.1: Cancellation Policy: Providing less than 2 clear business days' notice for standard supports will incur a 100% cancellation fee in accordance with the NDIS Price Guide 2025/26.`
-            } else if (lowerWarning.includes('complaint') || lowerWarning.includes('dispute') || lowerWarning.includes('grievance')) {
-                activeClause = `Clause ${idx + 1}.1: Complaints: ${subjectName} may raise any grievance directly with ${brandName} without reprisal, and retains the right to contact the NDIS Quality & Safeguards Commission (1800 035 544).`
-            } else if (lowerWarning.includes('pricing') || lowerWarning.includes('price') || lowerWarning.includes('cost') || lowerWarning.includes('rate')) {
-                activeClause = `Clause ${idx + 1}.1: Pricing: All supports delivered by ${brandName} shall be charged exactly at the current NDIS Price Guide rates, including the TTP margin if applicable.`
-            } else if (lowerWarning.includes('consent') || lowerWarning.includes('permission')) {
-                activeClause = `Clause ${idx + 1}.1: Consent: ${subjectName} provides informed consent for ${brandName} to deliver the agreed supports and share necessary care information with allied health professionals.`
-            } else if (lowerWarning.includes('plan') || lowerWarning.includes('goal')) {
-                activeClause = `Clause ${idx + 1}.1: Goals: ${brandName} commits to aligning all delivered supports strictly to the stated goals within ${subjectName}'s current NDIS Plan.`
-            } else if (lowerWarning.includes('safety') || lowerWarning.includes('incident') || lowerWarning.includes('risk')) {
-                activeClause = `Clause ${idx + 1}.1: Incident Management: ${brandName} shall maintain an internal incident register and report critical safety incidents as required under NDIS Practice Standards Module 2.`
-            } else if (lowerWarning.includes('termination') || lowerWarning.includes('exit')) {
-                activeClause = `Clause ${idx + 1}.1: Agreement Termination: Either party may terminate this agreement with 14 days' written notice, during which time ${brandName} will assist ${subjectName} in transitioning to another provider.`
-            } else if (lowerWarning.includes('gst') || lowerWarning.includes('tax') || lowerWarning.includes('invoice')) {
-                activeClause = `Clause ${idx + 1}.1: GST & Invoicing: Services supplied to ${subjectName} under this agreement are GST-free. Invoices will be generated within 7 days of service delivery.`
+
+            let activeClause = `Clause ${idx + 1}.1: General Compliance: The parties hereby incorporate the latest NDIS Practice Standards into this agreement, superseding any conflicting terms.`
+
+            if ((lowerWarning.includes('goal') || lowerWarning.includes('plan')) && !usedClauseCategories.has('goal')) {
+                usedClauseCategories.add('goal')
+                activeClause = `Clause ${idx + 1}.1: Goals: ${brandName} hereby incorporates and commits to aligning all supports to ${subjectName}'s NDIS Plan goals.`
+            } else if ((lowerWarning.includes('nominee') || lowerWarning.includes('representative') || lowerWarning.includes('rep')) && !usedClauseCategories.has('nominee')) {
+                usedClauseCategories.add('nominee')
+                activeClause = `Clause ${idx + 1}.1: Representation: The nominated representative is formally recorded as ${body.nomineeName || '[Not Provided]'}. This supersedes any prior unrecorded proxy.`
+            } else if ((lowerWarning.includes('cancel') || lowerWarning.includes('cancellation')) && !usedClauseCategories.has('cancel')) {
+                usedClauseCategories.add('cancel')
+                activeClause = `Clause ${idx + 1}.1: Cancellation: A minimum of 2 clear business days notice is required for standard supports, as per the binding NDIS Price Guide 2025/26.`
+            } else if ((lowerWarning.includes('pricing') || lowerWarning.includes('price') || lowerWarning.includes('rate') || lowerWarning.includes('cost')) && !usedClauseCategories.has('price')) {
+                usedClauseCategories.add('price')
+                activeClause = `Clause ${idx + 1}.1: Pricing: All supports are strictly governed by and align with the NDIS Price Guide 2025/26 maximum limits.`
+            } else if ((lowerWarning.includes('abn') || lowerWarning.includes('provider') || lowerWarning.includes('details') || lowerWarning.includes('name')) && !usedClauseCategories.has('abn')) {
+                usedClauseCategories.add('abn')
+                activeClause = `Clause ${idx + 1}.1: Provider Details: ${brandName} (ABN: ${providerAbn}) is formally incorporated as the official service provider, superseding any generic descriptors.`
+            } else if ((lowerWarning.includes('complaint') || lowerWarning.includes('dispute') || lowerWarning.includes('grievance')) && !usedClauseCategories.has('complaint')) {
+                usedClauseCategories.add('complaint')
+                activeClause = `Clause ${idx + 1}.1: Complaints: ${subjectName} may raise any grievance directly with ${brandName} without reprisal, and retains the right to contact the NDIS Commission.`
+            } else if ((lowerWarning.includes('incident') || lowerWarning.includes('safety') || lowerWarning.includes('risk')) && !usedClauseCategories.has('incident')) {
+                usedClauseCategories.add('incident')
+                activeClause = `Clause ${idx + 1}.1: Incident Management: ${brandName} shall formally document and report critical safety incidents as required under NDIS Practice Standards Module 2.`
             }
 
             return [`Gap ${idx + 1}`, warningText, activeClause]
