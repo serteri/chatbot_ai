@@ -2997,5 +2997,43 @@
       "jsonDesc": "Tüm verilerinizi JSON dosyası olarak dışa aktarın.",
       "download": "İndir"
     }
+  },
+  "ndisLanding": {
+    "hero": {
+      "titlePart1": "Denetime Hazır NDIS Uyumluluğu",
+      "titleHighlight": "Egemen Siber Zeka",
+      "subtitle": "Hizmet Sözleşmesi denetimlerini otomatikleştirin, NDIS Standartlarındaki boşlukları tespit edin ve kurumunuza özel logolu Ek Belgeler oluşturun. Veriniz Avustralya dışına çıkmaz.",
+      "ctaPrimary": "Ücretsiz Denetime Başla",
+      "ctaSecondary": "Örnek Belge İncele"
+    },
+    "trustBar": {
+      "sydney": "Veriler Sidney'de barındırılır (ap-southeast-2)",
+      "privacy": "APP & Gizlilik Yasası Uyumlu",
+      "azure": "Azure Egemen Bulut"
+    },
+    "howItWorks": {
+      "title": "PylonChat Uyumluluğu Nasıl Otomatikleştirir",
+      "step1Title": "1. Dokümanları Yükleyin (Toplu/Tek)",
+      "step1Desc": "50 adede kadar Hizmet Sözleşmesini güvenli ap-southeast-2 kasamıza sürükleyin.",
+      "step2Title": "2. AI Uyumluluk Denetimi",
+      "step2Desc": "Motorumuz eksik maddeleri, eski fiyatlandırmaları ve gizlilik sorunlarını tespit eder.",
+      "step3Title": "3. Kurumsal Ek Belge Oluşturun",
+      "step3Desc": "Firmanızın logosunu ve net iyileştirme maddelerini içeren Ana Ek Belgeyi hızla dışa aktarın."
+    },
+    "pricing": {
+      "title": "Sade Kurumsal Fiyatlandırma",
+      "subtitle": "Kullanıcı başına değil, denetim rahatlığı için ödeyin.",
+      "free": "Başlangıç",
+      "freePrice": "₺0",
+      "freeDesc": "Tekli Analizi Dene",
+      "freeFeature1": "3 Doküman Denetimi",
+      "freeFeature2": "Filigranlı PDF",
+      "pro": "Profesyonel",
+      "proPrice": "$99/ay",
+      "proDesc": "Sınırsız Denetim",
+      "proFeature1": "Toplu İşleme",
+      "proFeature2": "Beyaz Etiket (White-Label) PDF",
+      "cta": "Hemen Başlıyoruz"
+    }
   }
 }

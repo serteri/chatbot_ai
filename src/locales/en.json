@@ -3006,5 +3006,43 @@
       "jsonDesc": "Export all your data as a JSON file.",
       "download": "Download"
     }
+  },
+  "ndisLanding": {
+    "hero": {
+      "titlePart1": "Audit-Ready NDIS Compliance",
+      "titleHighlight": "Sovereign AI",
+      "subtitle": "Automate Service Agreement audits, identify compliance gaps against NDIS Practice Standards (2025/26), and generate white-labeled Addendums. Data never leaves Australia.",
+      "ctaPrimary": "Start Free Audit",
+      "ctaSecondary": "View Sample Addendum"
+    },
+    "trustBar": {
+      "sydney": "Data stored in Sydney (ap-southeast-2)",
+      "privacy": "APP & Privacy Act Compliant",
+      "azure": "Azure Sovereign Cloud"
+    },
+    "howItWorks": {
+      "title": "How PylonChat Automates Compliance",
+      "step1Title": "1. Upload Documents (Bulk or Single)",
+      "step1Desc": "Securely drop up to 50 Service Agreements into our ap-southeast-2 vault.",
+      "step2Title": "2. AI Compliance Audit",
+      "step2Desc": "Our engine spots missing clauses, outdated pricing, and APP privacy gaps.",
+      "step3Title": "3. Generate Branded Addendum",
+      "step3Desc": "Instantly export a Master Addendum featuring your firm's logo and exact remediation clauses."
+    },
+    "pricing": {
+      "title": "Simple Enterprise Pricing",
+      "subtitle": "Pay for compliance peace of mind, not per seat.",
+      "free": "Starter",
+      "freePrice": "$0",
+      "freeDesc": "Try Single Analysis",
+      "freeFeature1": "3 Document Audits",
+      "freeFeature2": "Watermarked PDFs",
+      "pro": "Professional",
+      "proPrice": "$99/mo",
+      "proDesc": "Unlimited Auditing",
+      "proFeature1": "Bulk Processing",
+      "proFeature2": "White-Label PDFs",
+      "cta": "Get Started"
+    }
   }
 }
