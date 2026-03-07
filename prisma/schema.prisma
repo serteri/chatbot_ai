@@ -174,16 +174,19 @@ model Analysis {
 // -----------------------------------------------------------------------------
 
 model AnalysisTask {
-  id              String   @id @default(cuid())
+  id              String    @id @default(cuid())
   userId          String
   fileName        String
-  status          String   @default("pending") // pending, processing, completed, failed
-  fileUrl         String?  // Azure Blob Storage link
-  analysisId      String?  @unique // Link to Analysis when completed
-  resultJson      Json?    // Full AI analysis response (warnings, score, suggestions)
+  status          String    @default("pending") // pending, processing, completed, failed
+  fileUrl         String?   // Azure Blob Storage link
+  analysisId      String?   @unique // Link to Analysis when completed
+  resultJson      Json?     // Full AI analysis response (warnings, score, suggestions)
+  approvedBy      String?   // Name of the human approver
+  approverTitle   String?   // Title/role of the approver
+  approvalDate    DateTime? // Timestamp of the human approval
   
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   analysis        Analysis? @relation(fields: [analysisId], references: [id], onDelete: SetNull)

@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import {
     UploadCloud, FileText, CheckCircle, AlertCircle, Loader2,
-    Play, Pause, Trash2, Eye, X, ShieldAlert, TrendingUp
+    Play, Pause, Trash2, Eye, X, ShieldAlert, TrendingUp, UserCheck
 } from 'lucide-react'
 
 type FileStatus = 'idle' | 'uploading' | 'pending' | 'processing' | 'completed' | 'failed'
@@ -41,10 +41,17 @@ function getScoreColor(score: number) {
 // ---------------------------------------------------------------------------
 
 function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; fileName: string; onClose: () => void }) {
+    const [approverName, setApproverName] = useState('')
+    const [approverTitle, setApproverTitle] = useState('')
+    const [isConfirmed, setIsConfirmed] = useState(false)
+    const [isGenerating, setIsGenerating] = useState(false)
+
+    const canGenerate = isConfirmed && approverName.trim().length > 0 && approverTitle.trim().length > 0
+
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
             <div
-                className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col"
+                className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -96,6 +103,51 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                             </div>
                         )}
                     </div>
+
+                    {/* ── Human-in-the-Loop Approval ── */}
+                    <div className="border border-slate-200 rounded-xl overflow-hidden">
+                        <div className="bg-slate-800 px-4 py-2.5">
+                            <h4 className="text-sm font-semibold text-white flex items-center gap-2">
+                                <UserCheck className="h-4 w-4 text-teal-400" />
+                                Internal Approval — Required Before Generating Addendum
+                            </h4>
+                        </div>
+                        <div className="p-4 space-y-4 bg-slate-50/50">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-600 mb-1">Approver Full Name *</label>
+                                    <input
+                                        type="text"
+                                        value={approverName}
+                                        onChange={(e) => setApproverName(e.target.value)}
+                                        placeholder="e.g. Sarah Johnson"
+                                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-white"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-600 mb-1">Title / Role *</label>
+                                    <input
+                                        type="text"
+                                        value={approverTitle}
+                                        onChange={(e) => setApproverTitle(e.target.value)}
+                                        placeholder="e.g. NDIS Compliance Manager"
+                                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-white"
+                                    />
+                                </div>
+                            </div>
+                            <label className="flex items-start gap-3 cursor-pointer group">
+                                <input
+                                    type="checkbox"
+                                    checked={isConfirmed}
+                                    onChange={(e) => setIsConfirmed(e.target.checked)}
+                                    className="mt-0.5 h-4 w-4 rounded border-slate-300 text-teal-600 focus:ring-teal-500/20"
+                                />
+                                <span className="text-xs text-slate-600 leading-relaxed group-hover:text-slate-800 transition-colors">
+                                    I have reviewed these remediations and confirm they align with our internal policies and NDIS Practice Standards. I understand this addendum is a compliance draft and must be verified by the provider&apos;s authorized officer.
+                                </span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Footer with Addendum Generator */}
@@ -104,7 +156,9 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                         Azure OpenAI (Sydney) • NDIS 2025/26
                     </p>
                     <button
+                        disabled={!canGenerate || isGenerating}
                         onClick={async () => {
+                            setIsGenerating(true)
                             try {
                                 const res = await fetch('/api/validator/generate-addendum', {
                                     method: 'POST',
@@ -114,6 +168,8 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                                         participantName: result.participantName,
                                         complianceScore: result.complianceScore,
                                         warnings: result.warnings,
+                                        approverName: approverName.trim(),
+                                        approverTitle: approverTitle.trim(),
                                     })
                                 })
                                 if (!res.ok) throw new Error('Failed to generate')
@@ -126,12 +182,20 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                                 URL.revokeObjectURL(url)
                             } catch {
                                 alert('Failed to generate addendum. Please try again.')
+                            } finally {
+                                setIsGenerating(false)
                             }
                         }}
-                        className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer"
+                        className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl transition-all shadow-sm cursor-pointer ${canGenerate && !isGenerating
+                            ? 'text-white bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 hover:shadow-md'
+                            : 'text-slate-400 bg-slate-200 cursor-not-allowed'
+                            }`}
                     >
-                        <FileText className="h-3.5 w-3.5" />
-                        Generate Master Addendum
+                        {isGenerating ? (
+                            <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating...</>
+                        ) : (
+                            <><FileText className="h-3.5 w-3.5" /> Generate Master Addendum</>
+                        )}
                     </button>
                 </div>
             </div>
