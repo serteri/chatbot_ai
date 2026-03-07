@@ -3000,16 +3000,24 @@
   },
   "ndisLanding": {
     "hero": {
-      "titlePart1": "Denetime Hazır NDIS Uyumluluğu",
-      "titleHighlight": "Egemen Siber Zeka",
-      "subtitle": "Hizmet Sözleşmesi denetimlerini otomatikleştirin, NDIS Standartlarındaki boşlukları tespit edin ve kurumunuza özel logolu Ek Belgeler oluşturun. Veriniz Avustralya dışına çıkmaz.",
-      "ctaPrimary": "Ücretsiz Denetime Başla",
-      "ctaSecondary": "Örnek Belge İncele"
+      "titlePart1": "Uyumluluk Açıklarını",
+      "titleHighlight": "Denetime Hazır Sözleşmelere Çevirin.",
+      "subtitle": "Sıradan Hizmet Sözleşmelerini yükleyin, 11+ kritik NDIS noktasını analiz edin ve saniyeler içinde kurumunuza özel logolu Ek Belgeler oluşturun.",
+      "ctaPrimary": "Ücretsiz Başla",
+      "ctaSecondary": "60sn Demoyu İzle"
     },
     "trustBar": {
       "sydney": "Veriler Sidney'de barındırılır (ap-southeast-2)",
       "privacy": "APP & Gizlilik Yasası Uyumlu",
       "azure": "Azure Egemen Bulut"
+    },
+    "interactive": {
+      "before": "Önce: Standart 1.pdf",
+      "after": "Sonra: Kurumsal Ana Ek Belge",
+      "logoMock": "Yeni",
+      "checklist1": "Doğrulanmış ABN ve Ticari Unvan",
+      "checklist2": "Uyumlu İptal Politikası",
+      "checklist3": "GST Durumu Netleştirildi"
     },
     "howItWorks": {
       "title": "PylonChat Uyumluluğu Nasıl Otomatikleştirir",

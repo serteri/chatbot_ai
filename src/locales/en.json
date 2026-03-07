@@ -3009,16 +3009,24 @@
   },
   "ndisLanding": {
     "hero": {
-      "titlePart1": "Audit-Ready NDIS Compliance",
-      "titleHighlight": "Sovereign AI",
-      "subtitle": "Automate Service Agreement audits, identify compliance gaps against NDIS Practice Standards (2025/26), and generate white-labeled Addendums. Data never leaves Australia.",
-      "ctaPrimary": "Start Free Audit",
-      "ctaSecondary": "View Sample Addendum"
+      "titlePart1": "Turn Compliance Gaps into",
+      "titleHighlight": "Audit-Ready Contracts.",
+      "subtitle": "Upload generic Service Agreements, analyze 11+ critical NDIS points, and generate custom-branded Addendums in seconds.",
+      "ctaPrimary": "Get Started for Free",
+      "ctaSecondary": "Watch 60s Demo"
     },
     "trustBar": {
       "sydney": "Data stored in Sydney (ap-southeast-2)",
       "privacy": "APP & Privacy Act Compliant",
       "azure": "Azure Sovereign Cloud"
+    },
+    "interactive": {
+      "before": "Before: Generic 1.pdf",
+      "after": "After: Branded Master Addendum",
+      "logoMock": "Yeni",
+      "checklist1": "Verified ABN & Business Name",
+      "checklist2": "Compliant Cancellation Policy",
+      "checklist3": "GST Status Clarified"
     },
     "howItWorks": {
       "title": "How PylonChat Automates Compliance",

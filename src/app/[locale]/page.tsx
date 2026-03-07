@@ -2,6 +2,7 @@ import { PublicNav } from '@/components/layout/PublicNav'
 import { Footer } from '@/components/Footer'
 import { HeroEnterprise } from '@/components/landing/HeroEnterprise'
 import { TrustBar } from '@/components/landing/TrustBar'
+import { InteractiveDemo } from '@/components/landing/InteractiveDemo'
 import { HowItWorks } from '@/components/landing/HowItWorks'
 import { PricingPreview } from '@/components/landing/PricingPreview'
 
@@ -18,6 +19,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
             <main className="flex-1">
                 <HeroEnterprise locale={locale} />
+                <InteractiveDemo />
                 <TrustBar />
                 <HowItWorks />
                 <PricingPreview locale={locale} />
