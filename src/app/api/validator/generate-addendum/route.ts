@@ -21,6 +21,8 @@ interface AddendumRequest {
     approverName: string
     approverTitle: string
     nomineeName?: string
+    startDate?: string
+    endDate?: string
 }
 
 const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING || ''
@@ -187,12 +189,17 @@ export async function POST(request: NextRequest) {
 
             let activeClause = `Clause ${idx + 1}.1: General Compliance: The parties hereby incorporate the latest NDIS Practice Standards into this agreement, superseding any conflicting terms.`
 
-            if ((lowerWarning.includes('goal') || lowerWarning.includes('plan')) && !usedClauseCategories.has('goal')) {
-                usedClauseCategories.add('goal')
-                activeClause = `Clause ${idx + 1}.1: Goals: ${brandName} hereby incorporates and commits to aligning all supports to ${subjectName}'s NDIS Plan goals.`
-            } else if ((lowerWarning.includes('nominee') || lowerWarning.includes('representative') || lowerWarning.includes('rep')) && !usedClauseCategories.has('nominee')) {
+            // 1. Highest Priority: Nominee/Representative
+            if ((lowerWarning.includes('nominee') || lowerWarning.includes('representative') || lowerWarning.includes('rep') || lowerWarning.includes('guardian')) && !usedClauseCategories.has('nominee')) {
                 usedClauseCategories.add('nominee')
                 activeClause = `Clause ${idx + 1}.1: Representation: The nominated representative is formally recorded as ${body.nomineeName || '[Not Provided]'}. This supersedes any prior unrecorded proxy.`
+
+                // 2. High Priority: Dates/Duration
+            } else if ((lowerWarning.includes('date') || lowerWarning.includes('start') || lowerWarning.includes('end') || lowerWarning.includes('duration') || lowerWarning.includes('expiry')) && !usedClauseCategories.has('dates')) {
+                usedClauseCategories.add('dates')
+                activeClause = `Clause ${idx + 1}.1: Duration: The Service Agreement shall commence on ${body.startDate || '[Not Provided]'} and remain in effect until ${body.endDate || '[Not Provided]'}.`
+
+                // 3. Middle Priorities: Cancellations, Pricing, ABN, Complaints, Incidents
             } else if ((lowerWarning.includes('cancel') || lowerWarning.includes('cancellation')) && !usedClauseCategories.has('cancel')) {
                 usedClauseCategories.add('cancel')
                 activeClause = `Clause ${idx + 1}.1: Cancellation: A minimum of 2 clear business days notice is required for standard supports, as per the binding NDIS Price Guide 2025/26.`
@@ -208,6 +215,12 @@ export async function POST(request: NextRequest) {
             } else if ((lowerWarning.includes('incident') || lowerWarning.includes('safety') || lowerWarning.includes('risk')) && !usedClauseCategories.has('incident')) {
                 usedClauseCategories.add('incident')
                 activeClause = `Clause ${idx + 1}.1: Incident Management: ${brandName} shall formally document and report critical safety incidents as required under NDIS Practice Standards Module 2.`
+
+                // 4. Lowest Priority: Goals / Plan
+                // Kept last so that "Representative date plan" catches as Nominee/Date first, rather than blindly hitting 'plan'.
+            } else if ((lowerWarning.includes('goal') || lowerWarning.includes('plan') || lowerWarning.includes('outcome')) && !usedClauseCategories.has('goal')) {
+                usedClauseCategories.add('goal')
+                activeClause = `Clause ${idx + 1}.1: Goals: ${brandName} hereby incorporates and commits to aligning all supports to ${subjectName}'s NDIS Plan goals.`
             }
 
             return [`Gap ${idx + 1}`, warningText, activeClause]

@@ -52,6 +52,8 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
     const [providerName, setProviderName] = useState('')
     const [providerAbn, setProviderAbn] = useState('')
     const [nomineeName, setNomineeName] = useState('')
+    const [startDate, setStartDate] = useState('')
+    const [endDate, setEndDate] = useState('')
     const [isLoadingBranding, setIsLoadingBranding] = useState(true)
 
     useEffect(() => {
@@ -136,7 +138,7 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                             <AlertCircle className="h-4 w-4 text-teal-600" />
                             <h4 className="text-sm font-semibold text-teal-900">Information Required for Addendum</h4>
                         </div>
-                        <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div>
                                 <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
                                     Participant Name *
@@ -189,6 +191,28 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                                     onChange={e => setNomineeName(e.target.value)}
                                     placeholder="Representative Name"
                                     className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider truncate">
+                                    Start Date (Optional)
+                                </label>
+                                <input
+                                    type="date"
+                                    value={startDate}
+                                    onChange={e => setStartDate(e.target.value)}
+                                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50 text-slate-700"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider truncate">
+                                    End Date (Optional)
+                                </label>
+                                <input
+                                    type="date"
+                                    value={endDate}
+                                    onChange={e => setEndDate(e.target.value)}
+                                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50 text-slate-700"
                                 />
                             </div>
                         </div>
@@ -259,6 +283,8 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                                         companyName: providerName,
                                         abn: providerAbn,
                                         nomineeName: nomineeName,
+                                        startDate: startDate,
+                                        endDate: endDate,
                                         complianceScore: result.complianceScore,
                                         warnings: result.warnings,
                                         approverName: approverName.trim(),
