@@ -14,6 +14,8 @@ import { BlobServiceClient } from '@azure/storage-blob'
 interface AddendumRequest {
     fileName: string
     participantName: string
+    companyName?: string
+    abn?: string
     complianceScore: number
     warnings: string[]
     approverName: string
@@ -30,19 +32,21 @@ export async function POST(request: NextRequest) {
         }
 
         const body: AddendumRequest = await request.json()
-        const { fileName, participantName, complianceScore, warnings, approverName, approverTitle } = body
+        const { fileName, participantName, companyName, abn, complianceScore, warnings, approverName, approverTitle } = body
 
         if (!fileName || !warnings) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
         }
 
-        // Fetch branding from DB
+        // Fetch branding from DB if not provided
         const user = await prisma.user.findUnique({
             where: { id: session.user.id },
-            select: { companyName: true, logoUrl: true }
+            select: { companyName: true, logoUrl: true, abn: true }
         })
 
-        const brandName = user?.companyName || 'NDIS Provider'
+        const brandName = companyName || user?.companyName || 'NDIS Provider'
+        const providerAbn = abn || user?.abn || '[To be specified in Schedule 1]'
+        const subjectName = participantName && participantName !== 'Not specified' ? participantName : '[To be specified in Schedule 1]'
 
         // Download logo as buffer if exists (private blob)
         let logoBase64: string | null = null
@@ -135,7 +139,7 @@ export async function POST(request: NextRequest) {
         doc.setFont('helvetica', 'bold')
         doc.text('Participant:', margin + 5, cursorY + 15)
         doc.setFont('helvetica', 'normal')
-        doc.text(participantName || 'As identified in original agreement', margin + 30, cursorY + 15)
+        doc.text(subjectName, margin + 30, cursorY + 15)
 
         doc.setFont('helvetica', 'bold')
         doc.text('Compliance Score:', margin + 5, cursorY + 22)
@@ -171,37 +175,37 @@ export async function POST(request: NextRequest) {
         doc.setFont('helvetica', 'bold')
         doc.setTextColor(15, 23, 42)
         doc.setFontSize(11)
-        doc.text('2. Identified Compliance Gaps & Required Actions', margin, cursorY)
+        doc.text('2. Active Compliance Clauses (Replaces Identified Gaps)', margin, cursorY)
         cursorY += 4
 
         const tableBody = warnings.map((warning, idx) => {
             const warningText = typeof warning === 'string' ? warning : JSON.stringify(warning)
 
-            // Generate a remediation suggestion based on the warning
-            let remediation = 'Provider must address this gap and update the Service Agreement accordingly.'
+            // Generate active compliant clauses injected with custom variables
+            let activeClause = `Clause ${idx + 1}.1: The parties agree to append this standard compliance item to the agreement.`
 
             const lowerWarning = warningText.toLowerCase()
-            if (lowerWarning.includes('abn') || lowerWarning.includes('provider')) {
-                remediation = 'Insert complete Provider details including registered ABN, business name, and NDIS registration number in Section 1 of the agreement.'
+            if (lowerWarning.includes('abn') || lowerWarning.includes('provider') || lowerWarning.includes('name')) {
+                activeClause = `Clause ${idx + 1}.1: The Provider is formally recorded as ${brandName} with ABN ${providerAbn}. The Participant is ${subjectName}.`
             } else if (lowerWarning.includes('cancellation') || lowerWarning.includes('cancel')) {
-                remediation = 'Add a cancellation clause specifying the notice period (minimum 2 clear business days for standard supports) as per NDIS Price Guide 2025/26.'
+                activeClause = `Clause ${idx + 1}.1: Cancellation Policy: Providing less than 2 clear business days' notice for standard supports will incur a 100% cancellation fee in accordance with the NDIS Price Guide 2025/26.`
             } else if (lowerWarning.includes('complaint') || lowerWarning.includes('dispute') || lowerWarning.includes('grievance')) {
-                remediation = 'Include a formal complaints and disputes resolution procedure with reference to the NDIS Quality & Safeguards Commission (1800 035 544).'
+                activeClause = `Clause ${idx + 1}.1: Complaints: ${subjectName} may raise any grievance directly with ${brandName} without reprisal, and retains the right to contact the NDIS Quality & Safeguards Commission (1800 035 544).`
             } else if (lowerWarning.includes('pricing') || lowerWarning.includes('price') || lowerWarning.includes('cost') || lowerWarning.includes('rate')) {
-                remediation = 'Ensure all pricing references align with the NDIS Price Guide 2025/26 effective rates. Include itemised support line items with TIS codes.'
+                activeClause = `Clause ${idx + 1}.1: Pricing: All supports delivered by ${brandName} shall be charged exactly at the current NDIS Price Guide rates, including the TTP margin if applicable.`
             } else if (lowerWarning.includes('consent') || lowerWarning.includes('permission')) {
-                remediation = 'Add explicit informed consent clauses covering data sharing, support delivery methods, and participant rights under the NDIS Act 2013.'
+                activeClause = `Clause ${idx + 1}.1: Consent: ${subjectName} provides informed consent for ${brandName} to deliver the agreed supports and share necessary care information with allied health professionals.`
             } else if (lowerWarning.includes('plan') || lowerWarning.includes('goal')) {
-                remediation = 'Include a clear reference to participant goals as outlined in their NDIS Plan, ensuring supports are aligned with stated objectives.'
+                activeClause = `Clause ${idx + 1}.1: Goals: ${brandName} commits to aligning all delivered supports strictly to the stated goals within ${subjectName}'s current NDIS Plan.`
             } else if (lowerWarning.includes('safety') || lowerWarning.includes('incident') || lowerWarning.includes('risk')) {
-                remediation = 'Add incident management and safety reporting procedures in accordance with NDIS Practice Standards Module 2 (Provider Governance).'
+                activeClause = `Clause ${idx + 1}.1: Incident Management: ${brandName} shall maintain an internal incident register and report critical safety incidents as required under NDIS Practice Standards Module 2.`
             } else if (lowerWarning.includes('termination') || lowerWarning.includes('exit')) {
-                remediation = 'Include clear service termination/exit procedures with reasonable notice periods and transition support arrangements.'
+                activeClause = `Clause ${idx + 1}.1: Agreement Termination: Either party may terminate this agreement with 14 days' written notice, during which time ${brandName} will assist ${subjectName} in transitioning to another provider.`
             } else if (lowerWarning.includes('gst') || lowerWarning.includes('tax') || lowerWarning.includes('invoice')) {
-                remediation = 'Ensure GST treatment is correctly stated. NDIS supports are generally GST-free. Include clear invoicing procedures and payment terms.'
+                activeClause = `Clause ${idx + 1}.1: GST & Invoicing: Services supplied to ${subjectName} under this agreement are GST-free. Invoices will be generated within 7 days of service delivery.`
             }
 
-            return [`Gap ${idx + 1}`, warningText, remediation]
+            return [`Gap ${idx + 1}`, warningText, activeClause]
         })
 
         if (tableBody.length === 0) {

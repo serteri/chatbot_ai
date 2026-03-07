@@ -7,11 +7,13 @@ import { toast } from 'sonner'
 interface Props {
     initialCompanyName: string
     initialLogoUrl: string
+    initialAbn: string
 }
 
-export default function BrandingSettings({ initialCompanyName, initialLogoUrl }: Props) {
+export default function BrandingSettings({ initialCompanyName, initialLogoUrl, initialAbn }: Props) {
     const [companyName, setCompanyName] = useState(initialCompanyName)
     const [logoUrl, setLogoUrl] = useState(initialLogoUrl)
+    const [abn, setAbn] = useState(initialAbn)
     const [logoPreview, setLogoPreview] = useState<string | null>(null)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [isSaving, setIsSaving] = useState(false)
@@ -47,6 +49,7 @@ export default function BrandingSettings({ initialCompanyName, initialLogoUrl }:
         try {
             const formData = new FormData()
             formData.append('companyName', companyName)
+            formData.append('abn', abn)
             if (selectedFile) {
                 formData.append('logo', selectedFile)
             }
@@ -99,6 +102,23 @@ export default function BrandingSettings({ initialCompanyName, initialLogoUrl }:
                     />
                     <p className="text-xs text-slate-400 mt-1">
                         This will appear in the PDF header and signature block.
+                    </p>
+                </div>
+
+                {/* ABN */}
+                <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                        Australian Business Number (ABN)
+                    </label>
+                    <input
+                        type="text"
+                        value={abn}
+                        onChange={(e) => { setAbn(e.target.value); setSaveStatus('idle') }}
+                        placeholder="e.g. 12 345 678 901"
+                        className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-white"
+                    />
+                    <p className="text-xs text-slate-400 mt-1">
+                        Used to auto-complete Addendum clauses regarding provider registration.
                     </p>
                 </div>
 
@@ -177,12 +197,20 @@ export default function BrandingSettings({ initialCompanyName, initialLogoUrl }:
                                     <img src={currentLogo} alt="Logo" className="h-10 w-auto max-w-[120px] object-contain rounded" />
                                 )}
                             </div>
-                            {companyName && (
+                            {(companyName || abn) && (
                                 <div className="mt-3 bg-slate-50 border border-slate-200 rounded-lg p-3">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Provider:</span>
-                                        <span className="text-xs font-semibold text-slate-800">{companyName}</span>
-                                    </div>
+                                    {companyName && (
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Provider:</span>
+                                            <span className="text-xs font-semibold text-slate-800">{companyName}</span>
+                                        </div>
+                                    )}
+                                    {abn && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ABN:</span>
+                                            <span className="text-xs font-semibold text-slate-800">{abn}</span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

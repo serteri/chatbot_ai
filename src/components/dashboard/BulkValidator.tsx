@@ -47,7 +47,31 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
     const [isConfirmed, setIsConfirmed] = useState(false)
     const [isGenerating, setIsGenerating] = useState(false)
 
-    const canGenerate = isConfirmed && approverName.trim().length > 0 && approverTitle.trim().length > 0
+    // Form states for Data Intake
+    const [finalParticipantName, setFinalParticipantName] = useState(result.participantName || '')
+    const [providerName, setProviderName] = useState('')
+    const [providerAbn, setProviderAbn] = useState('')
+    const [isLoadingBranding, setIsLoadingBranding] = useState(true)
+
+    useEffect(() => {
+        const fetchBranding = async () => {
+            try {
+                const res = await fetch('/api/user/branding')
+                if (res.ok) {
+                    const data = await res.json()
+                    if (data.companyName) setProviderName(data.companyName)
+                    if (data.abn) setProviderAbn(data.abn)
+                }
+            } catch (err) {
+                console.error('Failed to fetch branding for bulk form', err)
+            } finally {
+                setIsLoadingBranding(false)
+            }
+        }
+        fetchBranding()
+    }, [])
+
+    const canGenerate = isConfirmed && approverName.trim().length > 0 && approverTitle.trim().length > 0 && finalParticipantName.trim().length > 0 && providerName.trim().length > 0 && providerAbn.trim().length > 0
 
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -103,6 +127,58 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                                 No compliance warnings detected. This document meets NDIS 2025/26 standards.
                             </div>
                         )}
+                    </div>
+
+                    {/* ── Smart Data Intake Form ── */}
+                    <div className="border border-teal-200 rounded-xl overflow-hidden">
+                        <div className="bg-teal-50 px-4 py-2.5 flex items-center gap-2 border-b border-teal-100">
+                            <AlertCircle className="h-4 w-4 text-teal-600" />
+                            <h4 className="text-sm font-semibold text-teal-900">Information Required for Addendum</h4>
+                        </div>
+                        <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                                    Participant Name *
+                                </label>
+                                <input
+                                    type="text"
+                                    value={finalParticipantName}
+                                    onChange={e => setFinalParticipantName(e.target.value)}
+                                    placeholder="e.g. John Doe"
+                                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                                    Provider Name *
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={providerName}
+                                        onChange={e => setProviderName(e.target.value)}
+                                        placeholder="Your Company Name"
+                                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50"
+                                    />
+                                    {isLoadingBranding && <Loader2 className="h-3 w-3 animate-spin absolute right-3 top-2.5 text-slate-400" />}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                                    Provider ABN *
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={providerAbn}
+                                        onChange={e => setProviderAbn(e.target.value)}
+                                        placeholder="e.g. 12 345 678 901"
+                                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50"
+                                    />
+                                    {isLoadingBranding && <Loader2 className="h-3 w-3 animate-spin absolute right-3 top-2.5 text-slate-400" />}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* ── Human-in-the-Loop Approval ── */}
@@ -166,7 +242,9 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({
                                         fileName,
-                                        participantName: result.participantName,
+                                        participantName: finalParticipantName || 'Not specified',
+                                        companyName: providerName,
+                                        abn: providerAbn,
                                         complianceScore: result.complianceScore,
                                         warnings: result.warnings,
                                         approverName: approverName.trim(),

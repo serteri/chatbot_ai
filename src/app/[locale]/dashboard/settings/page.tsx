@@ -38,6 +38,7 @@ export default async function SettingsPage() {
             image: true,
             companyName: true,
             logoUrl: true,
+            abn: true,
         }
     })
 
@@ -58,6 +59,7 @@ export default async function SettingsPage() {
                 <BrandingSettings
                     initialCompanyName={dbUser?.companyName ?? ''}
                     initialLogoUrl={dbUser?.logoUrl ?? ''}
+                    initialAbn={dbUser?.abn ?? ''}
                 />
             </Suspense>
         </div>

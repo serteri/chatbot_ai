@@ -21,12 +21,17 @@ export async function POST(request: NextRequest) {
         const formData = await request.formData()
         const file = formData.get('logo') as File | null
         const companyName = formData.get('companyName') as string | null
+        const abn = formData.get('abn') as string | null
 
-        // Update companyName if provided
-        if (companyName !== null) {
+        // Update companyName and abn if provided
+        if (companyName !== null || abn !== null) {
+            const dataToUpdate: any = {}
+            if (companyName !== null) dataToUpdate.companyName = companyName.trim() || null
+            if (abn !== null) dataToUpdate.abn = abn.trim() || null
+
             await prisma.user.update({
                 where: { id: session.user.id },
-                data: { companyName: companyName.trim() || null }
+                data: dataToUpdate
             })
         }
 
@@ -67,11 +72,12 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({
                 success: true,
                 logoUrl,
-                companyName: companyName?.trim() || null
+                companyName: companyName?.trim() || null,
+                abn: abn?.trim() || null
             })
         }
 
-        return NextResponse.json({ success: true, companyName: companyName?.trim() || null })
+        return NextResponse.json({ success: true, companyName: companyName?.trim() || null, abn: abn?.trim() || null })
     } catch (error: any) {
         console.error('Branding API Error:', error)
         return NextResponse.json({ error: 'Failed to save branding' }, { status: 500 })
@@ -88,12 +94,13 @@ export async function GET() {
 
         const user = await prisma.user.findUnique({
             where: { id: session.user.id },
-            select: { companyName: true, logoUrl: true }
+            select: { companyName: true, logoUrl: true, abn: true }
         })
 
         return NextResponse.json({
             companyName: user?.companyName || null,
-            logoUrl: user?.logoUrl || null
+            logoUrl: user?.logoUrl || null,
+            abn: user?.abn || null
         })
     } catch (error: any) {
         console.error('Branding GET Error:', error)

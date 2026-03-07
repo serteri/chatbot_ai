@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { Copy, Check, ShieldAlert, FileWarning, X, Loader2, FileDown } from 'lucide-react'
+import { Copy, Check, ShieldAlert, FileWarning, X, Loader2, FileDown, AlertCircle } from 'lucide-react'
 import { logPdfExport } from '@/app/[locale]/dashboard/validator/actions'
 import { toast } from 'sonner'
 
@@ -22,6 +22,31 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
     const [isCopied, setIsCopied] = useState(false)
     const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
     const [isSaved, setIsSaved] = useState(false)
+
+    // Form states
+    const [finalParticipantName, setFinalParticipantName] = useState(participantName || '')
+    const [providerName, setProviderName] = useState('')
+    const [providerAbn, setProviderAbn] = useState('')
+    const [isLoadingBranding, setIsLoadingBranding] = useState(true)
+
+    // Fetch branding data for auto-completion
+    useEffect(() => {
+        const fetchBranding = async () => {
+            try {
+                const res = await fetch('/api/user/branding')
+                if (res.ok) {
+                    const data = await res.json()
+                    if (data.companyName) setProviderName(data.companyName)
+                    if (data.abn) setProviderAbn(data.abn)
+                }
+            } catch (err) {
+                console.error('Failed to fetch branding for form', err)
+            } finally {
+                setIsLoadingBranding(false)
+            }
+        }
+        fetchBranding()
+    }, [])
 
     if (!warnings || warnings.length === 0) return null
 
@@ -53,7 +78,9 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     fileName: filename,
-                    participantName: participantName || 'Not specified',
+                    participantName: finalParticipantName || 'Not specified',
+                    companyName: providerName,
+                    abn: providerAbn,
                     complianceScore: complianceScore ?? 0,
                     warnings,
                     approverName: '',
@@ -77,7 +104,7 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
             vaultForm.append('warnings', JSON.stringify(warnings))
             vaultForm.append('remediations', JSON.stringify(remediations))
             vaultForm.append('complianceScore', String(complianceScore ?? 0))
-            vaultForm.append('participantName', participantName || 'Unknown')
+            vaultForm.append('participantName', finalParticipantName || 'Unknown')
 
             const saveRes = await fetch('/api/validator/save-analysis', {
                 method: 'POST',
@@ -138,6 +165,58 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
                 ))}
             </div>
 
+            {/* Smart Data Intake Form */}
+            <div className="px-6 py-5 bg-white border-t border-rose-100">
+                <div className="flex items-center gap-2 mb-4">
+                    <AlertCircle className="h-4 w-4 text-teal-600" />
+                    <h4 className="font-medium text-sm text-slate-900">Information Required for Addendum</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                            Participant Name *
+                        </label>
+                        <input
+                            type="text"
+                            value={finalParticipantName}
+                            onChange={e => setFinalParticipantName(e.target.value)}
+                            placeholder="e.g. John Doe"
+                            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-white"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                            Provider Name *
+                        </label>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={providerName}
+                                onChange={e => setProviderName(e.target.value)}
+                                placeholder="Your Company Name"
+                                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-white"
+                            />
+                            {isLoadingBranding && <Loader2 className="h-3.5 w-3.5 animate-spin absolute right-3 top-2.5 text-slate-400" />}
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                            Provider ABN *
+                        </label>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={providerAbn}
+                                onChange={e => setProviderAbn(e.target.value)}
+                                placeholder="e.g. 12 345 678 901"
+                                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-white"
+                            />
+                            {isLoadingBranding && <Loader2 className="h-3.5 w-3.5 animate-spin absolute right-3 top-2.5 text-slate-400" />}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Footer with Master Addendum Action */}
             <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
                 <div className="flex flex-col gap-1">
@@ -153,7 +232,7 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
 
                 <button
                     onClick={handleGeneratePDF}
-                    disabled={isGeneratingPdf || !remediations || Object.keys(remediations).length === 0}
+                    disabled={isGeneratingPdf || !remediations || Object.keys(remediations).length === 0 || !finalParticipantName.trim() || !providerName.trim() || !providerAbn.trim()}
                     className="flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white text-sm font-medium rounded-xl hover:bg-teal-700 transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                     {isGeneratingPdf ? (
