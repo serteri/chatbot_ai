@@ -180,6 +180,7 @@ model AnalysisTask {
   status          String   @default("pending") // pending, processing, completed, failed
   fileUrl         String?  // Azure Blob Storage link
   analysisId      String?  @unique // Link to Analysis when completed
+  resultJson      Json?    // Full AI analysis response (warnings, score, suggestions)
   
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

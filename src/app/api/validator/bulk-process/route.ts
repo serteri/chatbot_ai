@@ -106,16 +106,25 @@ export async function POST(request: NextRequest) {
                 }
             })
 
-            // Mark task completed and link it
+            // Mark task completed, link it, and store full result JSON
             await prisma.analysisTask.update({
                 where: { id: taskId },
                 data: {
                     status: 'completed',
-                    analysisId: newAnalysis.id
+                    analysisId: newAnalysis.id,
+                    resultJson: analysisResult
                 }
             })
 
-            return NextResponse.json({ success: true, analysisId: newAnalysis.id })
+            return NextResponse.json({
+                success: true,
+                analysisId: newAnalysis.id,
+                result: {
+                    participantName: analysisResult.participantName || 'Unknown',
+                    complianceScore: analysisResult.complianceScore || 0,
+                    warnings: analysisResult.warnings || [],
+                }
+            })
 
         } catch (jobError: any) {
             console.error(`Processing Task ${taskId} failed:`, jobError)

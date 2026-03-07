@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import {
     Search, FileText, Download, ShieldCheck, AlertTriangle,
     CheckCircle2, XCircle, Layers, Clock, Filter,
-    TrendingUp, Lock
+    TrendingUp, Lock, FileDown
 } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
@@ -202,6 +202,25 @@ export default function HistoryClientPage({ singleAnalyses, bulkBatches, bulkAna
                 </div>
             </div>
 
+            {/* ── Master Download All ── */}
+            {singleAnalyses.some(a => a.pdfUrl) && (
+                <div className="flex justify-end">
+                    <button
+                        onClick={async () => {
+                            const filesWithUrls = singleAnalyses.filter(a => a.pdfUrl)
+                            for (const record of filesWithUrls) {
+                                await handleSecureDownload(record.pdfUrl!)
+                                await new Promise(r => setTimeout(r, 500))
+                            }
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer"
+                    >
+                        <Download className="h-4 w-4" />
+                        Download All Files from Sydney Vault
+                    </button>
+                </div>
+            )}
+
             {/* ── Controls ── */}
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                 <div className="relative w-full sm:max-w-md">
@@ -220,8 +239,8 @@ export default function HistoryClientPage({ singleAnalyses, bulkBatches, bulkAna
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${activeTab === tab
-                                    ? 'bg-white shadow-sm text-slate-900'
-                                    : 'text-slate-500 hover:text-slate-700'
+                                ? 'bg-white shadow-sm text-slate-900'
+                                : 'text-slate-500 hover:text-slate-700'
                                 }`}
                         >
                             {tab === 'all' && <Filter className="h-3 w-3 inline mr-1" />}
@@ -333,7 +352,18 @@ export default function HistoryClientPage({ singleAnalyses, bulkBatches, bulkAna
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs text-slate-400 font-mono">{batch.batchId.slice(0, 16)}...</span>
+                                        <button
+                                            onClick={() => {
+                                                const firstTaskId = batch.tasks[0]?.id
+                                                if (firstTaskId) {
+                                                    window.open(`/api/audit/export-batch?batchTaskId=${firstTaskId}`, '_blank')
+                                                }
+                                            }}
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors border border-indigo-200/50 cursor-pointer"
+                                        >
+                                            <FileDown className="h-3.5 w-3.5" />
+                                            Export CSV
+                                        </button>
                                     </div>
                                 </div>
                                 {/* Batch Tasks */}
