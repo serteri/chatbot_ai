@@ -98,9 +98,41 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                     </div>
                 </div>
 
-                {/* Footer */}
-                <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-400 text-center">
-                    Analysis powered by Azure OpenAI (Sydney, ap-southeast-2) • NDIS Practice Standards 2025/26
+                {/* Footer with Addendum Generator */}
+                <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                    <p className="text-xs text-slate-400">
+                        Azure OpenAI (Sydney) • NDIS 2025/26
+                    </p>
+                    <button
+                        onClick={async () => {
+                            try {
+                                const res = await fetch('/api/validator/generate-addendum', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        fileName,
+                                        participantName: result.participantName,
+                                        complianceScore: result.complianceScore,
+                                        warnings: result.warnings,
+                                    })
+                                })
+                                if (!res.ok) throw new Error('Failed to generate')
+                                const blob = await res.blob()
+                                const url = URL.createObjectURL(blob)
+                                const a = document.createElement('a')
+                                a.href = url
+                                a.download = `NDIS_Addendum_${fileName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`
+                                a.click()
+                                URL.revokeObjectURL(url)
+                            } catch {
+                                alert('Failed to generate addendum. Please try again.')
+                            }
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer"
+                    >
+                        <FileText className="h-3.5 w-3.5" />
+                        Generate Master Addendum
+                    </button>
                 </div>
             </div>
         </div>
