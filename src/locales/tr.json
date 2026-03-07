@@ -2954,5 +2954,48 @@
       "reply": "Cevap alınamadı.",
       "network": "Bağlantı hatası."
     }
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "save": "Değişiklikleri Kaydet",
+    "saving": "Kaydediliyor...",
+    "saveSuccess": "Ayarlar kaydedildi",
+    "tabs": {
+      "profile": "Profil",
+      "security": "Güvenlik",
+      "notifications": "Bildirimler",
+      "preferences": "Tercihler"
+    },
+    "profile": {
+      "name": "Ad Soyad",
+      "email": "E-posta Adresi",
+      "emailNote": "E-posta, kimlik doğrulama sağlayıcınız tarafından yönetilir.",
+      "planBadge": "NDIS Uyumluluk Planı"
+    },
+    "security": {
+      "activeSessions": "Aktif Oturumlar",
+      "deviceDesc": "Hesabınıza giriş yapan cihazlar.",
+      "currentSession": "Mevcut oturum",
+      "logout": "Çıkış Yap"
+    },
+    "notifications": {
+      "title": "Bildirim Tercihleri",
+      "desc": "Nasıl bilgilendirilmek istediğinizi seçin.",
+      "emailTitle": "E-posta Bildirimleri",
+      "emailDesc": "Uyumluluk uyarılarını ve güncellemelerini e-posta ile alın.",
+      "marketingTitle": "Pazarlama E-postaları",
+      "marketingDesc": "Ürün güncellemelerini ve yeni özellikleri alın."
+    },
+    "preferences": {
+      "theme": "Görünüm",
+      "themeDesc": "Panelin görünümünü ve hissini özelleştirin.",
+      "darkMode": "Karanlık Mod",
+      "darkModeDesc": "Açık ve koyu temalar arasında geçiş yapın.",
+      "dataPrivacy": "Veri ve Gizlilik",
+      "privacyDesc": "Verilerinizi ve gizlilik ayarlarınızı yönetin.",
+      "downloadData": "Verilerinizi İndirin",
+      "jsonDesc": "Tüm verilerinizi JSON dosyası olarak dışa aktarın.",
+      "download": "İndir"
+    }
   }
 }

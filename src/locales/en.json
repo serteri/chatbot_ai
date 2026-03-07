@@ -2963,5 +2963,48 @@
       "reply": "No reply received.",
       "network": "Connection error."
     }
+  },
+  "settings": {
+    "title": "Settings",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "saveSuccess": "Settings saved",
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "notifications": "Notifications",
+      "preferences": "Preferences"
+    },
+    "profile": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "emailNote": "Email is managed by your authentication provider.",
+      "planBadge": "NDIS Compliance Plan"
+    },
+    "security": {
+      "activeSessions": "Active Sessions",
+      "deviceDesc": "Devices currently signed in to your account.",
+      "currentSession": "Current session",
+      "logout": "Sign Out"
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "desc": "Choose how you want to be notified.",
+      "emailTitle": "Email Notifications",
+      "emailDesc": "Receive compliance alerts and updates via email.",
+      "marketingTitle": "Marketing Emails",
+      "marketingDesc": "Receive product updates and new features."
+    },
+    "preferences": {
+      "theme": "Appearance",
+      "themeDesc": "Customise the look and feel of the dashboard.",
+      "darkMode": "Dark Mode",
+      "darkModeDesc": "Switch between light and dark themes.",
+      "dataPrivacy": "Data & Privacy",
+      "privacyDesc": "Manage your data and privacy settings.",
+      "downloadData": "Download Your Data",
+      "jsonDesc": "Export all your data as a JSON file.",
+      "download": "Download"
+    }
   }
 }
