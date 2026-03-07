@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
+import autoTable from 'jspdf-autotable'
 import { BlobServiceClient } from '@azure/storage-blob'
 
 // ---------------------------------------------------------------------------
@@ -88,12 +88,22 @@ export async function POST(request: NextRequest) {
         doc.rect(10, 10, pageWidth - 20, 28, 'F')
 
         // Inject logo into top-right of banner if available
+        let logoInjected = false
         if (logoBase64) {
             try {
                 doc.addImage(logoBase64, 'PNG', pageWidth - margin - 28, 12, 24, 24)
+                logoInjected = true
             } catch {
                 console.warn('[Addendum] Failed to inject logo image into PDF')
+                logoInjected = false
             }
+        }
+
+        if (!logoInjected) {
+            doc.setFont('helvetica', 'bold')
+            doc.setTextColor(255, 255, 255)
+            doc.setFontSize(10)
+            doc.text(brandName, pageWidth - margin, 20, { align: 'right' })
         }
 
         doc.setFont('helvetica', 'bold')
@@ -199,7 +209,7 @@ export async function POST(request: NextRequest) {
         }
 
         // @ts-ignore
-        doc.autoTable({
+        autoTable(doc, {
             startY: cursorY,
             head: [['#', 'Compliance Gap', 'Required Remediation Action']],
             body: tableBody,

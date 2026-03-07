@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react'
 import { Upload, Building2, CheckCircle, Loader2, Image as ImageIcon, Trash2, Eye } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Props {
     initialCompanyName: string
@@ -21,11 +22,11 @@ export default function BrandingSettings({ initialCompanyName, initialLogoUrl }:
         const file = e.target.files?.[0]
         if (!file) return
         if (!file.type.startsWith('image/')) {
-            alert('Please select an image file (PNG, JPG, SVG)')
+            toast.error('Please select an image file (PNG, JPG, SVG)')
             return
         }
         if (file.size > 5 * 1024 * 1024) {
-            alert('Logo must be under 5MB')
+            toast.error('Logo must be under 5MB')
             return
         }
         setSelectedFile(file)

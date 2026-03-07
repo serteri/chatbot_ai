@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { toast } from 'sonner'
 import {
     Search, FileText, Download, ShieldCheck, AlertTriangle,
     CheckCircle2, XCircle, Layers, Clock, Filter,
@@ -129,10 +131,10 @@ async function handleSecureDownload(pdfUrl: string) {
         if (data.url) {
             window.open(data.url, '_blank')
         } else {
-            alert('Failed to generate secure download link. SAS token may have expired.')
+            toast.error('Failed to generate secure download link. SAS token may have expired.')
         }
     } catch {
-        alert('Download error. Please try again.')
+        toast.error('Download error. Please try again.')
     }
 }
 

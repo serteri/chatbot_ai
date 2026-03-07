@@ -5,6 +5,7 @@ import {
     UploadCloud, FileText, CheckCircle, AlertCircle, Loader2,
     Play, Pause, Trash2, Eye, X, ShieldAlert, TrendingUp, UserCheck
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 type FileStatus = 'idle' | 'uploading' | 'pending' | 'processing' | 'completed' | 'failed'
 
@@ -181,7 +182,7 @@ function AnalysisModal({ result, fileName, onClose }: { result: AnalysisResult; 
                                 a.click()
                                 URL.revokeObjectURL(url)
                             } catch {
-                                alert('Failed to generate addendum. Please try again.')
+                                toast.error('Failed to generate addendum. Please try again.')
                             } finally {
                                 setIsGenerating(false)
                             }

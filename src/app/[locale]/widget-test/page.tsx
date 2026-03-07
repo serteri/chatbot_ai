@@ -13,6 +13,7 @@ import ChatWidget from '@/components/ChatWidget'
 import { RealEstateWidget } from '@/components/widget/RealEstateWidget'
 import { EducationWidget } from '@/components/widget/EducationWidget'
 import { EcommerceWidget } from '@/components/widget/EcommerceWidget'
+import { toast } from 'sonner'
 
 // Tip tanımları
 type ChatbotMode = 'document' | 'education' | 'ecommerce' | 'hybrid' | 'general' | string;
@@ -107,7 +108,7 @@ export default function WidgetTestPage() {
     // Widget'ı manuel olarak sıfırlama
     const refreshWidget = () => {
         if (!chatbotId) {
-            alert(t('errors.noId'));
+            toast.error(t('errors.noId'));
             return;
         }
         setChatKey(prev => prev + 1);

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -118,7 +119,7 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                         if (city) setLocationInfo(`${city}, ${country}`);
                     }
                 } catch (e) { console.error(e); }
-            }, () => {});
+            }, () => { });
         }
     }, []);
 
@@ -166,7 +167,7 @@ export default function SettingsForm({ user }: SettingsFormProps) {
             setTimeout(() => setSaveSuccess(false), 3000);
         } catch (error) {
             console.error(error);
-            alert("Ayarlar kaydedilirken bir hata oluştu.");
+            toast.error("Ayarlar kaydedilirken bir hata oluştu.");
         } finally {
             setIsSaving(false);
         }
@@ -208,11 +209,11 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                 setTestEmailSent(true);
                 setTimeout(() => setTestEmailSent(false), 5000);
             } else {
-                alert(data.error || 'Email gönderilemedi. Email bildirimlerinizin açık olduğundan emin olun.');
+                toast.error(data.error || 'Email gönderilemedi. Email bildirimlerinizin açık olduğundan emin olun.');
             }
         } catch (error) {
             console.error('Test email error:', error);
-            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            toast.error('Bir hata oluştu. Lütfen tekrar deneyin.');
         } finally {
             setIsSendingTest(false);
         }
@@ -289,7 +290,7 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                             </CardContent>
                             <CardFooter className="bg-slate-50/50 border-t flex justify-end p-4">
                                 <div className="flex items-center gap-4">
-                                    {saveSuccess && <span className="text-sm text-green-600 flex items-center gap-1 animate-in fade-in"><CheckCircle2 className="w-4 h-4"/> {t('saveSuccess')}</span>}
+                                    {saveSuccess && <span className="text-sm text-green-600 flex items-center gap-1 animate-in fade-in"><CheckCircle2 className="w-4 h-4" /> {t('saveSuccess')}</span>}
                                     <Button
                                         onClick={handleSave}
                                         disabled={!hasChanges || isSaving}
@@ -300,7 +301,7 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                                                 : "bg-slate-100 text-slate-400 cursor-not-allowed hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-600"
                                         )}
                                     >
-                                        {isSaving ? <><Loader2 className="w-4 h-4 mr-2 animate-spin"/> {t('saving')}</> : t('save')}
+                                        {isSaving ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('saving')}</> : t('save')}
                                     </Button>
                                 </div>
                             </CardFooter>
@@ -332,11 +333,11 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                                                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                                                     {t('security.currentSession')}
                                                 </p>
-                                                {locationInfo && <p className="text-xs text-slate-500 flex items-center gap-1"><MapPin className="w-3 h-3"/> {locationInfo}</p>}
+                                                {locationInfo && <p className="text-xs text-slate-500 flex items-center gap-1"><MapPin className="w-3 h-3" /> {locationInfo}</p>}
                                             </div>
                                         </div>
                                     </div>
-                                    <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50"><LogOut className="w-4 h-4 mr-2"/> {t('security.logout')}</Button>
+                                    <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50"><LogOut className="w-4 h-4 mr-2" /> {t('security.logout')}</Button>
                                 </div>
                             </CardContent>
                         </Card>
@@ -408,7 +409,7 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                             </CardContent>
                             <CardFooter className="bg-slate-50/50 border-t flex justify-end p-4">
                                 <div className="flex items-center gap-4">
-                                    {saveSuccess && <span className="text-sm text-green-600 flex items-center gap-1 animate-in fade-in"><CheckCircle2 className="w-4 h-4"/> {t('saveSuccess')}</span>}
+                                    {saveSuccess && <span className="text-sm text-green-600 flex items-center gap-1 animate-in fade-in"><CheckCircle2 className="w-4 h-4" /> {t('saveSuccess')}</span>}
                                     <Button
                                         onClick={handleSave}
                                         disabled={!hasChanges || isSaving}
@@ -419,7 +420,7 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                                                 : "bg-slate-100 text-slate-400 cursor-not-allowed hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-600"
                                         )}
                                     >
-                                        {isSaving ? <><Loader2 className="w-4 h-4 mr-2 animate-spin"/> {t('saving')}</> : t('save')}
+                                        {isSaving ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('saving')}</> : t('save')}
                                     </Button>
                                 </div>
                             </CardFooter>

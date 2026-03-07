@@ -46,5 +46,5 @@ export const config = {
   // Chatbot (iframe), API routes, and now the internal /domain route are excluded from intl middleware primarily
   // But wait, /domain is an internal rewrite destination, so it won't be matched by the incoming request matcher naturally?
   // Actually, rewrite happens internally. Valid requests hitting middleware are external.
-  matcher: ['/((?!api|_next|_static|.*\\..*|chatbot|embed).*)']
+  matcher: ['/((?!api|_next|_static|ads\\.txt|.*\\..*|chatbot|embed).*)']
 };
