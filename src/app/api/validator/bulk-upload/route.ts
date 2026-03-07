@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
-import { uploadPdfToAzure } from '@/lib/azure-storage'
+import { uploadPdfToAzure, generateUniqueName } from '@/lib/azure-storage'
 
 export async function POST(request: NextRequest) {
     try {
@@ -18,9 +18,8 @@ export async function POST(request: NextRequest) {
         }
 
         const fileName = file.name
-        const safeFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
-        const uniqueFileName = `${Date.now()}-${safeFileName}`
-        const storagePath = `bulk-analyses/${session.user.id}/${uniqueFileName}`
+        const uniqueName = generateUniqueName(fileName)
+        const storagePath = `bulk-analyses/${session.user.id}/${uniqueName}`
 
         // 1. Upload the raw PDF to Azure Blob Storage
         const buffer = Buffer.from(await file.arrayBuffer())

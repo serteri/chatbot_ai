@@ -4,7 +4,7 @@ import { prisma } from '@/lib/db/prisma'
 import { createAuditLog } from '@/lib/services/audit'
 
 // Azure Blob Storage for sovereign vault storage
-import { uploadPdfToAzure } from '@/lib/azure-storage'
+import { uploadPdfToAzure, generateUniqueName } from '@/lib/azure-storage'
 
 export async function POST(request: NextRequest) {
     try {
@@ -30,9 +30,8 @@ export async function POST(request: NextRequest) {
         // If an Azure Storage bucket exists and a file was provided, upload it
         if (file) {
             const buffer = Buffer.from(await file.arrayBuffer())
-            const safeFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
-            const uniqueFileName = `${Date.now()}-${safeFileName}`
-            const storagePath = `analyses/${session.user.id}/${uniqueFileName}`
+            const uniqueName = generateUniqueName(fileName)
+            const storagePath = `analyses/${session.user.id}/${uniqueName}`
 
             pdfUrl = await uploadPdfToAzure(buffer, storagePath)
         }

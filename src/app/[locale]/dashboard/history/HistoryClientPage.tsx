@@ -98,15 +98,25 @@ export default function HistoryClientPage({ initialAnalyses }: { initialAnalyses
                                         </td>
                                         <td className="py-4 px-6 text-right">
                                             {record.pdfUrl ? (
-                                                <a
-                                                    href={record.pdfUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-lg transition-colors border border-teal-200/50"
+                                                <button
+                                                    onClick={async () => {
+                                                        try {
+                                                            const res = await fetch(`/api/validator/secure-download?url=${encodeURIComponent(record.pdfUrl!)}`)
+                                                            const data = await res.json()
+                                                            if (data.url) {
+                                                                window.open(data.url, '_blank')
+                                                            } else {
+                                                                alert('Failed to generate secure download link.')
+                                                            }
+                                                        } catch {
+                                                            alert('Download error. Please try again.')
+                                                        }
+                                                    }}
+                                                    className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-lg transition-colors border border-teal-200/50 cursor-pointer"
                                                 >
                                                     <Download className="h-3.5 w-3.5" />
-                                                    Download
-                                                </a>
+                                                    Secure Download
+                                                </button>
                                             ) : (
                                                 <span className="inline-flex items-center text-xs text-slate-400 italic">
                                                     Local only
