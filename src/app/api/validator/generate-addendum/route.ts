@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
+import { prisma } from '@/lib/db/prisma'
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
+import { BlobServiceClient } from '@azure/storage-blob'
 
 // ---------------------------------------------------------------------------
 // POST /api/validator/generate-addendum
 // Generates a professional "NDIS Service Agreement Addendum" PDF
-// from the analysis resultJson (warnings, score, participant details)
+// with white-label branding (logo + company name from DB)
 // ---------------------------------------------------------------------------
 
 interface AddendumRequest {
@@ -17,6 +19,8 @@ interface AddendumRequest {
     approverName: string
     approverTitle: string
 }
+
+const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING || ''
 
 export async function POST(request: NextRequest) {
     try {
@@ -30,6 +34,33 @@ export async function POST(request: NextRequest) {
 
         if (!fileName || !warnings) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+        }
+
+        // Fetch branding from DB
+        const user = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            select: { companyName: true, logoUrl: true }
+        })
+
+        const brandName = user?.companyName || 'NDIS Provider'
+
+        // Download logo as buffer if exists (private blob)
+        let logoBase64: string | null = null
+        if (user?.logoUrl && AZURE_STORAGE_CONNECTION_STRING) {
+            try {
+                const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING)
+                const containerClient = blobServiceClient.getContainerClient('branding-assets')
+                const urlParts = new URL(user.logoUrl)
+                const blobName = decodeURIComponent(urlParts.pathname.split('/').pop() || '')
+                if (blobName) {
+                    const blobClient = containerClient.getBlockBlobClient(blobName)
+                    const logoBuffer = await blobClient.downloadToBuffer()
+                    logoBase64 = `data:image/png;base64,${logoBuffer.toString('base64')}`
+                    console.log(`[Addendum] Loaded branded logo: ${blobName}`)
+                }
+            } catch (logoErr) {
+                console.warn('[Addendum] Could not load logo, proceeding without:', logoErr)
+            }
         }
 
         // Generate PDF
@@ -56,15 +87,25 @@ export async function POST(request: NextRequest) {
         doc.setFillColor(15, 23, 42) // Slate-900
         doc.rect(10, 10, pageWidth - 20, 28, 'F')
 
+        // Inject logo into top-right of banner if available
+        if (logoBase64) {
+            try {
+                doc.addImage(logoBase64, 'PNG', pageWidth - margin - 28, 12, 24, 24)
+            } catch {
+                console.warn('[Addendum] Failed to inject logo image into PDF')
+            }
+        }
+
         doc.setFont('helvetica', 'bold')
         doc.setTextColor(255, 255, 255)
-        doc.setFontSize(16)
-        doc.text('NDIS SERVICE AGREEMENT ADDENDUM', pageWidth / 2, 24, { align: 'center' })
+        doc.setFontSize(14)
+        const titleX = logoBase64 ? (pageWidth - 28) / 2 : pageWidth / 2
+        doc.text('NDIS SERVICE AGREEMENT ADDENDUM', titleX, 22, { align: 'center' })
 
         doc.setFont('helvetica', 'normal')
         doc.setFontSize(8)
-        doc.setTextColor(148, 163, 184) // Slate-400
-        doc.text('Master Compliance Document • NDIS Practice Standards & Price Guide 2025/26', pageWidth / 2, 33, { align: 'center' })
+        doc.setTextColor(148, 163, 184)
+        doc.text(`${brandName} • NDIS Practice Standards & Price Guide 2025/26`, titleX, 31, { align: 'center' })
 
         let cursorY = 48
 
@@ -256,7 +297,7 @@ export async function POST(request: NextRequest) {
             doc.line(xOffset + 12, cursorY + 31, xOffset + sigBoxWidth, cursorY + 31)
         }
 
-        drawSigBox(margin, 'Provider Representative')
+        drawSigBox(margin, `${brandName} Representative`)
         drawSigBox(margin + sigBoxWidth + 10, 'Participant / Nominee')
 
         // ── Internal Approval Stamp ──

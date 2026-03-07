@@ -22,6 +22,7 @@ model User {
   emailVerified      DateTime?
   image              String?
   companyName        String?
+  logoUrl            String?  // White-label branding logo (Azure blob URL)
   website            String?
   language           String           @default("en-AU") // English AU native.
   timezone           String           @default("Australia/Sydney")
