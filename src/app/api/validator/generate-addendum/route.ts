@@ -199,6 +199,11 @@ export async function POST(request: NextRequest) {
                 usedClauseCategories.add('dates')
                 activeClause = `Clause ${idx + 1}.1: Duration: The Service Agreement shall commence on ${body.startDate || '[Not Provided]'} and remain in effect until ${body.endDate || '[Not Provided]'}.`
 
+                // 2.5 High Priority: Informed Consent
+            } else if ((lowerWarning.includes('consent') || lowerWarning.includes('privacy') || lowerWarning.includes('sharing') || lowerWarning.includes('information')) && !usedClauseCategories.has('consent')) {
+                usedClauseCategories.add('consent')
+                activeClause = `Clause ${idx + 1}.1: Informed Consent: ${subjectName} hereby provides informed consent for ${brandName} to deliver the agreed supports and share necessary care information with appropriately registered allied health professionals.`
+
                 // 3. Middle Priorities: Cancellations, Pricing, ABN, Complaints, Incidents
             } else if ((lowerWarning.includes('cancel') || lowerWarning.includes('cancellation')) && !usedClauseCategories.has('cancel')) {
                 usedClauseCategories.add('cancel')

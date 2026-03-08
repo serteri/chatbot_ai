@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 import { redirect } from 'next/navigation'
-import HistoryClientPage from './HistoryClientPage'
+import DocumentVault from '@/components/dashboard/DocumentVault'
 
 export async function generateMetadata() {
     return {
@@ -115,7 +115,7 @@ export default async function HistoryPage() {
     }
 
     return (
-        <HistoryClientPage
+        <DocumentVault
             singleAnalyses={serializedSingle}
             bulkBatches={serializedBatches}
             bulkAnalysisMap={bulkAnalysisMap}
