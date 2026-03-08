@@ -16,6 +16,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "validator": "Validator",
+    "vault": "Denetim Merkezi ve Belge Kasası",
     "chatbots": "Chatbotlar",
     "aiAgents": "Yapay Zeka Ajanları",
     "allChatbots": "Tüm Chatbot'lar",

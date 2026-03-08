@@ -104,7 +104,7 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                             </Link>
 
                             <Link
-                                href={`/${currentLocale}/dashboard/history`}
+                                href={`/${currentLocale}/dashboard/vault`}
                                 className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
                             >
                                 <ShieldCheck className="h-4 w-4" />

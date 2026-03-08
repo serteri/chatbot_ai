@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db/prisma'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { BlobServiceClient } from '@azure/storage-blob'
+import { uploadPdfToAzure, generateUniqueName } from '@/lib/azure-storage'
 
 // ---------------------------------------------------------------------------
 // POST /api/validator/generate-addendum
@@ -23,6 +24,7 @@ interface AddendumRequest {
     nomineeName?: string
     startDate?: string
     endDate?: string
+    taskId?: string
 }
 
 const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING || ''
@@ -410,6 +412,24 @@ export async function POST(request: NextRequest) {
         const pdfBuffer = Buffer.from(doc.output('arraybuffer'))
 
         console.log(`[Generate Addendum] Created ${pdfBuffer.length} byte PDF for "${fileName}" (${warnings.length} gaps)`)
+
+        // Upload to Azure if taskId is provided
+        if (body.taskId) {
+            try {
+                const uniqueName = generateUniqueName(`Addendum_${fileName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
+                const storagePath = `analyses/${session.user.id}/${uniqueName}`;
+
+                const uploadedUrl = await uploadPdfToAzure(pdfBuffer, storagePath);
+
+                await prisma.analysisTask.update({
+                    where: { id: body.taskId },
+                    data: { addendumFileUrl: uploadedUrl }
+                })
+                console.log(`[Generate Addendum] Successfully saved addendum to Azure and linked to task ${body.taskId}`)
+            } catch (err) {
+                console.error('[Generate Addendum] Failed to save addendum to azure', err)
+            }
+        }
 
         return new NextResponse(pdfBuffer, {
             status: 200,

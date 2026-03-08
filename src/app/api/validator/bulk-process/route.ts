@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 import { SYSTEM_PROMPT, getAzureOpenAIClient, extractTextFromPDF } from '@/app/api/validator/analyze/route'
 import { downloadBlobAsBuffer } from '@/lib/azure-storage'
+import { normalizeToISO } from '@/lib/utils/dateNormalizer'
 
 export async function POST(request: NextRequest) {
     try {
@@ -91,13 +92,20 @@ export async function POST(request: NextRequest) {
 
             console.log(`[Bulk Process] Completed AI Analysis for ${task.fileName}. Saving to DB...`)
 
+            const participantName = analysisResult.participantName || 'Unknown'
+            const documentStartDate = normalizeToISO(analysisResult.startDate)
+            const documentEndDate = normalizeToISO(analysisResult.endDate)
+            const complianceScore = analysisResult.complianceScore || 0
+
             // 4. After AI extraction, save the result to the main vault Analysis DB.
             const newAnalysis = await prisma.analysis.create({
                 data: {
                     userId: session.user.id,
                     fileName: task.fileName,
-                    participantName: analysisResult.participantName || 'Unknown',
-                    complianceScore: analysisResult.complianceScore || 0,
+                    participantName,
+                    documentStartDate,
+                    documentEndDate,
+                    complianceScore,
                     warnings: analysisResult.warnings || [],
                     // Auto generate fixes for every warning (optional bulk param)
                     remediationText: null,
@@ -112,6 +120,10 @@ export async function POST(request: NextRequest) {
                 data: {
                     status: 'completed',
                     analysisId: newAnalysis.id,
+                    participantName,
+                    documentStartDate,
+                    documentEndDate,
+                    complianceScore,
                     resultJson: analysisResult
                 }
             })

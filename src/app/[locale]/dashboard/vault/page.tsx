@@ -5,7 +5,7 @@ import DocumentVault from '@/components/dashboard/DocumentVault'
 
 export async function generateMetadata() {
     return {
-        title: 'Service Agreement History | NDIS Audit Readiness',
+        title: 'Audit Hub & Document Vault | NDIS Audit Readiness',
         description: 'Review all past NDIS Service Agreement compliance analyses stored in the Sovereign Vault.',
     }
 }

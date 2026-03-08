@@ -5,6 +5,7 @@ import { createAuditLog } from '@/lib/services/audit'
 
 // Azure Blob Storage for sovereign vault storage
 import { uploadPdfToAzure, generateUniqueName } from '@/lib/azure-storage'
+import { normalizeToISO } from '@/lib/utils/dateNormalizer'
 
 export async function POST(request: NextRequest) {
     try {
@@ -17,6 +18,8 @@ export async function POST(request: NextRequest) {
         const file = formData.get('pdf') as File | null
         const fileName = formData.get('fileName') as string
         const participantName = formData.get('participantName') as string || 'Unknown Participant'
+        const documentStartDate = normalizeToISO(formData.get('documentStartDate') as string)
+        const documentEndDate = normalizeToISO(formData.get('documentEndDate') as string)
         const complianceScore = parseFloat(formData.get('complianceScore') as string || '0')
 
         // Parse JSON strings back to objects
@@ -42,6 +45,8 @@ export async function POST(request: NextRequest) {
                 userId: session.user.id,
                 fileName: fileName || 'Unknown Document',
                 participantName,
+                documentStartDate,
+                documentEndDate,
                 complianceScore,
                 warnings: warnings, // Prisma handles JSON serialization
                 remediationText: remediations,
