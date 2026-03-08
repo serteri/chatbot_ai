@@ -11,11 +11,11 @@ import OpenAI from 'openai'
 
 export const SYSTEM_PROMPT = `You are a Pure NDIS Compliance Officer. Analyze the text of this Service Agreement strictly against the NDIS Practice Standards and the explicit rules of the NDIS Price Guide 2025/26.
 
-Return a JSON object containing:
-- "participantName": string or null (the participant's full name)
+Return a strict JSON object containing:
+- "participantName": string or null (Extract the participant's full name from headers like 'About the Participant', 'Name', or 'Participant Details'. Do not use provider names.)
 - "totalFunding": number (total plan funding in AUD)
-- "startDate": string (plan start date, e.g. "2025-07-01")
-- "endDate": string (plan end date, e.g. "2026-06-30")
+- "startDate": string (plan start date, e.g. "2025-07-01". Look explicitly for 'Start Date' or 'Commencement')
+- "endDate": string (plan end date, e.g. "2026-06-30". Look explicitly for 'End Date', 'Expiry', or 'Review Date')
 - "lineItems": array of objects, each with:
   - "code": string (NDIS line item code, e.g. "04_590_0125_6_1")
   - "description": string (what the line item covers)

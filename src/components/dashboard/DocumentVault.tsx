@@ -369,14 +369,21 @@ export default function DocumentVault({ singleAnalyses, bulkBatches, bulkAnalysi
                                                 <div className="font-semibold text-sm text-slate-700 truncate max-w-[200px]">
                                                     {displayFileName(record.fileName)}
                                                 </div>
-                                                {record.participantName && (
+                                                {record.participantName && record.participantName !== 'Unknown' && (
                                                     <div className="text-xs text-slate-500 mt-0.5">
                                                         <span className="font-medium text-slate-400">P:</span> {record.participantName}
                                                     </div>
                                                 )}
                                             </td>
                                             <td className="py-3.5 px-5 text-sm text-slate-600">
-                                                {formatDate(record?.documentEndDate)}
+                                                <div className="flex items-center gap-2">
+                                                    {formatDate(record?.documentEndDate)}
+                                                    {(!record?.documentEndDate || formatDate(record.documentEndDate) === 'Invalid Date' || formatDate(record.documentEndDate) === 'N/A') && (
+                                                        <button className="text-amber-500 hover:text-amber-600 transition-colors" title="Missing Date - Manual Edit Required">
+                                                            <Activity className="h-3.5 w-3.5" />
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </td>
                                             <td className="py-3.5 px-5">
                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold ${scoreColor.bg} ${scoreColor.text} border ${scoreColor.border}`}>
@@ -459,7 +466,7 @@ export default function DocumentVault({ singleAnalyses, bulkBatches, bulkAnalysi
                                                             <FileText className="h-4 w-4 text-slate-300 shrink-0" />
                                                             <div>
                                                                 <div className="text-sm font-medium text-slate-700 truncate max-w-[150px] sm:max-w-xs">{displayFileName(task.fileName)}</div>
-                                                                {analysisData?.participantName && <div className="text-xs text-slate-500">P: {analysisData.participantName}</div>}
+                                                                {analysisData?.participantName && analysisData.participantName !== 'Unknown' && <div className="text-xs text-slate-500">P: {analysisData.participantName}</div>}
                                                             </div>
                                                         </div>
                                                         <div className="flex items-center gap-3 shrink-0">

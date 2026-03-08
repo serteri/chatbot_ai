@@ -24,6 +24,7 @@ interface QueuedFile {
     taskId?: string
     analysisId?: string
     result?: AnalysisResult
+    retryCount: number
 }
 
 // ---------------------------------------------------------------------------
@@ -340,7 +341,7 @@ export default function BulkValidator() {
     const addFilesToQueue = (files: FileList | File[]) => {
         const newFiles: QueuedFile[] = Array.from(files)
             .filter(f => f.type === 'application/pdf' && f.size <= 20 * 1024 * 1024)
-            .map(file => ({ id: crypto.randomUUID(), file, status: 'idle', progress: 0 }))
+            .map(file => ({ id: crypto.randomUUID(), file, status: 'idle', progress: 0, retryCount: 0 }))
         setQueue(prev => [...prev, ...newFiles])
     }
 
@@ -380,20 +381,32 @@ export default function BulkValidator() {
     }, [queue, isProcessingLoopActive])
 
     // ── Step 2: Process ──
+    const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
+
     useEffect(() => {
         if (!isProcessingLoopActive) return
         const processNextFile = async () => {
             const pendingFile = queue.find(q => q.status === 'pending')
             if (!pendingFile || !pendingFile.taskId) return
+
             setQueue(prev => prev.map(q => q.id === pendingFile.id ? { ...q, status: 'processing' } : q))
+
             try {
+                // Exponential Backoff (2s, 5s, 10s) before fetching based on retry count
+                if (pendingFile.retryCount > 0) {
+                    const waitTime = pendingFile.retryCount === 1 ? 2000 : pendingFile.retryCount === 2 ? 5000 : 10000
+                    await delay(waitTime)
+                }
+
                 const res = await fetch('/api/validator/bulk-process', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ taskId: pendingFile.taskId })
                 })
+
                 if (!res.ok) throw new Error('Analysis Extract Failed')
                 const data = await res.json()
+
                 setQueue(prev => prev.map(q => q.id === pendingFile.id ? {
                     ...q,
                     status: 'completed',
@@ -402,9 +415,20 @@ export default function BulkValidator() {
                     result: data.result
                 } : q))
             } catch (err: any) {
-                setQueue(prev => prev.map(q => q.id === pendingFile.id ? { ...q, status: 'failed', error: err.message } : q))
+                // If it fails, check if we can retry
+                if (pendingFile.retryCount < 3) {
+                    setQueue(prev => prev.map(q => q.id === pendingFile.id ? {
+                        ...q,
+                        status: 'pending', // send back to pending for next loop
+                        retryCount: q.retryCount + 1
+                    } : q))
+                } else {
+                    // Exhausted retries
+                    setQueue(prev => prev.map(q => q.id === pendingFile.id ? { ...q, status: 'failed', error: err.message } : q))
+                }
             }
         }
+
         const processingCount = queue.filter(q => q.status === 'processing').length
         if (processingCount === 0) processNextFile()
     }, [queue, isProcessingLoopActive])
@@ -431,11 +455,25 @@ export default function BulkValidator() {
                             Drop up to 50 PDFs. 20MB limit per file. Processed sequentially in Sydney (ap-southeast-2).
                         </p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                         {totalFiles > 0 && (
-                            <div className="text-right mr-4">
-                                <span className="text-xl font-bold text-slate-800">{progressPercent}%</span>
-                                <p className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Completed</p>
+                            <div className="hidden sm:flex items-center gap-6 mr-4 bg-white px-4 py-2 rounded-xl border border-slate-200">
+                                <div className="text-center">
+                                    <span className="text-lg font-bold text-emerald-600 leading-none block">{completedFiles}</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Success</span>
+                                </div>
+                                <div className="text-center border-l border-slate-200 pl-4">
+                                    <span className="text-lg font-bold text-red-600 leading-none block">{failedFiles}</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Failed</span>
+                                </div>
+                                <div className="text-center border-l border-slate-200 pl-4">
+                                    <span className="text-lg font-bold text-slate-700 leading-none block">{totalFiles - completedFiles - failedFiles}</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Left</span>
+                                </div>
+                                <div className="text-center border-l border-slate-200 pl-4">
+                                    <span className="text-lg font-bold text-teal-600 leading-none block">{progressPercent}%</span>
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Done</span>
+                                </div>
                             </div>
                         )}
                         {!isProcessingLoopActive ? (
