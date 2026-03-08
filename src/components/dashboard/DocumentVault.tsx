@@ -4,12 +4,13 @@ import React, { useState } from 'react'
 import {
     Search, FileText, Download, ShieldCheck, CheckCircle2,
     XCircle, TrendingUp, AlertTriangle, Layers, Lock,
-    FileDown, ChevronDown, ChevronRight, Activity, Clock
+    FileDown, ChevronDown, ChevronUp, ChevronRight, Activity, Clock
 } from 'lucide-react'
 import { toast } from 'sonner'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import { useTranslations } from 'next-intl'
+import { format, parseISO } from 'date-fns'
 
 interface AnalysisRecord {
     id: string
@@ -62,13 +63,15 @@ function displayFileName(raw: string): string {
     return raw
 }
 
-function formatDate(isoString: string) {
-    const date = new Date(isoString)
-    return new Intl.DateTimeFormat('en-AU', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-    }).format(date)
+function formatDate(isoString: string | null | undefined) {
+    if (!isoString) return 'N/A'
+    try {
+        const date = typeof isoString === 'string' && isoString.includes('T') ? parseISO(isoString) : new Date(isoString)
+        if (isNaN(date.getTime())) return 'Invalid Date'
+        return format(date, 'dd MMM yyyy')
+    } catch {
+        return 'Invalid Date'
+    }
 }
 
 function getScoreColor(score: number) {
@@ -373,7 +376,7 @@ export default function DocumentVault({ singleAnalyses, bulkBatches, bulkAnalysi
                                                 )}
                                             </td>
                                             <td className="py-3.5 px-5 text-sm text-slate-600">
-                                                {record.documentEndDate ? formatDate(record.documentEndDate) : <span className="text-slate-400 italic">N/A</span>}
+                                                {formatDate(record?.documentEndDate)}
                                             </td>
                                             <td className="py-3.5 px-5">
                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold ${scoreColor.bg} ${scoreColor.text} border ${scoreColor.border}`}>
