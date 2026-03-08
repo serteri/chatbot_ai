@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
         const documentStartDate = normalizeToISO(formData.get('documentStartDate') as string)
         const documentEndDate = normalizeToISO(formData.get('documentEndDate') as string)
         const complianceScore = parseFloat(formData.get('complianceScore') as string || '0')
+        const taskId = formData.get('taskId') as string | null
 
         // Parse JSON strings back to objects
         const warningsStr = formData.get('warnings') as string
@@ -54,6 +55,25 @@ export async function POST(request: NextRequest) {
                 region: 'ap-southeast-2' // Fixed sovereign region
             }
         })
+
+        // ── Sync manually-entered dates back to the AnalysisTask ──
+        if (taskId) {
+            try {
+                await prisma.analysisTask.update({
+                    where: { id: taskId },
+                    data: {
+                        participantName,
+                        documentStartDate,
+                        documentEndDate,
+                        complianceScore,
+                        analysisId: analysisRecord.id,
+                    }
+                })
+                console.log(`[Save Analysis] Synced dates back to AnalysisTask ${taskId}`)
+            } catch (syncErr) {
+                console.warn(`[Save Analysis] Could not sync to AnalysisTask ${taskId}:`, syncErr)
+            }
+        }
 
         // Log to Audit Trail
         await createAuditLog({

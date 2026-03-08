@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
             const azureClient = getAzureOpenAIClient()
             const completion = await azureClient.chat.completions.create({
                 model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'pylonchat-v1',
-                temperature: 0.1,
+                temperature: 0,
                 response_format: { type: 'json_object' },
                 messages: [
                     { role: 'system', content: SYSTEM_PROMPT },
