@@ -430,16 +430,18 @@ export async function POST(request: NextRequest) {
             } catch (err) {
                 console.error('[Generate Addendum] Failed to save addendum to azure', err)
             }
+        }
 
-            // ── Sync manually-entered dates back to AnalysisTask + Analysis ──
-            const normalizedStart = normalizeToISO(body.startDate)
-            const normalizedEnd = normalizeToISO(body.endDate)
-            const safeParticipant = participantName && participantName !== 'Not specified' ? participantName : null
+        // ── ALWAYS sync manually-entered dates — works for BOTH single and bulk flows ──
+        const normalizedStart = normalizeToISO(body.startDate)
+        const normalizedEnd = normalizeToISO(body.endDate)
+        const safeParticipant = participantName && participantName !== 'Not specified' ? participantName : null
 
-            console.log(`[Generate Addendum] Syncing dates: start=${normalizedStart}, end=${normalizedEnd}, participant=${safeParticipant}`)
+        console.log(`[Generate Addendum] Syncing dates: start=${normalizedStart}, end=${normalizedEnd}, participant=${safeParticipant}, taskId=${body.taskId || 'none'}`)
 
-            try {
-                // Update the AnalysisTask itself
+        try {
+            if (body.taskId) {
+                // Bulk flow: update AnalysisTask + linked Analysis
                 await prisma.analysisTask.update({
                     where: { id: body.taskId },
                     data: {
@@ -449,7 +451,6 @@ export async function POST(request: NextRequest) {
                     }
                 })
 
-                // Also update the linked Analysis record so the Vault table picks it up
                 const task = await prisma.analysisTask.findUnique({ where: { id: body.taskId }, select: { analysisId: true } })
                 if (task?.analysisId) {
                     await prisma.analysis.update({
@@ -462,9 +463,29 @@ export async function POST(request: NextRequest) {
                     })
                     console.log(`[Generate Addendum] Synced dates to Analysis ${task.analysisId}`)
                 }
-            } catch (syncErr) {
-                console.warn(`[Generate Addendum] Date sync warning:`, syncErr)
+            } else {
+                // Single analysis flow: find latest Analysis by fileName and update it
+                const latestAnalysis = await prisma.analysis.findFirst({
+                    where: { userId: session.user.id, fileName: { contains: fileName.replace(/[^a-zA-Z0-9._-]/g, '') } },
+                    orderBy: { createdAt: 'desc' },
+                    select: { id: true }
+                })
+                if (latestAnalysis) {
+                    await prisma.analysis.update({
+                        where: { id: latestAnalysis.id },
+                        data: {
+                            ...(safeParticipant && { participantName: safeParticipant }),
+                            ...(normalizedStart && { documentStartDate: normalizedStart }),
+                            ...(normalizedEnd && { documentEndDate: normalizedEnd }),
+                        }
+                    })
+                    console.log(`[Generate Addendum] Single-flow: synced dates to Analysis ${latestAnalysis.id}`)
+                } else {
+                    console.warn(`[Generate Addendum] No Analysis record found for fileName: ${fileName}`)
+                }
             }
+        } catch (syncErr) {
+            console.warn(`[Generate Addendum] Date sync warning:`, syncErr)
         }
 
         return new NextResponse(pdfBuffer, {

@@ -111,6 +111,10 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
             vaultForm.append('remediations', JSON.stringify(remediations))
             vaultForm.append('complianceScore', String(complianceScore ?? 0))
             vaultForm.append('participantName', finalParticipantName || 'Unknown')
+            vaultForm.append('documentStartDate', startDate || '')
+            vaultForm.append('documentEndDate', endDate || '')
+
+            console.log('[RemediationPlan] Saving to vault with dates:', { startDate, endDate, participantName: finalParticipantName })
 
             const saveRes = await fetch('/api/validator/save-analysis', {
                 method: 'POST',

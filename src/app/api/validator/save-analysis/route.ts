@@ -41,6 +41,15 @@ export async function POST(request: NextRequest) {
         }
 
         // Save Analysis to Prisma Document Vault
+        console.log('[Save Analysis] Data being saved:', {
+            fileName,
+            participantName,
+            documentStartDate,
+            documentEndDate,
+            complianceScore,
+            taskId,
+        })
+
         const analysisRecord = await prisma.analysis.create({
             data: {
                 userId: session.user.id,
