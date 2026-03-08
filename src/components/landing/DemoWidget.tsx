@@ -66,118 +66,122 @@ export default function DemoWidget() {
     const topGap = warnings.length > 0 ? warnings[0] : null
     const score = result?.analysis?.complianceScore ?? 100
 
+    const remainingGapsCount = Math.max(0, warnings.length - 1)
+
+    const getActiveClause = (warning: string) => {
+        const lowerWarning = warning.toLowerCase()
+        if (lowerWarning.includes('consent') || lowerWarning.includes('privacy') || lowerWarning.includes('sharing')) return "Clause 1.1: Informed Consent: The participant hereby provides informed consent to collect and share necessary care information strictly as required by the NDIS Act 2013."
+        if (lowerWarning.includes('date') || lowerWarning.includes('start') || lowerWarning.includes('end')) return "Clause 1.1: Duration: The Service Agreement shall commence on [Start Date] and remain in effect until [End Date]."
+        if (lowerWarning.includes('nominee') || lowerWarning.includes('rep')) return "Clause 1.1: Representation: The nominated representative is formally recorded as [Name]."
+        if (lowerWarning.includes('cancel')) return "Clause 1.1: Cancellation: A minimum of 2 clear business days notice is required as per the NDIS Price Guide 2025/26."
+        if (lowerWarning.includes('price') || lowerWarning.includes('pricing')) return "Clause 1.1: Pricing: All supports align strictly with the NDIS Price Guide maximum limits."
+        return "Clause 1.1: General Compliance: The parties incorporate the latest NDIS Practice Standards into this agreement."
+    }
+
     return (
-        <section className="py-24 bg-slate-50 border-t border-slate-200">
-            <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-                <div className="mb-10">
-                    <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-                        Try the Enterprise Analysis Engine
-                    </h2>
-                    <p className="mt-4 text-lg text-slate-600">
-                        Drop a generic NDIS Service Agreement below. We'll find the highest-risk compliance gap for free.
-                    </p>
-                </div>
+        <div className="w-full max-w-2xl mx-auto mt-10">
+            <div className="bg-slate-800/50 backdrop-blur-md rounded-3xl border border-slate-700 p-6 sm:p-8 relative overflow-hidden shadow-2xl">
+                {!result && !isAnalyzing && (
+                    <div
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={handleDrop}
+                        className="border-2 border-dashed border-cyan-500/30 rounded-2xl p-8 sm:p-12 hover:bg-cyan-500/10 transition-colors cursor-pointer group"
+                    >
+                        <input
+                            type="file"
+                            id="demo-upload"
+                            className="hidden"
+                            accept=".pdf"
+                            onChange={(e) => e.target.files && handleFileSelect(e.target.files[0])}
+                        />
+                        <label htmlFor="demo-upload" className="cursor-pointer flex flex-col items-center">
+                            <div className="h-16 w-16 bg-cyan-500/20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <Upload className="h-8 w-8 text-cyan-400" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-white">Drag & Drop Service Agreement</h3>
+                            <p className="text-sm text-slate-400 mt-2">Up to 20MB, PDF format only</p>
+                        </label>
+                    </div>
+                )}
 
-                <div className="bg-white rounded-3xl shadow-xl border border-slate-200 p-8 max-w-2xl mx-auto overflow-hidden relative">
-                    {!result && !isAnalyzing && (
-                        <div
-                            onDragOver={(e) => e.preventDefault()}
-                            onDrop={handleDrop}
-                            className="border-2 border-dashed border-teal-200 rounded-2xl p-12 hover:bg-teal-50/50 transition-colors cursor-pointer group"
-                        >
-                            <input
-                                type="file"
-                                id="demo-upload"
-                                className="hidden"
-                                accept=".pdf"
-                                onChange={(e) => e.target.files && handleFileSelect(e.target.files[0])}
-                            />
-                            <label htmlFor="demo-upload" className="cursor-pointer flex flex-col items-center">
-                                <div className="h-16 w-16 bg-teal-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <Upload className="h-8 w-8 text-teal-600" />
+                {isAnalyzing && (
+                    <div className="flex flex-col items-center justify-center py-16">
+                        <Loader2 className="h-12 w-12 text-cyan-500 animate-spin mb-4" />
+                        <h3 className="text-lg font-semibold text-white animate-pulse">Scanning 11+ NDIS Risk Points...</h3>
+                        <p className="text-sm text-slate-400 mt-2">Connecting to Sovereign Sydney AI Engine</p>
+                    </div>
+                )}
+
+                {result && !isAnalyzing && (
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-left">
+                        <div className="flex items-center justify-between mb-6 pb-6 border-b border-slate-700/50">
+                            <div className="flex items-center gap-3 w-full max-w-[70%]">
+                                <div className="h-10 w-10 shrink-0 bg-cyan-500/20 text-cyan-400 rounded-xl flex items-center justify-center">
+                                    <FileText className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-lg font-semibold text-slate-900">Drag & Drop Service Agreement</h3>
-                                <p className="text-sm text-slate-500 mt-2">Up to 20MB, PDF format only</p>
-                            </label>
+                                <div className="min-w-0">
+                                    <h4 className="font-semibold text-white truncate w-full">{result.fileName}</h4>
+                                    <p className="text-xs text-slate-400">Analysis Complete</p>
+                                </div>
+                            </div>
+                            <div className="text-right shrink-0 pl-2">
+                                <div className="text-2xl sm:text-3xl font-bold text-red-500">{score}%</div>
+                                <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Compliance</p>
+                            </div>
                         </div>
-                    )}
 
-                    {isAnalyzing && (
-                        <div className="flex flex-col items-center justify-center py-16">
-                            <Loader2 className="h-12 w-12 text-teal-600 animate-spin mb-4" />
-                            <h3 className="text-lg font-semibold text-slate-900 animate-pulse">Scanning 11+ NDIS Risk Points...</h3>
-                            <p className="text-sm text-slate-500 mt-2">Connecting to Sovereign Sydney AI Engine</p>
-                        </div>
-                    )}
-
-                    {result && !isAnalyzing && (
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-left">
-                            <div className="flex items-center justify-between mb-6 pb-6 border-b border-slate-100">
-                                <div className="flex items-center gap-3">
-                                    <div className="h-10 w-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center">
-                                        <FileText className="h-5 w-5" />
-                                    </div>
+                        {topGap ? (
+                            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-5 mb-6">
+                                <div className="flex items-start gap-3 mb-4">
+                                    <AlertTriangle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
                                     <div>
-                                        <h4 className="font-semibold text-slate-900 truncate max-w-[200px]">{result.fileName}</h4>
-                                        <p className="text-xs text-slate-500">Analysis Complete</p>
+                                        <h5 className="font-semibold text-red-400 mb-1">Critical Gap Detected</h5>
+                                        <p className="text-sm text-slate-300">{topGap}</p>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <div className="text-3xl font-bold text-red-600">{score}%</div>
-                                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Compliance</p>
+                                <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-3">
+                                    <div className="text-xs font-semibold text-cyan-400 mb-1 uppercase tracking-wider">Active Clause Preview</div>
+                                    <p className="text-sm text-slate-300 italic">"{getActiveClause(topGap)}"</p>
                                 </div>
                             </div>
-
-                            {topGap ? (
-                                <div className="bg-red-50 border border-red-100 rounded-xl p-5 mb-6">
-                                    <div className="flex items-start gap-3">
-                                        <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-                                        <div>
-                                            <h5 className="font-semibold text-red-900 mb-1">Critical Gap Detected</h5>
-                                            <p className="text-sm text-red-800">{topGap}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 mb-6">
-                                    <div className="flex items-start gap-3">
-                                        <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
-                                        <div>
-                                            <h5 className="font-semibold text-emerald-900 mb-1">No Critical Gaps Found</h5>
-                                            <p className="text-sm text-emerald-800">Your document appears strictly compliant.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Blurred Teaser */}
-                            <div className="relative rounded-xl border border-slate-200 bg-slate-50 p-6 overflow-hidden">
-                                <div className="blur-[4px] opacity-60">
-                                    <div className="h-4 bg-slate-200 rounded w-3/4 mb-3"></div>
-                                    <div className="h-4 bg-slate-200 rounded w-full mb-3"></div>
-                                    <div className="h-4 bg-slate-200 rounded w-5/6 mb-3"></div>
-                                    <div className="h-4 bg-slate-200 rounded w-1/2"></div>
-                                </div>
-
-                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 backdrop-blur-[2px]">
-                                    <div className="bg-white px-6 py-4 rounded-2xl shadow-lg border border-teal-100 text-center">
-                                        <p className="font-semibold text-slate-900 mb-1">
-                                            {warnings.length} total compliance gaps found.
-                                        </p>
-                                        <p className="text-xs text-slate-600 mb-4">Create a free account to view the full report and generate a branded Master Addendum instantly.</p>
-                                        <Link
-                                            href="/register"
-                                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-xl shadow-md transition-all"
-                                        >
-                                            Sign Up for Free to View All <ArrowRight className="h-4 w-4" />
-                                        </Link>
+                        ) : (
+                            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-5 mb-6">
+                                <div className="flex items-start gap-3">
+                                    <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+                                    <div>
+                                        <h5 className="font-semibold text-emerald-400 mb-1">No Critical Gaps Found</h5>
+                                        <p className="text-sm text-slate-300">Your document appears strictly compliant.</p>
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                    )}
-                </div>
+                        )}
+
+                        {/* Blurred Teaser */}
+                        <div className="relative rounded-xl border border-slate-700 bg-slate-900 p-6 overflow-hidden">
+                            <div className="blur-[4px] opacity-40">
+                                <div className="h-4 bg-slate-600 rounded w-3/4 mb-3"></div>
+                                <div className="h-4 bg-slate-600 rounded w-full mb-3"></div>
+                                <div className="h-4 bg-slate-600 rounded w-5/6 mb-3"></div>
+                                <div className="h-4 bg-slate-600 rounded w-1/2"></div>
+                            </div>
+
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-[2px]">
+                                <div className="bg-slate-800 px-6 py-5 rounded-2xl shadow-2xl border border-slate-700 text-center mx-4 w-full sm:w-auto">
+                                    <p className="font-semibold text-white mb-3">
+                                        {warnings.length} total compliance gaps found.
+                                    </p>
+                                    <Link
+                                        href="/register"
+                                        className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-bold rounded-xl shadow-[0_0_20px_rgba(8,145,178,0.4)] hover:shadow-[0_0_30px_rgba(8,145,178,0.6)] transition-all"
+                                    >
+                                        View {remainingGapsCount > 0 ? remainingGapsCount : 'more'} more gaps and download your branded Addendum - Sign up free
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
             </div>
-        </section>
+        </div>
     )
 }

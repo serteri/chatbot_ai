@@ -196,7 +196,7 @@ export default function DocumentVault({ singleAnalyses, bulkBatches, bulkAnalysi
                         placeholder="Search by document name or participant..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-shadow"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition-shadow"
                     />
                 </div>
                 <div className="flex gap-2">
@@ -215,7 +215,7 @@ export default function DocumentVault({ singleAnalyses, bulkBatches, bulkAnalysi
             {filteredSingle.length > 0 && (
                 <div>
                     <h2 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-indigo-600" />
+                        <FileText className="h-4 w-4 text-cyan-600" />
                         Single Analysis Records
                         <span className="text-xs font-normal text-slate-400">({filteredSingle.length})</span>
                     </h2>
@@ -223,11 +223,10 @@ export default function DocumentVault({ singleAnalyses, bulkBatches, bulkAnalysi
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50 border-b border-slate-200">
-                                    <th className="py-3 px-5 text-xs font-semibold text-slate-500 uppercase">Filename</th>
-                                    <th className="py-3 px-5 text-xs font-semibold text-slate-500 uppercase">Participant</th>
-                                    <th className="py-3 px-5 text-xs font-semibold text-slate-500 uppercase">Score</th>
-                                    <th className="py-3 px-5 text-xs font-semibold text-slate-500 uppercase hidden sm:table-cell">Analyzed</th>
-                                    <th className="py-3 px-5 text-xs text-right font-semibold text-slate-500 uppercase">Actions</th>
+                                    <th className="py-3 px-5 text-xs font-semibold text-slate-500 uppercase">Document Name</th>
+                                    <th className="py-3 px-5 text-xs font-semibold text-slate-500 uppercase">Date Created</th>
+                                    <th className="py-3 px-5 text-xs font-semibold text-slate-500 uppercase">Compliance Score</th>
+                                    <th className="py-3 px-5 text-xs text-right font-semibold text-slate-500 uppercase">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -235,26 +234,29 @@ export default function DocumentVault({ singleAnalyses, bulkBatches, bulkAnalysi
                                     const scoreColor = getScoreColor(record.complianceScore)
                                     return (
                                         <tr key={record.id} className="hover:bg-slate-50/50">
-                                            <td className="py-3.5 px-5 font-medium text-sm text-slate-900">
+                                            <td className="py-3.5 px-5 font-medium text-sm text-slate-900 border-b border-slate-100">
                                                 {displayFileName(record.fileName)}
+                                                {record.participantName && <div className="text-xs text-slate-500 font-normal">Participant: {record.participantName}</div>}
                                             </td>
-                                            <td className="py-3.5 px-5 text-sm text-slate-600">
-                                                {record.participantName || <span className="text-slate-400 italic">Not extracted</span>}
+                                            <td className="py-3.5 px-5 text-sm text-slate-500 border-b border-slate-100">
+                                                {formatDate(record.createdAt)}
                                             </td>
-                                            <td className="py-3.5 px-5">
+                                            <td className="py-3.5 px-5 border-b border-slate-100">
                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold ${scoreColor.bg} ${scoreColor.text} border ${scoreColor.border}`}>
                                                     {getScoreIcon(record.complianceScore)} {record.complianceScore}%
                                                 </span>
                                             </td>
-                                            <td className="py-3.5 px-5 text-sm text-slate-500 hidden sm:table-cell">
-                                                {formatDate(record.createdAt)}
-                                            </td>
-                                            <td className="py-3.5 px-5 text-right">
-                                                {record.pdfUrl ? (
-                                                    <button onClick={() => handleSecureDownload(record.pdfUrl!)} className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg">
-                                                        <Download className="h-3.5 w-3.5" /> Download Addendum
+                                            <td className="py-3.5 px-5 text-right border-b border-slate-100">
+                                                <div className="flex justify-end gap-2">
+                                                    <button className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg shadow-sm">
+                                                        <FileText className="h-3.5 w-3.5" /> Download Original
                                                     </button>
-                                                ) : <span className="text-xs text-slate-400 italic">No Addendum</span>}
+                                                    {record.pdfUrl ? (
+                                                        <button onClick={() => handleSecureDownload(record.pdfUrl!)} className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-cyan-600 hover:bg-cyan-700 rounded-lg shadow-sm">
+                                                            <Download className="h-3.5 w-3.5" /> Download Addendum
+                                                        </button>
+                                                    ) : <span className="text-xs text-slate-400 italic px-3 py-1.5">No Addendum</span>}
+                                                </div>
                                             </td>
                                         </tr>
                                     )
@@ -269,15 +271,15 @@ export default function DocumentVault({ singleAnalyses, bulkBatches, bulkAnalysi
             {filteredBatches.length > 0 && (
                 <div className="pt-4">
                     <h2 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
-                        <Layers className="h-4 w-4 text-indigo-600" />
+                        <Layers className="h-4 w-4 text-cyan-600" />
                         Bulk Processing Batches
                         <span className="text-xs font-normal text-slate-400">({filteredBatches.length})</span>
                     </h2>
                     <div className="space-y-4">
                         {filteredBatches.map(batch => (
                             <div key={batch.batchId} className="bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden">
-                                <div className="bg-slate-50 px-5 py-3 border-b flex justify-between items-center">
-                                    <div className="font-semibold text-sm text-slate-800">Batch of {batch.tasks.length} files <span className="text-slate-500 font-normal text-xs block">{formatDate(batch.createdAt)}</span></div>
+                                <div className="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                                    <div className="font-semibold text-sm text-slate-800">Batch of {batch.tasks.length} files <span className="text-slate-500 font-normal text-xs ml-2">({formatDate(batch.createdAt)})</span></div>
                                 </div>
                                 <div className="divide-y divide-slate-100">
                                     {batch.tasks.map(task => {
@@ -294,8 +296,15 @@ export default function DocumentVault({ singleAnalyses, bulkBatches, bulkAnalysi
                                                     {score !== null && scoreColor ? (
                                                         <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold ${scoreColor.bg} ${scoreColor.text} border ${scoreColor.border}`}>{score}%</span>
                                                     ) : getStatusBadge(task.status)}
+
+                                                    <button className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-md">
+                                                        <FileText className="h-3 w-3" /> Original
+                                                    </button>
+
                                                     {task.fileUrl && task.status === 'completed' && (
-                                                        <button onClick={() => handleSecureDownload(task.fileUrl!)} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-md border border-indigo-200"><Download className="h-3 w-3" /> Addendum</button>
+                                                        <button onClick={() => handleSecureDownload(task.fileUrl!)} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white bg-cyan-600 hover:bg-cyan-700 rounded-md">
+                                                            <Download className="h-3 w-3" /> Addendum
+                                                        </button>
                                                     )}
                                                 </div>
                                             </div>

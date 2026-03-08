@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { FileText, ShieldCheck, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import DemoWidget from '@/components/landing/DemoWidget'
 
 export function HeroEnterprise({ locale }: { locale: string }) {
     const t = useTranslations('ndisLanding.hero')
@@ -68,6 +69,14 @@ export function HeroEnterprise({ locale }: { locale: string }) {
                         <FileText className="w-5 h-5 text-slate-400" />
                         {t('ctaSecondary')}
                     </Link>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                >
+                    <DemoWidget />
                 </motion.div>
             </div>
         </section>
