@@ -5,6 +5,7 @@ import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { BlobServiceClient } from '@azure/storage-blob'
 import { uploadPdfToAzure, generateUniqueName } from '@/lib/azure-storage'
+import { normalizeToISO } from '@/lib/utils/dateNormalizer'
 
 // ---------------------------------------------------------------------------
 // POST /api/validator/generate-addendum
@@ -428,6 +429,41 @@ export async function POST(request: NextRequest) {
                 console.log(`[Generate Addendum] Successfully saved addendum to Azure and linked to task ${body.taskId}`)
             } catch (err) {
                 console.error('[Generate Addendum] Failed to save addendum to azure', err)
+            }
+
+            // ── Sync manually-entered dates back to AnalysisTask + Analysis ──
+            const normalizedStart = normalizeToISO(body.startDate)
+            const normalizedEnd = normalizeToISO(body.endDate)
+            const safeParticipant = participantName && participantName !== 'Not specified' ? participantName : null
+
+            console.log(`[Generate Addendum] Syncing dates: start=${normalizedStart}, end=${normalizedEnd}, participant=${safeParticipant}`)
+
+            try {
+                // Update the AnalysisTask itself
+                await prisma.analysisTask.update({
+                    where: { id: body.taskId },
+                    data: {
+                        ...(safeParticipant && { participantName: safeParticipant }),
+                        ...(normalizedStart && { documentStartDate: normalizedStart }),
+                        ...(normalizedEnd && { documentEndDate: normalizedEnd }),
+                    }
+                })
+
+                // Also update the linked Analysis record so the Vault table picks it up
+                const task = await prisma.analysisTask.findUnique({ where: { id: body.taskId }, select: { analysisId: true } })
+                if (task?.analysisId) {
+                    await prisma.analysis.update({
+                        where: { id: task.analysisId },
+                        data: {
+                            ...(safeParticipant && { participantName: safeParticipant }),
+                            ...(normalizedStart && { documentStartDate: normalizedStart }),
+                            ...(normalizedEnd && { documentEndDate: normalizedEnd }),
+                        }
+                    })
+                    console.log(`[Generate Addendum] Synced dates to Analysis ${task.analysisId}`)
+                }
+            } catch (syncErr) {
+                console.warn(`[Generate Addendum] Date sync warning:`, syncErr)
             }
         }
 

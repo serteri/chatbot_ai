@@ -30,6 +30,8 @@ export default async function HistoryPage() {
             pdfUrl: true,
             region: true,
             createdAt: true,
+            documentStartDate: true,
+            documentEndDate: true,
         }
     })
 
@@ -92,6 +94,8 @@ export default async function HistoryPage() {
         ...a,
         warnings: Array.isArray(a.warnings) ? (a.warnings as any[]) : [],
         createdAt: a.createdAt.toISOString(),
+        documentStartDate: a.documentStartDate || null,
+        documentEndDate: a.documentEndDate || null,
     }))
 
     const serializedBatches = batches.map(batch => ({
@@ -103,13 +107,15 @@ export default async function HistoryPage() {
     }))
 
     // For bulk tasks that have linked analyses, include the analysis data
-    const bulkAnalysisMap: Record<string, { complianceScore: number; participantName: string | null; warnings: any[] }> = {}
+    const bulkAnalysisMap: Record<string, { complianceScore: number; participantName: string | null; warnings: any[]; documentStartDate?: string | null; documentEndDate?: string | null }> = {}
     for (const a of analyses) {
         if (bulkAnalysisIds.has(a.id)) {
             bulkAnalysisMap[a.id] = {
                 complianceScore: a.complianceScore,
                 participantName: a.participantName,
                 warnings: Array.isArray(a.warnings) ? (a.warnings as any[]) : [],
+                documentStartDate: a.documentStartDate || null,
+                documentEndDate: a.documentEndDate || null,
             }
         }
     }
