@@ -11,7 +11,7 @@ export function HeroEnterprise({ locale }: { locale: string }) {
     const t = useTranslations('ndisLanding.hero')
 
     return (
-        <section className="relative overflow-hidden bg-slate-900 pt-32 pb-20 lg:pt-40 lg:pb-28">
+        <section id="hero-upload" className="relative overflow-hidden bg-slate-900 pt-32 pb-20 lg:pt-40 lg:pb-28">
             <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay pointer-events-none" />
             <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[800px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/4 w-[600px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />

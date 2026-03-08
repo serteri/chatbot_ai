@@ -2,9 +2,8 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { FileText, CheckCircle2, ArrowRight } from 'lucide-react'
+import { FileText, CheckCircle2, ArrowRight, AlertTriangle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { DemoUploadWidget } from './DemoUploadWidget'
 
 export function InteractiveDemo() {
     const t = useTranslations('ndisLanding.interactive')
@@ -16,7 +15,7 @@ export function InteractiveDemo() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-24">
 
-                    {/* Before State (Functional Widget) */}
+                    {/* Before State — Static Blurred Non-Compliant Document */}
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -27,7 +26,32 @@ export function InteractiveDemo() {
                         <div className="mb-4 text-center text-sm font-semibold text-slate-500 uppercase tracking-widest">
                             {t('before')}
                         </div>
-                        <DemoUploadWidget />
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 pt-10 aspect-[3/4] relative opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                            {/* Generic Headers */}
+                            <div className="w-32 h-4 bg-slate-200 rounded mb-8" />
+                            <div className="w-3/4 h-6 bg-slate-300 rounded mb-4" />
+                            <div className="w-1/2 h-4 bg-slate-200 rounded mb-12" />
+
+                            {/* Generic Blocks */}
+                            <div className="space-y-4">
+                                <div className="w-full h-2 bg-slate-100 rounded" />
+                                <div className="w-full h-2 bg-slate-100 rounded" />
+                                <div className="w-5/6 h-2 bg-slate-100 rounded" />
+                            </div>
+
+                            {/* Missing Info highlights */}
+                            <div className="mt-12 space-y-3">
+                                <div className="flex items-center gap-2 p-2 border border-red-200 bg-red-50 text-red-600 text-xs rounded font-mono">
+                                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" /> [MISSING ABN]
+                                </div>
+                                <div className="flex items-center gap-2 p-2 border border-red-200 bg-red-50 text-red-600 text-xs rounded font-mono">
+                                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" /> [GENERIC CANCELLATION]
+                                </div>
+                                <div className="flex items-center gap-2 p-2 border border-amber-200 bg-amber-50 text-amber-600 text-xs rounded font-mono">
+                                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" /> [NO CONSENT CLAUSE]
+                                </div>
+                            </div>
+                        </div>
                     </motion.div>
 
                     {/* Arrow / Transition */}
