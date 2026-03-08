@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { FileText, CheckCircle2, ArrowRight } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { DemoUploadWidget } from './DemoUploadWidget'
 
