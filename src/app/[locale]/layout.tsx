@@ -65,6 +65,9 @@ export async function generateMetadata({
             template: `%s | ${SITE_NAME}`
         },
         description: SITE_DESCRIPTION,
+        verification: {
+            google: 'gM8Zs6FrDD-L9UD1fLXaqR1fGhC_zLhiJ1yRvcARhNo',
+        },
         alternates: {
             canonical: canonical.toString(),
             languages
