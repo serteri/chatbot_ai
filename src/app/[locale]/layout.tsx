@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import QueryProvider from '@/components/providers/QueryProvider'
@@ -33,17 +34,28 @@ export async function generateMetadata({
 }: LocaleLayoutProps): Promise<Metadata> {
     const { locale } = await params
     const siteUrl = getSiteUrl()
-    const localePrefix = locale === DEFAULT_LOCALE ? '' : `/${locale}`
-    const canonical = new URL(`${localePrefix}/`, siteUrl)
     const ogLocale = OG_LOCALE_MAP[locale] || locale
     const ogImage = SITE_OG_IMAGE.startsWith('http')
         ? SITE_OG_IMAGE
         : new URL(SITE_OG_IMAGE, siteUrl).toString()
 
+    // Read the actual request path injected by middleware so the canonical
+    // reflects this specific page, not just the locale root.
+    const headersList = await headers()
+    const pathname = headersList.get('x-pathname') || '/'
+    const canonical = new URL(pathname, siteUrl)
+
+    // hreflang alternates: swap the locale prefix to point each language
+    // version at the equivalent path on its own locale.
     const languages: Record<string, string> = {}
     for (const supportedLocale of SUPPORTED_LOCALES) {
-        const prefix = supportedLocale === DEFAULT_LOCALE ? '' : `/${supportedLocale}`
-        languages[supportedLocale] = new URL(`${prefix}/`, siteUrl).toString()
+        const defaultPrefix = locale === DEFAULT_LOCALE ? '' : `/${locale}`
+        const targetPrefix = supportedLocale === DEFAULT_LOCALE ? '' : `/${supportedLocale}`
+        // Replace the current locale prefix with the target locale prefix.
+        const equivalentPath = defaultPrefix
+            ? pathname.replace(new RegExp(`^/${locale}`), targetPrefix) || targetPrefix || '/'
+            : `${targetPrefix}${pathname}`
+        languages[supportedLocale] = new URL(equivalentPath || '/', siteUrl).toString()
     }
 
     return {

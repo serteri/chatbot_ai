@@ -38,8 +38,12 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // Otherwise, use standard internationalization middleware
-  return intlMiddleware(req);
+  // Standard internationalization middleware.
+  // Inject x-pathname so generateMetadata in [locale]/layout.tsx can build
+  // a per-page canonical URL instead of always pointing to the locale root.
+  const response = await intlMiddleware(req);
+  response.headers.set('x-pathname', req.nextUrl.pathname);
+  return response;
 }
 
 export const config = {
