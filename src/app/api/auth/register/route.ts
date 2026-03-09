@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { hash } from 'bcryptjs'
 import { prisma } from '@/lib/db/prisma'
 import { z } from 'zod'
+import { sendWelcomeEmail, sendAdminAlert } from '@/lib/email/user-notifications'
 
 // Validation schema
 const registerSchema = z.object({
@@ -67,6 +68,12 @@ export async function POST(req: NextRequest) {
         currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       }
     })
+
+    // Fire emails in parallel, non-blocking
+    await Promise.allSettled([
+      sendWelcomeEmail({ name: user.name!, email: user.email! }),
+      sendAdminAlert({ name: user.name!, email: user.email!, companyName: user.companyName || undefined }),
+    ])
 
     return NextResponse.json(
       {

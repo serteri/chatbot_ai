@@ -47,16 +47,12 @@ export default function PricingPage() {
             case 'tr':
                 return {
                     free: { price: starterUSD, display: NDIS_COMPLIANCE_TIERS.starter.displayTRY },
-                    pro: { price: 899, display: '₺899' },
-                    business: { price: 2099, display: '₺2.099' },
-                    enterprise: { price: proTRY, display: NDIS_COMPLIANCE_TIERS.professional.displayTRY }
+                    pro: { price: proTRY, display: NDIS_COMPLIANCE_TIERS.professional.displayTRY },
                 }
             default: // USD/EUR
                 return {
                     free: { price: starterUSD, display: `${currency}${starterUSD}` },
-                    pro: { price: 29, display: `${currency}29` },
-                    business: { price: 69, display: `${currency}69` },
-                    enterprise: { price: proUSD, display: `${currency}${proUSD}` }
+                    pro: { price: proUSD, display: `${currency}${proUSD}` },
                 }
         }
     }
