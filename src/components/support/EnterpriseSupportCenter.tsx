@@ -90,11 +90,11 @@ const faqCategories: Record<string, FAQCategory[]> = {
             questions: [
                 {
                     question: 'Fiyatlandirma nasil calisiyor?',
-                    answer: '4 plan sunuyoruz:\n\n• Ucretsiz: 1 chatbot, aylik 100 mesaj, temel ozellikler\n• Pro ($29/ay): 5 chatbot, aylik 5.000 mesaj, gelismis analitik\n• Business ($79/ay): 15 chatbot, aylik 25.000 mesaj, API erisimi, oncelikli destek\n• Enterprise (Ozel fiyat): Sinirsiz chatbot ve mesaj, ozel entegrasyonlar, 7/24 destek, SLA garantisi'
+                    answer: '2 plan sunuyoruz:\n\n• Starter (Ucretsiz): Aylik 3 NDIS denetimi, filigranli PDF raporlar, temel uyumluluk puanlama\n• Professional ($99/ay): Sinirsiz NDIS denetimi, markali PDF raporlar, toplu belge isleme, oncelikli destek\n\nBaslangicta kredi karti gerekmez.'
                 },
                 {
                     question: 'Yillik odeme indirimi var mi?',
-                    answer: 'Evet! Yillik odeme secenegi ile %20 indirim kazanirsiniz. Ornegin Pro plan aylik $29 yerine yillik odemede aylik $23.20\'ye denk gelir. Yillik planlar ayrica oncelikli destek ve ekstra ozellikler icerir.'
+                    answer: 'Simdilik yillik odeme secenegi sunulmamaktadir. Professional plan aylik $99 olarak faturalanir ve istediginiz zaman iptal edebilirsiniz.'
                 },
                 {
                     question: 'Plan degisikligi nasil yapilir?',
@@ -300,11 +300,11 @@ const faqCategories: Record<string, FAQCategory[]> = {
             questions: [
                 {
                     question: 'How does pricing work?',
-                    answer: 'We offer 4 plans:\n\n• Free: 1 chatbot, 100 messages/month, basic features\n• Pro ($29/mo): 5 chatbots, 5,000 messages/month, advanced analytics\n• Business ($79/mo): 15 chatbots, 25,000 messages/month, API access, priority support\n• Enterprise (Custom): Unlimited chatbots and messages, custom integrations, 24/7 support, SLA guarantee'
+                    answer: 'We offer 2 plans:\n\n• Starter (Free): 3 NDIS audits/month, watermarked PDF reports, basic compliance scoring\n• Professional ($99/mo): Unlimited NDIS audits, white-label PDF reports, bulk document processing, priority support\n\nNo credit card required to start.'
                 },
                 {
                     question: 'Is there an annual payment discount?',
-                    answer: 'Yes! You get 20% off with annual payment. For example, Pro plan becomes $23.20/month instead of $29/month. Annual plans also include priority support and extra features.'
+                    answer: 'Annual billing is not currently available. The Professional plan is billed monthly at $99 and can be cancelled anytime.'
                 },
                 {
                     question: 'How do I change my plan?',

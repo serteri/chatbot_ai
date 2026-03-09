@@ -1,17 +1,7 @@
-import { Resend } from 'resend'
 import { render } from '@react-email/components'
 import { WelcomeEmail } from '@/emails/WelcomeEmail'
 import { AdminAlertEmail } from '@/emails/AdminAlertEmail'
-
-const ADMIN_EMAIL = 'serteri@gmail.com'
-const FROM_ADDRESS = process.env.EMAIL_FROM || 'onboarding@resend.dev'
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.pylonchat.com'
-
-function getClient(): Resend {
-    const key = process.env.RESEND_API_KEY
-    if (!key) throw new Error('RESEND_API_KEY is not set')
-    return new Resend(key)
-}
+import { getResend, FROM, ADMIN_EMAIL, SITE_URL } from '@/lib/mail'
 
 // ---------------------------------------------------------------------------
 // Welcome email → new registrant
@@ -29,8 +19,8 @@ export async function sendWelcomeEmail(params: {
             })
         )
 
-        const { error } = await getClient().emails.send({
-            from: `PylonChat <${FROM_ADDRESS}>`,
+        const { error } = await getResend().emails.send({
+            from: FROM.info,
             to: [params.email],
             subject: 'Welcome to PylonChat — Your NDIS Compliance Shield is Active',
             html,
@@ -62,8 +52,8 @@ export async function sendAdminAlert(params: {
             })
         )
 
-        const { error } = await getClient().emails.send({
-            from: `PylonChat Alerts <${FROM_ADDRESS}>`,
+        const { error } = await getResend().emails.send({
+            from: FROM.noReply,
             to: [ADMIN_EMAIL],
             subject: `🚀 New User Registered: ${params.name} (${params.email})`,
             html,

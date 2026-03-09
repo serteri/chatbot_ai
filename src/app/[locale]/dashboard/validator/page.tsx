@@ -46,7 +46,7 @@ interface WarningDetail {
     text: string
     confidenceScore: number
     requiresManualReview: boolean
-    citation: string
+    sourceCitation: string
 }
 
 interface AnalysisResult {

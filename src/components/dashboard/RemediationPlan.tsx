@@ -10,7 +10,7 @@ export interface WarningDetail {
     text: string
     confidenceScore: number
     requiresManualReview: boolean
-    citation: string
+    sourceCitation: string
 }
 
 interface RemediationPlanProps {
@@ -26,7 +26,7 @@ interface RemediationPlanProps {
 
 function ConfidenceBadge({ score }: { score: number }) {
     const color =
-        score >= 85 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+        score >= 90 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
         score >= 70 ? 'bg-amber-50 text-amber-700 border-amber-200' :
                      'bg-red-50 text-red-700 border-red-200'
     return (
@@ -188,15 +188,15 @@ export default function RemediationPlan({ warnings, warningDetails, summary, rem
                                     {detail && (
                                         <div className="mt-2 flex flex-wrap items-center gap-2">
                                             <ConfidenceBadge score={detail.confidenceScore} />
-                                            {detail.requiresManualReview && (
+                                            {detail.confidenceScore < 90 && (
                                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-semibold bg-orange-50 text-orange-700 border-orange-200">
-                                                    ⚠ Requires Manual Review
+                                                    ⚠️ Manual Review Suggested
                                                 </span>
                                             )}
-                                            {/* NDIS citation */}
+                                            {/* NDIS source citation */}
                                             <span className="inline-flex items-center gap-1 text-[10px] text-slate-400">
                                                 <BookOpen className="h-3 w-3" />
-                                                {detail.citation}
+                                                {detail.sourceCitation}
                                             </span>
                                         </div>
                                     )}

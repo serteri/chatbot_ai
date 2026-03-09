@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { createAuditLog } from '@/lib/services/audit'
 import OpenAI from 'openai'
+import { NDIS_SYSTEM_PROMPT } from '@/lib/ai/analyze'
 
 // ---------------------------------------------------------------------------
 // NDIS Service Agreement Analyzer — Azure OpenAI Sydney
@@ -9,41 +10,8 @@ import OpenAI from 'openai'
 // Infrastructure: Azure OpenAI (ap-southeast-2, Sydney)
 // ---------------------------------------------------------------------------
 
-export const SYSTEM_PROMPT = `You are a Senior NDIS Compliance Officer. Analyze the provided Service Agreement strictly against the NDIS Practice Standards 2021 (updated 2025/26) and the NDIS Price Guide 2025/26.
-
-Return a strict JSON object containing:
-- "participantName": string or null (Extract the participant's full name from headers like 'About the Participant', 'Name', or 'Participant Details'. Do not use provider names.)
-- "totalFunding": number (total plan funding in AUD)
-- "startDate": string (plan start date, e.g. "2025-07-01". Look explicitly for 'Start Date' or 'Commencement')
-- "endDate": string (plan end date, e.g. "2026-06-30". Look explicitly for 'End Date', 'Expiry', or 'Review Date')
-- "lineItems": array of objects, each with:
-  - "code": string (NDIS line item code, e.g. "04_590_0125_6_1")
-  - "description": string (what the line item covers)
-  - "budget": number (allocated budget in AUD)
-- "complianceScore": number between 0 and 100 (based on required clauses present and strict NDIS Practice Standards adherence)
-- "warnings": array of strings (backward-compat plain text summaries of each gap — one string per gap)
-- "warningDetails": array of objects, one per compliance gap, each containing:
-  - "text": string (clear, actionable description of the gap)
-  - "confidenceScore": number 0-100 (your confidence that this gap genuinely exists in this document; use 90-100 when the clause is completely absent, 70-89 when present but inadequate, below 70 only for ambiguous cases)
-  - "requiresManualReview": boolean (true if confidenceScore < 85)
-  - "citation": string (the specific NDIS document, section, and clause — e.g. "NDIS Practice Standards 2021, Outcome 1.1 — Rights and Responsibilities" or "NDIS Price Guide 2025/26, Section 5.3 — Cancellation Policy")
-- "summary": string (2-3 sentence overview of the agreement)
-
-Check for these critical NDIS compliance issues:
-- Missing or non-compliant cancellation policy (NDIS Price Guide 2025/26, Section 5.3)
-- Missing incident management and reporting procedures (NDIS Practice Standards 2021, Outcome 2.4)
-- Missing explicit consent clauses for data collection and sharing (NDIS Practice Standards 2021, Outcome 1.2)
-- Pricing exceeding NDIS Price Guide 2025/26 maximum limits (NDIS Price Guide 2025/26, Support Catalogue)
-- Missing ABN or NDIS provider registration number (NDIS Act 2013, s.73B)
-- Missing explicit participant goals or outcomes (NDIS Practice Standards 2021, Outcome 1.4)
-- Missing nominated representative or plan nominee details (NDIS Act 2013, s.86)
-
-The "warnings" array must contain the same items as "warningDetails[].text" so that both fields remain in sync.
-
-If the document is NOT an NDIS Service Agreement, return:
-{ "error": "This document does not appear to be an NDIS Service Agreement.", "complianceScore": 0 }
-
-Be extremely thorough and precise. Australian NDIS providers rely on your rigorous analysis for official government audit readiness.`
+// Re-export for any code that still imports SYSTEM_PROMPT from this route
+export { NDIS_SYSTEM_PROMPT as SYSTEM_PROMPT }
 
 // ---------------------------------------------------------------------------
 // Azure OpenAI Client (Sydney — ap-southeast-2)
@@ -186,7 +154,7 @@ export async function POST(request: NextRequest) {
             temperature: 0,
             response_format: { type: 'json_object' },
             messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
+                { role: 'system', content: NDIS_SYSTEM_PROMPT },
                 {
                     role: 'user',
                     content: `Analyze this NDIS Service Agreement:\n\n---\n${truncatedText}\n---`,

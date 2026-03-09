@@ -48,7 +48,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'pricing',
             question: 'How does pricing work?',
-            answer: 'We offer 4 plans: Free (1 chatbot), Pro ($29/mo - 5 chatbots), Business ($79/mo - 15 chatbots), and Enterprise (custom pricing - unlimited). All paid plans include priority support.'
+            answer: 'We offer 2 plans: Starter (Free — 3 audits/month, watermarked reports) and Professional ($99/mo — unlimited audits, white-label PDF reports, priority support). No credit card required to start.'
         },
         {
             id: 'integration',
@@ -80,7 +80,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'pricing',
             question: 'Fiyatlandirma nasil calisiyor?',
-            answer: '4 plan sunuyoruz: Ucretsiz (1 chatbot), Pro (aylik $29 - 5 chatbot), Business (aylik $79 - 15 chatbot) ve Enterprise (ozel fiyat - sinirsiz). Tum ucretli planlar oncelikli destek icerir.'
+            answer: '2 plan sunuyoruz: Starter (Ucretsiz — aylik 3 denetim, filigranli raporlar) ve Professional (aylik $99 — sinirsiz denetim, markali PDF raporlar, oncelikli destek). Baslangicta kredi karti gerekmez.'
         },
         {
             id: 'integration',
@@ -112,7 +112,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'pricing',
             question: 'Wie funktioniert die Preisgestaltung?',
-            answer: 'Wir bieten 4 Plane: Kostenlos (1 Chatbot), Pro (29$/Monat - 5 Chatbots), Business (79$/Monat - 15 Chatbots) und Enterprise (individuelle Preise - unbegrenzt). Alle kostenpflichtigen Plane beinhalten Priority-Support.'
+            answer: 'Wir bieten 2 Plane: Starter (Kostenlos — 3 Prufungen/Monat, mit Wasserzeichen) und Professional (99$/Monat — unbegrenzte Prufungen, White-Label-PDF-Berichte, Priority-Support). Keine Kreditkarte erforderlich.'
         },
         {
             id: 'integration',
@@ -144,7 +144,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'pricing',
             question: 'Como funciona el precio?',
-            answer: 'Ofrecemos 4 planes: Gratis (1 chatbot), Pro ($29/mes - 5 chatbots), Business ($79/mes - 15 chatbots) y Enterprise (precio personalizado - ilimitado). Todos los planes de pago incluyen soporte prioritario.'
+            answer: 'Ofrecemos 2 planes: Starter (Gratis — 3 auditorias/mes, informes con marca de agua) y Professional ($99/mes — auditorias ilimitadas, informes PDF de marca blanca, soporte prioritario). No se requiere tarjeta de credito.'
         },
         {
             id: 'integration',
@@ -582,7 +582,7 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
         { q: 'Ucretsiz deneme surumu var mi?', a: 'Evet! Ucretsiz planumuzla hemen baslayabilirsiniz. Kredi karti gerektirmez. Ucretsiz planda 1 chatbot olusturabilir, 3 belge yukleyebilir ve aylik 100 mesaj kullanabilirsiniz. Tum temel ozelliklere erisim saglarsiniz. Daha fazla ozellik icin Pro veya Business planina yukseltebilirsiniz.', category: 'Genel' },
 
         // Fiyatlandirma
-        { q: 'Fiyatlandirma nasil calisiyor? Hangi planlar var?', a: 'Dort plan sunuyoruz:\n\n• UCRETSIZ: 1 chatbot, 3 belge, aylik 100 mesaj, temel ozellikler\n• PRO ($29/ay): 5 chatbot, 20 belge, aylik 5.000 mesaj, gelismis analitik, oncelikli destek\n• BUSINESS ($79/ay): 15 chatbot, 100 belge, aylik 25.000 mesaj, API erisimi, ozel marka, 7/24 destek\n• ENTERPRISE (Ozel): Sinirsiz chatbot ve mesaj, ozel entegrasyonlar, SLA garantisi, ozel hesap yoneticisi\n\nYillik odemede %20 indirim kazanirsiniz.', category: 'Fiyatlandirma' },
+        { q: 'Fiyatlandirma nasil calisiyor? Hangi planlar var?', a: 'Iki plan sunuyoruz:\n\n• STARTER (Ucretsiz): Aylik 3 NDIS denetimi, filigranli PDF raporlar, temel uyumluluk puanlama\n• PROFESSIONAL ($99/ay): Sinirsiz NDIS denetimi, markali PDF raporlar, toplu belge isleme, oncelikli destek\n\nBaslangicta kredi karti gerekmez.', category: 'Fiyatlandirma' },
         { q: 'Mesaj limiti asarsam ne olur?', a: 'Mesaj limitinizi astiginizda chatbotunuz calismaya devam eder ancak asim ucreti uygulanir:\n\n• Pro plan: Asim basina $0.01\n• Business plan: Asim basina $0.008\n• Enterprise: Asim ucreti yoktur, sinirsiz mesaj\n\nLimit yaklastiginizda (80% ve 95%) e-posta bildirimi alirsiniz. Dashboard\'dan kullanim durumunuzu takip edebilirsiniz.', category: 'Fiyatlandirma' },
         { q: 'Para iade politikasi nedir?', a: 'Memnuniyet garantisi sunuyoruz:\n\n• Ilk 14 gun icinde memnun kalmazsaniz tam iade\n• Yillik planlarda kalan sure icin orantili iade\n• Iade islemi 5-7 is gunu icinde tamamlanir\n• Iade talebinizi support@pylonchat.com adresine gonderebilirsiniz\n\nIptal sonrasi verileriniz 30 gun saklanir, istediginiz zaman geri donebilirsiniz.', category: 'Fiyatlandirma' },
 
@@ -614,7 +614,7 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
         { q: 'Is there a free trial?', a: 'Yes! You can start with our free plan immediately. No credit card required. Free plan includes 1 chatbot, 3 documents, and 100 messages/month. Access all basic features. Upgrade to Pro or Business for more features.', category: 'General' },
 
         // Pricing
-        { q: 'How does pricing work? What plans are available?', a: 'We offer four plans:\n\n• FREE: 1 chatbot, 3 docs, 100 msgs/month, basic features\n• PRO ($29/mo): 5 chatbots, 20 docs, 5,000 msgs/month, advanced analytics, priority support\n• BUSINESS ($79/mo): 15 chatbots, 100 docs, 25,000 msgs/month, API access, white-label, 24/7 support\n• ENTERPRISE (Custom): Unlimited chatbots & messages, custom integrations, SLA guarantee, dedicated account manager\n\nGet 20% off with annual billing.', category: 'Pricing' },
+        { q: 'How does pricing work? What plans are available?', a: 'We offer two plans:\n\n• STARTER (Free): 3 NDIS audits/month, watermarked PDF reports, basic compliance scoring\n• PROFESSIONAL ($99/mo): Unlimited NDIS audits, white-label PDF reports, bulk document processing, priority support\n\nNo credit card required to start.', category: 'Pricing' },
         { q: 'What happens if I exceed the message limit?', a: 'If you exceed your message limit, your chatbot continues working but overage fees apply:\n\n• Pro plan: $0.01 per overage\n• Business plan: $0.008 per overage\n• Enterprise: No overage fees, unlimited messages\n\nYou receive email notifications at 80% and 95% usage. Track usage in Dashboard.', category: 'Pricing' },
         { q: 'What is the refund policy?', a: 'We offer a satisfaction guarantee:\n\n• Full refund within first 14 days if not satisfied\n• Prorated refund for remaining time on annual plans\n• Refund processed within 5-7 business days\n• Send requests to support@pylonchat.com\n\nAfter cancellation, data is kept for 30 days - you can return anytime.', category: 'Pricing' },
 
@@ -678,7 +678,7 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
         { q: 'Hay una prueba gratuita?', a: 'Si! Puedes comenzar con nuestro plan gratuito inmediatamente. No se requiere tarjeta de credito. El plan gratuito incluye 1 chatbot, 3 documentos y 100 mensajes/mes. Acceso a todas las funciones basicas. Actualiza a Pro o Business para mas funciones.', category: 'General' },
 
         // Precios
-        { q: 'Como funciona el precio? Que planes hay disponibles?', a: 'Ofrecemos cuatro planes:\n\n• GRATIS: 1 chatbot, 3 docs, 100 msgs/mes, funciones basicas\n• PRO ($29/mes): 5 chatbots, 20 docs, 5,000 msgs/mes, analiticas avanzadas, soporte prioritario\n• BUSINESS ($79/mes): 15 chatbots, 100 docs, 25,000 msgs/mes, acceso API, marca blanca, soporte 24/7\n• ENTERPRISE (Personalizado): Chatbots y mensajes ilimitados, integraciones personalizadas, garantia SLA, gerente de cuenta dedicado\n\n20% de descuento con facturacion anual.', category: 'Precios' },
+        { q: 'Como funciona el precio? Que planes hay disponibles?', a: 'Ofrecemos dos planes:\n\n• STARTER (Gratis): 3 auditorias NDIS/mes, informes PDF con marca de agua, puntuacion de cumplimiento basica\n• PROFESSIONAL ($99/mes): Auditorias NDIS ilimitadas, informes PDF de marca blanca, procesamiento masivo de documentos, soporte prioritario\n\nNo se requiere tarjeta de credito para comenzar.', category: 'Precios' },
         { q: 'Que pasa si excedo el limite de mensajes?', a: 'Si excedes tu limite de mensajes, tu chatbot sigue funcionando pero se aplican cargos por exceso:\n\n• Plan Pro: $0.01 por exceso\n• Plan Business: $0.008 por exceso\n• Enterprise: Sin cargos por exceso, mensajes ilimitados\n\nRecibes notificaciones por email al 80% y 95% de uso. Rastrea el uso en el Dashboard.', category: 'Precios' },
         { q: 'Cual es la politica de reembolso?', a: 'Ofrecemos garantia de satisfaccion:\n\n• Reembolso completo dentro de los primeros 14 dias si no estas satisfecho\n• Reembolso prorrateado por tiempo restante en planes anuales\n• Reembolso procesado en 5-7 dias habiles\n• Envia solicitudes a support@pylonchat.com\n\nDespues de la cancelacion, los datos se mantienen por 30 dias - puedes regresar cuando quieras.', category: 'Precios' },
 
