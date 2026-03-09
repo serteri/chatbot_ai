@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Check, ArrowRight } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { NDIS_COMPLIANCE_TIERS } from '@/config/pricing'
 
 export function PricingPreview({ locale }: { locale: string }) {
     const t = useTranslations('ndisLanding.pricing')
@@ -44,7 +45,9 @@ export function PricingPreview({ locale }: { locale: string }) {
                     >
                         <h3 className="text-2xl font-bold text-slate-900 mb-2">{t('free')}</h3>
                         <p className="text-slate-500 mb-6 pb-6 border-b border-slate-100">{t('freeDesc')}</p>
-                        <div className="text-5xl font-extrabold text-slate-900 mb-8">{t('freePrice')}</div>
+                        <div className="text-5xl font-extrabold text-slate-900 mb-8">
+                            {NDIS_COMPLIANCE_TIERS.starter.displayUSD}
+                        </div>
 
                         <ul className="space-y-4 mb-8">
                             <li className="flex items-center gap-3 text-slate-700">
@@ -75,7 +78,10 @@ export function PricingPreview({ locale }: { locale: string }) {
 
                         <h3 className="text-2xl font-bold text-white mb-2">{t('pro')}</h3>
                         <p className="text-slate-400 mb-6 pb-6 border-b border-slate-800">{t('proDesc')}</p>
-                        <div className="text-5xl font-extrabold text-white mb-8">{t('proPrice')}</div>
+                        <div className="text-5xl font-extrabold text-white mb-8">
+                            {NDIS_COMPLIANCE_TIERS.professional.displayUSD}
+                            <span className="text-xl font-normal text-slate-400">/mo</span>
+                        </div>
 
                         <ul className="space-y-4 mb-8">
                             <li className="flex items-center gap-3 text-slate-300">

@@ -14,8 +14,11 @@ import {
     ShoppingCart,
     ArrowRight,
     ChevronDown,
-    ChevronUp
+    ChevronUp,
+    ShieldCheck,
+    X
 } from 'lucide-react'
+import { NDIS_COMPLIANCE_TIERS } from '@/config/pricing'
 
 export default function PricingPage() {
     const t = useTranslations()
@@ -33,23 +36,29 @@ export default function PricingPage() {
         }
     }
 
-    // Monthly prices based on locale
+    // Monthly prices based on locale.
+    // Starter ($0) and Professional ($99) values are imported from the central
+    // pricing config so they stay consistent with the landing page preview.
     const getMonthlyPrices = () => {
         const currency = getCurrency()
+        const starterUSD = NDIS_COMPLIANCE_TIERS.starter.priceMonthlyUSD
+        const proUSD = NDIS_COMPLIANCE_TIERS.professional.priceMonthlyUSD
+        const proTRY = NDIS_COMPLIANCE_TIERS.professional.priceMonthlyTRY
+
         switch (locale) {
             case 'tr':
                 return {
-                    free: { price: 0, display: '₺0' },
+                    free: { price: starterUSD, display: NDIS_COMPLIANCE_TIERS.starter.displayTRY },
                     pro: { price: 899, display: '₺899' },
                     business: { price: 2099, display: '₺2.099' },
-                    enterprise: { price: 2999, display: '₺2.999' }
+                    enterprise: { price: proTRY, display: NDIS_COMPLIANCE_TIERS.professional.displayTRY }
                 }
             default: // USD/EUR
                 return {
-                    free: { price: 0, display: `${currency}0` },
+                    free: { price: starterUSD, display: `${currency}${starterUSD}` },
                     pro: { price: 29, display: `${currency}29` },
                     business: { price: 69, display: `${currency}69` },
-                    enterprise: { price: 99, display: `${currency}99` }
+                    enterprise: { price: proUSD, display: `${currency}${proUSD}` }
                 }
         }
     }
@@ -413,6 +422,116 @@ export default function PricingPage() {
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Competitor Comparison */}
+                <div className="py-20 bg-slate-900 text-white">
+                    <div className="container mx-auto px-4">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="text-center mb-12">
+                                <span className="inline-block px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold uppercase tracking-wider mb-4">
+                                    How We&rsquo;re Different
+                                </span>
+                                <h2 className="text-3xl font-bold mb-4">
+                                    PylonChat vs. Lumary &amp; ShiftCare
+                                </h2>
+                                <p className="text-slate-400 max-w-2xl mx-auto">
+                                    Lumary and ShiftCare are excellent rostering and shift-management platforms.
+                                    PylonChat solves a completely different problem: <strong className="text-white">protecting your NDIS compliance</strong> through AI-driven document auditing.
+                                </p>
+                            </div>
+
+                            <div className="grid md:grid-cols-3 gap-6">
+                                {/* Lumary */}
+                                <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-slate-300 font-bold text-sm">L</div>
+                                        <span className="font-semibold text-slate-300">Lumary</span>
+                                    </div>
+                                    <ul className="space-y-3 text-sm text-slate-400">
+                                        <li className="flex items-start gap-2">
+                                            <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                                            Shift scheduling &amp; rostering
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                                            NDIS claiming &amp; plan management
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <X className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                                            Does not audit service agreement documents
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <X className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                                            No AI-generated compliance addendums
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                {/* ShiftCare */}
+                                <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-slate-300 font-bold text-sm">S</div>
+                                        <span className="font-semibold text-slate-300">ShiftCare</span>
+                                    </div>
+                                    <ul className="space-y-3 text-sm text-slate-400">
+                                        <li className="flex items-start gap-2">
+                                            <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                                            Staff scheduling &amp; time-tracking
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                                            Client management &amp; progress notes
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <X className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                                            No document compliance scoring
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <X className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                                            No automated gap-detection for agreements
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                {/* PylonChat */}
+                                <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-6 relative">
+                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                                        That&rsquo;s us
+                                    </div>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-8 h-8 rounded-full bg-cyan-600 flex items-center justify-center text-white font-bold text-sm">P</div>
+                                        <span className="font-semibold text-white">PylonChat</span>
+                                    </div>
+                                    <ul className="space-y-3 text-sm text-slate-300">
+                                        <li className="flex items-start gap-2">
+                                            <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                                            AI-driven NDIS service agreement auditing
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                                            Auto-generated compliance addendums
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                                            Detects missing ABN, cancellation clauses &amp; consent gaps
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <ShieldCheck className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                                            White-label PDF export for your brand
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <p className="text-center text-slate-500 text-sm mt-10">
+                                We don&rsquo;t manage your shifts — we protect your compliance.
+                                <Link href={`/${locale}/dashboard/validator`} className="text-cyan-400 hover:text-cyan-300 ml-1 underline underline-offset-2">
+                                    Try a free audit →
+                                </Link>
+                            </p>
                         </div>
                     </div>
                 </div>

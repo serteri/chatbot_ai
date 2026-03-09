@@ -256,6 +256,49 @@ export function calculateYearlySavings(planId: SubscriptionPlan): number {
   return Math.round(yearlySavings * 100) / 100
 }
 
+// ─── NDIS Compliance Product Tiers ──────────────────────────────────────────
+// Single source of truth for the NDIS compliance product pricing.
+// Import from here in every component that displays a plan name, price, or
+// feature list. Never hardcode dollar amounts in individual components.
+
+export const NDIS_COMPLIANCE_TIERS = {
+    starter: {
+        id: 'starter' as const,
+        name: 'Starter',
+        priceMonthlyUSD: 0,
+        priceMonthlyTRY: 0,
+        displayUSD: '$0',
+        displayTRY: '₺0',
+        features: [
+            '3 Compliance Audits / month',
+            'Watermarked PDF reports',
+            'NDIS gap detection',
+            'Basic compliance scoring',
+        ],
+        cta: 'Get Started Free',
+    },
+    professional: {
+        id: 'professional' as const,
+        name: 'Professional',
+        priceMonthlyUSD: 99,
+        priceMonthlyTRY: 2999,
+        displayUSD: '$99',
+        displayTRY: '₺2.999',
+        features: [
+            'Unlimited Compliance Audits',
+            'White-label PDF reports (no watermark)',
+            'Bulk document processing',
+            'Priority support',
+            'Custom branding & logo injection',
+            'Full NDIS 2025/26 clause library',
+        ],
+        cta: 'Start Professional',
+    },
+} as const
+
+export type NdisComplianceTierKey = keyof typeof NDIS_COMPLIANCE_TIERS
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
  * Kullanıcının limitlerini kontrol et
  */
