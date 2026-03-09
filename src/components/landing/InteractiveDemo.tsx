@@ -2,18 +2,36 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { FileText, CheckCircle2, ArrowRight, AlertTriangle } from 'lucide-react'
+import { FileText, CheckCircle2, ArrowRight, AlertTriangle, MousePointerClick } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 export function InteractiveDemo() {
     const t = useTranslations('ndisLanding.interactive')
+
+    const scrollToUpload = () => {
+        document.getElementById('hero-upload')?.scrollIntoView({ behavior: 'smooth' })
+    }
 
     return (
         <section className="py-24 bg-slate-50 overflow-hidden relative">
             <div className="absolute top-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-24">
+                {/* Clickable CTA hint */}
+                <div
+                    onClick={scrollToUpload}
+                    className="flex items-center justify-center gap-2 mb-8 cursor-pointer group"
+                >
+                    <span className="text-xs font-medium text-slate-400 group-hover:text-cyan-500 transition-colors">
+                        Example only — click to try the real thing
+                    </span>
+                    <MousePointerClick className="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-500 transition-colors" />
+                </div>
+
+                <div
+                    onClick={scrollToUpload}
+                    className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-24 cursor-pointer"
+                >
 
                     {/* Before State — Static Blurred Non-Compliant Document */}
                     <motion.div
@@ -27,6 +45,14 @@ export function InteractiveDemo() {
                             {t('before')}
                         </div>
                         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 pt-10 aspect-[3/4] relative opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                            {/* Non-interactive badge */}
+                            <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 shadow-sm">
+                                <span className="block w-1.5 h-1.5 rounded-full bg-amber-400" />
+                                <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide whitespace-nowrap">
+                                    Example — Non-Interactive
+                                </span>
+                            </div>
+
                             {/* Generic Headers */}
                             <div className="w-32 h-4 bg-slate-200 rounded mb-8" />
                             <div className="w-3/4 h-6 bg-slate-300 rounded mb-4" />
