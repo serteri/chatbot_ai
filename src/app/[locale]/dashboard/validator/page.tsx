@@ -42,6 +42,13 @@ interface LineItem {
     budget: number
 }
 
+interface WarningDetail {
+    text: string
+    confidenceScore: number
+    requiresManualReview: boolean
+    citation: string
+}
+
 interface AnalysisResult {
     participantName?: string | null
     totalFunding?: number
@@ -50,6 +57,7 @@ interface AnalysisResult {
     lineItems?: LineItem[]
     complianceScore?: number
     warnings?: string[]
+    warningDetails?: WarningDetail[]
     summary?: string
     error?: string
 }
@@ -144,8 +152,10 @@ export default function ValidatorPage() {
     // -----------------------------------------------------------------------
 
     const handleFile = useCallback(async (file: File) => {
-        if (!file.name.toLowerCase().endsWith('.pdf')) {
-            toast.error('Please upload a PDF document.')
+        const isPdf = file.name.toLowerCase().endsWith('.pdf')
+        const isDocx = file.name.toLowerCase().endsWith('.docx')
+        if (!isPdf && !isDocx) {
+            toast.error('Please upload a PDF or DOCX document.')
             return
         }
 
@@ -449,7 +459,7 @@ export default function ValidatorPage() {
                             <input
                                 ref={fileInputRef}
                                 type="file"
-                                accept=".pdf"
+                                accept=".pdf,.docx"
                                 onChange={handleFileInput}
                                 className="hidden"
                             />
@@ -688,6 +698,7 @@ export default function ValidatorPage() {
                     {step === 'audit-ready' && analysisData?.warnings && analysisData.warnings.length > 0 && (
                         <RemediationPlan
                             warnings={analysisData.warnings}
+                            warningDetails={analysisData.warningDetails}
                             remediations={remediations}
                             isGenerating={isGeneratingRemediations}
                             summary={analysisData.summary || ''}

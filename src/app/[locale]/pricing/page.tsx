@@ -9,14 +9,12 @@ import { useParams } from 'next/navigation'
 import {
     Check,
     Star,
-    MessageSquare,
-    GraduationCap,
-    ShoppingCart,
     ArrowRight,
     ChevronDown,
     ChevronUp,
     ShieldCheck,
-    X
+    X,
+    MessageSquare,
 } from 'lucide-react'
 import { NDIS_COMPLIANCE_TIERS } from '@/config/pricing'
 
@@ -109,80 +107,29 @@ export default function PricingPage() {
         return `${currency}${savings}`
     }
 
+    // Only 2 NDIS tiers — consistent with the landing page.
+    // Prices sourced from the central config via getMonthlyPrices().
     const plans = [
         {
             id: 'free',
-            name: t('pricing.plans.free.name'),
+            name: NDIS_COMPLIANCE_TIERS.starter.name,
             description: t('pricing.plans.free.description'),
-            features: [
-                t('pricing.plans.free.features.0'),
-                t('pricing.plans.free.features.1'),
-                t('pricing.plans.free.features.2'),
-                t('pricing.plans.free.features.3'),
-                t('pricing.plans.free.features.4')
-            ],
+            features: NDIS_COMPLIANCE_TIERS.starter.features as unknown as string[],
             popular: false,
-            gradient: 'from-gray-500 to-gray-600',
-            borderColor: 'border-gray-200',
-            priceColor: 'text-gray-700',
+            gradient: 'from-slate-500 to-slate-600',
+            borderColor: 'border-slate-200',
+            priceColor: 'text-slate-700',
             cta: t('pricing.getStarted')
         },
         {
             id: 'pro',
-            name: t('pricing.plans.pro.name'),
+            name: NDIS_COMPLIANCE_TIERS.professional.name,
             description: t('pricing.plans.pro.description'),
-            features: [
-                t('pricing.plans.pro.features.0'),
-                t('pricing.plans.pro.features.1'),
-                t('pricing.plans.pro.features.2'),
-                t('pricing.plans.pro.features.3'),
-                t('pricing.plans.pro.features.4'),
-                t('pricing.plans.pro.features.5'),
-                t('pricing.plans.pro.features.6')
-            ],
+            features: NDIS_COMPLIANCE_TIERS.professional.features as unknown as string[],
             popular: true,
-            gradient: 'from-blue-500 to-indigo-600',
-            borderColor: 'border-blue-400 ring-2 ring-blue-100',
-            priceColor: 'text-blue-600',
-            cta: t('pricing.choosePlan')
-        },
-        {
-            id: 'business',
-            name: t('pricing.plans.business.name'),
-            description: t('pricing.plans.business.description'),
-            features: [
-                t('pricing.plans.business.features.0'),
-                t('pricing.plans.business.features.1'),
-                t('pricing.plans.business.features.2'),
-                t('pricing.plans.business.features.3'),
-                t('pricing.plans.business.features.4'),
-                t('pricing.plans.business.features.5'),
-                t('pricing.plans.business.features.6'),
-                t('pricing.plans.business.features.7')
-            ],
-            popular: false,
-            gradient: 'from-purple-500 to-pink-600',
-            borderColor: 'border-purple-200 hover:border-purple-300',
-            priceColor: 'text-purple-600',
-            cta: t('pricing.choosePlan')
-        },
-        {
-            id: 'enterprise',
-            name: t('pricing.plans.enterprise.name'),
-            description: t('pricing.plans.enterprise.description'),
-            features: [
-                t('pricing.plans.enterprise.features.0'),
-                t('pricing.plans.enterprise.features.1'),
-                t('pricing.plans.enterprise.features.2'),
-                t('pricing.plans.enterprise.features.3'),
-                t('pricing.plans.enterprise.features.4'),
-                t('pricing.plans.enterprise.features.5'),
-                t('pricing.plans.enterprise.features.6')
-            ],
-            popular: false,
-            gradient: 'from-emerald-500 to-teal-600',
-            borderColor: 'border-emerald-200 hover:border-emerald-300',
-            priceColor: 'text-emerald-600',
+            gradient: 'from-cyan-500 to-blue-600',
+            borderColor: 'border-cyan-400 ring-2 ring-cyan-100',
+            priceColor: 'text-cyan-600',
             cta: t('pricing.choosePlan')
         }
     ]
@@ -244,31 +191,10 @@ export default function PricingPage() {
                     </div>
                 </div>
 
-                {/* Chatbot Types */}
-                <div className="py-12 bg-gray-50">
-                    <div className="container mx-auto px-4">
-                        <div className="text-center mb-12">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                                {t('pricing.chatbotTypes')}
-                            </h2>
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                                <div className="flex items-center space-x-3">
-                                    <GraduationCap className="h-6 w-6 text-blue-600" />
-                                    <span className="text-gray-700">{t('pricing.education')}</span>
-                                </div>
-                                <div className="flex items-center space-x-3">
-                                    <ShoppingCart className="h-6 w-6 text-green-600" />
-                                    <span className="text-gray-700">{t('pricing.ecommerce')}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Pricing Plans */}
                 <div className="py-20">
                     <div className="container mx-auto px-4">
-                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+                        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                             {plans.map((plan) => (
                                 <div
                                     key={plan.id}
@@ -332,93 +258,61 @@ export default function PricingPage() {
                     </div>
                 </div>
 
-                {/* Plan Comparison Table */}
+                {/* NDIS Feature Comparison Table */}
                 <div className="py-20 bg-white">
                     <div className="container mx-auto px-4">
                         <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-                            {t('pricing.comparison')}
+                            Plan Comparison
                         </h2>
                         <div className="overflow-x-auto">
-                            <table className="w-full max-w-5xl mx-auto border-collapse bg-white rounded-xl shadow-lg">
+                            <table className="w-full max-w-3xl mx-auto border-collapse bg-white rounded-xl shadow-lg">
                                 <thead>
                                     <tr className="bg-gray-50 border-b">
-                                        <th className="text-left p-4 font-semibold text-gray-900">{t('pricing.feature')}</th>
-                                        <th className="text-center p-4 font-semibold text-gray-900">{t('pricing.plans.free.name')}</th>
-                                        <th className="text-center p-4 font-semibold text-blue-600">{t('pricing.plans.pro.name')}</th>
-                                        <th className="text-center p-4 font-semibold text-gray-900">{t('pricing.plans.business.name')}</th>
-                                        <th className="text-center p-4 font-semibold text-gray-900">{t('pricing.plans.enterprise.name')}</th>
+                                        <th className="text-left p-4 font-semibold text-gray-900">Feature</th>
+                                        <th className="text-center p-4 font-semibold text-gray-900">Starter — $0</th>
+                                        <th className="text-center p-4 font-semibold text-cyan-600">Professional — $99/mo</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">{t('pricing.chatbotCount')}</td>
-                                        <td className="text-center p-4">1</td>
-                                        <td className="text-center p-4 bg-blue-50/50">5</td>
-                                        <td className="text-center p-4">10</td>
-                                        <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                                        <td className="p-4 text-gray-700">Compliance Audits</td>
+                                        <td className="text-center p-4">3 / month</td>
+                                        <td className="text-center p-4 bg-cyan-50/50 font-semibold text-cyan-700">Unlimited</td>
                                     </tr>
                                     <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">{t('pricing.documentCount')}</td>
-                                        <td className="text-center p-4">3</td>
-                                        <td className="text-center p-4 bg-blue-50/50">50</td>
-                                        <td className="text-center p-4">100</td>
-                                        <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                                        <td className="p-4 text-gray-700">PDF Reports</td>
+                                        <td className="text-center p-4">Watermarked</td>
+                                        <td className="text-center p-4 bg-cyan-50/50 font-semibold text-cyan-700">White-label (no watermark)</td>
                                     </tr>
                                     <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">{t('pricing.monthlyConversations')}</td>
-                                        <td className="text-center p-4">50</td>
-                                        <td className="text-center p-4 bg-blue-50/50">1,000</td>
-                                        <td className="text-center p-4">5,000</td>
-                                        <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                                        <td className="p-4 text-gray-700">File Formats</td>
+                                        <td className="text-center p-4">PDF &amp; DOCX</td>
+                                        <td className="text-center p-4 bg-cyan-50/50">PDF &amp; DOCX</td>
                                     </tr>
                                     <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">{t('pricing.aiValuation')}</td>
-                                        <td className="text-center p-4">5/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
-                                        <td className="text-center p-4 bg-blue-50/50">50/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
-                                        <td className="text-center p-4">200/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
-                                        <td className="text-center p-4">{t('pricing.unlimited')}</td>
-                                    </tr>
-                                    <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">{t('pricing.analytics')}</td>
+                                        <td className="p-4 text-gray-700">Bulk Processing</td>
                                         <td className="text-center p-4">❌</td>
-                                        <td className="text-center p-4 bg-blue-50/50">✅</td>
-                                        <td className="text-center p-4">✅</td>
-                                        <td className="text-center p-4">✅</td>
+                                        <td className="text-center p-4 bg-cyan-50/50">✅</td>
                                     </tr>
                                     <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">{t('pricing.customBranding')}</td>
+                                        <td className="p-4 text-gray-700">Custom Branding &amp; Logo</td>
                                         <td className="text-center p-4">❌</td>
-                                        <td className="text-center p-4 bg-blue-50/50">✅</td>
-                                        <td className="text-center p-4">✅</td>
-                                        <td className="text-center p-4">✅</td>
+                                        <td className="text-center p-4 bg-cyan-50/50">✅</td>
                                     </tr>
                                     <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">{t('pricing.teamCollaboration')}</td>
-                                        <td className="text-center p-4">❌</td>
-                                        <td className="text-center p-4 bg-blue-50/50">❌</td>
-                                        <td className="text-center p-4">✅</td>
-                                        <td className="text-center p-4">✅</td>
+                                        <td className="p-4 text-gray-700">NDIS 2025/26 Clause Library</td>
+                                        <td className="text-center p-4">Basic</td>
+                                        <td className="text-center p-4 bg-cyan-50/50">Full</td>
                                     </tr>
                                     <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">{t('pricing.apiAccess')}</td>
+                                        <td className="p-4 text-gray-700">Audit Vault &amp; History</td>
                                         <td className="text-center p-4">❌</td>
-                                        <td className="text-center p-4 bg-blue-50/50">❌</td>
-                                        <td className="text-center p-4">❌</td>
-                                        <td className="text-center p-4">✅</td>
-                                    </tr>
-                                    <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">{t('pricing.demoChat')}</td>
-                                        <td className="text-center p-4">5/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
-                                        <td className="text-center p-4 bg-blue-50/50">50/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
-                                        <td className="text-center p-4">200/{locale === 'tr' ? 'ay' : locale === 'de' ? 'Monat' : locale === 'fr' ? 'mois' : locale === 'es' ? 'mes' : 'month'}</td>
-                                        <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                                        <td className="text-center p-4 bg-cyan-50/50">✅</td>
                                     </tr>
                                     <tr className="hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">{t('pricing.support')}</td>
-                                        <td className="text-center p-4">{t('pricing.emailSupport')}</td>
-                                        <td className="text-center p-4 bg-blue-50/50">{t('pricing.prioritySupport')}</td>
-                                        <td className="text-center p-4">{t('pricing.prioritySupport')}</td>
-                                        <td className="text-center p-4">{t('pricing.support247')}</td>
+                                        <td className="p-4 text-gray-700">Support</td>
+                                        <td className="text-center p-4">Email</td>
+                                        <td className="text-center p-4 bg-cyan-50/50">Priority</td>
                                     </tr>
                                 </tbody>
                             </table>

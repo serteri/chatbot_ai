@@ -1613,82 +1613,81 @@
     "portalError": "Unable to open subscription portal. Please try again.",
     "plans": {
       "free": {
-        "name": "Free",
+        "name": "Starter",
         "price": "$0",
-        "description": "Perfect to get started",
+        "description": "Try NDIS compliance auditing at no cost",
         "features": [
-          "1 Chatbot",
-          "3 Documents",
-          "50 Conversations/month",
-          "Email Support",
-          "5 AI Valuations/month"
+          "3 Compliance Audits / month",
+          "Watermarked PDF reports",
+          "NDIS gap detection",
+          "Basic compliance scoring",
+          "Email Support"
         ]
       },
       "pro": {
-        "name": "Pro",
-        "price": "$29",
-        "description": "Best for small businesses",
+        "name": "Professional",
+        "price": "$99",
+        "description": "Unlimited auditing for serious providers",
         "features": [
-          "5 Chatbots",
-          "50 Documents",
-          "1,000 Conversations/month",
-          "Priority Support",
-          "Custom Branding",
-          "Analytics Dashboard",
-          "50 AI Valuations/month"
+          "Unlimited Compliance Audits",
+          "White-label PDF reports (no watermark)",
+          "Bulk document processing",
+          "Priority support",
+          "Custom branding & logo injection",
+          "Full NDIS 2025/26 clause library",
+          "Audit Vault & document history"
         ]
       },
       "business": {
-        "name": "Business",
-        "price": "$69",
-        "description": "For growing teams",
+        "name": "Professional",
+        "price": "$99",
+        "description": "Unlimited auditing for serious providers",
         "features": [
-          "10 Chatbots",
-          "100 Documents",
-          "5,000 Conversations/month",
-          "Priority Support",
-          "Custom Branding",
-          "Analytics Dashboard",
-          "Team Collaboration",
-          "200 AI Valuations/month"
+          "Unlimited Compliance Audits",
+          "White-label PDF reports (no watermark)",
+          "Bulk document processing",
+          "Priority support",
+          "Custom branding & logo injection",
+          "Full NDIS 2025/26 clause library",
+          "Audit Vault & document history"
         ]
       },
       "enterprise": {
-        "name": "Enterprise",
+        "name": "Professional",
         "price": "$99",
-        "description": "For large organizations",
+        "description": "Unlimited auditing for serious providers",
         "features": [
-          "Unlimited Chatbots",
-          "Unlimited Documents",
-          "Unlimited Conversations",
-          "24/7 Support",
-          "Custom Domain",
-          "API Access",
-          "Unlimited AI Valuations"
+          "Unlimited Compliance Audits",
+          "White-label PDF reports (no watermark)",
+          "Bulk document processing",
+          "Priority support",
+          "Custom branding & logo injection",
+          "Full NDIS 2025/26 clause library",
+          "Audit Vault & document history"
         ]
       }
     },
-    "getStarted": "Get Started",
-    "choosePlan": "Choose Plan",
+    "getStarted": "Get Started Free",
+    "choosePlan": "Start Professional",
     "mostPopular": "Most Popular",
     "faq": {
-      "title": "FAQ",
-      "q1": "Can I change my plan anytime?",
-      "a1": "Yes, you can upgrade your plan at any time. The upgrade is effective immediately.",
-      "q2": "What happens if I cancel my subscription?",
-      "a2": "If you cancel your subscription, your plan remains active until the end of the term. Afterwards, you revert to the Free plan.",
-      "q3": "How do I receive invoices?",
-      "a3": "Invoices are automatically sent to your email address after each payment. You can also access past invoices via the 'Manage Subscription' button.",
+      "title": "Frequently Asked Questions",
+      "q1": "Can I upgrade or cancel anytime?",
+      "a1": "Yes. Upgrade takes effect immediately. If you cancel, your Professional plan remains active until the end of your billing period, then reverts to Starter.",
+      "q2": "What file formats are supported?",
+      "a2": "We support PDF and DOCX (Microsoft Word) service agreements. Maximum file size is 20MB.",
+      "q3": "What NDIS standards does PylonChat check against?",
+      "a3": "Every analysis is run against the NDIS Practice Standards 2021 (updated 2025/26) and the NDIS Price Guide 2025/26. Specific clause references are cited in each warning.",
       "q4": "What payment methods do you accept?",
-      "a4": "We accept all major credit cards (Visa, Mastercard, American Express).",
-      "q5": "How many chatbots can I create?",
-      "a5": "The number depends on your plan. Free includes 1, Pro includes 5, Business includes 20, and Enterprise offers unlimited chatbots.",
-      "q6": "Can I use my own domain?",
-      "a6": "Yes! Business and Enterprise plans include custom domain support for seamless website integration.",
-      "q7": "Is my data secure?",
-      "a7": "Absolutely. We use industry-standard encryption and are GDPR compliant. Your data is never shared with third parties.",
-      "q8": "Do you offer support?",
-      "a8": "Yes! Free plan includes email support, Pro has priority support, and Business/Enterprise plans include 24/7 dedicated support."
+      "a4": "We accept all major credit cards (Visa, Mastercard, American Express) via Stripe.",
+      "q5": "What does 'Watermarked PDF' mean on the Starter plan?",
+      "a5": "Starter plan addendum PDFs include a PylonChat watermark. Professional plan removes all watermarks and injects your own logo and branding.",
+      "q6": "Is my client data secure?",
+      "a6": "Yes. Documents are processed in Azure OpenAI Sydney (ap-southeast-2) and never stored on our servers after analysis. We are GDPR compliant and data never leaves Australia.",
+      "q7": "What is Bulk Processing?",
+      "a7": "Professional plan allows you to upload and audit multiple service agreements at once — ideal for providers managing large participant caseloads.",
+      "q8": "Do you replace Lumary or ShiftCare?",
+      "a8": "No. PylonChat is a compliance auditing tool. We don't manage shifts or billing. We analyse your service agreements and generate addendums to fix compliance gaps before an NDIS audit."
     }
   },
   "StudentProfile": {

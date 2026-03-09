@@ -2,12 +2,20 @@
 
 import React, { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { Copy, Check, ShieldAlert, FileWarning, X, Loader2, FileDown, AlertCircle } from 'lucide-react'
+import { Copy, Check, ShieldAlert, FileWarning, X, Loader2, FileDown, AlertCircle, BookOpen } from 'lucide-react'
 import { logPdfExport } from '@/app/[locale]/dashboard/validator/actions'
 import { toast } from 'sonner'
 
+export interface WarningDetail {
+    text: string
+    confidenceScore: number
+    requiresManualReview: boolean
+    citation: string
+}
+
 interface RemediationPlanProps {
     warnings: string[]
+    warningDetails?: WarningDetail[]
     summary: string
     remediations: Record<string, string> | null
     isGenerating: boolean
@@ -16,7 +24,19 @@ interface RemediationPlanProps {
     complianceScore?: number
 }
 
-export default function RemediationPlan({ warnings, summary, remediations, isGenerating, filename, participantName, complianceScore }: RemediationPlanProps) {
+function ConfidenceBadge({ score }: { score: number }) {
+    const color =
+        score >= 85 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+        score >= 70 ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                     'bg-red-50 text-red-700 border-red-200'
+    return (
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-semibold ${color}`}>
+            {score}% confidence
+        </span>
+    )
+}
+
+export default function RemediationPlan({ warnings, warningDetails, summary, remediations, isGenerating, filename, participantName, complianceScore }: RemediationPlanProps) {
     const t = useTranslations('validator.remediation')
     const [selectedWarning, setSelectedWarning] = useState<string | null>(null)
     const [isCopied, setIsCopied] = useState(false)
@@ -155,24 +175,46 @@ export default function RemediationPlan({ warnings, summary, remediations, isGen
             </div>
 
             <div className="divide-y divide-slate-100">
-                {warnings.map((warning, idx) => (
-                    <div key={idx} className="p-4 sm:px-6 hover:bg-slate-50 transition-colors flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
-                        <div className="flex items-start gap-3">
-                            <FileWarning className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-                            <p className="text-sm text-slate-700 leading-relaxed">{warning}</p>
+                {warnings.map((warning, idx) => {
+                    const detail = warningDetails?.[idx]
+                    return (
+                        <div key={idx} className="p-4 sm:px-6 hover:bg-slate-50 transition-colors flex flex-col sm:flex-row gap-4 justify-between items-start">
+                            <div className="flex items-start gap-3 flex-1 min-w-0">
+                                <FileWarning className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                                <div className="min-w-0">
+                                    <p className="text-sm text-slate-700 leading-relaxed">{warning}</p>
+
+                                    {/* Confidence + manual-review flag */}
+                                    {detail && (
+                                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                                            <ConfidenceBadge score={detail.confidenceScore} />
+                                            {detail.requiresManualReview && (
+                                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-semibold bg-orange-50 text-orange-700 border-orange-200">
+                                                    ⚠ Requires Manual Review
+                                                </span>
+                                            )}
+                                            {/* NDIS citation */}
+                                            <span className="inline-flex items-center gap-1 text-[10px] text-slate-400">
+                                                <BookOpen className="h-3 w-3" />
+                                                {detail.citation}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setSelectedWarning(warning)}
+                                disabled={isGenerating && !remediations}
+                                className="shrink-0 flex items-center gap-2 px-4 py-2 text-xs font-medium bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-teal-200"
+                            >
+                                {isGenerating && !remediations ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : null}
+                                {t('fixSuggestion')}
+                            </button>
                         </div>
-                        <button
-                            onClick={() => setSelectedWarning(warning)}
-                            disabled={isGenerating && !remediations}
-                            className="shrink-0 flex items-center gap-2 px-4 py-2 text-xs font-medium bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-teal-200"
-                        >
-                            {isGenerating && !remediations ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : null}
-                            {t('fixSuggestion')}
-                        </button>
-                    </div>
-                ))}
+                    )
+                })}
             </div>
 
             {/* Smart Data Intake Form */}

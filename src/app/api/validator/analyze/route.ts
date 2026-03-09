@@ -9,7 +9,7 @@ import OpenAI from 'openai'
 // Infrastructure: Azure OpenAI (ap-southeast-2, Sydney)
 // ---------------------------------------------------------------------------
 
-export const SYSTEM_PROMPT = `You are a Pure NDIS Compliance Officer. Analyze the text of this Service Agreement strictly against the NDIS Practice Standards and the explicit rules of the NDIS Price Guide 2025/26.
+export const SYSTEM_PROMPT = `You are a Senior NDIS Compliance Officer. Analyze the provided Service Agreement strictly against the NDIS Practice Standards 2021 (updated 2025/26) and the NDIS Price Guide 2025/26.
 
 Return a strict JSON object containing:
 - "participantName": string or null (Extract the participant's full name from headers like 'About the Participant', 'Name', or 'Participant Details'. Do not use provider names.)
@@ -21,17 +21,24 @@ Return a strict JSON object containing:
   - "description": string (what the line item covers)
   - "budget": number (allocated budget in AUD)
 - "complianceScore": number between 0 and 100 (based on required clauses present and strict NDIS Practice Standards adherence)
-- "warnings": array of strings (each warning describes a missing or non-compliant element according to NDIS 2025/26)
+- "warnings": array of strings (backward-compat plain text summaries of each gap — one string per gap)
+- "warningDetails": array of objects, one per compliance gap, each containing:
+  - "text": string (clear, actionable description of the gap)
+  - "confidenceScore": number 0-100 (your confidence that this gap genuinely exists in this document; use 90-100 when the clause is completely absent, 70-89 when present but inadequate, below 70 only for ambiguous cases)
+  - "requiresManualReview": boolean (true if confidenceScore < 85)
+  - "citation": string (the specific NDIS document, section, and clause — e.g. "NDIS Practice Standards 2021, Outcome 1.1 — Rights and Responsibilities" or "NDIS Price Guide 2025/26, Section 5.3 — Cancellation Policy")
 - "summary": string (2-3 sentence overview of the agreement)
 
-Check for these critical NDIS compliance issues and add them to "warnings":
-- Missing or non-compliant cancellation policy (Must strictly follow NDIS Terms of Business 2025/26)
-- Missing incident management and reporting procedures
-- Missing explicit consent clauses for data collection and sharing
-- Pricing exceeding NDIS Price Guide 2025/26 maximum limits
-- Missing ABN or NDIS provider registration number
-- Missing explicit participant goals or outcomes aligned with their NDIS plan
-- Missing nominated representative or plan nominee details
+Check for these critical NDIS compliance issues:
+- Missing or non-compliant cancellation policy (NDIS Price Guide 2025/26, Section 5.3)
+- Missing incident management and reporting procedures (NDIS Practice Standards 2021, Outcome 2.4)
+- Missing explicit consent clauses for data collection and sharing (NDIS Practice Standards 2021, Outcome 1.2)
+- Pricing exceeding NDIS Price Guide 2025/26 maximum limits (NDIS Price Guide 2025/26, Support Catalogue)
+- Missing ABN or NDIS provider registration number (NDIS Act 2013, s.73B)
+- Missing explicit participant goals or outcomes (NDIS Practice Standards 2021, Outcome 1.4)
+- Missing nominated representative or plan nominee details (NDIS Act 2013, s.86)
+
+The "warnings" array must contain the same items as "warningDetails[].text" so that both fields remain in sync.
 
 If the document is NOT an NDIS Service Agreement, return:
 { "error": "This document does not appear to be an NDIS Service Agreement.", "complianceScore": 0 }
@@ -66,13 +73,37 @@ export function getAzureOpenAIClient(): OpenAI {
 }
 
 // ---------------------------------------------------------------------------
-// PDF Text Extraction
+// Text Extraction — PDF
 // ---------------------------------------------------------------------------
 
 export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
     const pdfParse = (await import('pdf-parse-fork')).default
     const data = await pdfParse(buffer)
     return data.text
+}
+
+// ---------------------------------------------------------------------------
+// Text Extraction — DOCX (mammoth)
+// ---------------------------------------------------------------------------
+
+export async function extractTextFromDocx(buffer: Buffer): Promise<string> {
+    const mammoth = (await import('mammoth')).default
+    const result = await mammoth.extractRawText({ buffer })
+    return result.value
+}
+
+// ---------------------------------------------------------------------------
+// Dispatcher — picks extractor by MIME / extension
+// ---------------------------------------------------------------------------
+
+const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+
+export async function extractText(file: File, buffer: Buffer): Promise<string> {
+    const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf'
+    const isDocx = file.name.toLowerCase().endsWith('.docx') || file.type === DOCX_MIME
+    if (isPdf) return extractTextFromPDF(buffer)
+    if (isDocx) return extractTextFromDocx(buffer)
+    throw new Error('Unsupported file type. Please upload a PDF or DOCX file.')
 }
 
 // ---------------------------------------------------------------------------
@@ -101,9 +132,14 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        if (!file.name.toLowerCase().endsWith('.pdf')) {
+        const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf'
+        const isDocx =
+            file.name.toLowerCase().endsWith('.docx') ||
+            file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+
+        if (!isPdf && !isDocx) {
             return NextResponse.json(
-                { error: 'Only PDF files are accepted.' },
+                { error: 'Only PDF and DOCX files are accepted.' },
                 { status: 400 }
             )
         }
@@ -117,24 +153,24 @@ export async function POST(request: NextRequest) {
 
         console.log('File received:', { name: file.name, size: file.size, type: file.type })
 
-        // ── Extract PDF Text ──
+        // ── Extract text (PDF or DOCX) ──
         let extractedText: string
 
         try {
             const arrayBuffer = await file.arrayBuffer()
             const buffer = Buffer.from(arrayBuffer)
-            extractedText = await extractTextFromPDF(buffer)
+            extractedText = await extractText(file, buffer)
         } catch (err: any) {
-            console.error('PDF Engine Error:', err?.message || err)
+            console.error('Text Extraction Error:', err?.message || err)
             return NextResponse.json(
-                { error: `PDF Engine Error: ${err?.message || 'Failed to extract text from this specific document format.'}` },
-                { status: 500 } // Changed to 500 to clearly separate from 422 user errors
+                { error: `Text Extraction Error: ${err?.message || 'Failed to extract text from this document.'}` },
+                { status: 500 }
             )
         }
 
         if (!extractedText || extractedText.trim().length < 50) {
             return NextResponse.json(
-                { error: 'The PDF appears to be empty or contains only images. Please upload a text-based PDF.' },
+                { error: 'The document appears to be empty or scanned-image only. Please upload a text-based PDF or DOCX.' },
                 { status: 422 }
             )
         }
