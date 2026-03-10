@@ -61,8 +61,8 @@ export async function generateMetadata({
     return {
         metadataBase: siteUrl,
         title: {
-            default: SITE_NAME,
-            template: `%s | ${SITE_NAME}`
+            default: 'NDIS Shield Hub | Compliance & Accuracy Shield',
+            template: `%s | NDIS Shield Hub`
         },
         description: SITE_DESCRIPTION,
         verification: {

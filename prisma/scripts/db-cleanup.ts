@@ -4,7 +4,7 @@
  *
  * - Deletes maximilianmikus@gmail.com and any account whose name
  *   contains "Maximilian" as a safety net.
- * - Sets companyName = "Pylon NDIS Shield" for serteri@gmail.com.
+ * - Sets companyName = "NDIS Shield Hub Australia" for serteri@gmail.com.
  */
 
 import { PrismaClient } from '@prisma/client'
@@ -29,9 +29,9 @@ async function main() {
     // 3. Update admin account with new company name
     const updated = await prisma.user.updateMany({
         where: { email: 'serteri@gmail.com' },
-        data: { companyName: 'Pylon NDIS Shield' },
+        data: { companyName: 'NDIS Shield Hub Australia' },
     })
-    console.log(`[cleanup] Set companyName="Pylon NDIS Shield" for ${updated.count} account(s)`)
+    console.log(`[cleanup] Set companyName="NDIS Shield Hub Australia" for ${updated.count} account(s)`)
 }
 
 main()
