@@ -1692,7 +1692,7 @@
       "q6": "Kendi domainimi kullanabilir miyim?",
       "a6": "Evet! İşletme ve Kurumsal planlar özel domain desteği içerir. Chatbot'u kendi web sitenize sorunsuz bir şekilde entegre edebilirsiniz.",
       "q7": "Verilerim güvende mi?",
-      "a7": "Kesinlikle. Endüstri standardı şifreleme kullanıyoruz ve GDPR uyumluyuz. Verileriniz güvenli bir şekilde saklanır ve üçüncü taraflarla paylaşılmaz.",
+      "a7": "Kesinlikle. Endüstri standardı şifreleme kullanıyoruz ve Privacy Act (APP) uyumluyuz. Verileriniz güvenli bir şekilde saklanır ve üçüncü taraflarla paylaşılmaz.",
       "q8": "Destek sunuyor musunuz?",
       "a8": "Evet! Ücretsiz plan e-posta desteği içerir, Pro'da öncelikli destek var ve İşletme/Kurumsal planlar 7/24 özel destek içerir."
     }
@@ -2448,7 +2448,7 @@
       "privacy": "Gizlilik Politikası",
       "terms": "Kullanım Şartları",
       "cookies": "Çerez Politikası",
-      "gdpr": "KVKK",
+      "gdpr": "Privacy Act (APP)",
       "help": "Yardım"
     }
   },
@@ -2639,9 +2639,9 @@
       "howText": "Oturum yönetimi, tercih hatırlama ve analitik amaçlarla çerez kullanıyoruz."
     },
     "gdpr": {
-      "title": "GDPR Uyumluluğu",
+      "title": "Privacy Act (APP) Uyumluluğu",
       "rightsTitle": "Veri Koruma Haklarınız",
-      "rightsText": "GDPR kapsamında erişim, düzeltme, silme ve veri taşınabilirliği haklarınız vardır.",
+      "rightsText": "Privacy Act (APP) kapsamında erişim, düzeltme ve veri taşınabilirliği haklarınız vardır.",
       "processingTitle": "Veri İşleme",
       "processingText": "Verilerinizi yalnızca meşru amaçlarla ve yasal temellere dayanarak işliyoruz."
     }
@@ -2717,7 +2717,7 @@
       "privacy": "Gizlilik Politikası",
       "terms": "Kullanım Şartları",
       "cookies": "Çerez Politikası",
-      "gdpr": "GDPR",
+      "gdpr": "Privacy Act (APP)",
       "helpCenter": "Yardım Merkezi",
       "docs": "Dokümantasyon",
       "faq": "SSS",

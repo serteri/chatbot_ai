@@ -24,14 +24,14 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
         { name: t('links.about'), href: `/${locale}/about` },
         { name: t('links.blog'), href: `/${locale}/blog` },
         { name: t('links.careers'), href: `/${locale}/careers` },
-        { name: t('links.contact'), href: `/${locale}/contact` },
+        { name: t('links.contact'), href: 'https://ndisshield.com.au/en/contact' },
     ]
 
     const legalLinks = [
         { name: t('links.privacy'), href: `/${locale}/privacy` },
         { name: t('links.terms'), href: `/${locale}/terms` },
         { name: t('links.cookies'), href: `/${locale}/cookies` },
-        { name: t('links.gdpr'), href: `/${locale}/gdpr` },
+        { name: t('links.privacy'), href: `/${locale}/privacy-act` },
     ]
 
     const supportLinks = [
@@ -196,10 +196,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                                 onChange={(e) => window.location.href = `/${e.target.value}`}
                             >
                                 <option value="tr">🇹🇷 Türkçe</option>
-                                <option value="en">🇺🇸 English</option>
-                                <option value="es">🇪🇸 Español</option>
-                                <option value="fr">🇫🇷 Français</option>
-                                <option value="de">🇩🇪 Deutsch</option>
+                                <option value="en">🇦🇺 English (AU)</option>
                             </select>
                         </div>
                     </div>

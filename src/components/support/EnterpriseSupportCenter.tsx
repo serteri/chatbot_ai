@@ -170,7 +170,7 @@ const faqCategories: Record<string, FAQCategory[]> = {
                 },
                 {
                     question: 'Egitim verileri guvenli mi?',
-                    answer: 'Evet, tuem egitim verileriniz:\n\n• AES-256 ile sifrelenir\n• Avrupa ve ABD\'deki guvenli veri merkezlerinde saklanir\n• GDPR ve KVKK uyumludur\n• Sadece sizin chatbotunuz tarafindan kullanilir\n• Istediginiz zaman silebilirsiniz\n\nVerileriniz hicbir sekilde ucuncu taraflarla paylasilmaz.'
+                    answer: 'Evet, tuem egitim verileriniz:\n\n• AES-256 ile sifrelenir\n• Avrupa ve ABD\'deki guvenli veri merkezlerinde saklanir\n• Privacy Act (APP) uyumludur\n• Sadece sizin chatbotunuz tarafindan kullanilir\n• Istediginiz zaman silebilirsiniz\n\nVerileriniz hicbir sekilde ucuncu taraflarla paylasilmaz.'
                 },
                 {
                     question: 'Chatbot cevaplarini nasil iyilestiririm?',
@@ -217,7 +217,7 @@ const faqCategories: Record<string, FAQCategory[]> = {
                     answer: 'Evet, en yuksek guvenlik standartlarini uyguluyoruz:\n\n• TLS 1.3 ile sifrelenmis baglanti\n• AES-256 ile veri sifreleme\n• SOC 2 Type II sertifikali veri merkezleri\n• Duzenli guvenlik denetimleri\n• 2FA (iki faktorlu dogrulama)\n• IP beyaz listesi (Enterprise)'
                 },
                 {
-                    question: 'GDPR ve KVKK uyumlu mu?',
+                    question: 'Privacy Act (APP) uyumlu mu?',
                     answer: 'Evet, tam uyumluyuz:\n\n• Veri isleme sozlesmesi (DPA) mevcut\n• Kullanici rizasi yonetimi\n• Veri silme talepleri icin arac\n• Veri tasima hakki destegi\n• Avrupa\'da veri depolama secenegi\n• Gizlilik politikasi sablonu'
                 },
                 {
@@ -380,7 +380,7 @@ const faqCategories: Record<string, FAQCategory[]> = {
                 },
                 {
                     question: 'Is my training data secure?',
-                    answer: 'Yes, all training data:\n\n• Encrypted with AES-256\n• Stored in secure EU and US data centers\n• GDPR and CCPA compliant\n• Used only by your chatbot\n• Deletable anytime\n\nYour data is never shared with third parties.'
+                    answer: 'Yes, all training data:\n\n• Encrypted with AES-256\n• Stored in secure local Azure servers in Sydney\n• Privacy Act (APP) compliant\n• Used only by your chatbot\n• Deletable anytime\n\nYour data is never shared with third parties.'
                 },
                 {
                     question: 'How do I improve chatbot responses?',
@@ -427,7 +427,7 @@ const faqCategories: Record<string, FAQCategory[]> = {
                     answer: 'Yes, we implement the highest security standards:\n\n• TLS 1.3 encrypted connection\n• AES-256 data encryption\n• SOC 2 Type II certified data centers\n• Regular security audits\n• 2FA (two-factor authentication)\n• IP whitelist (Enterprise)'
                 },
                 {
-                    question: 'Is it GDPR and CCPA compliant?',
+                    question: 'Is it Privacy Act (APP) compliant?',
                     answer: 'Yes, we are fully compliant:\n\n• Data Processing Agreement (DPA) available\n• User consent management\n• Data deletion request tool\n• Data portability support\n• Europe data storage option\n• Privacy policy template'
                 },
                 {

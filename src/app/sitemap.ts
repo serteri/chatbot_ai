@@ -16,7 +16,7 @@ const PUBLIC_PATHS = [
     '/terms',
     '/privacy',
     '/cookies',
-    '/gdpr',
+    '/privacy-act',
     '/demo',
     '/demo/education',
     '/demo/ecommerce',

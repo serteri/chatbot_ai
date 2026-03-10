@@ -485,18 +485,16 @@ export function WhatsAppChatWidget({
                     <div key={message.id}>
                         <div className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                             <div className={`flex gap-2 max-w-[85%] ${message.sender === 'user' ? 'flex-row-reverse' : ''}`}>
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                                    message.sender === 'user'
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-green-500 text-white'
-                                }`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.sender === 'user'
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-green-500 text-white'
+                                    }`}>
                                     {message.sender === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
                                 </div>
-                                <div className={`rounded-2xl px-4 py-3 ${
-                                    message.sender === 'user'
-                                        ? 'bg-blue-500 text-white rounded-tr-sm'
-                                        : 'bg-white text-gray-800 shadow-sm border rounded-tl-sm'
-                                }`}>
+                                <div className={`rounded-2xl px-4 py-3 ${message.sender === 'user'
+                                    ? 'bg-blue-500 text-white rounded-tr-sm'
+                                    : 'bg-white text-gray-800 shadow-sm border rounded-tl-sm'
+                                    }`}>
                                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                                 </div>
                             </div>
@@ -600,8 +598,10 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
         { q: 'Hangi analitik ve raporlari gorebilirim?', a: 'Dashboard\'da kapsamli analitikler sunuyoruz:\n\n• GENEL: Toplam konusma, mesaj sayisi, aktif kullanici\n• PERFORMANS: Cozum orani, ortalama yanit suresi, musteri memnuniyeti\n• ICERIK: En cok sorulan sorular, yanitlanamayan sorular, populer konular\n• ZAMAN: Yogun saatler, gunluk/haftalik/aylik trendler\n• DONUSUM: Lead yakalama, hedef tamamlama, canli destege yonlendirme\n\nRaporlar CSV, PDF, JSON formatinda indirilebilir. Zamanlanmis e-posta raporlari ayarlanabilir.', category: 'Analitik' },
 
         // Guvenlik
-        { q: 'Verilerim guvenli mi? Hangi onlemler aliniyor?', a: 'En yuksek guvenlik standartlarini uyguluyoruz:\n\n• SIFRELEME: TLS 1.3 baglanti, AES-256 veri sifreleme\n• ALTYAPI: SOC 2 Type II sertifikali AWS veri merkezleri\n• ERISIM: 2FA zorunlu, IP beyaz listesi (Enterprise), rol bazli yetkilendirme\n• DENETIM: Duzenli guvenlik testleri, penetrasyon testleri\n• UYUMLULUK: GDPR, KVKK, CCPA, HIPAA (Enterprise)\n\nVerileriniz Avrupa (Frankfurt) veya ABD (Virginia) veri merkezlerinde saklanir.', category: 'Guvenlik' },
-        { q: 'GDPR ve KVKK uyumlu mu?', a: 'Evet, tam uyumluyuz:\n\n• Veri Isleme Sozlesmesi (DPA) mevcut\n• Kullanici rizasi yonetimi (cookie banner entegrasyonu)\n• Veri silme talep araci (RTBF - Right to be Forgotten)\n• Veri tasima destegi (Data Portability)\n• Avrupa\'da veri depolama secenegi\n• Gizlilik politikasi ve kullanim sartlari sablonlari\n• DPO (Data Protection Officer) ile iletisim kanali\n\nKVKK verbis bildirimi icin gerekli dokumanlari sagliyoruz.', category: 'Guvenlik' },
+        {
+            q: 'Verilerim guvenli mi? Hangi onlemler aliniyor?', a: 'En yuksek guvenlik standartlarini uyguluyoruz:\n\n• SIFRELEME: TLS 1.3 baglanti, AES-256 veri sifreleme\n• ALTYAPI: SOC 2 Type II sertifikali AWS veri merkezleri\n• ERISIM: 2FA zorunlu, IP beyaz listesi (Enterprise), rol bazli yetkilendirme\n• DENETIM: Duzenli guvenlik testleri, penetrasyon testleri\n• UYUMLULUK: Privacy Act (APP)\n\nVerileriniz Sidney\'deki (Avustralya) yerel Azure sunucularında saklanir.', category: 'Guvenlik'
+        },
+        { q: 'Privacy Act (APP) uyumlu mu?', a: 'Evet, tam uyumluyuz:\n\n• Veri Isleme Sozlesmesi (DPA) mevcut\n• Kullanici rizasi yonetimi (cookie banner entegrasyonu)\n• Veri silme talep araci (RTBF - Right to be Forgotten)\n• Veri tasima destegi (Data Portability)\n• Avrupa\'da veri depolama secenegi\n• Gizlilik politikasi ve kullanim sartlari sablonlari\n• DPO (Data Protection Officer) ile iletisim kanali\n\nAPP uyumluluğu için gerekli dokümanları sağlıyoruz.', category: 'Guvenlik' },
 
         // Hesap
         { q: 'Hesabimi nasil yonetirim? Ayarlari nereden degistiririm?', a: 'Dashboard\'dan tum hesap islemlerinizi yapabilirsiniz:\n\n• PROFIL: Ad, e-posta, sifre degisikligi\n• FATURALAMA: Plan degisikligi, odeme yontemi, fatura gecmisi\n• EKIP: Kullanici ekleme/cikarma, roller ve izinler\n• BILDIRIMLER: E-posta bildirimleri, haftalik raporlar\n• GUVENLIK: 2FA etkinlestirme, oturum yonetimi, API anahtarlari\n• ENTEGRASYONLAR: Ucuncu parti baglantilari yonetme\n\nTum degisiklikler aninda kaydedilir.', category: 'Hesap' },
@@ -632,8 +632,8 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
         { q: 'What analytics and reports can I see?', a: 'We offer comprehensive analytics in Dashboard:\n\n• GENERAL: Total conversations, message count, active users\n• PERFORMANCE: Resolution rate, avg response time, customer satisfaction\n• CONTENT: Most asked questions, unanswered queries, popular topics\n• TIME: Peak hours, daily/weekly/monthly trends\n• CONVERSION: Lead capture, goal completion, live support escalation\n\nReports downloadable in CSV, PDF, JSON. Scheduled email reports available.', category: 'Analytics' },
 
         // Security
-        { q: 'Is my data secure? What measures are taken?', a: 'We implement highest security standards:\n\n• ENCRYPTION: TLS 1.3 connection, AES-256 data encryption\n• INFRASTRUCTURE: SOC 2 Type II certified AWS data centers\n• ACCESS: Mandatory 2FA, IP whitelist (Enterprise), role-based permissions\n• AUDIT: Regular security tests, penetration testing\n• COMPLIANCE: GDPR, CCPA, HIPAA (Enterprise)\n\nData stored in Europe (Frankfurt) or USA (Virginia) data centers.', category: 'Security' },
-        { q: 'Is it GDPR and CCPA compliant?', a: 'Yes, we are fully compliant:\n\n• Data Processing Agreement (DPA) available\n• User consent management (cookie banner integration)\n• Data deletion request tool (RTBF - Right to be Forgotten)\n• Data portability support\n• Europe data storage option\n• Privacy policy and terms of service templates\n• DPO (Data Protection Officer) contact channel\n\nWe provide necessary documentation for compliance.', category: 'Security' },
+        { q: 'Is my data secure? What measures are taken?', a: 'We implement highest security standards:\n\n• ENCRYPTION: TLS 1.3 connection, AES-256 data encryption\n• INFRASTRUCTURE: SOC 2 Type II certified AWS data centers\n• ACCESS: Mandatory 2FA, IP whitelist (Enterprise), role-based permissions\n• AUDIT: Regular security tests, penetration testing\n• COMPLIANCE: Privacy Act (APP)\n\nData stored in local Azure servers in Sydney, Australia.', category: 'Security' },
+        { q: 'Is it Privacy Act (APP) compliant?', a: 'Yes, we are fully compliant:\n\n• Data Processing Agreement (DPA) available\n• User consent management (cookie banner integration)\n• Data deletion request tool (RTBF - Right to be Forgotten)\n• Data portability support\n• Local Australian data storage\n• Privacy policy and terms of service templates\n• DPO (Data Protection Officer) contact channel\n\nWe provide necessary documentation for compliance.', category: 'Security' },
 
         // Account
         { q: 'How do I manage my account? Where do I change settings?', a: 'Manage all account operations from Dashboard:\n\n• PROFILE: Name, email, password changes\n• BILLING: Plan changes, payment method, invoice history\n• TEAM: Add/remove users, roles and permissions\n• NOTIFICATIONS: Email notifications, weekly reports\n• SECURITY: Enable 2FA, session management, API keys\n• INTEGRATIONS: Manage third-party connections\n\nAll changes are saved instantly.', category: 'Account' },
@@ -696,8 +696,8 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
         { q: 'Que analiticas y reportes puedo ver?', a: 'Ofrecemos analiticas completas en el Dashboard:\n\n• GENERAL: Total de conversaciones, conteo de mensajes, usuarios activos\n• RENDIMIENTO: Tasa de resolucion, tiempo promedio de respuesta, satisfaccion del cliente\n• CONTENIDO: Preguntas mas frecuentes, consultas sin responder, temas populares\n• TIEMPO: Horas pico, tendencias diarias/semanales/mensuales\n• CONVERSION: Captura de leads, cumplimiento de objetivos, escalacion a soporte en vivo\n\nReportes descargables en CSV, PDF, JSON. Reportes programados por email disponibles.', category: 'Analiticas' },
 
         // Seguridad
-        { q: 'Mis datos estan seguros? Que medidas se toman?', a: 'Implementamos los mas altos estandares de seguridad:\n\n• ENCRIPTACION: Conexion TLS 1.3, encriptacion de datos AES-256\n• INFRAESTRUCTURA: Centros de datos AWS certificados SOC 2 Type II\n• ACCESO: 2FA obligatorio, lista blanca de IP (Enterprise), permisos basados en roles\n• AUDITORIA: Pruebas de seguridad regulares, pruebas de penetracion\n• CUMPLIMIENTO: GDPR, CCPA, HIPAA (Enterprise)\n\nDatos almacenados en centros de datos de Europa (Frankfurt) o USA (Virginia).', category: 'Seguridad' },
-        { q: 'Cumple con GDPR?', a: 'Si, cumplimos completamente:\n\n• Acuerdo de Procesamiento de Datos (DPA) disponible\n• Gestion de consentimiento de usuario (integracion de banner de cookies)\n• Herramienta de solicitud de eliminacion de datos (Derecho al Olvido)\n• Soporte de portabilidad de datos\n• Opcion de almacenamiento en Europa\n• Plantillas de politica de privacidad y terminos de servicio\n• Canal de contacto con DPO (Oficial de Proteccion de Datos)\n\nProporcionamos toda la documentacion necesaria para el cumplimiento.', category: 'Seguridad' },
+        { q: 'Mis datos estan seguros? Que medidas se toman?', a: 'Implementamos los mas altos estandares de seguridad:\n\n• ENCRIPTACION: Conexion TLS 1.3, encriptacion de datos AES-256\n• INFRAESTRUCTURA: Centros de datos AWS certificados SOC 2 Type II\n• ACCESO: 2FA obligatorio, lista blanca de IP (Enterprise), permisos basados en roles\n• AUDITORIA: Pruebas de seguridad regulares, pruebas de penetracion\n• CUMPLIMIENTO: Privacy Act (APP)\n\nDatos almacenados en centros de datos de Europa (Frankfurt) o USA (Virginia).', category: 'Seguridad' },
+        { q: 'Cumple con Privacy Act (APP)?', a: 'Si, cumplimos completamente:\n\n• Acuerdo de Procesamiento de Datos (DPA) disponible\n• Gestion de consentimiento de usuario (integracion de banner de cookies)\n• Herramienta de solicitud de eliminacion de datos (Derecho al Olvido)\n• Soporte de portabilidad de datos\n• Opcion de almacenamiento en Europa\n• Plantillas de politica de privacidad y terminos de servicio\n• Canal de contacto con DPO (Oficial de Proteccion de Datos)\n\nProporcionamos toda la documentacion necesaria para el cumplimiento.', category: 'Seguridad' },
 
         // Cuenta
         { q: 'Como gestiono mi cuenta? Donde cambio la configuracion?', a: 'Gestiona todas las operaciones de cuenta desde el Dashboard:\n\n• PERFIL: Cambios de nombre, email, contrasena\n• FACTURACION: Cambios de plan, metodo de pago, historial de facturas\n• EQUIPO: Agregar/eliminar usuarios, roles y permisos\n• NOTIFICACIONES: Notificaciones por email, reportes semanales\n• SEGURIDAD: Habilitar 2FA, gestion de sesiones, claves API\n• INTEGRACIONES: Gestionar conexiones de terceros\n\nTodos los cambios se guardan instantaneamente.', category: 'Cuenta' },
@@ -908,9 +908,8 @@ export function FloatingWhatsAppButton({
             {/* Floating Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 ${
-                    isOpen ? 'bg-gray-600 hover:bg-gray-700' : 'bg-green-500 hover:bg-green-600'
-                }`}
+                className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 ${isOpen ? 'bg-gray-600 hover:bg-gray-700' : 'bg-green-500 hover:bg-green-600'
+                    }`}
                 aria-label="Support"
             >
                 {isOpen ? (

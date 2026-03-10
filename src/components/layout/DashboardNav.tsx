@@ -50,7 +50,7 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
 
     const changeLocale = (newLocale: string) => {
         // HATA DÜZELTME: URL mantığı yenilendi
-        const supportedLocales = ['tr', 'en', 'de', 'fr', 'es'];
+        const supportedLocales = ['tr', 'en'];
         const pathSegments = pathname.split('/').filter(Boolean);
 
         // Eğer URL'in ilk parçası desteklenen bir dil ise (örn: /tr/dashboard), onu değiştir
@@ -150,11 +150,7 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="bg-white border border-gray-200 shadow-xl z-[999] min-w-[160px] p-1 mt-2" align="end">
                                 <div className="px-2 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                                    {currentLocale === 'tr' ? 'Dil Seçin' :
-                                        currentLocale === 'de' ? 'Sprache wählen' :
-                                            currentLocale === 'fr' ? 'Choisir la langue' :
-                                                currentLocale === 'es' ? 'Elegir idioma' :
-                                                    'Select Language'}
+                                    {currentLocale === 'tr' ? 'Dil Seçin' : 'Select Language'}
                                 </div>
 
                                 <DropdownMenuItem onClick={() => changeLocale('tr')} className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-sm ${currentLocale === 'tr' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}>
@@ -167,34 +163,10 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
 
                                 <DropdownMenuItem onClick={() => changeLocale('en')} className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-sm ${currentLocale === 'en' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}>
                                     <div className="flex items-center gap-3">
-                                        <span className="text-lg">🇬🇧</span>
-                                        <span>English</span>
+                                        <span className="text-lg">🇦🇺</span>
+                                        <span>English (AU)</span>
                                     </div>
                                     {currentLocale === 'en' && <span className="text-blue-600">✓</span>}
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem onClick={() => changeLocale('de')} className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-sm ${currentLocale === 'de' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}>
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-lg">🇩🇪</span>
-                                        <span>Deutsch</span>
-                                    </div>
-                                    {currentLocale === 'de' && <span className="text-blue-600">✓</span>}
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem onClick={() => changeLocale('fr')} className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-sm ${currentLocale === 'fr' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}>
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-lg">🇫🇷</span>
-                                        <span>Français</span>
-                                    </div>
-                                    {currentLocale === 'fr' && <span className="text-blue-600">✓</span>}
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem onClick={() => changeLocale('es')} className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-sm ${currentLocale === 'es' ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}>
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-lg">🇪🇸</span>
-                                        <span>Español</span>
-                                    </div>
-                                    {currentLocale === 'es' && <span className="text-blue-600">✓</span>}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

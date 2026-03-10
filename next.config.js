@@ -21,6 +21,21 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
+
+    async redirects() {
+        return [
+            {
+                source: '/en/gdpr',
+                destination: '/en/privacy-act',
+                permanent: true,
+            },
+            {
+                source: '/tr/gdpr',
+                destination: '/tr/privacy-act',
+                permanent: true,
+            }
+        ];
+    },
 }
 
 module.exports = withNextIntl(nextConfig)

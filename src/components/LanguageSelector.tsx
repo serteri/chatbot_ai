@@ -6,10 +6,7 @@ import { ChevronDown, Languages, CheckCircle } from 'lucide-react'
 
 const languages = [
     { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' }
+    { code: 'en', name: 'English (AU)', flag: '🇦🇺' }
 ]
 
 export default function LanguageSelector() {

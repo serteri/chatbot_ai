@@ -1683,7 +1683,7 @@
       "q5": "What does 'Watermarked PDF' mean on the Starter plan?",
       "a5": "Starter plan addendum PDFs include a NDIS Shield Hub watermark. Professional plan removes all watermarks and injects your own logo and branding.",
       "q6": "Is my client data secure?",
-      "a6": "Yes. Documents are processed in Azure OpenAI Sydney (ap-southeast-2) and never stored on our servers after analysis. We are GDPR compliant and data never leaves Australia.",
+      "a6": "Yes. Documents are processed in Azure OpenAI Sydney (ap-southeast-2) and never stored on our servers after analysis. We are Privacy Act (APP) compliant and data never leaves Australia.",
       "q7": "What is Bulk Processing?",
       "a7": "Professional plan allows you to upload and audit multiple service agreements at once — ideal for providers managing large participant caseloads.",
       "q8": "Do you replace Lumary or ShiftCare?",
@@ -2430,7 +2430,7 @@
     "resetDate": "Resets on {date}"
   },
   "footer": {
-    "description": "Transform customer experience with AI-powered chatbots. Setup in minutes, 24/7 support.",
+    "description": "Transform customer experience with NDIS Shield Hub - Brisbane-based NDIS compliance platform.",
     "copyright": "All rights reserved.",
     "location": "Brisbane, Australia",
     "sections": {
@@ -2537,7 +2537,7 @@
     "posts": {
       "post1": {
         "title": "The Future of AI Customer Support",
-        "excerpt": "How generative AI is transforming the way businesses interact with customers 24/7 without losing the human touch."
+        "excerpt": "How generative AI is transforming how businesses manage NDIS compliance without losing the human touch."
       },
       "post2": {
         "title": "Optimizing Chatbot Responses for E-commerce",
@@ -2627,7 +2627,7 @@
       "cookiesTitle": "Cookies and Tracking",
       "cookiesText": "Our website uses cookies and similar technologies to enhance your experience. Cookies help us remember your preferences and analyze site usage. You can control cookies through your browser settings.",
       "securityTitle": "Data Security",
-      "securityText": "We use industry-standard security measures including SSL encryption, secure data centers, and regular security audits to protect your data. However, no data transmission over the internet is 100% secure.",
+      "securityText": "We use industry-standard security measures including local data storage on Azure servers in Sydney, complying with Australian Privacy Principles (APP). However, no data transmission over the internet is 100% secure.",
       "thirdPartyTitle": "Third-Party Services",
       "thirdPartyText": "Our platform may use third-party services such as Google OAuth, Stripe payment processing, and analytics tools. These services have their own privacy policies, and we encourage you to review them.",
       "retentionTitle": "Data Retention",
@@ -2677,9 +2677,9 @@
       "howText": "We use cookies for session management, preference storage, and analytics purposes."
     },
     "gdpr": {
-      "title": "GDPR Compliance",
+      "title": "Privacy Act (APP) Compliance",
       "rightsTitle": "Your Data Protection Rights",
-      "rightsText": "Under GDPR, you have rights to access, rectification, erasure, and data portability.",
+      "rightsText": "Under the Privacy Act (APP), you have rights to access, correction, and data portability.",
       "processingTitle": "Data Processing",
       "processingText": "We process your data only for legitimate purposes and on legal bases."
     }
@@ -2755,7 +2755,7 @@
       "privacy": "Privacy Policy",
       "terms": "Terms of Service",
       "cookies": "Cookie Policy",
-      "gdpr": "GDPR",
+      "gdpr": "Privacy Act (APP)",
       "helpCenter": "Help Center",
       "docs": "Documentation",
       "faq": "FAQ",

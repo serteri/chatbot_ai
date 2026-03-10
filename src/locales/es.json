@@ -1454,7 +1454,7 @@
       "q6": "¿Puedo usar mi propio dominio?",
       "a6": "¡Sí! Los planes Business y Enterprise incluyen soporte de dominio.",
       "q7": "¿Mis datos están seguros?",
-      "a7": "Absolutamente. Usamos cifrado estándar y cumplimos con GDPR.",
+      "a7": "Absolutamente. Usamos cifrado estándar y cumplimos con Privacy Act (APP).",
       "q8": "¿Ofrecen soporte?",
       "a8": "¡Sí! Free tiene soporte email, Pro tiene soporte prioritario, Business/Enterprise 24/7."
     }
@@ -2221,7 +2221,7 @@
       "privacy": "Política de privacidad",
       "terms": "Términos de servicio",
       "cookies": "Política de cookies",
-      "gdpr": "GDPR",
+      "privacyAct": "Privacy Act (APP)",
       "helpCenter": "Centro de ayuda",
       "docs": "Documentación",
       "faq": "FAQ",
@@ -2428,10 +2428,10 @@
       "howTitle": "Cómo Usamos las Cookies",
       "howText": "Usamos cookies para gestión de sesiones, almacenamiento de preferencias y análisis."
     },
-    "gdpr": {
-      "title": "Cumplimiento de GDPR",
+    "privacyAct": {
+      "title": "Cumplimiento de Privacy Act (APP)",
       "rightsTitle": "Sus Derechos de Protección de Datos",
-      "rightsText": "Bajo el GDPR, tiene derechos de acceso, rectificación, supresión y portabilidad de datos.",
+      "rightsText": "Bajo el Privacy Act (APP), tiene derechos de acceso, rectificación, supresión y portabilidad de datos.",
       "processingTitle": "Procesamiento de Datos",
       "processingText": "Procesamos sus datos solo para fines legítimos y sobre bases legales."
     }

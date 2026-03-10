@@ -32,7 +32,11 @@
       "Bash(npx ts-node:*)",
       "Bash(dir /s /b C:UsersserteDesktopchatbot_ai*.json)",
       "Bash(findstr:*)",
-      "Bash(dir /s /b \"C:\\\\Users\\\\serte\\\\Desktop\\\\chatbot_ai\\\\*.json\")"
+      "Bash(dir /s /b \"C:\\\\Users\\\\serte\\\\Desktop\\\\chatbot_ai\\\\*.json\")",
+      "Bash(grep:*)",
+      "Bash(npm list:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsx:*)"
     ]
   }
 }
