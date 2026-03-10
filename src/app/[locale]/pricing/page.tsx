@@ -325,11 +325,11 @@ export default function PricingPage() {
                                     How We&rsquo;re Different
                                 </span>
                                 <h2 className="text-3xl font-bold mb-4">
-                                    PylonChat vs. Lumary &amp; ShiftCare
+                                    NDIS Shield Hub vs. Lumary &amp; ShiftCare
                                 </h2>
                                 <p className="text-slate-400 max-w-2xl mx-auto">
                                     Lumary and ShiftCare are excellent rostering and shift-management platforms.
-                                    PylonChat solves a completely different problem: <strong className="text-white">protecting your NDIS compliance</strong> through AI-driven document auditing.
+                                    NDIS Shield Hub solves a completely different problem: <strong className="text-white">protecting your NDIS compliance</strong> through AI-driven document auditing.
                                 </p>
                             </div>
 
@@ -386,14 +386,14 @@ export default function PricingPage() {
                                     </ul>
                                 </div>
 
-                                {/* PylonChat */}
+                                {/* NDIS Shield Hub */}
                                 <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-6 relative">
                                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-cyan-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
                                         That&rsquo;s us
                                     </div>
                                     <div className="flex items-center gap-3 mb-4">
                                         <div className="w-8 h-8 rounded-full bg-cyan-600 flex items-center justify-center text-white font-bold text-sm">P</div>
-                                        <span className="font-semibold text-white">PylonChat</span>
+                                        <span className="font-semibold text-white">NDIS Shield Hub</span>
                                     </div>
                                     <ul className="space-y-3 text-sm text-slate-300">
                                         <li className="flex items-start gap-2">

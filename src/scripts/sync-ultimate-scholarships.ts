@@ -18,7 +18,7 @@ async function main() {
 
         console.log('🎉 BAŞARILI! ULTIMATE AGGREGATION TAMAMLANDI!')
         console.log(`⏱️  Süre: ${duration} dakika`)
-        console.log(`📊 SONUÇ: Binlerce scholarship PylonChat'da!`)
+        console.log(`📊 SONUÇ: Binlerce scholarship NDIS Shield Hub'da!`)
 
         // Expected results:
         console.log(`✅ BEKLENİLEN SONUÇLAR:`)

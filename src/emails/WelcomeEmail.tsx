@@ -27,22 +27,22 @@ export function WelcomeEmail({
     return (
         <Html>
             <Head />
-            <Preview>Your NDIS Compliance Shield is now active — welcome to NDIS Shield.</Preview>
+            <Preview>Your NDIS Compliance Shield is now active — welcome to NDIS Shield Hub.</Preview>
             <Body style={main}>
                 <Container style={container}>
 
                     {/* Header bar */}
                     <Section style={header}>
-                        <Text style={logoText}>NDIS Shield</Text>
+                        <Text style={logoText}>NDIS Shield Hub</Text>
                         <Text style={tagline}>NDIS Compliance Intelligence</Text>
                     </Section>
 
                     {/* Body */}
                     <Section style={body}>
-                        <Heading style={h1}>Welcome to NDIS Shield, {name}.</Heading>
+                        <Heading style={h1}>Welcome to NDIS Shield Hub, {name}.</Heading>
 
                         <Text style={paragraph}>
-                            Thank you for joining NDIS Shield. Your account is live and your
+                            Thank you for joining NDIS Shield Hub. Your account is live and your
                             <strong> NDIS Compliance Shield is now active</strong>.
                         </Text>
 
@@ -82,10 +82,10 @@ export function WelcomeEmail({
                     {/* Footer */}
                     <Section style={footer}>
                         <Text style={footerMuted}>
-                            NDIS Shield · Sydney, Australia · ap-southeast-2
+                            NDIS Shield Hub · Sydney, Australia · ap-southeast-2
                         </Text>
                         <Text style={footerMuted}>
-                            © {new Date().getFullYear()} NDIS Shield. All rights reserved.
+                            © {new Date().getFullYear()} NDIS Shield Hub. All rights reserved.
                         </Text>
                     </Section>
 

@@ -232,7 +232,7 @@ function CancelAppointmentContent() {
                 )}
 
                 {/* Footer */}
-                <p className="text-center text-xs text-gray-400 mt-6">© {new Date().getFullYear()} PylonChat</p>
+                <p className="text-center text-xs text-gray-400 mt-6">© {new Date().getFullYear()} NDIS Shield Hub</p>
             </div>
         </div>
     )

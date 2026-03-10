@@ -10,7 +10,7 @@ export default function Loading() {
                     </div>
                 </div>
                 <div className="text-sm font-medium text-slate-500 animate-pulse">
-                    PylonChat
+                    NDIS Shield Hub
                 </div>
             </div>
         </div>

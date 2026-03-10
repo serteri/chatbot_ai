@@ -63,7 +63,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'languages',
             question: 'What languages are supported?',
-            answer: 'PylonChat supports 50+ languages including English, Turkish, German, French, Spanish, Arabic, Chinese, Japanese, and more. The chatbot automatically detects and responds in the user\'s language.'
+            answer: 'NDIS Shield Hub supports 50+ languages including English, Turkish, German, French, Spanish, Arabic, Chinese, Japanese, and more. The chatbot automatically detects and responds in the user\'s language.'
         },
         {
             id: 'analytics',
@@ -73,7 +73,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'api',
             question: 'Is there an API available?',
-            answer: 'Yes, Pro and higher plans include API access. You can integrate PylonChat into your own applications using our REST API. Documentation is available in your dashboard.'
+            answer: 'Yes, Pro and higher plans include API access. You can integrate NDIS Shield Hub into your own applications using our REST API. Documentation is available in your dashboard.'
         }
     ],
     tr: [
@@ -95,7 +95,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'languages',
             question: 'Hangi diller destekleniyor?',
-            answer: 'PylonChat Turkce, Ingilizce, Almanca, Fransizca, Ispanyolca, Arapca, Cince, Japonca ve daha fazlasi dahil 50\'den fazla dili destekler. Chatbot kullanicinin dilini otomatik algilar ve yanit verir.'
+            answer: 'NDIS Shield Hub Turkce, Ingilizce, Almanca, Fransizca, Ispanyolca, Arapca, Cince, Japonca ve daha fazlasi dahil 50\'den fazla dili destekler. Chatbot kullanicinin dilini otomatik algilar ve yanit verir.'
         },
         {
             id: 'analytics',
@@ -105,7 +105,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'api',
             question: 'API mevcut mu?',
-            answer: 'Evet, Pro ve ustu planlar API erisimi icerir. REST API\'mizi kullanarak PylonChat\'i kendi uygulamalariniza entegre edebilirsiniz. Dokumantasyon panelinizde mevcuttur.'
+            answer: 'Evet, Pro ve ustu planlar API erisimi icerir. REST API\'mizi kullanarak NDIS Shield Hub\'i kendi uygulamalariniza entegre edebilirsiniz. Dokumantasyon panelinizde mevcuttur.'
         }
     ],
     de: [
@@ -127,7 +127,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'languages',
             question: 'Welche Sprachen werden unterstutzt?',
-            answer: 'PylonChat unterstutzt uber 50 Sprachen, darunter Deutsch, Englisch, Turkisch, Franzosisch, Spanisch und mehr. Der Chatbot erkennt automatisch die Sprache des Benutzers.'
+            answer: 'NDIS Shield Hub unterstutzt uber 50 Sprachen, darunter Deutsch, Englisch, Turkisch, Franzosisch, Spanisch und mehr. Der Chatbot erkennt automatisch die Sprache des Benutzers.'
         },
         {
             id: 'analytics',
@@ -137,7 +137,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'api',
             question: 'Gibt es eine API?',
-            answer: 'Ja, Pro und hohere Plane beinhalten API-Zugang. Sie konnen PylonChat uber unsere REST-API in Ihre eigenen Anwendungen integrieren.'
+            answer: 'Ja, Pro und hohere Plane beinhalten API-Zugang. Sie konnen NDIS Shield Hub uber unsere REST-API in Ihre eigenen Anwendungen integrieren.'
         }
     ],
     es: [
@@ -159,7 +159,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'languages',
             question: 'Que idiomas son compatibles?',
-            answer: 'PylonChat soporta mas de 50 idiomas incluyendo Espanol, Ingles, Aleman, Frances, Turco y mas. El chatbot detecta automaticamente el idioma del usuario.'
+            answer: 'NDIS Shield Hub soporta mas de 50 idiomas incluyendo Espanol, Ingles, Aleman, Frances, Turco y mas. El chatbot detecta automaticamente el idioma del usuario.'
         },
         {
             id: 'analytics',
@@ -169,7 +169,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'api',
             question: 'Hay una API disponible?',
-            answer: 'Si, los planes Pro y superiores incluyen acceso a la API. Puedes integrar PylonChat en tus propias aplicaciones usando nuestra API REST.'
+            answer: 'Si, los planes Pro y superiores incluyen acceso a la API. Puedes integrar NDIS Shield Hub en tus propias aplicaciones usando nuestra API REST.'
         }
     ],
     fr: [
@@ -191,7 +191,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'languages',
             question: 'Quelles langues sont supportees?',
-            answer: 'PylonChat supporte plus de 50 langues dont le Francais, l\'Anglais, l\'Allemand, l\'Espagnol, le Turc et plus. Le chatbot detecte automatiquement la langue de l\'utilisateur.'
+            answer: 'NDIS Shield Hub supporte plus de 50 langues dont le Francais, l\'Anglais, l\'Allemand, l\'Espagnol, le Turc et plus. Le chatbot detecte automatiquement la langue de l\'utilisateur.'
         },
         {
             id: 'analytics',
@@ -201,7 +201,7 @@ const faqData: Record<string, FAQOption[]> = {
         {
             id: 'api',
             question: 'Y a-t-il une API disponible?',
-            answer: 'Oui, les forfaits Pro et superieurs incluent l\'acces API. Vous pouvez integrer PylonChat dans vos propres applications via notre API REST.'
+            answer: 'Oui, les forfaits Pro et superieurs incluent l\'acces API. Vous pouvez integrer NDIS Shield Hub dans vos propres applications via notre API REST.'
         }
     ]
 }
@@ -221,7 +221,7 @@ const translations: Record<string, Record<string, string>> = {
         title: '24/7 Enterprise Support',
         subtitle: 'How can we help you today?',
         available: 'Online',
-        welcomeMessage: 'Hello! I\'m PylonChat Support Assistant. I can help you with common questions. Select a topic below or type your question.',
+        welcomeMessage: 'Hello! I\'m NDIS Shield Hub Support Assistant. I can help you with common questions. Select a topic below or type your question.',
         faqTitle: 'Frequently Asked Questions',
         inputPlaceholder: 'Type your message...',
         sendButton: 'Send',
@@ -239,7 +239,7 @@ const translations: Record<string, Record<string, string>> = {
         title: '7/24 Enterprise Destek',
         subtitle: 'Bugun size nasil yardimci olabiliriz?',
         available: 'Cevrimici',
-        welcomeMessage: 'Merhaba! Ben PylonChat Destek Asistaniyim. Sik sorulan sorularda size yardimci olabilirim. Asagidan bir konu secin veya sorunuzu yazin.',
+        welcomeMessage: 'Merhaba! Ben NDIS Shield Hub Destek Asistaniyim. Sik sorulan sorularda size yardimci olabilirim. Asagidan bir konu secin veya sorunuzu yazin.',
         faqTitle: 'Sik Sorulan Sorular',
         inputPlaceholder: 'Mesajinizi yazin...',
         sendButton: 'Gonder',
@@ -257,7 +257,7 @@ const translations: Record<string, Record<string, string>> = {
         title: '24/7 Enterprise Support',
         subtitle: 'Wie konnen wir Ihnen heute helfen?',
         available: 'Online',
-        welcomeMessage: 'Hallo! Ich bin der PylonChat Support-Assistent. Ich kann Ihnen bei haufigen Fragen helfen. Wahlen Sie unten ein Thema oder geben Sie Ihre Frage ein.',
+        welcomeMessage: 'Hallo! Ich bin der NDIS Shield Hub Support-Assistent. Ich kann Ihnen bei haufigen Fragen helfen. Wahlen Sie unten ein Thema oder geben Sie Ihre Frage ein.',
         faqTitle: 'Haufig gestellte Fragen',
         inputPlaceholder: 'Nachricht eingeben...',
         sendButton: 'Senden',
@@ -275,7 +275,7 @@ const translations: Record<string, Record<string, string>> = {
         title: 'Soporte Enterprise 24/7',
         subtitle: 'Como podemos ayudarte hoy?',
         available: 'En linea',
-        welcomeMessage: 'Hola! Soy el Asistente de Soporte de PylonChat. Puedo ayudarte con preguntas comunes. Selecciona un tema abajo o escribe tu pregunta.',
+        welcomeMessage: 'Hola! Soy el Asistente de Soporte de NDIS Shield Hub. Puedo ayudarte con preguntas comunes. Selecciona un tema abajo o escribe tu pregunta.',
         faqTitle: 'Preguntas Frecuentes',
         inputPlaceholder: 'Escribe tu mensaje...',
         sendButton: 'Enviar',
@@ -293,7 +293,7 @@ const translations: Record<string, Record<string, string>> = {
         title: 'Support Enterprise 24/7',
         subtitle: 'Comment pouvons-nous vous aider?',
         available: 'En ligne',
-        welcomeMessage: 'Bonjour! Je suis l\'Assistant Support PylonChat. Je peux vous aider avec les questions courantes. Selectionnez un sujet ci-dessous ou tapez votre question.',
+        welcomeMessage: 'Bonjour! Je suis l\'Assistant Support NDIS Shield Hub. Je peux vous aider avec les questions courantes. Selectionnez un sujet ci-dessous ou tapez votre question.',
         faqTitle: 'Questions Frequentes',
         inputPlaceholder: 'Tapez votre message...',
         sendButton: 'Envoyer',
@@ -577,8 +577,8 @@ export function WhatsAppChatWidget({
 const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string }>> = {
     tr: [
         // Genel
-        { q: 'PylonChat nedir ve ne ise yarar?', a: 'PylonChat, isletmeler icin gelistirilmis yapay zeka destekli chatbot platformudur. Web sitenize, mobil uygulamaniza veya sosyal medya kanallariniza entegre edebileceginiz akilli chatbotlar olusturmanizi saglar. Musteri sorularini 7/24 otomatik yanitlar, musteri memnuniyetini artirir ve destek maliyetlerinizi %60\'a kadar azaltir.', category: 'Genel' },
-        { q: 'Hangi sektorlere hizmet veriyorsunuz?', a: 'PylonChat tum sektorlerde kullanilabilir: E-ticaret (urun onerileri, siparis takibi), Egitim (ogrenci danismanligi, kayit islemleri), Emlak (mulk sorgulama, randevu alma), Saglik (randevu, SSS), Finans (hesap bilgileri, islem sorgulama), Turizm (rezervasyon, bilgi), Perakende ve daha fazlasi. Her sektor icin ozellestirilmis sablonlar sunuyoruz.', category: 'Genel' },
+        { q: 'NDIS Shield Hub nedir ve ne ise yarar?', a: 'NDIS Shield Hub, isletmeler icin gelistirilmis yapay zeka destekli chatbot platformudur. Web sitenize, mobil uygulamaniza veya sosyal medya kanallariniza entegre edebileceginiz akilli chatbotlar olusturmanizi saglar. Musteri sorularini 7/24 otomatik yanitlar, musteri memnuniyetini artirir ve destek maliyetlerinizi %60\'a kadar azaltir.', category: 'Genel' },
+        { q: 'Hangi sektorlere hizmet veriyorsunuz?', a: 'NDIS Shield Hub tum sektorlerde kullanilabilir: E-ticaret (urun onerileri, siparis takibi), Egitim (ogrenci danismanligi, kayit islemleri), Emlak (mulk sorgulama, randevu alma), Saglik (randevu, SSS), Finans (hesap bilgileri, islem sorgulama), Turizm (rezervasyon, bilgi), Perakende ve daha fazlasi. Her sektor icin ozellestirilmis sablonlar sunuyoruz.', category: 'Genel' },
         { q: 'Ucretsiz deneme surumu var mi?', a: 'Evet! Ucretsiz planumuzla hemen baslayabilirsiniz. Kredi karti gerektirmez. Ucretsiz planda 1 chatbot olusturabilir, 3 belge yukleyebilir ve aylik 100 mesaj kullanabilirsiniz. Tum temel ozelliklere erisim saglarsiniz. Daha fazla ozellik icin Pro veya Business planina yukseltebilirsiniz.', category: 'Genel' },
 
         // Fiyatlandirma
@@ -588,13 +588,13 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
 
         // Entegrasyon
         { q: 'Chatbotu web siteme nasil entegre ederim?', a: 'Entegrasyon 3 kolay adimda tamamlanir:\n\n1. Dashboard\'da chatbotunuzu olusturun ve egitim verilerini ekleyin\n2. Ayarlar > Embed Kodu bolumune gidin\n3. Verilen JavaScript kodunu web sitenizin </body> etiketinden hemen once yapistirin\n\nWordPress icin eklentimizi kullanabilirsiniz. Shopify, Wix, Squarespace icin de ozel entegrasyon rehberlerimiz mevcuttur. Chatbot otomatik olarak sitenizde gorunecektir.', category: 'Entegrasyon' },
-        { q: 'Hangi platformlarla entegre olur?', a: 'PylonChat genis entegrasyon destegi sunar:\n\n• WEB: Tum web siteleri, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MESAJLASMA: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• IS ARACLARI: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• OTOMASYON: Zapier ile 5000+ uygulama baglantisi\n• OZEL: REST API ile kendi entegrasyonlarinizi gelistirebilirsiniz', category: 'Entegrasyon' },
+        { q: 'Hangi platformlarla entegre olur?', a: 'NDIS Shield Hub genis entegrasyon destegi sunar:\n\n• WEB: Tum web siteleri, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MESAJLASMA: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• IS ARACLARI: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• OTOMASYON: Zapier ile 5000+ uygulama baglantisi\n• OZEL: REST API ile kendi entegrasyonlarinizi gelistirebilirsiniz', category: 'Entegrasyon' },
         { q: 'API dokumantasyonu nerede? Nasil kullanirim?', a: 'API dokumantasyonuna Dashboard > Gelistirici > API Dokumantasyonu bolumunden ulasabilirsiniz.\n\nAPI ile yapabilecekleriniz:\n• Chatbot olusturma ve yonetme\n• Egitim verileri yukleme\n• Mesaj gonderme ve alma\n• Konusma gecmisine erisim\n• Analitik verileri cekme\n\nAPI anahtarinizi ayni sayfadan olusturabilirsiniz. Rate limit: Pro 60/dk, Business 300/dk, Enterprise ozel.', category: 'Entegrasyon' },
 
         // Egitim
         { q: 'Chatbotumu nasil egitirim? Hangi yontemler var?', a: 'Chatbotunuzu 3 farkli yontemle egitebilirsiniz:\n\n1. BELGE YUKLEME: PDF, DOCX, DOC, TXT, CSV, XLSX dosyalari yukleyin. AI otomatik olarak icerigi analiz eder.\n\n2. WEB SITESI TARAMA: URL girin, chatbot sitenizi tarar ve icerik cikarir. SSS, urun bilgileri, blog yazilari otomatik ogrenilir.\n\n3. MANUEL GIRIS: Soru-cevap ciftleri dogrudan ekleyin. Ozel senaryolar icin ideal.\n\nEgitim genellikle birkac dakika icerisinde tamamlanir.', category: 'Egitim' },
         { q: 'Hangi dosya formatlarini destekliyorsunuz?', a: 'Desteklenen dosya formatlari:\n\n• BELGELER: PDF, DOCX, DOC, TXT, RTF, ODT\n• TABLOLAR: CSV, XLSX, XLS (urun kataloglari icin ideal)\n• WEB: HTML, XML, Sitemap\n• KOD: Markdown (MD)\n\nMaksimum dosya boyutu:\n• Pro: 10MB/dosya, toplam 50MB\n• Business: 50MB/dosya, toplam 500MB\n• Enterprise: Sinirsiz\n\nBirden fazla dosya ayni anda yuklenebilir.', category: 'Egitim' },
-        { q: 'Chatbot kac dil destekliyor?', a: 'PylonChat 50\'den fazla dili destekler:\n\n• Turkce, Ingilizce, Almanca, Fransizca, Ispanyolca\n• Arapca, Cince (Basitlestirilmis/Geleneksel), Japonca, Korece\n• Rusca, Portekizce, Italyanca, Hollandaca, Lehce\n• Hintce, Endonezyaca, Vietnamca, Tayce\n• Ve daha fazlasi...\n\nChatbot kullanicinin dilini otomatik algilar ve ayni dilde yanit verir. Her dil icin ayri egitim verileri de yukleyebilirsiniz.', category: 'Egitim' },
+        { q: 'Chatbot kac dil destekliyor?', a: 'NDIS Shield Hub 50\'den fazla dili destekler:\n\n• Turkce, Ingilizce, Almanca, Fransizca, Ispanyolca\n• Arapca, Cince (Basitlestirilmis/Geleneksel), Japonca, Korece\n• Rusca, Portekizce, Italyanca, Hollandaca, Lehce\n• Hintce, Endonezyaca, Vietnamca, Tayce\n• Ve daha fazlasi...\n\nChatbot kullanicinin dilini otomatik algilar ve ayni dilde yanit verir. Her dil icin ayri egitim verileri de yukleyebilirsiniz.', category: 'Egitim' },
 
         // Analitik
         { q: 'Hangi analitik ve raporlari gorebilirim?', a: 'Dashboard\'da kapsamli analitikler sunuyoruz:\n\n• GENEL: Toplam konusma, mesaj sayisi, aktif kullanici\n• PERFORMANS: Cozum orani, ortalama yanit suresi, musteri memnuniyeti\n• ICERIK: En cok sorulan sorular, yanitlanamayan sorular, populer konular\n• ZAMAN: Yogun saatler, gunluk/haftalik/aylik trendler\n• DONUSUM: Lead yakalama, hedef tamamlama, canli destege yonlendirme\n\nRaporlar CSV, PDF, JSON formatinda indirilebilir. Zamanlanmis e-posta raporlari ayarlanabilir.', category: 'Analitik' },
@@ -609,8 +609,8 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
     ],
     en: [
         // General
-        { q: 'What is PylonChat and what does it do?', a: 'PylonChat is an AI-powered chatbot platform built for businesses. It allows you to create intelligent chatbots that integrate with your website, mobile app, or social media channels. It automatically answers customer questions 24/7, increases customer satisfaction, and reduces support costs by up to 60%.', category: 'General' },
-        { q: 'Which industries do you serve?', a: 'PylonChat works for all industries: E-commerce (product recommendations, order tracking), Education (student advising, registration), Real Estate (property inquiries, appointments), Healthcare (appointments, FAQs), Finance (account info, transactions), Tourism (reservations, info), Retail, and more. We offer customized templates for each industry.', category: 'General' },
+        { q: 'What is NDIS Shield Hub and what does it do?', a: 'NDIS Shield Hub is an AI-powered chatbot platform built for businesses. It allows you to create intelligent chatbots that integrate with your website, mobile app, or social media channels. It automatically answers customer questions 24/7, increases customer satisfaction, and reduces support costs by up to 60%.', category: 'General' },
+        { q: 'Which industries do you serve?', a: 'NDIS Shield Hub works for all industries: E-commerce (product recommendations, order tracking), Education (student advising, registration), Real Estate (property inquiries, appointments), Healthcare (appointments, FAQs), Finance (account info, transactions), Tourism (reservations, info), Retail, and more. We offer customized templates for each industry.', category: 'General' },
         { q: 'Is there a free trial?', a: 'Yes! You can start with our free plan immediately. No credit card required. Free plan includes 1 chatbot, 3 documents, and 100 messages/month. Access all basic features. Upgrade to Pro or Business for more features.', category: 'General' },
 
         // Pricing
@@ -620,13 +620,13 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
 
         // Integration
         { q: 'How do I integrate the chatbot with my website?', a: 'Integration is completed in 3 easy steps:\n\n1. Create your chatbot in Dashboard and add training data\n2. Go to Settings > Embed Code\n3. Paste the JavaScript code just before </body> tag on your website\n\nUse our plugin for WordPress. We have dedicated integration guides for Shopify, Wix, Squarespace. The chatbot will automatically appear on your site.', category: 'Integration' },
-        { q: 'Which platforms do you integrate with?', a: 'PylonChat offers extensive integration support:\n\n• WEB: All websites, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MESSAGING: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• BUSINESS TOOLS: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• AUTOMATION: 5000+ apps via Zapier\n• CUSTOM: Build your own integrations with REST API', category: 'Integration' },
+        { q: 'Which platforms do you integrate with?', a: 'NDIS Shield Hub offers extensive integration support:\n\n• WEB: All websites, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MESSAGING: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• BUSINESS TOOLS: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• AUTOMATION: 5000+ apps via Zapier\n• CUSTOM: Build your own integrations with REST API', category: 'Integration' },
         { q: 'Where is the API documentation? How do I use it?', a: 'Access API documentation at Dashboard > Developer > API Documentation.\n\nWith the API you can:\n• Create and manage chatbots\n• Upload training data\n• Send and receive messages\n• Access conversation history\n• Pull analytics data\n\nGenerate your API key on the same page. Rate limits: Pro 60/min, Business 300/min, Enterprise custom.', category: 'Integration' },
 
         // Training
         { q: 'How do I train my chatbot? What methods are available?', a: 'Train your chatbot using 3 methods:\n\n1. DOCUMENT UPLOAD: Upload PDF, DOCX, DOC, TXT, CSV, XLSX files. AI automatically analyzes content.\n\n2. WEBSITE CRAWLING: Enter URL, chatbot crawls your site and extracts content. FAQs, product info, blog posts are auto-learned.\n\n3. MANUAL ENTRY: Add Q&A pairs directly. Ideal for custom scenarios.\n\nTraining typically completes within minutes.', category: 'Training' },
         { q: 'What file formats do you support?', a: 'Supported file formats:\n\n• DOCUMENTS: PDF, DOCX, DOC, TXT, RTF, ODT\n• SPREADSHEETS: CSV, XLSX, XLS (ideal for product catalogs)\n• WEB: HTML, XML, Sitemap\n• CODE: Markdown (MD)\n\nMaximum file size:\n• Pro: 10MB/file, 50MB total\n• Business: 50MB/file, 500MB total\n• Enterprise: Unlimited\n\nMultiple files can be uploaded simultaneously.', category: 'Training' },
-        { q: 'How many languages does the chatbot support?', a: 'PylonChat supports 50+ languages:\n\n• English, Turkish, German, French, Spanish\n• Arabic, Chinese (Simplified/Traditional), Japanese, Korean\n• Russian, Portuguese, Italian, Dutch, Polish\n• Hindi, Indonesian, Vietnamese, Thai\n• And more...\n\nThe chatbot auto-detects user language and responds accordingly. You can also upload separate training data for each language.', category: 'Training' },
+        { q: 'How many languages does the chatbot support?', a: 'NDIS Shield Hub supports 50+ languages:\n\n• English, Turkish, German, French, Spanish\n• Arabic, Chinese (Simplified/Traditional), Japanese, Korean\n• Russian, Portuguese, Italian, Dutch, Polish\n• Hindi, Indonesian, Vietnamese, Thai\n• And more...\n\nThe chatbot auto-detects user language and responds accordingly. You can also upload separate training data for each language.', category: 'Training' },
 
         // Analytics
         { q: 'What analytics and reports can I see?', a: 'We offer comprehensive analytics in Dashboard:\n\n• GENERAL: Total conversations, message count, active users\n• PERFORMANCE: Resolution rate, avg response time, customer satisfaction\n• CONTENT: Most asked questions, unanswered queries, popular topics\n• TIME: Peak hours, daily/weekly/monthly trends\n• CONVERSION: Lead capture, goal completion, live support escalation\n\nReports downloadable in CSV, PDF, JSON. Scheduled email reports available.', category: 'Analytics' },
@@ -641,8 +641,8 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
     ],
     de: [
         // Allgemein
-        { q: 'Was ist PylonChat und wofur wird es verwendet?', a: 'PylonChat ist eine KI-gestutzte Chatbot-Plattform fur Unternehmen. Sie ermoglicht die Erstellung intelligenter Chatbots, die in Ihre Website, mobile App oder Social-Media-Kanale integriert werden konnen. Beantwortet Kundenanfragen automatisch rund um die Uhr, steigert die Kundenzufriedenheit und reduziert Supportkosten um bis zu 60%.', category: 'Allgemein' },
-        { q: 'Welche Branchen bedienen Sie?', a: 'PylonChat funktioniert fur alle Branchen: E-Commerce (Produktempfehlungen, Bestellverfolgung), Bildung (Studienberatung, Anmeldung), Immobilien (Objektanfragen, Termine), Gesundheit (Termine, FAQs), Finanzen (Kontoinformationen, Transaktionen), Tourismus (Reservierungen, Informationen), Einzelhandel und mehr. Wir bieten angepasste Vorlagen fur jede Branche.', category: 'Allgemein' },
+        { q: 'Was ist NDIS Shield Hub und wofur wird es verwendet?', a: 'NDIS Shield Hub ist eine KI-gestutzte Chatbot-Plattform fur Unternehmen. Sie ermoglicht die Erstellung intelligenter Chatbots, die in Ihre Website, mobile App oder Social-Media-Kanale integriert werden konnen. Beantwortet Kundenanfragen automatisch rund um die Uhr, steigert die Kundenzufriedenheit und reduziert Supportkosten um bis zu 60%.', category: 'Allgemein' },
+        { q: 'Welche Branchen bedienen Sie?', a: 'NDIS Shield Hub funktioniert fur alle Branchen: E-Commerce (Produktempfehlungen, Bestellverfolgung), Bildung (Studienberatung, Anmeldung), Immobilien (Objektanfragen, Termine), Gesundheit (Termine, FAQs), Finanzen (Kontoinformationen, Transaktionen), Tourismus (Reservierungen, Informationen), Einzelhandel und mehr. Wir bieten angepasste Vorlagen fur jede Branche.', category: 'Allgemein' },
         { q: 'Gibt es eine kostenlose Testversion?', a: 'Ja! Sie konnen sofort mit unserem kostenlosen Plan starten. Keine Kreditkarte erforderlich. Der kostenlose Plan umfasst 1 Chatbot, 3 Dokumente und 100 Nachrichten/Monat. Zugang zu allen Grundfunktionen. Upgraden Sie auf Pro oder Business fur mehr Funktionen.', category: 'Allgemein' },
 
         // Preisgestaltung
@@ -652,13 +652,13 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
 
         // Integration
         { q: 'Wie integriere ich den Chatbot in meine Website?', a: 'Die Integration erfolgt in 3 einfachen Schritten:\n\n1. Erstellen Sie Ihren Chatbot im Dashboard und fugen Sie Trainingsdaten hinzu\n2. Gehen Sie zu Einstellungen > Embed-Code\n3. Fugen Sie den JavaScript-Code direkt vor dem </body>-Tag auf Ihrer Website ein\n\nVerwenden Sie unser Plugin fur WordPress. Wir haben dedizierte Integrationsanleitungen fur Shopify, Wix, Squarespace. Der Chatbot erscheint automatisch auf Ihrer Website.', category: 'Integration' },
-        { q: 'Mit welchen Plattformen integrieren Sie?', a: 'PylonChat bietet umfangreiche Integrationsunterstutzung:\n\n• WEB: Alle Websites, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MESSAGING: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• BUSINESS-TOOLS: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• AUTOMATISIERUNG: 5000+ Apps uber Zapier\n• INDIVIDUELL: Erstellen Sie eigene Integrationen mit REST API', category: 'Integration' },
+        { q: 'Mit welchen Plattformen integrieren Sie?', a: 'NDIS Shield Hub bietet umfangreiche Integrationsunterstutzung:\n\n• WEB: Alle Websites, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MESSAGING: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• BUSINESS-TOOLS: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• AUTOMATISIERUNG: 5000+ Apps uber Zapier\n• INDIVIDUELL: Erstellen Sie eigene Integrationen mit REST API', category: 'Integration' },
         { q: 'Wo ist die API-Dokumentation? Wie verwende ich sie?', a: 'Zugriff auf API-Dokumentation unter Dashboard > Entwickler > API-Dokumentation.\n\nMit der API konnen Sie:\n• Chatbots erstellen und verwalten\n• Trainingsdaten hochladen\n• Nachrichten senden und empfangen\n• Auf Gesprachsverlauf zugreifen\n• Analysedaten abrufen\n\nGenerieren Sie Ihren API-Schlussel auf derselben Seite. Rate-Limits: Pro 60/Min, Business 300/Min, Enterprise individuell.', category: 'Integration' },
 
         // Training
         { q: 'Wie trainiere ich meinen Chatbot? Welche Methoden gibt es?', a: 'Trainieren Sie Ihren Chatbot mit 3 Methoden:\n\n1. DOKUMENT-UPLOAD: Laden Sie PDF, DOCX, DOC, TXT, CSV, XLSX-Dateien hoch. KI analysiert Inhalte automatisch.\n\n2. WEBSITE-CRAWLING: URL eingeben, Chatbot durchsucht Ihre Website und extrahiert Inhalte. FAQs, Produktinfos, Blogbeitrage werden automatisch gelernt.\n\n3. MANUELLE EINGABE: Fugen Sie Frage-Antwort-Paare direkt hinzu. Ideal fur individuelle Szenarien.\n\nTraining wird typischerweise innerhalb von Minuten abgeschlossen.', category: 'Training' },
         { q: 'Welche Dateiformate unterstutzen Sie?', a: 'Unterstutzte Dateiformate:\n\n• DOKUMENTE: PDF, DOCX, DOC, TXT, RTF, ODT\n• TABELLEN: CSV, XLSX, XLS (ideal fur Produktkataloge)\n• WEB: HTML, XML, Sitemap\n• CODE: Markdown (MD)\n\nMaximale Dateigrosse:\n• Pro: 10MB/Datei, 50MB gesamt\n• Business: 50MB/Datei, 500MB gesamt\n• Enterprise: Unbegrenzt\n\nMehrere Dateien konnen gleichzeitig hochgeladen werden.', category: 'Training' },
-        { q: 'Wie viele Sprachen unterstutzt der Chatbot?', a: 'PylonChat unterstutzt uber 50 Sprachen:\n\n• Deutsch, Englisch, Turkisch, Franzosisch, Spanisch\n• Arabisch, Chinesisch (vereinfacht/traditionell), Japanisch, Koreanisch\n• Russisch, Portugiesisch, Italienisch, Niederlandisch, Polnisch\n• Hindi, Indonesisch, Vietnamesisch, Thailandisch\n• Und mehr...\n\nDer Chatbot erkennt automatisch die Benutzersprache und antwortet entsprechend. Sie konnen auch separate Trainingsdaten fur jede Sprache hochladen.', category: 'Training' },
+        { q: 'Wie viele Sprachen unterstutzt der Chatbot?', a: 'NDIS Shield Hub unterstutzt uber 50 Sprachen:\n\n• Deutsch, Englisch, Turkisch, Franzosisch, Spanisch\n• Arabisch, Chinesisch (vereinfacht/traditionell), Japanisch, Koreanisch\n• Russisch, Portugiesisch, Italienisch, Niederlandisch, Polnisch\n• Hindi, Indonesisch, Vietnamesisch, Thailandisch\n• Und mehr...\n\nDer Chatbot erkennt automatisch die Benutzersprache und antwortet entsprechend. Sie konnen auch separate Trainingsdaten fur jede Sprache hochladen.', category: 'Training' },
 
         // Analysen
         { q: 'Welche Analysen und Berichte kann ich sehen?', a: 'Wir bieten umfassende Analysen im Dashboard:\n\n• ALLGEMEIN: Gesamtgesprache, Nachrichtenanzahl, aktive Benutzer\n• LEISTUNG: Losungsrate, durchschn. Antwortzeit, Kundenzufriedenheit\n• INHALT: Meistgestellte Fragen, unbeantwortete Anfragen, beliebte Themen\n• ZEIT: Spitzenzeiten, tagliche/wochentliche/monatliche Trends\n• KONVERSION: Lead-Erfassung, Zielerreichung, Live-Support-Eskalation\n\nBerichte als CSV, PDF, JSON herunterladbar. Geplante E-Mail-Berichte verfugbar.', category: 'Analysen' },
@@ -673,8 +673,8 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
     ],
     es: [
         // General
-        { q: 'Que es PylonChat y para que sirve?', a: 'PylonChat es una plataforma de chatbot impulsada por IA creada para empresas. Te permite crear chatbots inteligentes que se integran con tu sitio web, aplicacion movil o canales de redes sociales. Responde automaticamente las preguntas de los clientes 24/7, aumenta la satisfaccion del cliente y reduce los costos de soporte hasta en un 60%.', category: 'General' },
-        { q: 'A que industrias sirven?', a: 'PylonChat funciona para todas las industrias: E-commerce (recomendaciones de productos, seguimiento de pedidos), Educacion (asesoria estudiantil, inscripcion), Inmobiliaria (consultas de propiedades, citas), Salud (citas, FAQs), Finanzas (info de cuentas, transacciones), Turismo (reservaciones, info), Retail y mas. Ofrecemos plantillas personalizadas para cada industria.', category: 'General' },
+        { q: 'Que es NDIS Shield Hub y para que sirve?', a: 'NDIS Shield Hub es una plataforma de chatbot impulsada por IA creada para empresas. Te permite crear chatbots inteligentes que se integran con tu sitio web, aplicacion movil o canales de redes sociales. Responde automaticamente las preguntas de los clientes 24/7, aumenta la satisfaccion del cliente y reduce los costos de soporte hasta en un 60%.', category: 'General' },
+        { q: 'A que industrias sirven?', a: 'NDIS Shield Hub funciona para todas las industrias: E-commerce (recomendaciones de productos, seguimiento de pedidos), Educacion (asesoria estudiantil, inscripcion), Inmobiliaria (consultas de propiedades, citas), Salud (citas, FAQs), Finanzas (info de cuentas, transacciones), Turismo (reservaciones, info), Retail y mas. Ofrecemos plantillas personalizadas para cada industria.', category: 'General' },
         { q: 'Hay una prueba gratuita?', a: 'Si! Puedes comenzar con nuestro plan gratuito inmediatamente. No se requiere tarjeta de credito. El plan gratuito incluye 1 chatbot, 3 documentos y 100 mensajes/mes. Acceso a todas las funciones basicas. Actualiza a Pro o Business para mas funciones.', category: 'General' },
 
         // Precios
@@ -684,13 +684,13 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
 
         // Integracion
         { q: 'Como integro el chatbot con mi sitio web?', a: 'La integracion se completa en 3 pasos faciles:\n\n1. Crea tu chatbot en el Dashboard y agrega datos de entrenamiento\n2. Ve a Configuracion > Codigo Embed\n3. Pega el codigo JavaScript justo antes de la etiqueta </body> en tu sitio web\n\nUsa nuestro plugin para WordPress. Tenemos guias de integracion dedicadas para Shopify, Wix, Squarespace. El chatbot aparecera automaticamente en tu sitio.', category: 'Integracion' },
-        { q: 'Con que plataformas se integra?', a: 'PylonChat ofrece amplio soporte de integracion:\n\n• WEB: Todos los sitios web, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MENSAJERIA: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• HERRAMIENTAS DE NEGOCIO: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• AUTOMATIZACION: 5000+ apps via Zapier\n• PERSONALIZADO: Crea tus propias integraciones con REST API', category: 'Integracion' },
+        { q: 'Con que plataformas se integra?', a: 'NDIS Shield Hub ofrece amplio soporte de integracion:\n\n• WEB: Todos los sitios web, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MENSAJERIA: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• HERRAMIENTAS DE NEGOCIO: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• AUTOMATIZACION: 5000+ apps via Zapier\n• PERSONALIZADO: Crea tus propias integraciones con REST API', category: 'Integracion' },
         { q: 'Donde esta la documentacion API? Como la uso?', a: 'Accede a la documentacion API en Dashboard > Desarrollador > Documentacion API.\n\nCon la API puedes:\n• Crear y gestionar chatbots\n• Subir datos de entrenamiento\n• Enviar y recibir mensajes\n• Acceder al historial de conversaciones\n• Obtener datos de analiticas\n\nGenera tu clave API en la misma pagina. Limites de tasa: Pro 60/min, Business 300/min, Enterprise personalizado.', category: 'Integracion' },
 
         // Entrenamiento
         { q: 'Como entreno mi chatbot? Que metodos hay disponibles?', a: 'Entrena tu chatbot usando 3 metodos:\n\n1. SUBIDA DE DOCUMENTOS: Sube archivos PDF, DOCX, DOC, TXT, CSV, XLSX. La IA analiza automaticamente el contenido.\n\n2. RASTREO WEB: Ingresa URL, el chatbot rastrea tu sitio y extrae contenido. FAQs, info de productos, posts de blog se aprenden automaticamente.\n\n3. ENTRADA MANUAL: Agrega pares de preguntas y respuestas directamente. Ideal para escenarios personalizados.\n\nEl entrenamiento tipicamente se completa en minutos.', category: 'Entrenamiento' },
         { q: 'Que formatos de archivo soportan?', a: 'Formatos de archivo soportados:\n\n• DOCUMENTOS: PDF, DOCX, DOC, TXT, RTF, ODT\n• HOJAS DE CALCULO: CSV, XLSX, XLS (ideal para catalogos de productos)\n• WEB: HTML, XML, Sitemap\n• CODIGO: Markdown (MD)\n\nTamano maximo de archivo:\n• Pro: 10MB/archivo, 50MB total\n• Business: 50MB/archivo, 500MB total\n• Enterprise: Ilimitado\n\nMultiples archivos pueden subirse simultaneamente.', category: 'Entrenamiento' },
-        { q: 'Cuantos idiomas soporta el chatbot?', a: 'PylonChat soporta mas de 50 idiomas:\n\n• Espanol, Ingles, Aleman, Frances, Turco\n• Arabe, Chino (Simplificado/Tradicional), Japones, Coreano\n• Ruso, Portugues, Italiano, Holandes, Polaco\n• Hindi, Indonesio, Vietnamita, Tailandes\n• Y mas...\n\nEl chatbot detecta automaticamente el idioma del usuario y responde correspondientemente. Tambien puedes subir datos de entrenamiento separados para cada idioma.', category: 'Entrenamiento' },
+        { q: 'Cuantos idiomas soporta el chatbot?', a: 'NDIS Shield Hub soporta mas de 50 idiomas:\n\n• Espanol, Ingles, Aleman, Frances, Turco\n• Arabe, Chino (Simplificado/Tradicional), Japones, Coreano\n• Ruso, Portugues, Italiano, Holandes, Polaco\n• Hindi, Indonesio, Vietnamita, Tailandes\n• Y mas...\n\nEl chatbot detecta automaticamente el idioma del usuario y responde correspondientemente. Tambien puedes subir datos de entrenamiento separados para cada idioma.', category: 'Entrenamiento' },
 
         // Analiticas
         { q: 'Que analiticas y reportes puedo ver?', a: 'Ofrecemos analiticas completas en el Dashboard:\n\n• GENERAL: Total de conversaciones, conteo de mensajes, usuarios activos\n• RENDIMIENTO: Tasa de resolucion, tiempo promedio de respuesta, satisfaccion del cliente\n• CONTENIDO: Preguntas mas frecuentes, consultas sin responder, temas populares\n• TIEMPO: Horas pico, tendencias diarias/semanales/mensuales\n• CONVERSION: Captura de leads, cumplimiento de objetivos, escalacion a soporte en vivo\n\nReportes descargables en CSV, PDF, JSON. Reportes programados por email disponibles.', category: 'Analiticas' },
@@ -705,8 +705,8 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
     ],
     fr: [
         // General
-        { q: 'Qu\'est-ce que PylonChat et a quoi sert-il?', a: 'PylonChat est une plateforme de chatbot alimentee par l\'IA concue pour les entreprises. Elle vous permet de creer des chatbots intelligents qui s\'integrent a votre site web, application mobile ou canaux de medias sociaux. Repond automatiquement aux questions des clients 24h/24 et 7j/7, augmente la satisfaction client et reduit les couts de support jusqu\'a 60%.', category: 'General' },
-        { q: 'Quelles industries servez-vous?', a: 'PylonChat fonctionne pour toutes les industries: E-commerce (recommandations produits, suivi commandes), Education (conseil etudiant, inscription), Immobilier (demandes de biens, rendez-vous), Sante (rendez-vous, FAQs), Finance (infos compte, transactions), Tourisme (reservations, infos), Commerce de detail et plus. Nous offrons des modeles personnalises pour chaque industrie.', category: 'General' },
+        { q: 'Qu\'est-ce que NDIS Shield Hub et a quoi sert-il?', a: 'NDIS Shield Hub est une plateforme de chatbot alimentee par l\'IA concue pour les entreprises. Elle vous permet de creer des chatbots intelligents qui s\'integrent a votre site web, application mobile ou canaux de medias sociaux. Repond automatiquement aux questions des clients 24h/24 et 7j/7, augmente la satisfaction client et reduit les couts de support jusqu\'a 60%.', category: 'General' },
+        { q: 'Quelles industries servez-vous?', a: 'NDIS Shield Hub fonctionne pour toutes les industries: E-commerce (recommandations produits, suivi commandes), Education (conseil etudiant, inscription), Immobilier (demandes de biens, rendez-vous), Sante (rendez-vous, FAQs), Finance (infos compte, transactions), Tourisme (reservations, infos), Commerce de detail et plus. Nous offrons des modeles personnalises pour chaque industrie.', category: 'General' },
         { q: 'Y a-t-il un essai gratuit?', a: 'Oui! Vous pouvez commencer avec notre plan gratuit immediatement. Pas de carte de credit requise. Le plan gratuit inclut 1 chatbot, 3 documents et 100 messages/mois. Acces a toutes les fonctions de base. Passez a Pro ou Business pour plus de fonctionnalites.', category: 'General' },
 
         // Tarification
@@ -716,13 +716,13 @@ const quickFAQs: Record<string, Array<{ q: string; a: string; category?: string 
 
         // Integration
         { q: 'Comment integrer le chatbot a mon site web?', a: 'L\'integration se complete en 3 etapes faciles:\n\n1. Creez votre chatbot dans le Dashboard et ajoutez les donnees d\'entrainement\n2. Allez dans Parametres > Code Embed\n3. Collez le code JavaScript juste avant la balise </body> sur votre site\n\nUtilisez notre plugin pour WordPress. Nous avons des guides d\'integration dedies pour Shopify, Wix, Squarespace. Le chatbot apparaitra automatiquement sur votre site.', category: 'Integration' },
-        { q: 'Avec quelles plateformes vous integrez-vous?', a: 'PylonChat offre un support d\'integration etendu:\n\n• WEB: Tous les sites web, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MESSAGERIE: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• OUTILS BUSINESS: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• AUTOMATISATION: 5000+ apps via Zapier\n• PERSONNALISE: Creez vos propres integrations avec REST API', category: 'Integration' },
+        { q: 'Avec quelles plateformes vous integrez-vous?', a: 'NDIS Shield Hub offre un support d\'integration etendu:\n\n• WEB: Tous les sites web, WordPress, Shopify, WooCommerce, Magento, Wix, Squarespace\n• MESSAGERIE: WhatsApp Business, Facebook Messenger, Instagram DM, Telegram\n• OUTILS BUSINESS: Slack, Microsoft Teams, Discord\n• CRM: Salesforce, HubSpot, Zendesk, Freshdesk, Pipedrive\n• AUTOMATISATION: 5000+ apps via Zapier\n• PERSONNALISE: Creez vos propres integrations avec REST API', category: 'Integration' },
         { q: 'Ou est la documentation API? Comment l\'utiliser?', a: 'Accedez a la documentation API dans Dashboard > Developpeur > Documentation API.\n\nAvec l\'API vous pouvez:\n• Creer et gerer des chatbots\n• Telecharger des donnees d\'entrainement\n• Envoyer et recevoir des messages\n• Acceder a l\'historique des conversations\n• Extraire des donnees d\'analyse\n\nGenerez votre cle API sur la meme page. Limites de taux: Pro 60/min, Business 300/min, Enterprise personnalise.', category: 'Integration' },
 
         // Entrainement
         { q: 'Comment entrainer mon chatbot? Quelles methodes sont disponibles?', a: 'Entrainez votre chatbot avec 3 methodes:\n\n1. TELECHARGEMENT DE DOCUMENTS: Telechargez des fichiers PDF, DOCX, DOC, TXT, CSV, XLSX. L\'IA analyse automatiquement le contenu.\n\n2. EXPLORATION WEB: Entrez l\'URL, le chatbot explore votre site et extrait le contenu. FAQs, infos produits, articles de blog sont appris automatiquement.\n\n3. SAISIE MANUELLE: Ajoutez des paires question-reponse directement. Ideal pour les scenarios personnalises.\n\nL\'entrainement se complete generalement en quelques minutes.', category: 'Entrainement' },
         { q: 'Quels formats de fichiers supportez-vous?', a: 'Formats de fichiers supportes:\n\n• DOCUMENTS: PDF, DOCX, DOC, TXT, RTF, ODT\n• TABLEURS: CSV, XLSX, XLS (ideal pour catalogues produits)\n• WEB: HTML, XML, Sitemap\n• CODE: Markdown (MD)\n\nTaille maximale de fichier:\n• Pro: 10Mo/fichier, 50Mo total\n• Business: 50Mo/fichier, 500Mo total\n• Enterprise: Illimite\n\nPlusieurs fichiers peuvent etre telecharges simultanement.', category: 'Entrainement' },
-        { q: 'Combien de langues le chatbot supporte-t-il?', a: 'PylonChat supporte plus de 50 langues:\n\n• Francais, Anglais, Allemand, Espagnol, Turc\n• Arabe, Chinois (Simplifie/Traditionnel), Japonais, Coreen\n• Russe, Portugais, Italien, Neerlandais, Polonais\n• Hindi, Indonesien, Vietnamien, Thai\n• Et plus...\n\nLe chatbot detecte automatiquement la langue de l\'utilisateur et repond en consequence. Vous pouvez aussi telecharger des donnees d\'entrainement separees pour chaque langue.', category: 'Entrainement' },
+        { q: 'Combien de langues le chatbot supporte-t-il?', a: 'NDIS Shield Hub supporte plus de 50 langues:\n\n• Francais, Anglais, Allemand, Espagnol, Turc\n• Arabe, Chinois (Simplifie/Traditionnel), Japonais, Coreen\n• Russe, Portugais, Italien, Neerlandais, Polonais\n• Hindi, Indonesien, Vietnamien, Thai\n• Et plus...\n\nLe chatbot detecte automatiquement la langue de l\'utilisateur et repond en consequence. Vous pouvez aussi telecharger des donnees d\'entrainement separees pour chaque langue.', category: 'Entrainement' },
 
         // Analyses
         { q: 'Quelles analyses et rapports puis-je voir?', a: 'Nous offrons des analyses completes dans le Dashboard:\n\n• GENERAL: Total conversations, nombre de messages, utilisateurs actifs\n• PERFORMANCE: Taux de resolution, temps de reponse moyen, satisfaction client\n• CONTENU: Questions les plus posees, requetes sans reponse, sujets populaires\n• TEMPS: Heures de pointe, tendances quotidiennes/hebdomadaires/mensuelles\n• CONVERSION: Capture de leads, completion d\'objectifs, escalade vers support en direct\n\nRapports telechargeables en CSV, PDF, JSON. Rapports programmes par email disponibles.', category: 'Analyses' },

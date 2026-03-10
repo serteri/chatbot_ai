@@ -52,7 +52,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
                         </h1>
 
                         <p className="text-lg text-slate-600 leading-relaxed mb-8">
-                            PylonChat is the only AI assistant that supports your CALD patients in{' '}
+                            NDIS Shield Hub is the only AI assistant that supports your CALD patients in{' '}
                             <span className="font-semibold text-slate-800">50+ languages</span>, while
                             automatically generating flawless,{' '}
                             <span className="font-semibold text-slate-800">English-only audit trails</span>{' '}

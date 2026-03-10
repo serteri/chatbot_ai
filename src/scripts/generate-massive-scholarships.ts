@@ -21,7 +21,7 @@ async function main() {
         console.log('='.repeat(60))
         console.log('🎉 MISSION ACCOMPLISHED!')
         console.log(`⏱️  Generation Time: ${duration} seconds`)
-        console.log('📊 PylonChat now has MASSIVE scholarship database!')
+        console.log('📊 NDIS Shield Hub now has MASSIVE scholarship database!')
         console.log('🌍 Coverage: 50+ Countries')
         console.log('🏫 Sources: 500+ Universities + Foundations + Governments')
         console.log('💎 Quality: Premium scholarship opportunities')

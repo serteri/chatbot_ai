@@ -124,7 +124,7 @@ export default function RemediationPlan({ warnings, warningDetails, summary, rem
 
             // Also save to vault
             const vaultForm = new FormData()
-            vaultForm.append('pdf', pdfBlob, 'PylonChat_NDIS_Addendum.pdf')
+            vaultForm.append('pdf', pdfBlob, 'NDIS Shield Hub_NDIS_Addendum.pdf')
             vaultForm.append('fileName', filename)
             vaultForm.append('summary', summary)
             vaultForm.append('warnings', JSON.stringify(warnings))
@@ -149,7 +149,7 @@ export default function RemediationPlan({ warnings, warningDetails, summary, rem
             const url = URL.createObjectURL(pdfBlob)
             const a = document.createElement('a')
             a.href = url
-            a.download = `PylonChat_NDIS_Addendum_${filename.replace('.pdf', '')}.pdf`
+            a.download = `NDIS Shield Hub_NDIS_Addendum_${filename.replace('.pdf', '')}.pdf`
             document.body.appendChild(a)
             a.click()
             document.body.removeChild(a)

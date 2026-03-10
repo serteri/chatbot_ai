@@ -35,9 +35,9 @@ const translations: Record<string, Record<string, string>> = {
         send: 'Send',
         online: 'Online',
         typing: 'Support agent is typing...',
-        welcome: 'Hello! Welcome to PylonChat Enterprise Support. I\'m here to help you with any questions or issues. How can I assist you today?',
+        welcome: 'Hello! Welcome to NDIS Shield Hub Enterprise Support. I\'m here to help you with any questions or issues. How can I assist you today?',
         received: 'Thank you for your message. Our support team will respond shortly. As an Enterprise customer, you have priority access and will receive a response within 1 hour.',
-        agentName: 'PylonChat Support'
+        agentName: 'NDIS Shield Hub Support'
     },
     tr: {
         title: '7/24 Enterprise Destek',
@@ -46,9 +46,9 @@ const translations: Record<string, Record<string, string>> = {
         send: 'Gönder',
         online: 'Çevrimiçi',
         typing: 'Destek temsilcisi yazıyor...',
-        welcome: 'Merhaba! PylonChat Enterprise Desteğe hoş geldiniz. Herhangi bir soru veya sorunuzda size yardımcı olmak için buradayım. Bugün size nasıl yardımcı olabilirim?',
+        welcome: 'Merhaba! NDIS Shield Hub Enterprise Desteğe hoş geldiniz. Herhangi bir soru veya sorunuzda size yardımcı olmak için buradayım. Bugün size nasıl yardımcı olabilirim?',
         received: 'Mesajınız için teşekkürler. Destek ekibimiz en kısa sürede yanıt verecektir. Enterprise müşterisi olarak öncelikli erişiminiz var ve 1 saat içinde yanıt alacaksınız.',
-        agentName: 'PylonChat Destek'
+        agentName: 'NDIS Shield Hub Destek'
     },
     de: {
         title: '24/7 Enterprise Support',
@@ -57,9 +57,9 @@ const translations: Record<string, Record<string, string>> = {
         send: 'Senden',
         online: 'Online',
         typing: 'Support-Mitarbeiter tippt...',
-        welcome: 'Hallo! Willkommen beim PylonChat Enterprise Support. Ich bin hier, um Ihnen bei allen Fragen oder Problemen zu helfen. Wie kann ich Ihnen heute helfen?',
+        welcome: 'Hallo! Willkommen beim NDIS Shield Hub Enterprise Support. Ich bin hier, um Ihnen bei allen Fragen oder Problemen zu helfen. Wie kann ich Ihnen heute helfen?',
         received: 'Vielen Dank für Ihre Nachricht. Unser Support-Team wird in Kürze antworten. Als Enterprise-Kunde haben Sie Prioritätszugang und erhalten innerhalb von 1 Stunde eine Antwort.',
-        agentName: 'PylonChat Support'
+        agentName: 'NDIS Shield Hub Support'
     },
     es: {
         title: 'Soporte Enterprise 24/7',
@@ -68,9 +68,9 @@ const translations: Record<string, Record<string, string>> = {
         send: 'Enviar',
         online: 'En línea',
         typing: 'El agente de soporte está escribiendo...',
-        welcome: '¡Hola! Bienvenido al Soporte Enterprise de PylonChat. Estoy aquí para ayudarte con cualquier pregunta o problema. ¿Cómo puedo ayudarte hoy?',
+        welcome: '¡Hola! Bienvenido al Soporte Enterprise de NDIS Shield Hub. Estoy aquí para ayudarte con cualquier pregunta o problema. ¿Cómo puedo ayudarte hoy?',
         received: 'Gracias por tu mensaje. Nuestro equipo de soporte responderá en breve. Como cliente Enterprise, tienes acceso prioritario y recibirás una respuesta en 1 hora.',
-        agentName: 'Soporte PylonChat'
+        agentName: 'Soporte NDIS Shield Hub'
     },
     fr: {
         title: 'Support Enterprise 24/7',
@@ -79,9 +79,9 @@ const translations: Record<string, Record<string, string>> = {
         send: 'Envoyer',
         online: 'En ligne',
         typing: 'L\'agent de support écrit...',
-        welcome: 'Bonjour ! Bienvenue au Support Enterprise PylonChat. Je suis là pour vous aider avec toutes vos questions ou problèmes. Comment puis-je vous aider aujourd\'hui ?',
+        welcome: 'Bonjour ! Bienvenue au Support Enterprise NDIS Shield Hub. Je suis là pour vous aider avec toutes vos questions ou problèmes. Comment puis-je vous aider aujourd\'hui ?',
         received: 'Merci pour votre message. Notre équipe de support répondra sous peu. En tant que client Enterprise, vous avez un accès prioritaire et recevrez une réponse dans l\'heure.',
-        agentName: 'Support PylonChat'
+        agentName: 'Support NDIS Shield Hub'
     }
 }
 

@@ -161,10 +161,10 @@ export default async function DataSovereigntyPage({ params }: DataSovereigntyPag
                 <section className="bg-gradient-to-r from-teal-600 to-emerald-600 py-16 lg:py-20">
                     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-                            Trust PylonChat With Your Most Sensitive Data
+                            Trust NDIS Shield Hub With Your Most Sensitive Data
                         </h2>
                         <p className="text-xl text-teal-100 mb-8 max-w-2xl mx-auto">
-                            Join NDIS providers across Australia who trust PylonChat
+                            Join NDIS providers across Australia who trust NDIS Shield Hub
                             for compliant, sovereign data handling.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">

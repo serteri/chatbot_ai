@@ -37,7 +37,7 @@ const emailTranslations: Record<string, Record<string, string>> = {
         downPayment: 'Peşinat',
         calculatedMaxBudget: 'Hesaplanan Max Bütçe',
         callNow: 'Hemen Ara',
-        autoEmail: 'Bu email NDIS Shield tarafından otomatik gönderilmiştir.',
+        autoEmail: 'Bu email NDIS Shield Hub tarafından otomatik gönderilmiştir.',
         intentBuy: 'Satın Alma',
         intentRent: 'Kiralama',
         intentSell: 'Satış',
@@ -98,7 +98,7 @@ const emailTranslations: Record<string, Record<string, string>> = {
         downPayment: 'Down Payment',
         calculatedMaxBudget: 'Calculated Max Budget',
         callNow: 'Call Now',
-        autoEmail: 'This email was automatically sent by NDIS Shield.',
+        autoEmail: 'This email was automatically sent by NDIS Shield Hub.',
         intentBuy: 'Purchase',
         intentRent: 'Rental',
         intentSell: 'Sale',
@@ -255,7 +255,7 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
         <div class="header">
             <h1>${categoryEmoji} ${categoryText}</h1>
             <div class="score">${data.score}/100</div>
-            <p style="margin: 0; opacity: 0.9;">NDIS Shield - ${chatbot.name}</p>
+            <p style="margin: 0; opacity: 0.9;">NDIS Shield Hub - ${chatbot.name}</p>
         </div>
         <div class="body">
             <div class="priority">
@@ -384,7 +384,7 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
         </div>
         <div class="footer">
             <p>${t(lang, 'autoEmail')}</p>
-            <p>© ${new Date().getFullYear()} NDIS Shield</p>
+            <p>© ${new Date().getFullYear()} NDIS Shield Hub</p>
         </div>
     </div>
 </body>
@@ -392,7 +392,7 @@ export async function sendLeadNotificationToAgent(data: LeadEmailData): Promise<
 `
 
         const result = await resend.emails.send({
-            from: process.env.EMAIL_FROM || 'NDIS Shield <noreply@ndisshield.com.au>',
+            from: process.env.EMAIL_FROM || 'NDIS Shield Hub <noreply@ndisshield.com.au>',
             to: notificationEmail,
             subject: `${categoryEmoji} ${categoryText} - ${data.name} (${lang === 'tr' ? 'Puan' : 'Score'}: ${data.score})`,
             html
@@ -477,7 +477,7 @@ export async function sendAppointmentEmailToAgent(data: AppointmentEmailData, ag
         </div>
         <div class="footer">
             <p>${t(lang, 'calendarAutoAdded')}</p>
-            <p>© ${new Date().getFullYear()} NDIS Shield</p>
+            <p>© ${new Date().getFullYear()} NDIS Shield Hub</p>
         </div>
     </div>
 </body>
@@ -485,7 +485,7 @@ export async function sendAppointmentEmailToAgent(data: AppointmentEmailData, ag
 `
 
         const result = await resend.emails.send({
-            from: process.env.EMAIL_FROM || 'NDIS Shield <noreply@ndisshield.com.au>',
+            from: process.env.EMAIL_FROM || 'NDIS Shield Hub <noreply@ndisshield.com.au>',
             to: agentEmail,
             subject: `📅 ${t(lang, 'subjectNewAppointment')}: ${data.leadName} - ${data.appointmentDate} ${data.appointmentTime}`,
             html
@@ -567,7 +567,7 @@ export async function sendAppointmentEmailToCustomer(data: AppointmentEmailData,
                 <p>${t(lang, 'cancelOrChange')}</p>
                 `}
                 <p style="margin-top: 15px;">${t(lang, 'haveAGoodDay')}</p>
-                <p style="margin-top: 20px; color: #9ca3af; font-size: 11px;">© ${new Date().getFullYear()} NDIS Shield</p>
+                <p style="margin-top: 20px; color: #9ca3af; font-size: 11px;">© ${new Date().getFullYear()} NDIS Shield Hub</p>
             </div>
         </div>
     </div>
@@ -576,7 +576,7 @@ export async function sendAppointmentEmailToCustomer(data: AppointmentEmailData,
 `
 
         const result = await resend.emails.send({
-            from: process.env.EMAIL_FROM || 'NDIS Shield <noreply@ndisshield.com.au>',
+            from: process.env.EMAIL_FROM || 'NDIS Shield Hub <noreply@ndisshield.com.au>',
             to: customerEmail,
             subject: `✅ ${t(lang, 'subjectAppointmentConfirmed')} - ${data.appointmentDate} ${data.appointmentTime}`,
             html
@@ -642,7 +642,7 @@ export async function sendCancellationEmailToAgent(data: AppointmentEmailData, a
             </div>
         </div>
         <div class="footer">
-            <p>© ${new Date().getFullYear()} NDIS Shield</p>
+            <p>© ${new Date().getFullYear()} NDIS Shield Hub</p>
         </div>
     </div>
 </body>
@@ -650,7 +650,7 @@ export async function sendCancellationEmailToAgent(data: AppointmentEmailData, a
 `
 
         const result = await resend.emails.send({
-            from: process.env.EMAIL_FROM || 'NDIS Shield <noreply@ndisshield.com.au>',
+            from: process.env.EMAIL_FROM || 'NDIS Shield Hub <noreply@ndisshield.com.au>',
             to: agentEmail,
             subject: `❌ ${t(lang, 'appointmentCancelled')}: ${data.leadName} - ${data.appointmentDate}`,
             html

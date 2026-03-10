@@ -12,7 +12,7 @@ export default function DemoWidget() {
     const [result, setResult] = useState<any>(null)
 
     useEffect(() => {
-        const stored = sessionStorage.getItem('pylonchat_demo_result')
+        const stored = sessionStorage.getItem('ndisshield_demo_result')
         if (stored) {
             setResult(JSON.parse(stored))
         }
@@ -52,7 +52,7 @@ export default function DemoWidget() {
             if (!res.ok) throw new Error(data.error || 'Failed to analyze')
 
             setResult(data)
-            sessionStorage.setItem('pylonchat_demo_result', JSON.stringify(data))
+            sessionStorage.setItem('ndisshield_demo_result', JSON.stringify(data))
             toast.success('Analysis complete!', { id: toastId })
         } catch (e: any) {
             toast.error(e.message, { id: toastId })

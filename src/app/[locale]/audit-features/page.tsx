@@ -163,7 +163,7 @@ export default async function AuditFeaturesPage({ params }: AuditFeaturesPagePro
                             <div className="relative bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
                                 <div className="w-10 h-10 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold text-lg mb-5">2</div>
                                 <h3 className="text-lg font-bold text-slate-900 mb-2">AI Responds & Translates</h3>
-                                <p className="text-slate-500">PylonChat responds in the participant&apos;s language while simultaneously generating an English audit log.</p>
+                                <p className="text-slate-500">NDIS Shield Hub responds in the participant&apos;s language while simultaneously generating an English audit log.</p>
                             </div>
                             <div className="relative bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
                                 <div className="w-10 h-10 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold text-lg mb-5">3</div>
@@ -181,7 +181,7 @@ export default async function AuditFeaturesPage({ params }: AuditFeaturesPagePro
                             Ready to Automate Your NDIS Compliance?
                         </h2>
                         <p className="text-xl text-teal-100 mb-8 max-w-2xl mx-auto">
-                            See how PylonChat can save your team 15+ hours per week on
+                            See how NDIS Shield Hub can save your team 15+ hours per week on
                             compliance documentation.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">

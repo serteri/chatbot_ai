@@ -48,7 +48,7 @@ export async function uploadPdfToAzure(buffer: Buffer, storagePath: string): Pro
             blobHTTPHeaders: { blobContentType: 'application/pdf' },
             metadata: {
                 region: 'ap-southeast-2',
-                processed_by: 'PylonChat_Sovereign_AI',
+                processed_by: 'NDIS Shield Hub_Sovereign_AI',
             }
         })
 

@@ -446,7 +446,7 @@ export default function ChatWidget({ chatbotId, onClose, mode = 'document', onRe
                         <div className="mt-2 text-center">
                             <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
                                 {t('aiPowered')} · Powered by
-                                <span style={{ color: primaryColor, fontWeight: 600 }}>PylonChat</span>
+                                <span style={{ color: primaryColor, fontWeight: 600 }}>NDIS Shield Hub</span>
                             </div>
                         </div>
                     )}

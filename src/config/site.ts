@@ -1,16 +1,16 @@
 export const siteConfig = {
-  name: "NDIS Shield",
+  name: "NDIS Shield Hub",
   description: "Professional multi-language AI chatbot platform",
   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
 
   links: {
-    twitter: "https://twitter.com/pylonchat",
+    twitter: "https://twitter.com/ndisshieldhub",
     github: "https://github.com/serteri/chatbot_ai",
     docs: "https://ndisshield.com.au/docs",
   },
 
   creator: {
-    name: "NDIS Shield Team",
+    name: "NDIS Shield Hub Team",
     url: "https://ndisshield.com.au",
   },
 

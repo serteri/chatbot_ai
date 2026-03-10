@@ -28,7 +28,7 @@ interface ChatMessage {
     timestamp: Date
 }
 
-const STORAGE_KEY = 'pylonchat_general_demo'
+const STORAGE_KEY = 'ndisshield_general_demo'
 const MAX_MESSAGES = 5
 const EXPIRY_HOURS = 24
 
@@ -100,7 +100,7 @@ export default function GeneralDemoPage() {
         if (!isInitialized) return
 
         const welcomeContent = locale === 'tr'
-            ? `Merhaba! 👋 Ben PylonChat Genel Asistanıyım.
+            ? `Merhaba! 👋 Ben NDIS Shield Hub Genel Asistanıyım.
             
 Size platformumuz ve sunduğumuz hizmetler hakkında bilgi verebilirim.
 
@@ -115,7 +115,7 @@ Size platformumuz ve sunduğumuz hizmetler hakkında bilgi verebilirim.
 "Kurulum ne kadar sürer?"
 
 Nasıl yardımcı olabilirim?`
-            : `Hello! 👋 I'm the PylonChat General Assistant.
+            : `Hello! 👋 I'm the NDIS Shield Hub General Assistant.
 
 I can help you with information about our platform and services.
 
@@ -180,14 +180,14 @@ How can I help you today?`
         // Sektörler / Industries
         if (input.match(/(sektör|tür|yapabilirim|neler|what|industries|types)/)) {
             return locale === 'tr'
-                ? `PylonChat olarak şu anda NDIS sağlayıcıları için özelleşmiş çözümler sunuyoruz:
+                ? `NDIS Shield Hub olarak şu anda NDIS sağlayıcıları için özelleşmiş çözümler sunuyoruz:
 
 1. 📝 **Hizmet Sözleşmesi Analizi:** NDIS kurallarına uygunluk kontrolü.
 2. ⚡ **Otomatik İyileştirme:** NDIS Fiyat Rehberi 2025/26'ya uygun ek maddeler.
 3. 🔒 **Güvenli Depolama (Sovereign Vault):** Avustralya (Sydney) veri merkezli özel depolama.
 
 Her biri NDIS altyapısına özel olarak denetlenebilir şekilde tasarlanmıştır.`
-                : `At PylonChat, we currently offer specialized solutions for NDIS Providers:
+                : `At NDIS Shield Hub, we currently offer specialized solutions for NDIS Providers:
 
 1. 📝 **Service Agreement Analysis:** Full NDIS Practice Standards compliance checks.
 2. ⚡ **Auto-Remediation:** Instant addendums aligned with the 2025/26 NDIS Price Guide.
@@ -238,14 +238,14 @@ The total process usually takes **less than 10 minutes**! 🚀`
 
         // Default response
         return locale === 'tr'
-            ? `Anladım, bu konuda size yardımcı olabilirim! PylonChat hakkında daha fazla detay öğrenmek isterseniz:
+            ? `Anladım, bu konuda size yardımcı olabilirim! NDIS Shield Hub hakkında daha fazla detay öğrenmek isterseniz:
 
 • Hizmet verdiğimiz sektörler
 • Fiyatlandırma politikamız
 • Kurulum ve teknik destek
 
 Konularında sorular sorabilirsiniz. Başka nasıl yardımcı olabilirim?`
-            : `I understand, I can help you with that! If you'd like to know more about PylonChat:
+            : `I understand, I can help you with that! If you'd like to know more about NDIS Shield Hub:
 
 • Industries we serve
 • Our pricing policy
@@ -281,7 +281,7 @@ Feel free to ask about these topics. How else can I assist you?`
                             <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
                                 <MessageSquare className="h-5 w-5 text-white" />
                             </div>
-                            <span className="text-lg font-bold text-gray-900">PylonChat</span>
+                            <span className="text-lg font-bold text-gray-900">NDIS Shield Hub</span>
                         </Link>
 
                         <div className="flex items-center gap-2">
@@ -323,8 +323,8 @@ Feel free to ask about these topics. How else can I assist you?`
                     </div>
                     <p className="text-gray-300">
                         {locale === 'tr'
-                            ? 'PylonChat platformu hakkında sorularınızı yanıtlayan sanal asistan'
-                            : 'Virtual assistant answering your questions about the PylonChat platform'}
+                            ? 'NDIS Shield Hub platformu hakkında sorularınızı yanıtlayan sanal asistan'
+                            : 'Virtual assistant answering your questions about the NDIS Shield Hub platform'}
                     </p>
                 </div>
             </div>
@@ -340,7 +340,7 @@ Feel free to ask about these topics. How else can I assist you?`
                                         <Bot className="h-4 w-4" />
                                     </div>
                                     <div>
-                                        <CardTitle className="text-base">{locale === 'tr' ? 'PylonChat Asistanı' : 'PylonChat Assistant'}</CardTitle>
+                                        <CardTitle className="text-base">{locale === 'tr' ? 'NDIS Shield Hub Asistanı' : 'NDIS Shield Hub Assistant'}</CardTitle>
                                         <div className="flex items-center text-gray-300 text-xs">
                                             <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse mr-1"></span>
                                             {locale === 'tr' ? 'Çevrimiçi' : 'Online'}

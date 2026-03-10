@@ -388,7 +388,7 @@ export default function ChatInterface({ chatbot, translations: t, language }: Ch
                     <div className="text-center mt-3">
                         <div className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
                             {t.aiPowered} · Powered by
-                            <span style={{ color: primaryColor, fontWeight: 600 }}>PylonChat</span>
+                            <span style={{ color: primaryColor, fontWeight: 600 }}>NDIS Shield Hub</span>
                         </div>
                     </div>
                 )}

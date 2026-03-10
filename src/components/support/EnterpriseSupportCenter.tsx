@@ -57,12 +57,12 @@ const faqCategories: Record<string, FAQCategory[]> = {
             color: 'blue',
             questions: [
                 {
-                    question: 'PylonChat nedir?',
-                    answer: 'PylonChat, isletmeler icin AI destekli chatbot platformudur. Web sitenize, uygulamaniza veya sosyal medya kanallariniza entegre edebileceginiz akilli chatbotlar olusturmanizi saglar. Chatbotlariniz musteri sorularini 7/24 otomatik olarak yanitlar, musteri memnuniyetini arttirir ve destek maliyetlerinizi azaltir.'
+                    question: 'NDIS Shield Hub nedir?',
+                    answer: 'NDIS Shield Hub, isletmeler icin AI destekli chatbot platformudur. Web sitenize, uygulamaniza veya sosyal medya kanallariniza entegre edebileceginiz akilli chatbotlar olusturmanizi saglar. Chatbotlariniz musteri sorularini 7/24 otomatik olarak yanitlar, musteri memnuniyetini arttirir ve destek maliyetlerinizi azaltir.'
                 },
                 {
                     question: 'Hangi sektorlere hizmet veriyorsunuz?',
-                    answer: 'PylonChat tum sektorlere hizmet vermektedir. E-ticaret, egitim, emlak, saglik, finans, turizm, perakende ve daha fazlasi. Her sektor icin ozellestirilmis chatbot sablonlari sunuyoruz. Ayrica sektorunuze ozel ozellikler de gelistirebiliriz.'
+                    answer: 'NDIS Shield Hub tum sektorlere hizmet vermektedir. E-ticaret, egitim, emlak, saglik, finans, turizm, perakende ve daha fazlasi. Her sektor icin ozellestirilmis chatbot sablonlari sunuyoruz. Ayrica sektorunuze ozel ozellikler de gelistirebiliriz.'
                 },
                 {
                     question: 'Chatbot kurulumu ne kadar suruyor?',
@@ -126,7 +126,7 @@ const faqCategories: Record<string, FAQCategory[]> = {
                 },
                 {
                     question: 'Hangi platformlarla entegre olur?',
-                    answer: 'PylonChat su platformlarla entegre olur:\n\n• Web siteleri (tum platformlar)\n• WordPress, Shopify, WooCommerce, Magento\n• WhatsApp Business, Facebook Messenger, Instagram\n• Slack, Microsoft Teams, Discord\n• Salesforce, HubSpot, Zendesk\n• Zapier ile 5000+ uygulama\n• REST API ile ozel entegrasyonlar'
+                    answer: 'NDIS Shield Hub su platformlarla entegre olur:\n\n• Web siteleri (tum platformlar)\n• WordPress, Shopify, WooCommerce, Magento\n• WhatsApp Business, Facebook Messenger, Instagram\n• Slack, Microsoft Teams, Discord\n• Salesforce, HubSpot, Zendesk\n• Zapier ile 5000+ uygulama\n• REST API ile ozel entegrasyonlar'
                 },
                 {
                     question: 'API dokumantasyonu nerede?',
@@ -267,12 +267,12 @@ const faqCategories: Record<string, FAQCategory[]> = {
             color: 'blue',
             questions: [
                 {
-                    question: 'What is PylonChat?',
-                    answer: 'PylonChat is an AI-powered chatbot platform for businesses. It allows you to create intelligent chatbots that can be integrated into your website, app, or social media channels. Your chatbots automatically answer customer questions 24/7, increase customer satisfaction, and reduce support costs.'
+                    question: 'What is NDIS Shield Hub?',
+                    answer: 'NDIS Shield Hub is an AI-powered chatbot platform for businesses. It allows you to create intelligent chatbots that can be integrated into your website, app, or social media channels. Your chatbots automatically answer customer questions 24/7, increase customer satisfaction, and reduce support costs.'
                 },
                 {
                     question: 'Which industries do you serve?',
-                    answer: 'PylonChat serves all industries including e-commerce, education, real estate, healthcare, finance, tourism, retail, and more. We offer customized chatbot templates for each industry and can develop industry-specific features.'
+                    answer: 'NDIS Shield Hub serves all industries including e-commerce, education, real estate, healthcare, finance, tourism, retail, and more. We offer customized chatbot templates for each industry and can develop industry-specific features.'
                 },
                 {
                     question: 'How long does chatbot setup take?',
@@ -336,7 +336,7 @@ const faqCategories: Record<string, FAQCategory[]> = {
                 },
                 {
                     question: 'Which platforms do you integrate with?',
-                    answer: 'PylonChat integrates with:\n\n• All websites\n• WordPress, Shopify, WooCommerce, Magento\n• WhatsApp Business, Facebook Messenger, Instagram\n• Slack, Microsoft Teams, Discord\n• Salesforce, HubSpot, Zendesk\n• 5000+ apps via Zapier\n• Custom integrations via REST API'
+                    answer: 'NDIS Shield Hub integrates with:\n\n• All websites\n• WordPress, Shopify, WooCommerce, Magento\n• WhatsApp Business, Facebook Messenger, Instagram\n• Slack, Microsoft Teams, Discord\n• Salesforce, HubSpot, Zendesk\n• 5000+ apps via Zapier\n• Custom integrations via REST API'
                 },
                 {
                     question: 'Where is the API documentation?',

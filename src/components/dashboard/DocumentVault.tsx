@@ -172,7 +172,7 @@ export default function DocumentVault({ singleAnalyses, bulkBatches, bulkAnalysi
 
         try {
             const zip = new JSZip()
-            const folder = zip.folder('PylonChat_Audit_Export')
+            const folder = zip.folder('NDIS Shield Hub_Audit_Export')
             if (!folder) throw new Error('Could not create folder')
 
             const singleHasUrl = singleAnalyses.filter(a => a.pdfUrl)

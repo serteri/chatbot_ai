@@ -18,7 +18,7 @@ import {
 import Link from 'next/link'
 
 // Demo chat limit constants
-const DEMO_CHAT_STORAGE_KEY = 'pylonchat_education_widget'
+const DEMO_CHAT_STORAGE_KEY = 'ndisshield_education_widget'
 const DEMO_CHAT_MAX_MESSAGES = 5
 const DEMO_CHAT_EXPIRY_HOURS = 24
 

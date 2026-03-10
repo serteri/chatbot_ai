@@ -29,7 +29,7 @@ import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 
 // Demo chat limit constants
-const DEMO_CHAT_STORAGE_KEY = 'pylonchat_widget_demo'
+const DEMO_CHAT_STORAGE_KEY = 'ndisshield_widget_demo'
 const DEMO_CHAT_MAX_MESSAGES = 5
 const DEMO_CHAT_EXPIRY_HOURS = 24
 
@@ -2105,7 +2105,7 @@ export function RealEstateWidget({
                             </button>
                         </div>
                         <p className="text-center text-[10px] text-gray-400 mt-2">
-                            Powered by <span className="font-semibold text-amber-600">PylonChat</span>
+                            Powered by <span className="font-semibold text-amber-600">NDIS Shield Hub</span>
                         </p>
                     </div>
                 </div>

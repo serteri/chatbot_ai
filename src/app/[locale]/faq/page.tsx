@@ -27,7 +27,7 @@ export default async function FaqPage({ params }: PageProps) {
                 <div className="container mx-auto px-4 max-w-3xl">
                     <div className="text-center mb-12">
                         <h1 className="text-4xl font-bold text-gray-900 mb-4">{tPage('faq')}</h1>
-                        <p className="text-xl text-gray-600">Frequently asked questions about PylonChat</p>
+                        <p className="text-xl text-gray-600">Frequently asked questions about NDIS Shield Hub</p>
                     </div>
 
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">

@@ -317,7 +317,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                                                     </Button>
                                                 </a>
                                                 <a
-                                                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${job.title} at NDIS Shield`)}&url=${encodeURIComponent(`https://www.ndisshield.com.au/${locale}/careers/${job.id}`)}`}
+                                                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${job.title} at NDIS Shield Hub`)}&url=${encodeURIComponent(`https://www.ndisshield.com.au/${locale}/careers/${job.id}`)}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex-1"

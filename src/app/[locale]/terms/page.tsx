@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const t = await getTranslations({ locale, namespace: 'legal.terms' })
 
     return {
-        title: t('title') + ' | NDIS Shield',
+        title: t('title') + ' | NDIS Shield Hub',
         description: t('intro'),
         alternates: {
             canonical: `https://www.ndisshield.com.au/${locale}/terms`,
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title: t('title'),
             description: t('intro'),
             url: `https://www.ndisshield.com.au/${locale}/terms`,
-            siteName: 'NDIS Shield',
+            siteName: 'NDIS Shield Hub',
             type: 'website',
         },
     }

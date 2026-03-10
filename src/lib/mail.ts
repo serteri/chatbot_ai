@@ -1,5 +1,5 @@
 /**
- * Central Resend email client for NDIS Shield.
+ * Central Resend email client for NDIS Shield Hub.
  *
  * FROM addresses (all verified on resend.dev domain):
  *   info@ndisshield.com.au      — user-facing welcome / transactional
@@ -25,9 +25,9 @@ export function getResend(): Resend {
 
 export const FROM = {
     /** Welcome emails, receipts, transactional messages */
-    info: 'NDIS Shield <info@ndisshield.com.au>',
+    info: 'NDIS Shield Hub Support <info@ndisshield.com.au>',
     /** System alerts, admin notifications */
-    noReply: 'NDIS Shield <no-reply@ndisshield.com.au>',
+    noReply: 'NDIS Shield Hub Support <no-reply@ndisshield.com.au>',
 } as const
 
 // ── Constants ─────────────────────────────────────────────────────────────────

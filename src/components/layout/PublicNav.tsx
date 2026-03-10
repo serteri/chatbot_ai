@@ -59,7 +59,7 @@ export function PublicNav() {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-lg font-bold text-slate-900 leading-tight tracking-tight">
-                                PylonChat
+                                NDIS Shield Hub
                             </span>
                             <span className="text-[10px] font-medium text-teal-700 uppercase tracking-widest leading-none">
                                 NDIS Compliance

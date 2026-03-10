@@ -29,7 +29,7 @@ interface ChatMessage {
     timestamp: Date
 }
 
-const STORAGE_KEY = 'pylonchat_ecommerce_demo'
+const STORAGE_KEY = 'ndisshield_ecommerce_demo'
 const MAX_MESSAGES = 5
 const EXPIRY_HOURS = 24
 
@@ -99,7 +99,7 @@ export default function EcommerceDemoPage() {
         if (!isInitialized) return
 
         const welcomeContent = locale === 'tr'
-            ? `Merhaba! 👋 Ben PylonChat E-Ticaret Destek AI'ınızım.
+            ? `Merhaba! 👋 Ben NDIS Shield Hub E-Ticaret Destek AI'ınızım.
 
 🛒 **Uzman Olduğum Konular:**
 • Ürün önerileri ve detaylı bilgiler
@@ -116,7 +116,7 @@ Bu demo sürümünde **${MAX_MESSAGES} soru** sorabilirsiniz. Sınırsız erişi
 "Ürün bana uymadı, nasıl iade ederim?"
 
 Size nasıl yardımcı olabilirim?`
-            : `Hello! 👋 I'm your PylonChat E-Commerce Support AI.
+            : `Hello! 👋 I'm your NDIS Shield Hub E-Commerce Support AI.
 
 🛒 **My Expertise:**
 • Product recommendations and detailed info
@@ -624,7 +624,7 @@ Let me know if you're looking for a specific product! 🛍️`
                             <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                                 <ShoppingCart className="h-5 w-5 text-white" />
                             </div>
-                            <span className="text-lg font-bold text-gray-900">PylonChat</span>
+                            <span className="text-lg font-bold text-gray-900">NDIS Shield Hub</span>
                         </Link>
 
                         <div className="flex items-center gap-2">

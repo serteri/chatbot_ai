@@ -22,7 +22,7 @@ export async function sendWelcomeEmail(params: {
         const { error } = await getResend().emails.send({
             from: FROM.info,
             to: [params.email],
-            subject: 'Welcome to NDIS Shield — Your NDIS Compliance Shield is Active',
+            subject: 'Welcome to NDIS Shield Hub — Your NDIS Compliance Shield is Active',
             html,
         })
 
