@@ -250,14 +250,14 @@
     },
     "faq": {
       "title": "Frequently Asked Questions",
-      "q1": "How does NDIS Shield Hub work?",
-      "a1": "Upload your documents, and the AI learns them to engage in natural conversations with your customers.",
-      "q2": "How long does setup take?",
-      "a2": "Account creation and initial chatbot setup take about 5 minutes.",
-      "q3": "What file formats do you support?",
-      "a3": "We support PDF, DOCX, and TXT formats.",
-      "q4": "What are the free plan limits?",
-      "a4": "The free plan includes 1 chatbot, 3 documents, and 50 conversations per month."
+      "q1": "How does NDIS Shield Hub ensure data accuracy?",
+      "a1": "Our AI audits every entry against the latest NDIS Price Guide and Practice Standards, flagging non-compliant clauses, incorrect support categories, and pricing discrepancies in real time.",
+      "q2": "Is the platform compliant with Australian privacy laws?",
+      "a2": "Yes. All data is processed and stored exclusively on Australian-based Azure servers in Sydney, ensuring full compliance with the Privacy Act 1988 and APP data sovereignty requirements.",
+      "q3": "What document formats does NDIS Shield Hub support?",
+      "a3": "We support PDF and DOCX service agreements. Our AI extracts, validates, and audits content against current NDIS standards automatically.",
+      "q4": "How quickly can I get an audit result?",
+      "a4": "Most service agreements are fully audited within 30–60 seconds. Bulk uploads with multiple documents are processed in parallel and typically complete within minutes."
     }
   },
   "auth": {
@@ -2734,7 +2734,7 @@
     }
   },
   "footer": {
-    "description": "Australia's leading NDIS service agreement compliance & audit platform.",
+    "description": "AI-powered NDIS Audit Readiness & Compliance platform.",
     "location": "Brisbane, Australia",
     "copyright": "All rights reserved.",
     "sections": {

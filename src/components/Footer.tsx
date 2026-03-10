@@ -14,10 +14,10 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
     const currentYear = new Date().getFullYear()
 
     const productLinks = [
-        { name: t('links.features'), href: `/${locale}/#features` },
-        { name: t('links.pricing'), href: `/${locale}/pricing` },
-        { name: t('links.demo'), href: `/${locale}/demo` },
-        { name: t('links.api'), href: `/${locale}/docs/api` },
+        { name: 'Price Guide 2025/26', href: `/${locale}/pricing` },
+        { name: 'Audit Checklist', href: `/${locale}/audit-features` },
+        { name: 'Accuracy Shield', href: `/${locale}/dashboard/validator` },
+        { name: 'Book a Demo', href: `/${locale}/contact?type=demo` },
     ]
 
     const companyLinks = [
@@ -51,7 +51,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                                 <MessageSquare className="h-3.5 w-3.5 text-white" />
                             </div>
                             <span className="text-sm text-gray-600">
-                                © {currentYear} PylonChat. {t('copyright')}
+                                © {currentYear} NDIS Shield Hub. {t('copyright')}
                             </span>
                         </div>
                         <div className="flex items-center gap-6 text-sm text-gray-500">
@@ -85,25 +85,25 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
                                 <MessageSquare className="h-6 w-6 text-white" />
                             </div>
-                            <span className="text-xl font-bold">PylonChat</span>
+                            <span className="text-xl font-bold">NDIS Shield Hub</span>
                         </Link>
                         <p className="text-gray-400 text-sm mb-6 max-w-xs">
                             {t('description')}
                         </p>
                         <div className="flex gap-4">
-                            <a href="https://twitter.com/pylonchat" target="_blank" rel="noopener noreferrer"
+                            <a href="https://twitter.com/ndisshieldhub" target="_blank" rel="noopener noreferrer"
                                 className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors">
                                 <Twitter className="h-5 w-5" />
                             </a>
-                            <a href="https://linkedin.com/company/pylonchat" target="_blank" rel="noopener noreferrer"
+                            <a href="https://linkedin.com/company/ndisshieldhub" target="_blank" rel="noopener noreferrer"
                                 className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors">
                                 <Linkedin className="h-5 w-5" />
                             </a>
-                            <a href="https://github.com/pylonchat" target="_blank" rel="noopener noreferrer"
+                            <a href="https://github.com/ndisshieldhub" target="_blank" rel="noopener noreferrer"
                                 className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors">
                                 <Github className="h-5 w-5" />
                             </a>
-                            <a href="https://youtube.com/@pylonchat" target="_blank" rel="noopener noreferrer"
+                            <a href="https://youtube.com/@ndisshieldhub" target="_blank" rel="noopener noreferrer"
                                 className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors">
                                 <Youtube className="h-5 w-5" />
                             </a>
@@ -187,7 +187,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <p className="text-gray-400 text-sm">
-                            © {currentYear} PylonChat. {t('copyright')}
+                            © {currentYear} NDIS Shield Hub. {t('copyright')}
                         </p>
                         <div className="flex items-center gap-6">
                             <select
