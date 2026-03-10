@@ -113,7 +113,7 @@ async function sendGenericWebhook(
 
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        'User-Agent': 'NDIS Shield-CRM/1.0',
+        'User-Agent': 'NDIS Shield Hub-CRM/1.0',
     }
 
     if (config.apiKey) {
@@ -124,7 +124,7 @@ async function sendGenericWebhook(
     const payload = {
         event: 'lead.created',
         timestamp: new Date().toISOString(),
-        source: 'pylonchat',
+        source: 'ndisshield',
         data: {
             contact: {
                 name: lead.name,
@@ -222,7 +222,7 @@ async function sendToRexSoftware(
         },
         notes: buildLeadNotes(lead),
         tags: [
-            `pylonchat-${lead.category}`,
+            `ndisshield-${lead.category}`,
             lead.intent ? `intent-${lead.intent}` : null,
             lead.propertyType ? `property-${lead.propertyType}` : null,
         ].filter(Boolean),
@@ -233,7 +233,7 @@ async function sendToRexSoftware(
             pre_approval: lead.hasPreApproval ? 'Yes' : 'No',
             lead_score: lead.score.toString(),
             lead_category: lead.category,
-            source: 'NDIS Shield Chatbot',
+            source: 'NDIS Shield Hub Chatbot',
         }
     }
 
@@ -313,7 +313,7 @@ async function sendToReapit(
         active: true,
         marketingConsent: 'grant',
         source: {
-            id: 'pylonchat',
+            id: 'ndisshield',
             type: 'source',
         },
         homePhone: lead.phone,
@@ -328,7 +328,7 @@ async function sendToReapit(
         } : undefined,
         negotiatorIds: [],
         metadata: {
-            pylonchat: {
+            ndisshield: {
                 leadId: lead.id,
                 score: lead.score,
                 category: lead.category,
@@ -372,7 +372,7 @@ async function sendToReapit(
 
 function buildLeadNotes(lead: CRMLeadPayload): string {
     const lines: string[] = [
-        `📋 NDIS Shield Lead — Score: ${lead.score}/100 (${lead.category.toUpperCase()})`,
+        `📋 NDIS Shield Hub Lead — Score: ${lead.score}/100 (${lead.category.toUpperCase()})`,
         `━━━━━━━━━━━━━━━━━━━━━━━━`,
     ]
 
@@ -416,7 +416,7 @@ export async function testCRMConnection(
 
     const testLead: CRMLeadPayload = {
         id: 'test-connection',
-        name: 'NDIS Shield Test',
+        name: 'NDIS Shield Hub Test',
         phone: '+61400000000',
         email: 'test@ndisshield.com.au',
         intent: 'buy',

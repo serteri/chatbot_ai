@@ -299,7 +299,7 @@ export default function CRMSettings({ chatbotId }: CRMSettingsProps) {
                         <p className="text-gray-400 mb-2">// Sample payload sent to your CRM:</p>
                         <pre>{JSON.stringify({
                             event: 'lead.created',
-                            source: 'pylonchat',
+                            source: 'ndisshield',
                             data: {
                                 contact: { name: 'John Doe', phone: '+61400000000', email: 'john@email.com' },
                                 qualification: { intent: 'buy', propertyType: 'apartment', budget: '$500K-$800K', timeline: '1-3 months' },
