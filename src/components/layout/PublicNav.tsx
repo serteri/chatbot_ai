@@ -11,7 +11,8 @@ import {
     Server,
     DollarSign,
     Lock,
-    CalendarCheck
+    CalendarCheck,
+    Mail
 } from 'lucide-react'
 
 export function PublicNav() {
@@ -35,6 +36,11 @@ export function PublicNav() {
             label: 'Pricing',
             href: `/${locale}/pricing`,
             icon: DollarSign,
+        },
+        {
+            label: 'Contact Us',
+            href: `/${locale}/contact`,
+            icon: Mail,
         },
     ]
 
