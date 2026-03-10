@@ -2683,7 +2683,7 @@
     "step2": "2. Erstellen Sie einen neuen CNAME-Eintrag",
     "step3": "3. Geben Sie im Feld Host/Name Ihre Subdomain ein (z.B. 'chat' oder '@' für die gesamte Domain)",
     "step4": "4. Geben Sie im Feld Wert/Zeigt auf ein:",
-    "cnameTarget": "app.pylonchat.com",
+    "cnameTarget": "app.ndisshield.com.au",
     "propagationNote": "Hinweis: DNS-Änderungen können bis zu 24 Stunden dauern, um sich zu verbreiten.",
     "save": "Domain speichern",
     "saving": "Wird gespeichert...",

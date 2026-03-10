@@ -28,7 +28,7 @@ export default async function middleware(req: NextRequest) {
     cleanHost &&
     cleanHost !== cleanAppHostname &&
     !host?.includes('vercel.app') &&
-    !host?.includes('pylonchat.com');
+    !host?.includes('ndisshield.com.au');
 
   if (isCustomDomain) {
     // Rewrite to the domain handler page

@@ -2,9 +2,9 @@
  * Production database cleanup script.
  * Run with: npx tsx prisma/scripts/db-cleanup.ts
  *
- * - Deletes maximilianmikus@gmail.com (Maximilian Götz-Mikus) and any
- *   other account whose name contains "Maximilian" as a safety net.
- * - Sets companyName = "PylonChat" for serteri@gmail.com.
+ * - Deletes maximilianmikus@gmail.com and any account whose name
+ *   contains "Maximilian" as a safety net.
+ * - Sets companyName = "Pylon NDIS Shield" for serteri@gmail.com.
  */
 
 import { PrismaClient } from '@prisma/client'
@@ -18,7 +18,7 @@ async function main() {
     })
     console.log(`[cleanup] Deleted ${byEmail.count} user(s) with email maximilianmikus@gmail.com`)
 
-    // 2. Safety net — delete any remaining "Maximilian" accounts
+    // 2. Safety net — any remaining "Maximilian" accounts
     const byName = await prisma.user.deleteMany({
         where: {
             name: { contains: 'Maximilian', mode: 'insensitive' },
@@ -26,12 +26,12 @@ async function main() {
     })
     console.log(`[cleanup] Deleted ${byName.count} additional user(s) whose name contains "Maximilian"`)
 
-    // 3. Update admin account
+    // 3. Update admin account with new company name
     const updated = await prisma.user.updateMany({
         where: { email: 'serteri@gmail.com' },
-        data: { companyName: 'PylonChat' },
+        data: { companyName: 'Pylon NDIS Shield' },
     })
-    console.log(`[cleanup] Updated companyName to "PylonChat" for ${updated.count} account(s)`)
+    console.log(`[cleanup] Set companyName="Pylon NDIS Shield" for ${updated.count} account(s)`)
 }
 
 main()

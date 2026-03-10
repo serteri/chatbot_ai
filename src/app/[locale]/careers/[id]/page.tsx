@@ -238,7 +238,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                                                     </Button>
                                                 </a>
                                             ) : (
-                                                <a href="mailto:careers@pylonchat.com?subject=Application for ${job.title}">
+                                                <a href="mailto:careers@ndisshield.com.au?subject=Application for ${job.title}">
                                                     <Button size="lg" className="w-full bg-white text-blue-600 hover:bg-blue-50">
                                                         <Mail className="h-4 w-4 mr-2" />
                                                         {t('applyByEmail')}
@@ -304,7 +304,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                                             </p>
                                             <div className="flex gap-2">
                                                 <a
-                                                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://www.pylonchat.com/${locale}/careers/${job.id}`)}`}
+                                                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://www.ndisshield.com.au/${locale}/careers/${job.id}`)}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex-1"
@@ -317,7 +317,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                                                     </Button>
                                                 </a>
                                                 <a
-                                                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${job.title} at PylonChat`)}&url=${encodeURIComponent(`https://www.pylonchat.com/${locale}/careers/${job.id}`)}`}
+                                                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${job.title} at NDIS Shield`)}&url=${encodeURIComponent(`https://www.ndisshield.com.au/${locale}/careers/${job.id}`)}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex-1"

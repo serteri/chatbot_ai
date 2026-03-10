@@ -226,7 +226,7 @@ export default function ContactPage() {
                                             </div>
                                             <div>
                                                 <div className="font-medium text-gray-900">{t('contact.info.email')}</div>
-                                                <div className="text-gray-600">support@pylonchat.com</div>
+                                                <div className="text-gray-600">support@ndisshield.com.au</div>
                                             </div>
                                         </div>
 
@@ -270,37 +270,37 @@ export default function ContactPage() {
 
                                     <div className="space-y-4">
                                         <a
-                                            href="mailto:support@pylonchat.com?subject=Technical Support Request"
+                                            href="mailto:support@ndisshield.com.au?subject=Technical Support Request"
                                             className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer group"
                                         >
                                             <HeadphonesIcon className="h-5 w-5 text-blue-600" />
                                             <div className="flex-1">
                                                 <span className="text-blue-900 font-medium block">{t('contact.support.technical')}</span>
-                                                <span className="text-blue-600 text-sm">support@pylonchat.com</span>
+                                                <span className="text-blue-600 text-sm">support@ndisshield.com.au</span>
                                             </div>
                                             <Mail className="h-4 w-4 text-blue-400 group-hover:text-blue-600 transition-colors" />
                                         </a>
 
                                         <a
-                                            href="mailto:sales@pylonchat.com?subject=Sales Inquiry"
+                                            href="mailto:sales@ndisshield.com.au?subject=Sales Inquiry"
                                             className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer group"
                                         >
                                             <Building className="h-5 w-5 text-green-600" />
                                             <div className="flex-1">
                                                 <span className="text-green-900 font-medium block">{t('contact.support.sales')}</span>
-                                                <span className="text-green-600 text-sm">sales@pylonchat.com</span>
+                                                <span className="text-green-600 text-sm">sales@ndisshield.com.au</span>
                                             </div>
                                             <Mail className="h-4 w-4 text-green-400 group-hover:text-green-600 transition-colors" />
                                         </a>
 
                                         <a
-                                            href="mailto:hello@pylonchat.com?subject=General Inquiry"
+                                            href="mailto:hello@ndisshield.com.au?subject=General Inquiry"
                                             className="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer group"
                                         >
                                             <MessageCircle className="h-5 w-5 text-purple-600" />
                                             <div className="flex-1">
                                                 <span className="text-purple-900 font-medium block">{t('contact.support.general')}</span>
-                                                <span className="text-purple-600 text-sm">hello@pylonchat.com</span>
+                                                <span className="text-purple-600 text-sm">hello@ndisshield.com.au</span>
                                             </div>
                                             <Mail className="h-4 w-4 text-purple-400 group-hover:text-purple-600 transition-colors" />
                                         </a>

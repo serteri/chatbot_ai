@@ -1,9 +1,9 @@
 /**
- * Central Resend email client for PylonChat.
+ * Central Resend email client for NDIS Shield.
  *
  * FROM addresses (all verified on resend.dev domain):
- *   info@pylonchat.com      — user-facing welcome / transactional
- *   no-reply@pylonchat.com  — system alerts and admin notifications
+ *   info@ndisshield.com.au      — user-facing welcome / transactional
+ *   no-reply@ndisshield.com.au  — system alerts and admin notifications
  */
 
 import { Resend } from 'resend'
@@ -25,12 +25,12 @@ export function getResend(): Resend {
 
 export const FROM = {
     /** Welcome emails, receipts, transactional messages */
-    info: 'PylonChat <info@pylonchat.com>',
+    info: 'NDIS Shield <info@ndisshield.com.au>',
     /** System alerts, admin notifications */
-    noReply: 'PylonChat <no-reply@pylonchat.com>',
+    noReply: 'NDIS Shield <no-reply@ndisshield.com.au>',
 } as const
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 export const ADMIN_EMAIL = 'serteri@gmail.com'
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.pylonchat.com'
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ndisshield.com.au'

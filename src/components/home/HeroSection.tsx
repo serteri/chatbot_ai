@@ -103,7 +103,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
                                     <div className="w-3 h-3 rounded-full bg-emerald-400" />
                                 </div>
                                 <span className="text-xs text-slate-400 font-mono">
-                                    pylonchat.com.au/dashboard
+                                    ndisshield.com.au/dashboard
                                 </span>
                                 <Lock className="h-3.5 w-3.5 text-emerald-400" />
                             </div>

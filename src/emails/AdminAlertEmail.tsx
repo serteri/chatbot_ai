@@ -43,13 +43,13 @@ export function AdminAlertEmail({
                     <Section style={header}>
                         <Text style={emoji}>🚀</Text>
                         <Heading style={h1}>New User Registered</Heading>
-                        <Text style={subheading}>PylonChat · {formattedDate} AEST</Text>
+                        <Text style={subheading}>NDIS Shield · {formattedDate} AEST</Text>
                     </Section>
 
                     {/* Details */}
                     <Section style={body}>
                         <Text style={lead}>
-                            A new provider has just signed up for PylonChat.
+                            A new provider has just signed up for NDIS Shield.
                         </Text>
 
                         <Section style={infoBox}>
@@ -92,7 +92,7 @@ export function AdminAlertEmail({
                         <Hr style={divider} />
 
                         <Text style={footerNote}>
-                            This is an automated alert from PylonChat. No action is required.
+                            This is an automated alert from NDIS Shield. No action is required.
                         </Text>
                     </Section>
 

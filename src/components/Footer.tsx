@@ -170,9 +170,9 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                 {/* Contact Info */}
                 <div className="mt-12 pt-8 border-t border-gray-800">
                     <div className="flex flex-wrap gap-6 text-sm text-gray-400">
-                        <a href="mailto:info@pylonchat.com" className="flex items-center gap-2 hover:text-white transition-colors">
+                        <a href="mailto:info@ndisshield.com.au" className="flex items-center gap-2 hover:text-white transition-colors">
                             <Mail className="h-4 w-4" />
-                            info@pylonchat.com
+                            info@ndisshield.com.au
                         </a>
                         <span className="flex items-center gap-2">
                             <MapPin className="h-4 w-4" />

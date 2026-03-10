@@ -183,13 +183,13 @@ export default async function SupportPage({
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <a href="mailto:support@pylonchat.com?subject=Priority Support Request">
+                        <a href="mailto:support@ndisshield.com.au?subject=Priority Support Request">
                             <Button className="w-full bg-blue-600 hover:bg-blue-700">
                                 <Mail className="h-4 w-4 mr-2" />
                                 {t('sendEmail')}
                             </Button>
                         </a>
-                        <p className="text-sm text-gray-500 mt-3 text-center">support@pylonchat.com</p>
+                        <p className="text-sm text-gray-500 mt-3 text-center">support@ndisshield.com.au</p>
                     </CardContent>
                 </Card>
 

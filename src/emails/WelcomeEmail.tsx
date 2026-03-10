@@ -22,27 +22,27 @@ interface WelcomeEmailProps {
 export function WelcomeEmail({
     name,
     email,
-    dashboardUrl = 'https://www.pylonchat.com/en/dashboard/validator',
+    dashboardUrl = 'https://www.ndisshield.com.au/en/dashboard/validator',
 }: WelcomeEmailProps) {
     return (
         <Html>
             <Head />
-            <Preview>Your NDIS Compliance Shield is now active — welcome to PylonChat.</Preview>
+            <Preview>Your NDIS Compliance Shield is now active — welcome to NDIS Shield.</Preview>
             <Body style={main}>
                 <Container style={container}>
 
                     {/* Header bar */}
                     <Section style={header}>
-                        <Text style={logoText}>PylonChat</Text>
+                        <Text style={logoText}>NDIS Shield</Text>
                         <Text style={tagline}>NDIS Compliance Intelligence</Text>
                     </Section>
 
                     {/* Body */}
                     <Section style={body}>
-                        <Heading style={h1}>Welcome to PylonChat, {name}.</Heading>
+                        <Heading style={h1}>Welcome to NDIS Shield, {name}.</Heading>
 
                         <Text style={paragraph}>
-                            Thank you for joining PylonChat. Your account is live and your
+                            Thank you for joining NDIS Shield. Your account is live and your
                             <strong> NDIS Compliance Shield is now active</strong>.
                         </Text>
 
@@ -82,10 +82,10 @@ export function WelcomeEmail({
                     {/* Footer */}
                     <Section style={footer}>
                         <Text style={footerMuted}>
-                            PylonChat · Sydney, Australia · ap-southeast-2
+                            NDIS Shield · Sydney, Australia · ap-southeast-2
                         </Text>
                         <Text style={footerMuted}>
-                            © {new Date().getFullYear()} PylonChat. All rights reserved.
+                            © {new Date().getFullYear()} NDIS Shield. All rights reserved.
                         </Text>
                     </Section>
 

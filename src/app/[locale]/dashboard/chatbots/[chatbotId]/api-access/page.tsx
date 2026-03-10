@@ -337,7 +337,7 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                         variant="ghost"
                                         size="icon"
                                         className="absolute top-2 right-2 text-slate-400 hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        onClick={() => copyToClipboard(`curl -X POST ${origin || 'https://api.pylonchat.com'}/api/chat \\
+                                        onClick={() => copyToClipboard(`curl -X POST ${origin || 'https://api.ndisshield.com.au'}/api/chat \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer ${keys[0]?.key || 'YOUR_API_KEY'}" \\
   -d '{"message": "Hello", "chatbotId": "${chatbotId}"}'`)}
@@ -345,7 +345,7 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                         {copiedKey ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                                     </Button>
                                     <pre className="whitespace-pre-wrap break-all">
-                                        {`curl -X POST ${origin || 'https://api.pylonchat.com'}/api/chat \\
+                                        {`curl -X POST ${origin || 'https://api.ndisshield.com.au'}/api/chat \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer ${keys[0]?.key || 'YOUR_API_KEY'}" \\
   -d '{"message": "Hello", "chatbotId": "${chatbotId}"}'`}
@@ -361,7 +361,7 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                         variant="ghost"
                                         size="icon"
                                         className="absolute top-2 right-2 text-slate-400 hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        onClick={() => copyToClipboard(`fetch('${origin || 'https://api.pylonchat.com'}/api/chat', {
+                                        onClick={() => copyToClipboard(`fetch('${origin || 'https://api.ndisshield.com.au'}/api/chat', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ export default function ApiAccessPage({ params }: ApiAccessPageProps) {
                                         {copiedKey ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                                     </Button>
                                     <pre className="whitespace-pre-wrap break-all">
-                                        {`fetch('${origin || 'https://api.pylonchat.com'}/api/chat', {
+                                        {`fetch('${origin || 'https://api.ndisshield.com.au'}/api/chat', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',

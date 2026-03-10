@@ -19,7 +19,7 @@ export default function CustomDomainSettings({ chatbotId, initialDomain }: Custo
     const [copied, setCopied] = useState(false)
     const t = useTranslations('customDomainSettings')
 
-    const cnameTarget = "app.pylonchat.com"
+    const cnameTarget = "app.ndisshield.com.au"
 
     const handleCopy = async (text: string) => {
         await navigator.clipboard.writeText(text)

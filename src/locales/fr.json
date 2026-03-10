@@ -2610,7 +2610,7 @@
     "step2": "2. Créez un nouvel enregistrement CNAME",
     "step3": "3. Dans le champ Hôte/Nom, entrez votre sous-domaine (ex: 'chat' ou '@' pour tout le domaine)",
     "step4": "4. Dans le champ Valeur/Pointe vers, entrez:",
-    "cnameTarget": "app.pylonchat.com",
+    "cnameTarget": "app.ndisshield.com.au",
     "propagationNote": "Note: Les modifications DNS peuvent prendre jusqu'à 24 heures pour se propager.",
     "save": "Enregistrer le domaine",
     "saving": "Enregistrement...",

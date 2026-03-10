@@ -1,5 +1,5 @@
-const DEFAULT_SITE_URL = 'https://www.pylonchat.com'
-const DEFAULT_SITE_NAME = 'PylonChat'
+const DEFAULT_SITE_URL = 'https://www.ndisshield.com.au'
+const DEFAULT_SITE_NAME = 'NDIS Shield'
 const DEFAULT_SITE_DESCRIPTION = 'AI-powered NDIS Service Agreement Validator and Audit Compliance toolkit.'
 
 export const SITE_URL =

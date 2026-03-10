@@ -12,8 +12,8 @@ const nextConfig = {
             allowedOrigins: [
                 'localhost:3000',
                 '*.vercel.app',
-                'pylonchat.com',
-                'www.pylonchat.com',
+                'ndisshield.com.au',
+                'www.ndisshield.com.au',
             ]
         }
     },

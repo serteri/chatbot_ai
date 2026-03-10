@@ -110,14 +110,14 @@ export default async function CareersPage({ params }: PageProps) {
                                     <p className="text-gray-600 mb-6">
                                         {t('sendCvDesc')}
                                     </p>
-                                    <a href="mailto:careers@pylonchat.com">
+                                    <a href="mailto:careers@ndisshield.com.au">
                                         <Button size="lg" className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
                                             <Clock className="w-4 h-4 mr-2" />
                                             {t('sendButton')}
                                         </Button>
                                     </a>
                                     <div className="mt-4 text-sm text-gray-400">
-                                        careers@pylonchat.com
+                                        careers@ndisshield.com.au
                                     </div>
                                 </div>
                             </div>
@@ -252,13 +252,13 @@ export default async function CareersPage({ params }: PageProps) {
                                     <p className="text-gray-300 mb-8 max-w-lg mx-auto">
                                         {t('sendCvDesc')}
                                     </p>
-                                    <a href="mailto:careers@pylonchat.com">
+                                    <a href="mailto:careers@ndisshield.com.au">
                                         <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 font-semibold px-8">
                                             {t('sendButton')}
                                             <ArrowRight className="ml-2 h-4 w-4" />
                                         </Button>
                                     </a>
-                                    <p className="mt-4 text-gray-400 text-sm">careers@pylonchat.com</p>
+                                    <p className="mt-4 text-gray-400 text-sm">careers@ndisshield.com.au</p>
                                 </div>
                             </div>
                         </div>

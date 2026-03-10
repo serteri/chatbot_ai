@@ -106,7 +106,7 @@ const faqCategories: Record<string, FAQCategory[]> = {
                 },
                 {
                     question: 'Para iade politikasi nedir?',
-                    answer: 'Ilk 14 gun icinde memnun kalmazsiniz tam iade garantisi sunuyoruz. Iade talebinizi support@pylonchat.com adresine gonderebilirsiniz. Yillik planlarda kalan sure icin orantili iade yapilir.'
+                    answer: 'Ilk 14 gun icinde memnun kalmazsiniz tam iade garantisi sunuyoruz. Iade talebinizi support@ndisshield.com.au adresine gonderebilirsiniz. Yillik planlarda kalan sure icin orantili iade yapilir.'
                 },
                 {
                     question: 'Kurumsal fiyatlandirma nasil belirleniyor?',
@@ -316,7 +316,7 @@ const faqCategories: Record<string, FAQCategory[]> = {
                 },
                 {
                     question: 'What is the refund policy?',
-                    answer: 'We offer a full refund guarantee within the first 14 days if not satisfied. Send your refund request to support@pylonchat.com. Annual plans receive prorated refunds for remaining time.'
+                    answer: 'We offer a full refund guarantee within the first 14 days if not satisfied. Send your refund request to support@ndisshield.com.au. Annual plans receive prorated refunds for remaining time.'
                 },
                 {
                     question: 'How is enterprise pricing determined?',

@@ -15,16 +15,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const t = await getTranslations({ locale, namespace: 'legal.privacy' })
 
     return {
-        title: t('title') + ' | PylonChat',
+        title: t('title') + ' | NDIS Shield',
         description: t('intro'),
         alternates: {
-            canonical: `https://www.pylonchat.com/${locale}/privacy`,
+            canonical: `https://www.ndisshield.com.au/${locale}/privacy`,
         },
         openGraph: {
             title: t('title'),
             description: t('intro'),
-            url: `https://www.pylonchat.com/${locale}/privacy`,
-            siteName: 'PylonChat',
+            url: `https://www.ndisshield.com.au/${locale}/privacy`,
+            siteName: 'NDIS Shield',
             type: 'website',
         },
     }
@@ -175,11 +175,11 @@ export default async function PrivacyPage({ params }: PageProps) {
                             <h3 className="text-xl font-semibold mb-2">{t('questionsTitle')}</h3>
                             <p className="text-blue-100 mb-4">{t('questionsText')}</p>
                             <a
-                                href="mailto:privacy@pylonchat.com"
+                                href="mailto:privacy@ndisshield.com.au"
                                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-xl font-medium hover:bg-blue-50 transition-colors"
                             >
                                 <Mail className="w-5 h-5" />
-                                privacy@pylonchat.com
+                                privacy@ndisshield.com.au
                             </a>
                         </div>
                     </div>

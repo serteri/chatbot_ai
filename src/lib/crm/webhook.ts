@@ -113,7 +113,7 @@ async function sendGenericWebhook(
 
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        'User-Agent': 'PylonChat-CRM/1.0',
+        'User-Agent': 'NDIS Shield-CRM/1.0',
     }
 
     if (config.apiKey) {
@@ -233,7 +233,7 @@ async function sendToRexSoftware(
             pre_approval: lead.hasPreApproval ? 'Yes' : 'No',
             lead_score: lead.score.toString(),
             lead_category: lead.category,
-            source: 'PylonChat Chatbot',
+            source: 'NDIS Shield Chatbot',
         }
     }
 
@@ -372,7 +372,7 @@ async function sendToReapit(
 
 function buildLeadNotes(lead: CRMLeadPayload): string {
     const lines: string[] = [
-        `📋 PylonChat Lead — Score: ${lead.score}/100 (${lead.category.toUpperCase()})`,
+        `📋 NDIS Shield Lead — Score: ${lead.score}/100 (${lead.category.toUpperCase()})`,
         `━━━━━━━━━━━━━━━━━━━━━━━━`,
     ]
 
@@ -416,9 +416,9 @@ export async function testCRMConnection(
 
     const testLead: CRMLeadPayload = {
         id: 'test-connection',
-        name: 'PylonChat Test',
+        name: 'NDIS Shield Test',
         phone: '+61400000000',
-        email: 'test@pylonchat.com',
+        email: 'test@ndisshield.com.au',
         intent: 'buy',
         propertyType: 'house',
         purpose: 'residence',
