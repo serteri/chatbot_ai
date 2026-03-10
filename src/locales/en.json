@@ -129,7 +129,7 @@
       "trust3": "Cancel anytime"
     },
     "features": {
-      "title": "Why PylonChat?",
+      "title": "Why NDIS Shield Hub?",
       "subtitle": "Discover our AI solutions developed specifically for the education and e-commerce sectors",
       "education": {
         "title": "Education Consulting",
@@ -164,16 +164,16 @@
         "description": "Branding and personalized response systems"
       }
     },
-    "footer": "© 2025 PylonChat. All rights reserved."
+    "footer": "© 2025 NDIS Shield Hub. All rights reserved."
   },
   "about": {
     "title": "About Us",
     "subtitle": "We are transforming customer service with AI technology",
-    "description": "PylonChat is an innovative platform that helps businesses enhance customer experience with AI-powered chatbots.",
+    "description": "NDIS Shield Hub is Australia's leading NDIS compliance platform — helping providers validate service agreements, identify audit risks, and maintain documentation standards.",
     "mission": "Our Mission",
-    "missionText": "Our goal is to enable businesses of all sizes to provide smart 24/7 support to their customers with advanced AI technology.",
+    "missionText": "To empower every NDIS provider with intelligent compliance tools that eliminate audit risk, protect participants, and reduce administrative burden.",
     "vision": "Our Vision",
-    "visionText": "To be the global leader in AI-powered customer service and the most trusted partner in businesses' digital transformation journey.",
+    "visionText": "To be Australia's most trusted NDIS compliance platform — setting the gold standard for service agreement accuracy and audit readiness.",
     "values": "Our Values",
     "value1": "Innovation",
     "value1Text": "Continually evolving technologies",
@@ -192,15 +192,15 @@
     "educationDesc": "Expert AI consultant for overseas education, visa procedures, and language schools",
     "ecommerceTitle": "E-commerce Support",
     "ecommerceDesc": "Smart customer service and sales assistant for online stores",
-    "stats": "PylonChat by the Numbers",
+    "stats": "NDIS Shield Hub by the Numbers",
     "chatbotsCreated": "Chatbots Created",
     "industries": "Industries Served",
     "languages": "Language Support",
     "support": "AI Support",
     "team": "Our Team",
-    "teamDesc": "The talented team bringing PylonChat to life",
+    "teamDesc": "The talented team bringing NDIS Shield Hub to life",
     "contactTitle": "Contact Us",
-    "contactDesc": "Have questions? Contact us for more information about PylonChat.",
+    "contactDesc": "Have questions? Contact us for more information about NDIS Shield Hub.",
     "contactButton": "Get in Touch",
     "getStarted": "Get Started Now",
     "getStartedDesc": "Create your free account and set up your AI chatbot in 5 minutes",
@@ -209,7 +209,7 @@
   "contact": {
     "title": "Contact",
     "subtitle": "Reach out to us, we are happy to help",
-    "description": "Have questions about PylonChat? Use the form below or contact us directly.",
+    "description": "Have questions about NDIS Shield Hub? Use the form below or contact us directly.",
     "name": "Full Name",
     "email": "Email",
     "subject": "Subject",
@@ -250,7 +250,7 @@
     },
     "faq": {
       "title": "Frequently Asked Questions",
-      "q1": "How does PylonChat work?",
+      "q1": "How does NDIS Shield Hub work?",
       "a1": "Upload your documents, and the AI learns them to engage in natural conversations with your customers.",
       "q2": "How long does setup take?",
       "a2": "Account creation and initial chatbot setup take about 5 minutes.",
@@ -263,7 +263,7 @@
   "auth": {
     "login": {
       "title": "Log In",
-      "subtitle": "Log in to your PylonChat account",
+      "subtitle": "Log in to your NDIS Shield Hub account",
       "email": "Email",
       "password": "Password",
       "button": "Log In",
@@ -287,7 +287,7 @@
       "newFeature1": "✨ Enhanced AI response quality",
       "newFeature2": "📊 New analytics dashboard",
       "newFeature3": "🎨 Widget customization options",
-      "footer": "© 2024 PylonChat. All rights reserved.",
+      "footer": "© 2024 NDIS Shield Hub. All rights reserved.",
       "registerTitle": "Transform customer experience with AI-powered chatbots",
       "registerSubtitle": "Create a free account and start immediately.",
       "feature1": "Unlimited AI chat experience",
@@ -297,7 +297,7 @@
     },
     "register": {
       "title": "Register",
-      "subtitle": "Create a PylonChat account",
+      "subtitle": "Create a NDIS Shield Hub account",
       "name": "Name",
       "email": "Email",
       "password": "Password",
@@ -1190,7 +1190,7 @@
     "typing": "Typing...",
     "minimize": "Minimize",
     "close": "Close",
-    "poweredBy": "Powered by PylonChat",
+    "poweredBy": "Powered by NDIS Shield Hub",
     "saveSuccess": "Widget settings saved!",
     "colors": "Colors",
     "colorsDesc": "Customize widget colors",
@@ -1215,10 +1215,10 @@
     "livePreview": "Live Preview",
     "previewDesc": "Test widget appearance",
     "branding": "Branding",
-    "brandingDesc": "Control 'Powered by PylonChat' visibility in widget",
+    "brandingDesc": "Control 'Powered by NDIS Shield Hub' visibility in widget",
     "hideBranding": "Hide Branding",
-    "hideBrandingDesc": "Remove 'Powered by PylonChat' from the chat widget",
-    "brandingUpgradeMessage": "Upgrade to Pro or higher to remove PylonChat branding from your widget",
+    "hideBrandingDesc": "Remove 'Powered by NDIS Shield Hub' from the chat widget",
+    "brandingUpgradeMessage": "Upgrade to Pro or higher to remove NDIS Shield Hub branding from your widget",
     "upgradePlan": "Upgrade Plan",
     "previewSample": "Trial Preview",
     "saveError": "Save failed",
@@ -1676,18 +1676,18 @@
       "a1": "Yes. Upgrade takes effect immediately. If you cancel, your Professional plan remains active until the end of your billing period, then reverts to Starter.",
       "q2": "What file formats are supported?",
       "a2": "We support PDF and DOCX (Microsoft Word) service agreements. Maximum file size is 20MB.",
-      "q3": "What NDIS standards does PylonChat check against?",
+      "q3": "What NDIS standards does NDIS Shield Hub check against?",
       "a3": "Every analysis is run against the NDIS Practice Standards 2021 (updated 2025/26) and the NDIS Price Guide 2025/26. Specific clause references are cited in each warning.",
       "q4": "What payment methods do you accept?",
       "a4": "We accept all major credit cards (Visa, Mastercard, American Express) via Stripe.",
       "q5": "What does 'Watermarked PDF' mean on the Starter plan?",
-      "a5": "Starter plan addendum PDFs include a PylonChat watermark. Professional plan removes all watermarks and injects your own logo and branding.",
+      "a5": "Starter plan addendum PDFs include a NDIS Shield Hub watermark. Professional plan removes all watermarks and injects your own logo and branding.",
       "q6": "Is my client data secure?",
       "a6": "Yes. Documents are processed in Azure OpenAI Sydney (ap-southeast-2) and never stored on our servers after analysis. We are GDPR compliant and data never leaves Australia.",
       "q7": "What is Bulk Processing?",
       "a7": "Professional plan allows you to upload and audit multiple service agreements at once — ideal for providers managing large participant caseloads.",
       "q8": "Do you replace Lumary or ShiftCare?",
-      "a8": "No. PylonChat is a compliance auditing tool. We don't manage shifts or billing. We analyse your service agreements and generate addendums to fix compliance gaps before an NDIS audit."
+      "a8": "No. NDIS Shield Hub is a compliance auditing tool. We don't manage shifts or billing. We analyse your service agreements and generate addendums to fix compliance gaps before an NDIS audit."
     }
   },
   "StudentProfile": {
@@ -2462,7 +2462,7 @@
   "careers": {
     "title": "Careers",
     "badge": "We're Hiring",
-    "subtitle": "Join us in building the future of AI-powered customer communication",
+    "subtitle": "Join us in building the future of NDIS compliance technology in Australia",
     "noOpeningsTitle": "No open positions currently",
     "noOpeningsDesc": "We don't have any open roles at the moment. However, we're always happy to meet talented people.",
     "sendCvTitle": "General Application",
@@ -2514,7 +2514,7 @@
     "contactDesc": "Our support team is available 24/7 to assist you.",
     "categories": {
       "gettingStarted": "Getting Started",
-      "gettingStartedDesc": "Learn the basics of PylonChat",
+      "gettingStartedDesc": "Learn the basics of NDIS Shield Hub",
       "billing": "Billing & Plans",
       "billingDesc": "Manage your subscription and payments",
       "account": "Account Settings",
@@ -2526,7 +2526,7 @@
     }
   },
   "blog": {
-    "title": "PylonChat Blog",
+    "title": "NDIS Shield Hub Blog",
     "subtitle": "Latest news, updates, and insights from the world of AI chatbots.",
     "readMore": "Read more",
     "categories": {
@@ -2544,14 +2544,14 @@
         "excerpt": "Best practices for training your AI to handle product queries, returns, and order status checks effectively."
       },
       "post3": {
-        "title": "PylonChat v2.0 Release Notes",
+        "title": "NDIS Shield Hub v2.0 Release Notes",
         "excerpt": "Introducing advanced analytics, multi-language support improvements, and a brand new dashboard experience."
       }
     }
   },
   "docs": {
     "title": "Documentation",
-    "subtitle": "Everything you need to build with PylonChat",
+    "subtitle": "Everything you need to build with NDIS Shield Hub",
     "sidebar": {
       "gettingStarted": "Getting Started",
       "coreConcepts": "Core Concepts",
@@ -2559,9 +2559,9 @@
     },
     "intro": {
       "title": "Introduction",
-      "text": "PylonChat is an AI-powered customer engagement platform that helps businesses automate support, increase sales, and provide 24/7 assistance.",
+      "text": "NDIS Shield Hub is Australia's leading AI-powered NDIS service agreement compliance and audit platform, helping providers validate documents, identify risks, and stay audit-ready 24/7.",
       "howItWorks": "How it works",
-      "howItWorksText": "Unlike traditional chatbots that rely on rigid decision trees, PylonChat uses advanced Large Language Models (LLMs) to understand intent and context. This allows it to handle complex queries, switch topics naturally, and provide personalized responses.",
+      "howItWorksText": "Unlike traditional chatbots that rely on rigid decision trees, NDIS Shield Hub uses advanced Large Language Models (LLMs) to understand intent and context. This allows it to handle complex queries, switch topics naturally, and provide personalized responses.",
       "nextSteps": "Next Steps",
       "step1": "Create your free account",
       "step2": "Configure your first chatbot",
@@ -2589,7 +2589,7 @@
       "title": "API Reference",
       "subtitle": "Programmatically manage chatbots, retrieve conversation history, and analyze performance metrics.",
       "auth": "Authentication",
-      "authDesc": "The PylonChat API uses API keys to authenticate requests.",
+      "authDesc": "The NDIS Shield Hub API uses API keys to authenticate requests.",
       "chatbots": "Chatbots",
       "chatbotsDesc": "Returns a list of chatbots associated with your account.",
       "conversations": "Conversations",
@@ -2600,7 +2600,7 @@
     "lastUpdated": "Last updated",
     "privacy": {
       "title": "Privacy Policy",
-      "intro": "At PylonChat, we respect your privacy and are committed to protecting your personal data.",
+      "intro": "At NDIS Shield Hub, we respect your privacy and are committed to protecting your personal data.",
       "summaryTitle": "Summary",
       "summaryItem1": "We only collect data necessary to provide our services",
       "summaryItem2": "We do not sell or share your data with third parties",
@@ -2646,12 +2646,12 @@
     },
     "terms": {
       "title": "Terms of Service",
-      "intro": "By using PylonChat services, you agree to these terms.",
+      "intro": "By using NDIS Shield Hub services, you agree to these terms.",
       "tocTitle": "Table of Contents",
       "agreementTitle": "Agreement to Terms",
-      "agreementText": "By accessing or using PylonChat services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services. You represent that you are over 18 years of age or are acting with legal guardian consent.",
+      "agreementText": "By accessing or using NDIS Shield Hub services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services. You represent that you are over 18 years of age or are acting with legal guardian consent.",
       "serviceTitle": "Service Description",
-      "serviceText": "PylonChat provides AI-powered chatbot services to help businesses interact with their customers. Our services include chatbot creation, customization, analytics, and integration tools. We reserve the right to modify or terminate services without prior notice.",
+      "serviceText": "NDIS Shield Hub provides AI-powered chatbot services to help businesses interact with their customers. Our services include chatbot creation, customization, analytics, and integration tools. We reserve the right to modify or terminate services without prior notice.",
       "userTitle": "User Responsibilities",
       "userText": "You are responsible for ensuring the accuracy of your account information, maintaining account security, using our services for lawful purposes, and complying with these terms. You are responsible for all activities that occur under your account.",
       "prohibitedTitle": "Prohibited Activities",
@@ -2659,9 +2659,9 @@
       "paymentTitle": "Payment and Subscription",
       "paymentText": "For paid plans, you must provide a valid payment method. Subscriptions automatically renew and are charged unless canceled. Price changes will be notified at least 30 days in advance. Our refund policy varies by plan type.",
       "intellectualTitle": "Intellectual Property",
-      "intellectualText": "All rights to the PylonChat platform, software, logos, and content belong to PylonChat. Content you create using our services remains yours, but you grant us a license to use it on our platform.",
+      "intellectualText": "All rights to the NDIS Shield Hub platform, software, logos, and content belong to NDIS Shield Hub. Content you create using our services remains yours, but you grant us a license to use it on our platform.",
       "liabilityTitle": "Limitation of Liability",
-      "liabilityText": "Our services are provided 'as is'. PylonChat does not guarantee that services will be uninterrupted or error-free. To the extent permitted by law, we are not liable for indirect, incidental, or consequential damages. Our total liability is limited to the amount you paid in the last 12 months.",
+      "liabilityText": "Our services are provided 'as is'. NDIS Shield Hub does not guarantee that services will be uninterrupted or error-free. To the extent permitted by law, we are not liable for indirect, incidental, or consequential damages. Our total liability is limited to the amount you paid in the last 12 months.",
       "terminationTitle": "Termination",
       "terminationText": "You may cancel your account at any time. We may suspend or terminate your account if you violate these terms. Upon termination, no refunds are provided for the remaining paid period, but you may export your data.",
       "governingTitle": "Governing Law",
@@ -2734,7 +2734,7 @@
     }
   },
   "footer": {
-    "description": "AI-powered customer engagement platform.",
+    "description": "Australia's leading NDIS service agreement compliance & audit platform.",
     "location": "Brisbane, Australia",
     "copyright": "All rights reserved.",
     "sections": {
@@ -3029,7 +3029,7 @@
       "checklist3": "GST Status Clarified"
     },
     "howItWorks": {
-      "title": "How PylonChat Automates Compliance",
+      "title": "How NDIS Shield Hub Automates Compliance",
       "step1Title": "1. Upload Documents (Bulk or Single)",
       "step1Desc": "Securely drop up to 50 Service Agreements into our ap-southeast-2 vault.",
       "step2Title": "2. AI Compliance Audit",

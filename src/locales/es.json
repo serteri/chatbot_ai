@@ -103,7 +103,7 @@
       "trust3": "Cancele en cualquier momento"
     },
     "features": {
-      "title": "¿Por qué PylonChat?",
+      "title": "¿Por qué NDIS Shield Hub?",
       "subtitle": "Descubra nuestras soluciones de IA desarrolladas específicamente para los sectores de educación y e-commerce",
       "education": {
         "title": "Consultoría Educativa",
@@ -138,12 +138,12 @@
         "description": "Diseño acorde a su marca y sistemas de respuesta personalizados"
       }
     },
-    "footer": "© 2025 PylonChat. Todos los derechos reservados."
+    "footer": "© 2025 NDIS Shield Hub. Todos los derechos reservados."
   },
   "about": {
     "title": "Acerca de Nosotros",
     "subtitle": "Transformamos el servicio al cliente con tecnología AI",
-    "description": "PylonChat es una plataforma innovadora que ayuda a las empresas a mejorar la experiencia del cliente con chatbots impulsados por IA.",
+    "description": "NDIS Shield Hub es una plataforma innovadora que ayuda a las empresas a mejorar la experiencia del cliente con chatbots impulsados por IA.",
     "mission": "Nuestra Misión",
     "missionText": "Nuestro objetivo es que las empresas de todos los tamaños puedan proporcionar soporte inteligente 24/7 a sus clientes con tecnología AI avanzada.",
     "vision": "Nuestra Visión",
@@ -166,15 +166,15 @@
     "educationDesc": "Consultor AI experto en educación en el extranjero, trámites de visa y escuelas de idiomas",
     "ecommerceTitle": "Soporte E-commerce",
     "ecommerceDesc": "Servicio al cliente inteligente y asistente de ventas para tiendas online",
-    "stats": "PylonChat en Números",
+    "stats": "NDIS Shield Hub en Números",
     "chatbotsCreated": "Chatbots Creados",
     "industries": "Industrias Atendidas",
     "languages": "Soporte de Idiomas",
     "support": "Soporte IA",
     "team": "Nuestro Equipo",
-    "teamDesc": "Nuestro talentoso equipo que hace realidad PylonChat",
+    "teamDesc": "Nuestro talentoso equipo que hace realidad NDIS Shield Hub",
     "contactTitle": "Contáctanos",
-    "contactDesc": "¿Tienes preguntas? Contáctanos para obtener más información sobre PylonChat.",
+    "contactDesc": "¿Tienes preguntas? Contáctanos para obtener más información sobre NDIS Shield Hub.",
     "contactButton": "Contactar",
     "getStarted": "Empezar Ahora",
     "getStartedDesc": "Crea tu cuenta gratuita y configura tu chatbot AI en 5 minutos",
@@ -232,7 +232,7 @@
   "auth": {
     "login": {
       "title": "Iniciar Sesión",
-      "subtitle": "Inicia sesión en tu cuenta de PylonChat",
+      "subtitle": "Inicia sesión en tu cuenta de NDIS Shield Hub",
       "email": "Email",
       "password": "Contraseña",
       "button": "Iniciar Sesión",
@@ -251,7 +251,7 @@
     },
     "register": {
       "title": "Registrarse",
-      "subtitle": "Crear cuenta de PylonChat",
+      "subtitle": "Crear cuenta de NDIS Shield Hub",
       "name": "Nombre",
       "email": "Email",
       "password": "Contraseña",
@@ -308,7 +308,7 @@
       "newFeature1": "✨ Calidad de respuesta de IA mejorada",
       "newFeature2": "📊 Nuevo panel de análisis",
       "newFeature3": "🎨 Opciones de personalización de widget",
-      "footer": "© 2024 PylonChat. Todos los derechos reservados.",
+      "footer": "© 2024 NDIS Shield Hub. Todos los derechos reservados.",
       "registerTitle": "Transforme la experiencia del cliente con chatbots de IA",
       "registerSubtitle": "Cree una cuenta gratuita y comience de inmediato.",
       "feature1": "Experiencia de chat de IA ilimitada",
@@ -1146,7 +1146,7 @@
     "typing": "Escribiendo...",
     "minimize": "Minimizar",
     "close": "Cerrar",
-    "poweredBy": "Powered by PylonChat",
+    "poweredBy": "Powered by NDIS Shield Hub",
     "saveSuccess": "¡Configuración del widget guardada!",
     "colors": "Colores",
     "colorsDesc": "Personalizar colores del widget",
@@ -1171,10 +1171,10 @@
     "livePreview": "Vista Previa en Vivo",
     "previewDesc": "Probar apariencia del widget",
     "branding": "Marca",
-    "brandingDesc": "Controlar la visibilidad de 'Powered by PylonChat' en el widget",
+    "brandingDesc": "Controlar la visibilidad de 'Powered by NDIS Shield Hub' en el widget",
     "hideBranding": "Ocultar Marca",
-    "hideBrandingDesc": "Eliminar 'Powered by PylonChat' del widget de chat",
-    "brandingUpgradeMessage": "Actualiza a Pro o superior para eliminar la marca PylonChat de tu widget",
+    "hideBrandingDesc": "Eliminar 'Powered by NDIS Shield Hub' del widget de chat",
+    "brandingUpgradeMessage": "Actualiza a Pro o superior para eliminar la marca NDIS Shield Hub de tu widget",
     "upgradePlan": "Actualizar Plan"
   },
   "common": {
@@ -2200,7 +2200,7 @@
     "resetDate": "Se reinicia el {date}"
   },
   "footer": {
-    "description": "Plataforma de interacción con clientes impulsada por IA.",
+    "description": "La principal plataforma australiana de cumplimiento y auditoría de acuerdos de servicio NDIS.",
     "location": "Brisbane, Australia",
     "copyright": "Todos los derechos reservados.",
     "sections": {
@@ -2254,7 +2254,7 @@
     "contactDesc": "Nuestro equipo de soporte está disponible 24/7 para ayudarle.",
     "categories": {
       "gettingStarted": "Empezando",
-      "gettingStartedDesc": "Aprenda los conceptos básicos de PylonChat",
+      "gettingStartedDesc": "Aprenda los conceptos básicos de NDIS Shield Hub",
       "billing": "Facturación y Planes",
       "billingDesc": "Administre su suscripción y pagos",
       "account": "Configuración de Cuenta",
@@ -2266,7 +2266,7 @@
     }
   },
   "blog": {
-    "title": "Blog de PylonChat",
+    "title": "Blog de NDIS Shield Hub",
     "subtitle": "Últimas noticias, actualizaciones y conocimientos del mundo de los chatbots de IA.",
     "readMore": "Leer más",
     "categories": {
@@ -2284,7 +2284,7 @@
         "excerpt": "Mejores prácticas para entrenar a su IA para manejar consultas de productos, devoluciones y verificaciones de estado de pedidos de manera efectiva."
       },
       "post3": {
-        "title": "Notas de la Versión PylonChat v2.0",
+        "title": "Notas de la Versión NDIS Shield Hub v2.0",
         "excerpt": "Presentando análisis avanzados, mejoras en soporte multilingüe y una experiencia de panel completamente nueva."
       }
     }
@@ -2321,7 +2321,7 @@
   },
   "docs": {
     "title": "Documentación",
-    "subtitle": "Todo lo que necesita para construir con PylonChat",
+    "subtitle": "Todo lo que necesita para construir con NDIS Shield Hub",
     "sidebar": {
       "gettingStarted": "Empezando",
       "coreConcepts": "Conceptos Básicos",
@@ -2329,9 +2329,9 @@
     },
     "intro": {
       "title": "Introducción",
-      "text": "PylonChat es una plataforma de compromiso con el cliente impulsada por IA que ayuda a las empresas a automatizar el soporte, aumentar las ventas y proporcionar asistencia 24/7.",
+      "text": "NDIS Shield Hub es una plataforma de compromiso con el cliente impulsada por IA que ayuda a las empresas a automatizar el soporte, aumentar las ventas y proporcionar asistencia 24/7.",
       "howItWorks": "Cómo funciona",
-      "howItWorksText": "A diferencia de los chatbots tradicionales que dependen de árboles de decisión rígidos, PylonChat utiliza modelos de lenguaje grande (LLM) avanzados para comprender la intención y el contexto. Esto le permite manejar consultas complejas, cambiar de tema de forma natural y proporcionar respuestas personalizadas.",
+      "howItWorksText": "A diferencia de los chatbots tradicionales que dependen de árboles de decisión rígidos, NDIS Shield Hub utiliza modelos de lenguaje grande (LLM) avanzados para comprender la intención y el contexto. Esto le permite manejar consultas complejas, cambiar de tema de forma natural y proporcionar respuestas personalizadas.",
       "nextSteps": "Próximos Pasos",
       "step1": "Cree su cuenta gratuita",
       "step2": "Configure su primer chatbot",
@@ -2341,7 +2341,7 @@
       "title": "Referencia de API",
       "subtitle": "Administre chatbots programáticamente, recupere el historial de conversaciones y analice métricas de rendimiento.",
       "auth": "Autenticación",
-      "authDesc": "La API de PylonChat utiliza claves API para autenticar solicitudes.",
+      "authDesc": "La API de NDIS Shield Hub utiliza claves API para autenticar solicitudes.",
       "chatbots": "Chatbots",
       "chatbotsDesc": "Devuelve una lista de chatbots asociados con su cuenta.",
       "conversations": "Conversaciones",
@@ -2352,7 +2352,7 @@
     "lastUpdated": "Última actualización",
     "privacy": {
       "title": "Política de Privacidad",
-      "intro": "En PylonChat, respetamos su privacidad y nos comprometemos a proteger sus datos personales.",
+      "intro": "En NDIS Shield Hub, respetamos su privacidad y nos comprometemos a proteger sus datos personales.",
       "summaryTitle": "Resumen",
       "summaryItem1": "Solo recopilamos datos necesarios para nuestros servicios",
       "summaryItem2": "No vendemos ni compartimos sus datos con terceros",
@@ -2398,12 +2398,12 @@
     },
     "terms": {
       "title": "Términos de Servicio",
-      "intro": "Al usar PylonChat, acepta estos términos.",
+      "intro": "Al usar NDIS Shield Hub, acepta estos términos.",
       "tocTitle": "Tabla de Contenidos",
       "agreementTitle": "Acuerdo de Términos",
-      "agreementText": "Al acceder a PylonChat, acepta estar sujeto a estos Términos. Si no está de acuerdo, no use nuestros servicios.",
+      "agreementText": "Al acceder a NDIS Shield Hub, acepta estar sujeto a estos Términos. Si no está de acuerdo, no use nuestros servicios.",
       "serviceTitle": "Descripción del Servicio",
-      "serviceText": "PylonChat proporciona servicios de chatbot IA para empresas. Nos reservamos el derecho de modificar los servicios.",
+      "serviceText": "NDIS Shield Hub proporciona servicios de chatbot IA para empresas. Nos reservamos el derecho de modificar los servicios.",
       "userTitle": "Responsabilidades del Usuario",
       "userText": "Es responsable de la exactitud de su información, la seguridad de la cuenta y el uso legal.",
       "prohibitedTitle": "Actividades Prohibidas",
@@ -2411,7 +2411,7 @@
       "paymentTitle": "Pago y Suscripción",
       "paymentText": "Los planes de pago requieren un método de pago válido. Las suscripciones se renuevan automáticamente.",
       "intellectualTitle": "Propiedad Intelectual",
-      "intellectualText": "Todos los derechos sobre la plataforma PylonChat pertenecen a PylonChat. Su contenido sigue siendo de su propiedad.",
+      "intellectualText": "Todos los derechos sobre la plataforma NDIS Shield Hub pertenecen a NDIS Shield Hub. Su contenido sigue siendo de su propiedad.",
       "liabilityTitle": "Limitación de Responsabilidad",
       "liabilityText": "Nuestros servicios se proporcionan 'tal cual'. No somos responsables de daños indirectos.",
       "terminationTitle": "Terminación",
@@ -2694,12 +2694,12 @@
     "uploadLogo": "Subir Logo",
     "removeLogo": "Eliminar Logo",
     "branding": "Marca",
-    "brandingDesc": "Gestionar marca PylonChat",
+    "brandingDesc": "Gestionar marca NDIS Shield Hub",
     "showBranding": "Mostrar Marca",
-    "showBrandingDesc": "Mostrar 'Desarrollado por PylonChat' en el widget de chat",
+    "showBrandingDesc": "Mostrar 'Desarrollado por NDIS Shield Hub' en el widget de chat",
     "hideBranding": "Ocultar Marca",
-    "hideBrandingDesc": "Eliminar 'Desarrollado por PylonChat' del widget de chat",
-    "brandingUpgradeMessage": "Actualice a Pro o superior para eliminar la marca PylonChat de su widget",
+    "hideBrandingDesc": "Eliminar 'Desarrollado por NDIS Shield Hub' del widget de chat",
+    "brandingUpgradeMessage": "Actualice a Pro o superior para eliminar la marca NDIS Shield Hub de su widget",
     "upgradePlan": "Actualizar Plan",
     "previewSample": "Vista Previa de Prueba",
     "saveError": "Error al guardar",

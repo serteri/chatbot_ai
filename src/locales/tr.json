@@ -130,7 +130,7 @@
       "trust3": "İstediğiniz zaman iptal"
     },
     "features": {
-      "title": "Neden PylonChat?",
+      "title": "Neden NDIS Shield Hub?",
       "subtitle": "Eğitim ve e-ticaret sektörlerine özel geliştirilmiş AI çözümlerimizi keşfedin",
       "education": {
         "title": "Eğitim Danışmanlığı",
@@ -165,12 +165,12 @@
         "description": "Markanıza uygun tasarım ve kişiselleştirilmiş yanıt sistemleri"
       }
     },
-    "footer": "© 2025 PylonChat. Tüm hakları saklıdır."
+    "footer": "© 2025 NDIS Shield Hub. Tüm hakları saklıdır."
   },
   "about": {
     "title": "Hakkımızda",
     "subtitle": "AI teknolojisi ile müşteri hizmetlerini dönüştürüyoruz",
-    "description": "PylonChat, işletmelerin müşteri deneyimini AI-powered chatbot'lar ile geliştirmesine yardımcı olan yenilikçi bir platform.",
+    "description": "NDIS Shield Hub, işletmelerin müşteri deneyimini AI-powered chatbot'lar ile geliştirmesine yardımcı olan yenilikçi bir platform.",
     "mission": "Misyonumuz",
     "missionText": "Her büyüklükteki işletmenin, gelişmiş AI teknolojisi ile müşterilerine 7/24 akıllı destek sağlayabilmesini hedefliyoruz.",
     "vision": "Vizyonumuz",
@@ -193,15 +193,15 @@
     "educationDesc": "Yurtdışı eğitim, vize işlemleri ve dil okulu konularında uzman AI danışmanı",
     "ecommerceTitle": "E-ticaret Desteği",
     "ecommerceDesc": "Online mağazalar için akıllı müşteri hizmetleri ve satış asistanı",
-    "stats": "Rakamlarla PylonChat",
+    "stats": "Rakamlarla NDIS Shield Hub",
     "chatbotsCreated": "Oluşturulan Chatbot",
     "industries": "Hizmet Verilen Sektör",
     "languages": "Dil Desteği",
     "support": "AI Destek",
     "team": "Ekibimiz",
-    "teamDesc": "PylonChat'ı hayata geçiren yetenekli ekibimiz",
+    "teamDesc": "NDIS Shield Hub'ı hayata geçiren yetenekli ekibimiz",
     "contactTitle": "Bizimle İletişime Geçin",
-    "contactDesc": "Sorularınız mı var? PylonChat hakkında daha fazla bilgi almak için bize ulaşın.",
+    "contactDesc": "Sorularınız mı var? NDIS Shield Hub hakkında daha fazla bilgi almak için bize ulaşın.",
     "contactButton": "İletişime Geç",
     "getStarted": "Hemen Başlayın",
     "getStartedDesc": "Ücretsiz hesabınızı oluşturun ve AI chatbot'unuzu 5 dakikada kurun",
@@ -210,7 +210,7 @@
   "contact": {
     "title": "İletişim",
     "subtitle": "Bize ulaşın, size yardımcı olmaktan memnuniyet duyarız",
-    "description": "PylonChat hakkında sorularınız mı var? Bizimle iletişime geçmek için aşağıdaki formu kullanın veya doğrudan bize ulaşın.",
+    "description": "NDIS Shield Hub hakkında sorularınız mı var? Bizimle iletişime geçmek için aşağıdaki formu kullanın veya doğrudan bize ulaşın.",
     "name": "Ad Soyad",
     "email": "E-posta",
     "subject": "Konu",
@@ -251,7 +251,7 @@
     },
     "faq": {
       "title": "Sık Sorulan Sorular",
-      "q1": "PylonChat nasıl çalışır?",
+      "q1": "NDIS Shield Hub nasıl çalışır?",
       "a1": "Dokümanlarınızı yükleyin, AI onları öğrenir ve müşterilerinizle doğal konuşmalar yapar.",
       "q2": "Kurulum ne kadar sürer?",
       "a2": "Hesap oluşturma ve ilk chatbot kurulumu yaklaşık 5 dakika sürer.",
@@ -264,7 +264,7 @@
   "auth": {
     "login": {
       "title": "Giriş Yap",
-      "subtitle": "PylonChat hesabınıza giriş yapın",
+      "subtitle": "NDIS Shield Hub hesabınıza giriş yapın",
       "email": "Email",
       "password": "Şifre",
       "button": "Giriş Yap",
@@ -288,7 +288,7 @@
       "newFeature1": "✨ Gelişmiş AI yanıt kalitesi",
       "newFeature2": "📊 Yeni analytics dashboard",
       "newFeature3": "🎨 Widget özelleştirme seçenekleri",
-      "footer": "© 2024 PylonChat. Tüm hakları saklıdır.",
+      "footer": "© 2024 NDIS Shield Hub. Tüm hakları saklıdır.",
       "registerTitle": "AI destekli chatbot'lar ile müşteri deneyimini dönüştürün",
       "registerSubtitle": "Ücretsiz hesap oluşturun ve hemen başlayın.",
       "feature1": "Sınırsız AI sohbet deneyimi",
@@ -298,7 +298,7 @@
     },
     "register": {
       "title": "Kayıt Ol",
-      "subtitle": "PylonChat hesabı oluşturun",
+      "subtitle": "NDIS Shield Hub hesabı oluşturun",
       "name": "İsim",
       "email": "Email",
       "password": "Şifre",
@@ -1200,7 +1200,7 @@
     "typing": "Yazıyor...",
     "minimize": "Küçült",
     "close": "Kapat",
-    "poweredBy": "Powered by PylonChat",
+    "poweredBy": "Powered by NDIS Shield Hub",
     "saveSuccess": "Widget ayarları kaydedildi!",
     "colors": "Renkler",
     "colorsDesc": "Widget renklerini özelleştirin",
@@ -1225,10 +1225,10 @@
     "livePreview": "Canlı Önizleme",
     "previewDesc": "Widget görünümünü test edin",
     "branding": "Marka Görünürlüğü",
-    "brandingDesc": "Widget'ta 'Powered by PylonChat' yazısının görünürlüğünü kontrol edin",
+    "brandingDesc": "Widget'ta 'Powered by NDIS Shield Hub' yazısının görünürlüğünü kontrol edin",
     "hideBranding": "Markayı Gizle",
-    "hideBrandingDesc": "Chat widget'ından 'Powered by PylonChat' yazısını kaldırın",
-    "brandingUpgradeMessage": "Widget'ınızdan PylonChat markasını kaldırmak için Pro veya daha üst plana yükseltin",
+    "hideBrandingDesc": "Chat widget'ından 'Powered by NDIS Shield Hub' yazısını kaldırın",
+    "brandingUpgradeMessage": "Widget'ınızdan NDIS Shield Hub markasını kaldırmak için Pro veya daha üst plana yükseltin",
     "upgradePlan": "Planı Yükselt",
     "realestate": {
       "title": "Emlak Asistanı",
@@ -2477,7 +2477,7 @@
     "contactDesc": "Destek ekibimiz size yardımcı olmak için 7/24 hizmetinizde.",
     "categories": {
       "gettingStarted": "Başlarken",
-      "gettingStartedDesc": "PylonChat temellerini öğrenin",
+      "gettingStartedDesc": "NDIS Shield Hub temellerini öğrenin",
       "billing": "Faturalandırma ve Planlar",
       "billingDesc": "Aboneliğinizi ve ödemelerinizi yönetin",
       "account": "Hesap Ayarları",
@@ -2489,7 +2489,7 @@
     }
   },
   "blog": {
-    "title": "PylonChat Blog",
+    "title": "NDIS Shield Hub Blog",
     "subtitle": "AI chatbot dünyasından en son haberler, güncellemeler ve içgörüler.",
     "readMore": "Devamını oku",
     "categories": {
@@ -2507,14 +2507,14 @@
         "excerpt": "Yapay zekanızı ürün sorguları, iadeler ve sipariş durumu kontrolleri için eğitme konusundaki en iyi uygulamalar."
       },
       "post3": {
-        "title": "PylonChat v2.0 Sürüm Notları",
+        "title": "NDIS Shield Hub v2.0 Sürüm Notları",
         "excerpt": "Gelişmiş analitikler, çoklu dil desteği iyileştirmeleri ve yepyeni bir dashboard deneyimi ile tanışın."
       }
     }
   },
   "docs": {
     "title": "Dokümantasyon",
-    "subtitle": "PylonChat ile geliştirme yapmak için ihtiyacınız olan her şey",
+    "subtitle": "NDIS Shield Hub ile geliştirme yapmak için ihtiyacınız olan her şey",
     "sidebar": {
       "gettingStarted": "Başlarken",
       "coreConcepts": "Temel Kavramlar",
@@ -2522,9 +2522,9 @@
     },
     "intro": {
       "title": "Giriş",
-      "text": "PylonChat, işletmelerin desteği otomatikleştirmesine, satışları artırmasına ve 7/24 yardım sağlamasına yardımcı olan yapay zeka destekli bir müşteri etkileşim platformudur.",
+      "text": "NDIS Shield Hub, işletmelerin desteği otomatikleştirmesine, satışları artırmasına ve 7/24 yardım sağlamasına yardımcı olan yapay zeka destekli bir müşteri etkileşim platformudur.",
       "howItWorks": "Nasıl çalışır",
-      "howItWorksText": "Katı karar ağaçlarına dayanan geleneksel chatbotların aksine, PylonChat niyeti ve bağlamı anlamak için gelişmiş Büyük Dil Modelleri (LLM) kullanır. Bu, karmaşık sorguları yönetmesine, konuları doğal bir şekilde değiştirmesine ve kişiselleştirilmiş yanıtlar sunmasına olanak tanır.",
+      "howItWorksText": "Katı karar ağaçlarına dayanan geleneksel chatbotların aksine, NDIS Shield Hub niyeti ve bağlamı anlamak için gelişmiş Büyük Dil Modelleri (LLM) kullanır. Bu, karmaşık sorguları yönetmesine, konuları doğal bir şekilde değiştirmesine ve kişiselleştirilmiş yanıtlar sunmasına olanak tanır.",
       "nextSteps": "Sonraki Adımlar",
       "step1": "Ücretsiz hesabınızı oluşturun",
       "step2": "İlk chatbotunuzu yapılandırın",
@@ -2552,7 +2552,7 @@
       "title": "API Referansı",
       "subtitle": "Chatbotları programatik olarak yönetin, konuşma geçmişini alın ve performans ölçümlerini analiz edin.",
       "auth": "Kimlik Doğrulama",
-      "authDesc": "PylonChat API, istekleri doğrulamak için API anahtarları kullanır.",
+      "authDesc": "NDIS Shield Hub API, istekleri doğrulamak için API anahtarları kullanır.",
       "chatbots": "Chatbotlar",
       "conversations": "Konuşmalar",
       "messages": "Mesajlar"
@@ -2562,7 +2562,7 @@
     "lastUpdated": "Son güncelleme",
     "privacy": {
       "title": "Gizlilik Politikası",
-      "intro": "PylonChat olarak gizliliğinize saygı duyuyor ve kişisel verilerinizi korumayı taahhüt ediyoruz.",
+      "intro": "NDIS Shield Hub olarak gizliliğinize saygı duyuyor ve kişisel verilerinizi korumayı taahhüt ediyoruz.",
       "summaryTitle": "Özet",
       "summaryItem1": "Yalnızca hizmetlerimizi sunmak için gerekli verileri topluyoruz",
       "summaryItem2": "Verilerinizi üçüncü taraflarla satmıyor veya paylaşmıyoruz",
@@ -2608,12 +2608,12 @@
     },
     "terms": {
       "title": "Hizmet Şartları",
-      "intro": "PylonChat hizmetlerini kullanarak bu şartları kabul etmiş olursunuz.",
+      "intro": "NDIS Shield Hub hizmetlerini kullanarak bu şartları kabul etmiş olursunuz.",
       "tocTitle": "İçindekiler",
       "agreementTitle": "Şartların Kabulü",
-      "agreementText": "PylonChat hizmetlerine erişerek veya bunları kullanarak, bu Hizmet Şartları ile bağlı olmayı kabul edersiniz. Bu şartları kabul etmiyorsanız, lütfen hizmetlerimizi kullanmayın. 18 yaşından büyük olduğunuzu veya yasal vasinizin izniyle hareket ettiğinizi beyan edersiniz.",
+      "agreementText": "NDIS Shield Hub hizmetlerine erişerek veya bunları kullanarak, bu Hizmet Şartları ile bağlı olmayı kabul edersiniz. Bu şartları kabul etmiyorsanız, lütfen hizmetlerimizi kullanmayın. 18 yaşından büyük olduğunuzu veya yasal vasinizin izniyle hareket ettiğinizi beyan edersiniz.",
       "serviceTitle": "Hizmet Tanımı",
-      "serviceText": "PylonChat, işletmelerin müşterileriyle etkileşimde bulunmasına yardımcı olan yapay zeka destekli chatbot hizmetleri sunar. Hizmetlerimiz, chatbot oluşturma, özelleştirme, analitik ve entegrasyon araçları içerir. Hizmetlerimizi önceden haber vermeksizin değiştirme veya sonlandırma hakkımızı saklı tutarız.",
+      "serviceText": "NDIS Shield Hub, işletmelerin müşterileriyle etkileşimde bulunmasına yardımcı olan yapay zeka destekli chatbot hizmetleri sunar. Hizmetlerimiz, chatbot oluşturma, özelleştirme, analitik ve entegrasyon araçları içerir. Hizmetlerimizi önceden haber vermeksizin değiştirme veya sonlandırma hakkımızı saklı tutarız.",
       "userTitle": "Kullanıcı Yükümlülükleri",
       "userText": "Hesap bilgilerinizin doğruluğunu sağlamak, hesap güvenliğinizi korumak, hizmetlerimizi yasal amaçlarla kullanmak ve bu şartlara uymak sizin sorumluluğunuzdadır. Hesabınızda gerçekleşen tüm faaliyetlerden siz sorumlusunuz.",
       "prohibitedTitle": "Yasaklanmış Faaliyetler",
@@ -2621,9 +2621,9 @@
       "paymentTitle": "Ödeme ve Abonelik",
       "paymentText": "Ücretli planlar için geçerli bir ödeme yöntemi sağlamanız gerekir. Abonelikler otomatik olarak yenilenir ve iptal edilmediği sürece ücretlendirilir. Fiyat değişiklikleri en az 30 gün önceden bildirilecektir. İade politikamız plan türüne göre değişir.",
       "intellectualTitle": "Fikri Mülkiyet",
-      "intellectualText": "PylonChat platformu, yazılımı, logoları ve içerikleri üzerindeki tüm haklar PylonChat'e aittir. Hizmetlerimizi kullanarak oluşturduğunuz chatbot içerikleri size ait olmaya devam eder, ancak platformumuzda kullanım lisansı verirsiniz.",
+      "intellectualText": "NDIS Shield Hub platformu, yazılımı, logoları ve içerikleri üzerindeki tüm haklar NDIS Shield Hub'e aittir. Hizmetlerimizi kullanarak oluşturduğunuz chatbot içerikleri size ait olmaya devam eder, ancak platformumuzda kullanım lisansı verirsiniz.",
       "liabilityTitle": "Sorumluluk Sınırlaması",
-      "liabilityText": "Hizmetlerimiz 'olduğu gibi' sunulmaktadır. PylonChat, hizmetlerin kesintisiz veya hatasız olacağını garanti etmez. Yasaların izin verdiği ölçüde, dolaylı, arızi veya sonuç olarak ortaya çıkan zararlardan sorumlu değiliz. Toplam sorumluluğumuz son 12 ayda ödediğiniz tutarla sınırlıdır.",
+      "liabilityText": "Hizmetlerimiz 'olduğu gibi' sunulmaktadır. NDIS Shield Hub, hizmetlerin kesintisiz veya hatasız olacağını garanti etmez. Yasaların izin verdiği ölçüde, dolaylı, arızi veya sonuç olarak ortaya çıkan zararlardan sorumlu değiliz. Toplam sorumluluğumuz son 12 ayda ödediğiniz tutarla sınırlıdır.",
       "terminationTitle": "Fesih",
       "terminationText": "Hesabınızı istediğiniz zaman iptal edebilirsiniz. Hizmet şartlarını ihlal etmeniz durumunda hesabınızı askıya alabilir veya sonlandırabiliriz. Fesih durumunda ücretli dönemin geri kalanı için iade yapılmaz, ancak verilerinizi dışa aktarabilirsiniz.",
       "governingTitle": "Geçerli Hukuk",
@@ -2696,7 +2696,7 @@
     }
   },
   "footer": {
-    "description": "Yapay zeka destekli müşteri etkileşim platformu.",
+    "description": "Avustralya'nın lider NDIS hizmet anlaşması uyumluluk ve denetim platformu.",
     "location": "Brisbane, Avustralya",
     "copyright": "Tüm hakları saklıdır.",
     "sections": {
@@ -3021,7 +3021,7 @@
       "checklist3": "GST Durumu Netleştirildi"
     },
     "howItWorks": {
-      "title": "PylonChat Uyumluluğu Nasıl Otomatikleştirir",
+      "title": "NDIS Shield Hub Uyumluluğu Nasıl Otomatikleştirir",
       "step1Title": "1. Dokümanları Yükleyin (Toplu/Tek)",
       "step1Desc": "50 adede kadar Hizmet Sözleşmesini güvenli ap-southeast-2 kasamıza sürükleyin.",
       "step2Title": "2. AI Uyumluluk Denetimi",
