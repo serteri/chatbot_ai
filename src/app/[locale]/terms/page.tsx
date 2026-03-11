@@ -150,11 +150,11 @@ export default async function TermsPage({ params }: PageProps) {
                             <h3 className="text-xl font-semibold mb-2">{t('questionsTitle')}</h3>
                             <p className="text-gray-300 mb-4">{t('questionsText')}</p>
                             <a
-                                href="mailto:legal@ndisshield.com.au"
+                                href="mailto:support@ndisshield.com.au"
                                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-900 rounded-xl font-medium hover:bg-gray-100 transition-colors"
                             >
                                 <Mail className="w-5 h-5" />
-                                legal@ndisshield.com.au
+                                support@ndisshield.com.au
                             </a>
                         </div>
                     </div>
