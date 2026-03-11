@@ -20,15 +20,13 @@ export interface InternalClaim {
  */
 export interface ProdaCsvRow {
     RegistrationNumber: string
-    ParticipantNumber: string
-    SupportNumber: string
-    SupportStartDate: string // Placed into 'YYYY-MM-DD' or 'DD/MM/YYYY' per PRODA spec
-    SupportEndDate: string // Usually maps identical to Start Date unless multiday
-    ClaimReference: string // Used for internal agency tracking
-    Quantity: string // 2 or more decimal places
-    UnitPrice: string // '0.00' format
-    CappedPrice: string // Normally left blank/null unless explicit
-    ClaimAmount: string // '0.00' format
-    GSTCode: string // Usually 'P1' for Free, 'P2' for Out of Scope NDIS etc.
-    CancellationReason: string
+    ParticipantID: string
+    SupportItemNumber: string
+    ClaimReference: string
+    SupportStartDate: string
+    SupportEndDate: string
+    ServiceBookingNumber: string
+    Quantity: string
+    UnitPrice: string
+    ClaimType: string
 }
