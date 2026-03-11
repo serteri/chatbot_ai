@@ -5,6 +5,7 @@ import { Calendar, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { Button } from '@/components/ui/button'
+import { MOCK_BLOG_POSTS } from '@/lib/mock-blog-data'
 
 interface PageProps {
     params: Promise<{ locale: string }>
@@ -14,35 +15,7 @@ export default async function BlogPage({ params }: PageProps) {
     const { locale } = await params
     const t = await getTranslations({ locale, namespace: 'blog' })
 
-    const posts = [
-        {
-            id: 1,
-            title: t('posts.post1.title'),
-            excerpt: t('posts.post1.excerpt'),
-            date: "Oct 12, 2025",
-            author: "Sarah Chembo",
-            category: t('categories.trends'),
-            image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80"
-        },
-        {
-            id: 2,
-            title: t('posts.post2.title'),
-            excerpt: t('posts.post2.excerpt'),
-            date: "Oct 08, 2025",
-            author: "Michael Chen",
-            category: t('categories.tips'),
-            image: "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?w=800&q=80"
-        },
-        {
-            id: 3,
-            title: t('posts.post3.title'),
-            excerpt: t('posts.post3.excerpt'),
-            date: "Oct 01, 2025",
-            author: "Emma Wilson",
-            category: t('categories.updates'),
-            image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
-        }
-    ]
+    const posts = MOCK_BLOG_POSTS
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
@@ -81,8 +54,10 @@ export default async function BlogPage({ params }: PageProps) {
                                     <p className="text-gray-600 line-clamp-3 mb-4">
                                         {post.excerpt}
                                     </p>
-                                    <Button variant="link" className="p-0 h-auto font-semibold text-blue-600 group">
-                                        {t('readMore')} <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                    <Button variant="link" className="p-0 h-auto font-semibold text-blue-600 group" asChild>
+                                        <Link href={`/${locale}/blog/${post.slug}`}>
+                                            {t('readMore')} <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                        </Link>
                                     </Button>
                                 </CardContent>
                             </Card>

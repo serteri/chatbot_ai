@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { MessageSquare, Mail, MapPin, Phone, Twitter, Linkedin, Github, Youtube } from 'lucide-react'
+import { Shield, Mail, MapPin, Phone, Twitter, Linkedin, Github, Youtube } from 'lucide-react'
 
 interface FooterProps {
     locale: string
@@ -47,8 +47,8 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                 <div className="px-6 py-4">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                                <MessageSquare className="h-3.5 w-3.5 text-white" />
+                            <div className="w-6 h-6 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center">
+                                <Shield className="h-3.5 w-3.5 text-white" />
                             </div>
                             <span className="text-sm text-gray-600">
                                 © {currentYear} NDIS Shield Hub. {t('copyright')}
@@ -82,8 +82,8 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
                     {/* Brand */}
                     <div className="col-span-2">
                         <Link href={`/${locale}`} className="flex items-center gap-3 mb-6">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                <MessageSquare className="h-6 w-6 text-white" />
+                            <div className="w-10 h-10 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
+                                <Shield className="h-6 w-6 text-white" />
                             </div>
                             <span className="text-xl font-bold">NDIS Shield Hub</span>
                         </Link>
