@@ -13,7 +13,7 @@ export function transformClaimsToCsvData(claims: InternalClaim[]): ProdaCsvRow[]
         // NDIS conventionally requires YYYY-MM-DD for their bulk CSV ingestion
         SupportStartDate: format(claim.supportDeliveredDate, 'yyyy-MM-dd'),
         SupportEndDate: format(claim.supportDeliveredDate, 'yyyy-MM-dd'),
-        ClaimReference: \`INV-\${claim.id.substring(0, 8).toUpperCase()}\`, // Simple hash for agency cross-referencing
+        ClaimReference: `INV-${claim.id.substring(0, 8).toUpperCase()}`, // Simple hash for agency cross-referencing
         Quantity: Number(claim.quantityDelivered).toFixed(2),
         UnitPrice: Number(claim.unitPrice).toFixed(2),
         CappedPrice: '',
@@ -34,7 +34,7 @@ export function generateProdaCsvString(data: ProdaCsvRow[]): string {
 
     // Extract headers dynamically from the first valid type mapped object structure
     const headers = Object.keys(data[0]) as (keyof ProdaCsvRow)[]
-    
+
     const csvRows = []
     // 1. Push CSV Header Row
     csvRows.push(headers.join(','))
@@ -46,7 +46,7 @@ export function generateProdaCsvString(data: ProdaCsvRow[]): string {
             // We must escape quotes inherently so PRODA parses successfully if user inputs random quotes
             const escaped = String(rawValue).replace(/"/g, '""')
             // If the field contains a comma or quote naturally string wrap it
-            return escaped.includes(',') || escaped.includes('"') ? \`"\${escaped}"\` : escaped
+            return escaped.includes(',') || escaped.includes('"') ? `"${escaped}"` : escaped
         })
         csvRows.push(values.join(','))
     }
