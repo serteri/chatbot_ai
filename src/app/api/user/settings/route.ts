@@ -13,13 +13,17 @@ export async function PATCH(req: Request) {
 
         // 2. Gelen Veriyi Al
         const body = await req.json();
-        const { emailNotifications, marketingEmails, name } = body;
+        const { emailNotifications, marketingEmails, name, abn, ndisProviderNumber, businessAddress, contactPhone } = body;
 
         // 3. Güncellenecek Veriyi Hazırla
         const updateData: any = {};
 
         // İsim değişikliği varsa ekle
         if (name !== undefined) updateData.name = name;
+        if (abn !== undefined) updateData.abn = abn;
+        if (ndisProviderNumber !== undefined) updateData.ndisProviderNumber = ndisProviderNumber;
+        if (businessAddress !== undefined) updateData.businessAddress = businessAddress;
+        if (contactPhone !== undefined) updateData.contactPhone = contactPhone;
 
         // Email Bildirimleri (Veritabanında doğrudan sütun var)
         if (typeof emailNotifications === 'boolean') {

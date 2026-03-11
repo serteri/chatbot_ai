@@ -39,6 +39,9 @@ export default async function SettingsPage() {
             companyName: true,
             logoUrl: true,
             abn: true,
+            ndisProviderNumber: true,
+            businessAddress: true,
+            contactPhone: true,
         }
     })
 
@@ -48,6 +51,10 @@ export default async function SettingsPage() {
         name: dbUser?.name ?? null,
         email: dbUser?.email ?? null,
         image: dbUser?.image ?? null,
+        abn: dbUser?.abn ?? null,
+        ndisProviderNumber: dbUser?.ndisProviderNumber ?? null,
+        businessAddress: dbUser?.businessAddress ?? null,
+        contactPhone: dbUser?.contactPhone ?? null,
         emailNotifications: true,
         marketingEmails: false,
     }

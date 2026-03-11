@@ -23,6 +23,9 @@ model User {
   image              String?
   companyName        String?
   abn                String?
+  ndisProviderNumber String?
+  businessAddress    String?
+  contactPhone       String?
   logoUrl            String?  // White-label branding logo (Azure blob URL)
   website            String?
   language           String           @default("en-AU") // English AU native.

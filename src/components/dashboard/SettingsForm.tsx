@@ -23,6 +23,10 @@ interface SettingsFormProps {
         name?: string | null;
         email?: string | null;
         image?: string | null;
+        abn?: string | null;
+        ndisProviderNumber?: string | null;
+        businessAddress?: string | null;
+        contactPhone?: string | null;
         emailNotifications?: boolean;
         marketingEmails?: boolean;
     }
@@ -47,11 +51,19 @@ export default function SettingsForm({ user }: SettingsFormProps) {
     // Form Verileri (Başlangıç değerleri prop'tan gelir)
     const [initialValues, setInitialValues] = useState({
         name: user.name || '',
+        abn: user.abn || '',
+        ndisProviderNumber: user.ndisProviderNumber || '',
+        businessAddress: user.businessAddress || '',
+        contactPhone: user.contactPhone || '',
         emailNotifications: user.emailNotifications ?? true,
         marketingEmails: user.marketingEmails ?? false
     });
 
     const [name, setName] = useState(user.name || '');
+    const [abn, setAbn] = useState(user.abn || '');
+    const [ndisProviderNumber, setNdisProviderNumber] = useState(user.ndisProviderNumber || '');
+    const [businessAddress, setBusinessAddress] = useState(user.businessAddress || '');
+    const [contactPhone, setContactPhone] = useState(user.contactPhone || '');
     const [emailNotifications, setEmailNotifications] = useState(user.emailNotifications ?? true);
     const [marketingEmails, setMarketingEmails] = useState(user.marketingEmails ?? false);
 
@@ -66,6 +78,10 @@ export default function SettingsForm({ user }: SettingsFormProps) {
     // Değişiklik Kontrolü: Mevcut değerler başlangıç değerlerinden farklı mı?
     const hasChanges =
         name !== initialValues.name ||
+        abn !== initialValues.abn ||
+        ndisProviderNumber !== initialValues.ndisProviderNumber ||
+        businessAddress !== initialValues.businessAddress ||
+        contactPhone !== initialValues.contactPhone ||
         emailNotifications !== initialValues.emailNotifications ||
         marketingEmails !== initialValues.marketingEmails;
 
@@ -147,6 +163,10 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name,
+                    abn,
+                    ndisProviderNumber,
+                    businessAddress,
+                    contactPhone,
                     emailNotifications,
                     marketingEmails,
                 })
@@ -157,6 +177,10 @@ export default function SettingsForm({ user }: SettingsFormProps) {
             // Başarılı kaydettikten sonra initial values'ı güncelle
             setInitialValues({
                 name,
+                abn,
+                ndisProviderNumber,
+                businessAddress,
+                contactPhone,
                 emailNotifications,
                 marketingEmails
             });
@@ -285,6 +309,32 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                                             <Input id="email" value={user.email || ''} disabled className="pl-10 cursor-not-allowed bg-slate-100" />
                                         </div>
                                         <p className="text-[11px] text-slate-400">{t('profile.emailNote')}</p>
+                                    </div>
+
+                                    {/* NDIS Fields */}
+                                    <div className="space-y-2 md:col-span-2 pt-6 border-t border-slate-200 dark:border-slate-800">
+                                        <h4 className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                                            <Shield className="h-4 w-4 text-teal-600" /> NDIS Provider Identity & Audit Config
+                                        </h4>
+                                        <p className="text-xs text-slate-500 mb-4">Critically required for automating NDIS PRODA Bulk Claim Syncs</p>
+                                        <div className="grid gap-6 md:grid-cols-2 mt-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="ndisProviderNumber">NDIS Provider Number</Label>
+                                                <Input id="ndisProviderNumber" placeholder="e.g. 4050000000" value={ndisProviderNumber} onChange={(e) => setNdisProviderNumber(e.target.value)} />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="abn">Australian Business Number (ABN)</Label>
+                                                <Input id="abn" placeholder="e.g. 11 222 333 444" value={abn} onChange={(e) => setAbn(e.target.value)} />
+                                            </div>
+                                            <div className="col-span-2 space-y-2">
+                                                <Label htmlFor="businessAddress">Registered Business Address</Label>
+                                                <Input id="businessAddress" placeholder="e.g. Level 1, 100 Sydney St, NSW 2000" value={businessAddress} onChange={(e) => setBusinessAddress(e.target.value)} />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="contactPhone">Compliance Contact Phone</Label>
+                                                <Input id="contactPhone" placeholder="e.g. 0400 000 000" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </CardContent>

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
+import { prisma } from '@/lib/db/prisma'
 import { InternalClaim } from '@/types/proda'
 import { transformClaimsToCsvData, generateProdaCsvString } from '@/lib/proda-utils'
 
@@ -40,7 +41,7 @@ const MOCK_CLAIMS_DATABASE: InternalClaim[] = [
 export async function POST(req: Request) {
     try {
         const session = await auth()
-        if (!session?.user) {
+        if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
@@ -51,12 +52,26 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'No claim IDs provided' }, { status: 400 })
         }
 
-        // 1. Fetch data from Mock DB (Substitute for Prisma later)
-        const selectedClaims = MOCK_CLAIMS_DATABASE.filter(claim => claimIds.includes(claim.id))
+        // Fetch User Identity from Prisma
+        const dbUser = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            select: { ndisProviderNumber: true }
+        })
 
-        if (selectedClaims.length === 0) {
+        const registrationNumber = dbUser?.ndisProviderNumber || 'MISSING_PROVIDER_ID'
+
+        // 1. Fetch data from Mock DB (Substitute for Prisma later)
+        const rawClaims = MOCK_CLAIMS_DATABASE.filter(claim => claimIds.includes(claim.id))
+
+        if (rawClaims.length === 0) {
             return NextResponse.json({ error: 'No matching claims found' }, { status: 404 })
         }
+
+        // Inject dynamic registration identity over mock templates
+        const selectedClaims = rawClaims.map(claim => ({
+            ...claim,
+            agencyRegistrationNumber: registrationNumber
+        }))
 
         // 2. Transform the raw Data using the previously built PRODA engines
         const prodaCsvData = transformClaimsToCsvData(selectedClaims)
