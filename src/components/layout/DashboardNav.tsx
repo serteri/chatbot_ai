@@ -23,7 +23,7 @@ import {
     Settings,
     ChevronDown,
     LayoutDashboard,
-    MessageSquare,
+    Shield,
     BarChart3,
     CreditCard,
     Building2,
@@ -81,7 +81,7 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                     {/* SOL TARA: Logo ve Menüler */}
                     <div className="flex items-center space-x-8">
                         <Link href={`/${currentLocale}/dashboard`} className="text-xl font-bold text-blue-600 flex items-center gap-2">
-                            <Bot className="h-6 w-6" />
+                            <Shield className="h-6 w-6" />
                             <span>NDIS Shield Hub</span>
                         </Link>
 
@@ -115,7 +115,7 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                                 href={`/${currentLocale}/dashboard/chatbots`}
                                 className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
                             >
-                                <Bot className="h-4 w-4" />
+                                <Shield className="h-4 w-4" />
                                 {t('nav.aiAgents', { fallback: 'AI Agents' })}
                             </Link>
 
@@ -123,7 +123,7 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                                 href={`/${currentLocale}/dashboard/conversations`}
                                 className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
                             >
-                                <MessageSquare className="h-4 w-4" />
+                                <Shield className="h-4 w-4" />
                                 {t('nav.conversations')}
                             </Link>
 
