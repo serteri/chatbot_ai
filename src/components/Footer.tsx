@@ -24,7 +24,7 @@ export function Footer({ locale, variant = 'default' }: FooterProps) {
         { name: t('links.about'), href: `/${locale}/about` },
         { name: t('links.blog'), href: `/${locale}/blog` },
         { name: t('links.careers'), href: `/${locale}/careers` },
-        { name: t('links.contact'), href: 'https://ndisshield.com.au/en/contact' },
+        { name: t('links.contact'), href: '/en/contact' },
     ]
 
     const legalLinks = [

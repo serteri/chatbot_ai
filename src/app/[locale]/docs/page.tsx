@@ -2,7 +2,7 @@ import { PublicNav } from '@/components/layout/PublicNav'
 import { Footer } from '@/components/Footer'
 import { Card } from '@/components/ui/card'
 import Link from 'next/link'
-import { Book, FileText, Code, Sparkles, MessageCircle } from 'lucide-react'
+import { Book, FileText, Code, Sparkles, MessageCircle, FileDown, ShieldCheck, Activity, Rocket } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 import { Button } from '@/components/ui/button'
 
@@ -79,6 +79,82 @@ export default async function DocsPage({ params }: PageProps) {
                                     <div className="text-3xl font-bold text-blue-100 mb-2">03</div>
                                     <h3 className="font-bold text-gray-900 mb-2">{t('intro.step3')}</h3>
                                 </Card>
+                            </div>
+
+                            {/* 2026 Roadmap / Future Features Section */}
+                            <div className="mt-20 pt-12 border-t border-gray-100">
+                                <div className="text-center mb-10">
+                                    <div className="inline-flex items-center px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm font-medium mb-4">
+                                        <Rocket className="w-4 h-4 mr-2" />
+                                        NDIS Shield Hub Roadmap
+                                    </div>
+                                    <h2 className="text-3xl font-bold text-gray-900 mb-4">2026 Future Features</h2>
+                                    <p className="text-gray-600 max-w-2xl mx-auto">
+                                        We are actively developing powerful new modules to further reduce your compliance burden and automate NDIS workflows.
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 not-prose">
+                                    <Card className="hover:shadow-md transition-shadow relative overflow-hidden">
+                                        <div className="absolute top-4 right-4 bg-orange-100 text-orange-700 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider">
+                                            Alpha
+                                        </div>
+                                        <CardHeader>
+                                            <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mb-3">
+                                                <FileText className="w-5 h-5" />
+                                            </div>
+                                            <h3 className="text-xl font-bold text-gray-900 mb-2">Auto-Service Agreements</h3>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-gray-600">Generate one-click PDF contracts perfectly tailored to participant plans, featuring secure, integrated e-signatures for instant onboarding.</p>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card className="hover:shadow-md transition-shadow relative overflow-hidden">
+                                        <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider">
+                                            Beta
+                                        </div>
+                                        <CardHeader>
+                                            <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center mb-3">
+                                                <FileDown className="w-5 h-5" />
+                                            </div>
+                                            <h3 className="text-xl font-bold text-gray-900 mb-2">PRODA Bulk Claim Export</h3>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-gray-600">Export hundreds of validated invoice lines into a single rigorously-verified .csv file explicitly formatted for instant NDIA portal uploads.</p>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card className="hover:shadow-md transition-shadow relative overflow-hidden">
+                                        <div className="absolute top-4 right-4 bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider">
+                                            Coming Soon
+                                        </div>
+                                        <CardHeader>
+                                            <div className="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center mb-3">
+                                                <Activity className="w-5 h-5" />
+                                            </div>
+                                            <h3 className="text-xl font-bold text-gray-900 mb-2">Budget Tracker</h3>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-gray-600">Provide participants and support coordinators with real-time visual capacity graphs and automated alerts prior to fund exhaustion.</p>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card className="hover:shadow-md transition-shadow relative overflow-hidden">
+                                        <div className="absolute top-4 right-4 bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider">
+                                            Coming Soon
+                                        </div>
+                                        <CardHeader>
+                                            <div className="w-10 h-10 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center mb-3">
+                                                <ShieldCheck className="w-5 h-5" />
+                                            </div>
+                                            <h3 className="text-xl font-bold text-gray-900 mb-2">Audit Readiness Score</h3>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-gray-600">An intelligent dashboard metric that flags missing compliance documents or expired staff credentials automatically before an auditor arrives.</p>
+                                        </CardContent>
+                                    </Card>
+                                </div>
                             </div>
 
                             <div className="mt-16 text-center bg-blue-50 rounded-2xl p-8 border border-blue-100 not-prose">
