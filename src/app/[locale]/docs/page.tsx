@@ -2,8 +2,9 @@ import { PublicNav } from '@/components/layout/PublicNav'
 import { Footer } from '@/components/Footer'
 import { Card } from '@/components/ui/card'
 import Link from 'next/link'
-import { Book, FileText, Code, Sparkles } from 'lucide-react'
+import { Book, FileText, Code, Sparkles, MessageCircle } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
+import { Button } from '@/components/ui/button'
 
 interface PageProps {
     params: Promise<{ locale: string }>
@@ -33,8 +34,8 @@ export default async function DocsPage({ params }: PageProps) {
                                     key={item.title}
                                     href={item.href}
                                     className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${item.active
-                                            ? 'bg-blue-50 text-blue-700'
-                                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                                        ? 'bg-blue-50 text-blue-700'
+                                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                                         }`}
                                 >
                                     <item.icon className={`mr-3 h-4 w-4 ${item.active ? 'text-blue-500' : 'text-gray-400'}`} />
@@ -78,6 +79,21 @@ export default async function DocsPage({ params }: PageProps) {
                                     <div className="text-3xl font-bold text-blue-100 mb-2">03</div>
                                     <h3 className="font-bold text-gray-900 mb-2">{t('intro.step3')}</h3>
                                 </Card>
+                            </div>
+
+                            <div className="mt-16 text-center bg-blue-50 rounded-2xl p-8 border border-blue-100 not-prose">
+                                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
+                                    <MessageCircle className="h-6 w-6" />
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">Need more help?</h3>
+                                <p className="text-gray-600 mb-6 max-w-lg mx-auto">
+                                    Our support team is available to assist you with any questions about NDIS Shield Hub.
+                                </p>
+                                <Link href={`/${locale}/contact`}>
+                                    <Button className="bg-blue-600 hover:bg-blue-700">
+                                        Contact Support
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                     </div>

@@ -2519,8 +2519,12 @@
       "billingDesc": "Manage your subscription and payments",
       "account": "Account Settings",
       "accountDesc": "Update your profile and preferences",
-      "chatbot": "Chatbot Configuration",
-      "chatbotDesc": "Customize your AI assistant",
+      "priceGuide": "NDIS Price Guide Updates",
+      "priceGuideDesc": "Stay current with the latest pricing arrangements and limits",
+      "audit": "Audit Preparation",
+      "auditDesc": "Get your documentation ready for upcoming NDIS audits",
+      "compliance": "Compliance Reporting",
+      "complianceDesc": "Understand and meet your NDIS quality reporting requirements",
       "security": "Security & Privacy",
       "securityDesc": "Learn how we protect your data"
     }

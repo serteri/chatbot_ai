@@ -19,6 +19,9 @@ export default async function GdprPage({ params }: PageProps) {
 
             <h2>{t('processingTitle')}</h2>
             <p>{t('processingText')}</p>
+
+            <h2>Data Storage and Sovereignty</h2>
+            <p>To comply with data sovereignty laws and the 13 Australian Privacy Principles (APP), all your NDIS participant data is securely stored in Sydney Azure Storage. This ensures that your sensitive information remains within Australia and meets the highest standards of data protection.</p>
         </LegalPageLayout>
     )
 }

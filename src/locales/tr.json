@@ -2482,8 +2482,12 @@
       "billingDesc": "Aboneliğinizi ve ödemelerinizi yönetin",
       "account": "Hesap Ayarları",
       "accountDesc": "Profilinizi ve tercihlerinizi güncelleyin",
-      "chatbot": "Chatbot Yapılandırması",
-      "chatbotDesc": "Yapay zeka asistanınızı özelleştirin",
+      "priceGuide": "NDIS Fiyat Rehberi Güncellemeleri",
+      "priceGuideDesc": "En son fiyat düzenlemeleri ve sınırlarından haberdar olun",
+      "audit": "Denetim Hazırlığı",
+      "auditDesc": "Yaklaşan NDIS denetimleri için belgelerinizi hazırlayın",
+      "compliance": "Uyumluluk Raporlaması",
+      "complianceDesc": "NDIS kalite raporlama gereksinimlerinizi anlayın ve karşılayın",
       "security": "Güvenlik ve Gizlilik",
       "securityDesc": "Verilerinizi nasıl koruduğumuzu öğrenin"
     }
