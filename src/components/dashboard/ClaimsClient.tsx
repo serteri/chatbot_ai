@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Download, FileWarning, AlertCircle } from 'lucide-react'
+import { Download, FileWarning, AlertCircle, Upload, FileSpreadsheet } from 'lucide-react'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { Claim } from '@prisma/client'
+import { useRouter } from 'next/navigation'
 
 interface ClaimsClientProps {
     claims: Claim[]
@@ -16,6 +17,9 @@ interface ClaimsClientProps {
 export default function ClaimsClient({ claims }: ClaimsClientProps) {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
     const [isExporting, setIsExporting] = useState(false)
+    const [isUploading, setIsUploading] = useState(false)
+    const fileInputRef = useRef<HTMLInputElement>(null)
+    const router = useRouter()
 
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
@@ -33,6 +37,39 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
             newSelected.delete(id)
         }
         setSelectedIds(newSelected)
+    }
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        setIsUploading(true)
+        const formData = new FormData()
+        formData.append('file', file)
+
+        try {
+            const response = await fetch('/api/claims/bulk-import', {
+                method: 'POST',
+                body: formData
+            })
+
+            const result = await response.json()
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Upload failed')
+            }
+
+            toast.success(result.message || 'Claims imported successfully')
+            router.refresh() // Trigger server-side re-fetch
+        } catch (error: any) {
+            console.error('Upload Error:', error)
+            toast.error(error.message || 'Failed to import claims.')
+        } finally {
+            setIsUploading(false)
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
+        }
     }
 
     const handleExport = async () => {
@@ -86,14 +123,45 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                     <p className="text-gray-600">Prepare and track your NDIS Bulk Payment strings</p>
                 </div>
 
-                <Button
-                    onClick={handleExport}
-                    disabled={selectedIds.size === 0 || isExporting}
-                    className="bg-teal-600 hover:bg-teal-700 text-white shadow-sm transition-all"
+                <div className="flex flex-wrap gap-3">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        accept=".csv"
+                        className="hidden"
+                    />
+                    
+                    <Button
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                        className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                    >
+                        <Upload className="mr-2 h-4 w-4" />
+                        {isUploading ? 'Uploading...' : 'Bulk Upload'}
+                    </Button>
+
+                    <Button
+                        onClick={handleExport}
+                        disabled={selectedIds.size === 0 || isExporting}
+                        className="bg-teal-600 hover:bg-teal-700 text-white shadow-sm transition-all"
+                    >
+                        <Download className="mr-2 h-4 w-4" />
+                        {isExporting ? 'Generating...' : `Export to PRODA CSV (${selectedIds.size})`}
+                    </Button>
+                </div>
+            </div>
+
+            <div className="mb-6 flex items-center justify-end">
+                <a 
+                    href="/templates/claims-import-template.csv" 
+                    download 
+                    className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1.5 bg-teal-50 px-3 py-1.5 rounded-full border border-teal-100 transition-colors"
                 >
-                    <Download className="mr-2 h-4 w-4" />
-                    {isExporting ? 'Generating...' : `Export to PRODA CSV (${selectedIds.size})`}
-                </Button>
+                    <FileSpreadsheet className="w-3.5 h-3.5" />
+                    Download CSV Template for Bulk Upload
+                </a>
             </div>
 
             <Card className="border-slate-200 shadow-sm border-t-4 border-t-teal-500">
