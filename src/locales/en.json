@@ -282,19 +282,19 @@
       "oauthError": "An error occurred during login"
     },
     "branding": {
-      "welcomeBack": "Welcome Back! 👋",
-      "continueManaging": "Continue managing your AI chatbots.",
+      "welcomeBack": "Effortless NDIS Claims & Compliance.",
+      "continueManaging": "Streamline your NDIS business. Convert complex rosters, timesheets, and progress notes into PRODA-ready claims in seconds. Spend less time on admin, more time on care.",
       "whatsNew": "What's New",
-      "newFeature1": "✨ Enhanced AI response quality",
-      "newFeature2": "📊 New analytics dashboard",
-      "newFeature3": "🎨 Widget customization options",
-      "footer": "© 2024 NDIS Shield Hub. All rights reserved.",
-      "registerTitle": "Transform customer experience with AI-powered chatbots",
-      "registerSubtitle": "Create a free account and start immediately.",
-      "feature1": "Unlimited AI chat experience",
-      "feature2": "Create custom chatbots",
-      "feature3": "Real-time analytics",
-      "feature4": "24/7 support"
+      "newFeature1": "✨ PRODA-ready claim extraction",
+      "newFeature2": "📊 Automated compliance auditing",
+      "newFeature3": "🎨 Custom service agreement validator",
+      "footer": "© 2025 NDIS Shield Hub. All rights reserved.",
+      "registerTitle": "Effortless NDIS Claims & Compliance.",
+      "registerSubtitle": "Streamline your NDIS business. Convert complex rosters, timesheets, and progress notes into PRODA-ready claims in seconds. Spend less time on admin, more time on care.",
+      "feature1": "Instant PRODA claim generation",
+      "feature2": "Audit-proof compliance checks",
+      "feature3": "Shield-grade data security",
+      "feature4": "24/7 NDIS compliance support"
     },
     "register": {
       "title": "Register",

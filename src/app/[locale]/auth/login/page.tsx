@@ -6,8 +6,9 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { AlertCircle, MessageSquare, Mail, Lock, Eye, EyeOff, Loader2, X, ArrowRight, Sparkles } from 'lucide-react'
+import { AlertCircle, Shield, Mail, Lock, Eye, EyeOff, Loader2, X, ArrowRight, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 
 export default function LoginPage() {
     const router = useRouter()
@@ -99,41 +100,62 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex">
             {/* Left Panel - Branding */}
-            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-500 p-12 flex-col justify-between relative overflow-hidden">
-                {/* Decorative elements */}
+            <div className="hidden lg:flex lg:w-1/2 bg-[#0088CC] p-12 flex-col justify-between relative overflow-hidden">
+                {/* Background decorative elements */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-3xl" />
-
+                
                 <div className="relative z-10">
-                    <Link href={`/${locale}`} className="flex items-center gap-3 text-white mb-16">
+                    <Link href={`/${locale}`} className="flex items-center gap-3 text-white mb-12">
                         <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-                            <MessageSquare className="h-7 w-7" />
+                            <Shield className="h-7 w-7" />
                         </div>
-                        <span className="text-2xl font-bold">NDIS Shield Hub</span>
+                        <span className="text-2xl font-bold italic tracking-tight">NDIS SHIELD HUB</span>
                     </Link>
 
-                    <h1 className="text-4xl font-bold text-white mb-6">
-                        {t('branding.welcomeBack')}
-                    </h1>
-                    <p className="text-blue-100 text-lg mb-8">
-                        {t('branding.continueManaging')}
-                    </p>
+                    <div className="max-w-md">
+                        <h1 className="text-4xl font-bold text-white mb-6 leading-tight">
+                            {t('branding.welcomeBack')}
+                        </h1>
+                        <p className="text-blue-50 text-lg mb-10 leading-relaxed">
+                            {t('branding.continueManaging')}
+                        </p>
 
-                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                        <div className="flex items-center gap-3 mb-4">
-                            <Sparkles className="h-5 w-5 text-yellow-300" />
-                            <span className="text-white font-semibold">{t('branding.whatsNew')}</span>
+                        <div className="relative w-full aspect-square max-w-[400px] mb-10 mx-auto group">
+                            <div className="absolute inset-0 bg-blue-400/20 rounded-full blur-3xl group-hover:bg-blue-400/30 transition-all duration-700" />
+                            <Image 
+                                src="/images/auth-brand.png" 
+                                alt="NDIS Shield Hub Branding" 
+                                fill 
+                                className="object-contain relative z-10 drop-shadow-2xl animate-in zoom-in-95 duration-700"
+                                priority
+                            />
                         </div>
-                        <ul className="space-y-2 text-blue-100 text-sm">
-                            <li>{t('branding.newFeature1')}</li>
-                            <li>{t('branding.newFeature2')}</li>
-                            <li>{t('branding.newFeature3')}</li>
-                        </ul>
+
+                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Sparkles className="h-5 w-5 text-yellow-300" />
+                                <span className="text-white font-semibold">{t('branding.whatsNew')}</span>
+                            </div>
+                            <ul className="space-y-3 text-blue-50 text-sm">
+                                <li className="flex items-start gap-2">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-blue-300 mt-1.5 flex-shrink-0" />
+                                    <span>{t('branding.newFeature1')}</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-blue-300 mt-1.5 flex-shrink-0" />
+                                    <span>{t('branding.newFeature2')}</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-blue-300 mt-1.5 flex-shrink-0" />
+                                    <span>{t('branding.newFeature3')}</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
-                <p className="text-blue-200 text-sm relative z-10">
+                <p className="text-blue-100 text-sm relative z-10 opacity-80">
                     {t('branding.footer')}
                 </p>
             </div>
@@ -143,10 +165,10 @@ export default function LoginPage() {
                 <div className="w-full max-w-md">
                     {/* Mobile Logo */}
                     <div className="lg:hidden flex items-center justify-center gap-2 mb-8">
-                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                            <MessageSquare className="h-6 w-6 text-white" />
+                        <div className="w-11 h-11 bg-[#0088CC] rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                            <Shield className="h-6 w-6 text-white" />
                         </div>
-                        <span className="text-xl font-bold text-gray-900">NDIS Shield Hub</span>
+                        <span className="text-xl font-bold text-gray-900 tracking-tight">NDIS SHIELD HUB</span>
                     </div>
 
                     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
@@ -306,7 +328,7 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full h-12 rounded-xl bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 hover:from-indigo-700 hover:via-blue-700 hover:to-cyan-700 text-white font-semibold shadow-lg shadow-blue-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                                className="w-full h-12 rounded-xl bg-[#0088CC] hover:bg-[#0077BB] text-white font-semibold shadow-lg shadow-blue-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
                             >
                                 {isLoading ? (
                                     <>
@@ -359,7 +381,7 @@ export default function LoginPage() {
                     </div>
 
                     <p className="mt-6 text-center text-xs text-gray-400">
-                        &copy; 2024 NDIS Shield Hub. All rights reserved.
+                        &copy; 2025 NDIS Shield Hub. All rights reserved.
                     </p>
                 </div>
             </div>

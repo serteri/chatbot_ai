@@ -283,19 +283,19 @@
       "oauthError": "Giriş yapılırken bir hata oluştu"
     },
     "branding": {
-      "welcomeBack": "Tekrar hoş geldiniz! 👋",
-      "continueManaging": "AI chatbot'larınızı yönetmeye devam edin.",
+      "welcomeBack": "Zahmetsiz NDIS Talepleri ve Uyumluluk.",
+      "continueManaging": "NDIS işinizi kolaylaştırın. Karmaşık listeleri, zaman çizelgelerini ve ilerleme notlarını saniyeler içinde PRODA'ya hazır taleplere dönüştürün. Yönetime daha az, bakıma daha fazla zaman ayırın.",
       "whatsNew": "Yenilikler",
-      "newFeature1": "✨ Gelişmiş AI yanıt kalitesi",
-      "newFeature2": "📊 Yeni analytics dashboard",
-      "newFeature3": "🎨 Widget özelleştirme seçenekleri",
-      "footer": "© 2024 NDIS Shield Hub. Tüm hakları saklıdır.",
-      "registerTitle": "AI destekli chatbot'lar ile müşteri deneyimini dönüştürün",
-      "registerSubtitle": "Ücretsiz hesap oluşturun ve hemen başlayın.",
-      "feature1": "Sınırsız AI sohbet deneyimi",
-      "feature2": "Özel chatbot oluşturma",
-      "feature3": "Gerçek zamanlı analytics",
-      "feature4": "7/24 destek"
+      "newFeature1": "✨ PRODA'ya hazır talep çıkarımı",
+      "newFeature2": "📊 Otomatik uyumluluk denetimi",
+      "newFeature3": "🎨 Özel hizmet sözleşmesi doğrulayıcı",
+      "footer": "© 2025 NDIS Shield Hub. Tüm hakları saklıdır.",
+      "registerTitle": "Zahmetsiz NDIS Talepleri ve Uyumluluk.",
+      "registerSubtitle": "NDIS işinizi kolaylaştırın. Karmaşık listeleri, zaman çizelgelerini ve ilerleme notlarını saniyeler içinde PRODA'ya hazır taleplere dönüştürün. Yönetime daha az, bakıma daha fazla zaman ayırın.",
+      "feature1": "Anında PRODA talep oluşturma",
+      "feature2": "Denetime hazır uyumluluk kontrolleri",
+      "feature3": "Shield seviyesinde veri güvenliği",
+      "feature4": "7/24 NDIS uyumluluk desteği"
     },
     "register": {
       "title": "Kayıt Ol",

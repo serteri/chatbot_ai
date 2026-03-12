@@ -6,9 +6,10 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { MessageSquare, Check, Eye, EyeOff, Loader2, AlertCircle, User, Mail, Lock, X } from 'lucide-react'
+import { Shield, Check, Eye, EyeOff, Loader2, AlertCircle, User, Mail, Lock, X } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 
 export default function RegisterPage() {
     const router = useRouter()
@@ -118,65 +119,72 @@ export default function RegisterPage() {
         }
     }
 
-    const features = [
-        'Sınırsız AI sohbet deneyimi',
-        'Özel chatbot oluşturma',
-        'Gerçek zamanlı analytics',
-        '7/24 destek'
-    ]
+
 
     return (
         <div className="min-h-screen flex">
             {/* Sol Panel - Özellikler */}
-            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 p-12 flex-col justify-between relative overflow-hidden">
-                {/* Decorative circles */}
+            <div className="hidden lg:flex lg:w-1/2 bg-[#0088CC] p-12 flex-col justify-between relative overflow-hidden">
+                {/* Background decorative elements */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-72 h-72 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-
+                
                 <div className="relative z-10">
-                    <Link href={`/${locale}`} className="flex items-center gap-3 text-white mb-16">
+                    <Link href={`/${locale}`} className="flex items-center gap-3 text-white mb-12">
                         <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-                            <MessageSquare className="h-7 w-7" />
+                            <Shield className="h-7 w-7" />
                         </div>
-                        <span className="text-2xl font-bold">NDIS Shield Hub</span>
+                        <span className="text-2xl font-bold italic tracking-tight">NDIS SHIELD HUB</span>
                     </Link>
 
-                    <h1 className="text-4xl font-bold text-white mb-6">
-                        {t('branding.registerTitle')}
-                    </h1>
-                    <p className="text-blue-100 text-lg mb-12">
-                        {t('branding.registerSubtitle')}
-                    </p>
+                    <div className="max-w-md">
+                        <h1 className="text-4xl font-bold text-white mb-6 leading-tight">
+                            {t('branding.registerTitle')}
+                        </h1>
+                        <p className="text-blue-50 text-lg mb-8 leading-relaxed">
+                            {t('branding.registerSubtitle')}
+                        </p>
 
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-3 text-white">
-                            <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center">
-                                <Check className="h-4 w-4 text-white" />
-                            </div>
-                            <span className="text-lg">{t('branding.feature1')}</span>
+                        <div className="relative w-full aspect-square max-w-[350px] mb-8 mx-auto -mt-4">
+                            <Image 
+                                src="/images/auth-brand.png" 
+                                alt="NDIS Shield Hub Branding" 
+                                fill 
+                                className="object-contain relative z-10 drop-shadow-2xl"
+                                priority
+                            />
                         </div>
-                        <div className="flex items-center gap-3 text-white">
-                            <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center">
-                                <Check className="h-4 w-4 text-white" />
+
+                        <div className="space-y-4 px-2">
+                            <div className="flex items-center gap-4 text-white">
+                                <div className="w-8 h-8 rounded-full bg-blue-400/30 backdrop-blur flex items-center justify-center border border-white/20">
+                                    <Check className="h-4 w-4 text-white" />
+                                </div>
+                                <span className="text-lg text-blue-50">{t('branding.feature1')}</span>
                             </div>
-                            <span className="text-lg">{t('branding.feature2')}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-white">
-                            <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center">
-                                <Check className="h-4 w-4 text-white" />
+                            <div className="flex items-center gap-4 text-white">
+                                <div className="w-8 h-8 rounded-full bg-blue-400/30 backdrop-blur flex items-center justify-center border border-white/20">
+                                    <Check className="h-4 w-4 text-white" />
+                                </div>
+                                <span className="text-lg text-blue-50">{t('branding.feature2')}</span>
                             </div>
-                            <span className="text-lg">{t('branding.feature3')}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-white">
-                            <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center">
-                                <Check className="h-4 w-4 text-white" />
+                            <div className="flex items-center gap-4 text-white">
+                                <div className="w-8 h-8 rounded-full bg-blue-400/30 backdrop-blur flex items-center justify-center border border-white/20">
+                                    <Check className="h-4 w-4 text-white" />
+                                </div>
+                                <span className="text-lg text-blue-50">{t('branding.feature3')}</span>
                             </div>
-                            <span className="text-lg">{t('branding.feature4')}</span>
+                            <div className="flex items-center gap-4 text-white">
+                                <div className="w-8 h-8 rounded-full bg-blue-400/30 backdrop-blur flex items-center justify-center border border-white/20">
+                                    <Check className="h-4 w-4 text-white" />
+                                </div>
+                                <span className="text-lg text-blue-50">{t('branding.feature4')}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <p className="text-blue-200 text-sm relative z-10">
+                <p className="text-blue-100 text-sm relative z-10 opacity-80">
                     {t('branding.footer')}
                 </p>
             </div>
@@ -186,10 +194,10 @@ export default function RegisterPage() {
                 <div className="w-full max-w-md">
                     {/* Mobile Logo */}
                     <div className="lg:hidden flex items-center justify-center gap-2 mb-8">
-                        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                            <MessageSquare className="h-6 w-6 text-white" />
+                        <div className="w-11 h-11 bg-[#0088CC] rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                            <Shield className="h-6 w-6 text-white" />
                         </div>
-                        <span className="text-xl font-bold text-gray-900">NDIS Shield Hub</span>
+                        <span className="text-xl font-bold text-gray-900 tracking-tight">NDIS SHIELD HUB</span>
                     </div>
 
                     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
@@ -359,7 +367,7 @@ export default function RegisterPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-purple-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                                className="w-full h-12 rounded-xl bg-[#0088CC] hover:bg-[#0077BB] text-white font-semibold shadow-lg shadow-blue-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
                             >
                                 {isLoading ? (
                                     <>
