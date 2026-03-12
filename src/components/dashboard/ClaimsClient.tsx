@@ -28,6 +28,9 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
     const [isUploading, setIsUploading] = useState(false)
     const [isCommitting, setIsCommitting] = useState(false)
     const [previewData, setPreviewData] = useState<any[] | null>(null)
+    const [rawRows, setRawRows] = useState<any[] | null>(null)
+    const [rawHeaders, setRawHeaders] = useState<string[] | null>(null)
+    const [columnMapping, setColumnMapping] = useState<Record<string, string>>({})
     const [importSummary, setImportSummary] = useState<any>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
@@ -70,6 +73,19 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                 throw new Error(result.error || 'Upload failed')
             }
 
+            // Store raw results for manual mapping
+            setRawRows(result.rawRows) 
+            setRawHeaders(result.headers)
+            
+            // Initial auto-mapping
+            const initialMapping: Record<string, string> = {}
+            if (result.headers) {
+                result.headers.forEach((h: string) => {
+                    const mapped = findAutoMapping(h)
+                    if (mapped) initialMapping[mapped] = h
+                })
+            }
+            setColumnMapping(initialMapping)
             setPreviewData(result.data)
             setImportSummary(result.summary)
             toast.success('File parsed successfully. Please review the data.')
@@ -114,6 +130,70 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
         } finally {
             setIsCommitting(false)
         }
+    }
+
+    const findAutoMapping = (header: string) => {
+        const h = header.toLowerCase().trim()
+        if (['participant name', 'participant', 'name', 'client name', 'full name'].includes(h)) return 'participantName'
+        if (['ndis number', 'ndis no', 'participantid', 'ndis id', 'ndis #'].includes(h)) return 'participantNdisNumber'
+        if (['support item', 'support item number', 'support ite', 'item code', 'support item no'].includes(h)) return 'supportItemNumber'
+        if (['date', 'support date', 'service date', 'activity date'].includes(h)) return 'supportDeliveredDate'
+        if (['quantity', 'hours', 'qty', 'units'].includes(h)) return 'quantityDelivered'
+        if (['unitprice', 'price', 'rate', 'unit price'].includes(h)) return 'unitPrice'
+        return null
+    }
+
+    const updateMapping = (field: string, header: string) => {
+        const newMapping = { ...columnMapping, [field]: header }
+        setColumnMapping(newMapping)
+        
+        if (!rawRows) return
+
+        // Recalculate preview data based on new mapping
+        const newPreview = rawRows.map((row: any, index: number) => {
+            const entry: any = { _originalRow: index + 2, _errors: [] }
+            
+            // Apply new mapping from RAW row data
+            Object.entries(newMapping).forEach(([field, header]) => {
+                const val = row[header]
+                entry[field] = typeof val === 'string' ? val.trim() : val
+            })
+
+            // Basic validation re-run
+            if (!entry.participantName) entry._errors.push('No Name')
+            if (!entry.participantNdisNumber) entry._errors.push('No NDIS ID')
+            if (!entry.supportItemNumber) entry._errors.push('No Item')
+            
+            const price = parseFloat(entry.unitPrice)
+            if (isNaN(price)) {
+                entry._errors.push('Invalid Price')
+            } else if (price > 10000) {
+                entry._errors.push(`Extreme Price: $${price.toLocaleString()}`)
+            }
+
+            // Date Processing (Client-side mirror of server logic)
+            if (entry.supportDeliveredDate) {
+                const dateStr = String(entry.supportDeliveredDate)
+                let parsedDate = parseDate(dateStr, 'dd/MM/yyyy', new Date())
+                if (!isValid(parsedDate)) parsedDate = new Date(dateStr)
+                if (isValid(parsedDate)) {
+                    entry.supportDeliveredDate = parsedDate.toISOString()
+                } else {
+                    entry._errors.push('Bad Date')
+                }
+            } else {
+                entry._errors.push('No Date')
+            }
+
+            return entry
+        })
+
+        setPreviewData(newPreview)
+        setImportSummary({
+            total: newPreview.length,
+            valid: newPreview.filter(r => r._errors.length === 0).length,
+            invalid: newPreview.filter(r => r._errors.length > 0).length
+        })
     }
 
     const handleExport = async () => {
@@ -295,9 +375,35 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                             <FileSpreadsheet className="w-6 h-6 text-blue-600" />
                             Review Imported Data
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className="pb-4">
                             We've mapped your file headers. Please verify the data below before saving.
                         </DialogDescription>
+
+                        {/* COLUMN MAPPING SELECTORS */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 pb-4 bg-blue-50/50 p-4 rounded-lg border border-blue-100">
+                            {[
+                                { label: 'Name', key: 'participantName' },
+                                { label: 'NDIS ID', key: 'participantNdisNumber' },
+                                { label: 'Item Code', key: 'supportItemNumber' },
+                                { label: 'Date', key: 'supportDeliveredDate' },
+                                { label: 'Qty', key: 'quantityDelivered' },
+                                { label: 'Price', key: 'unitPrice' }
+                            ].map(field => (
+                                <div key={field.key} className="space-y-1">
+                                    <label className="text-[10px] font-bold text-blue-900 uppercase tracking-tight">{field.label}</label>
+                                    <select 
+                                        className="w-full text-xs p-1.5 rounded border bg-white border-blue-200 outline-none focus:ring-2 focus:ring-blue-500"
+                                        value={columnMapping[field.key] || ''}
+                                        onChange={(e) => updateMapping(field.key, e.target.value)}
+                                    >
+                                        <option value="">-- Select Column --</option>
+                                        {rawHeaders?.map(h => (
+                                            <option key={h} value={h}>{h}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            ))}
+                        </div>
                     </DialogHeader>
 
                     {importSummary && (
