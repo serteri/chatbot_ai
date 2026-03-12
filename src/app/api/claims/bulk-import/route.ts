@@ -41,17 +41,22 @@ export async function POST(req: Request) {
                 return NextResponse.json({ error: 'No data to commit' }, { status: 400 })
             }
 
-            const dataToInsert = claimsData.map((c: any) => ({
-                userId: session.user.id,
-                participantName: String(c.participantName).trim(),
-                participantNdisNumber: String(c.participantNdisNumber).trim(),
-                supportItemNumber: String(c.supportItemNumber).trim(),
-                supportDeliveredDate: new Date(c.supportDeliveredDate),
-                quantityDelivered: parseFloat(c.quantityDelivered),
-                unitPrice: parseFloat(c.unitPrice),
-                totalClaimAmount: parseFloat(c.quantityDelivered) * parseFloat(c.unitPrice),
-                status: 'draft'
-            }))
+            const cleanNum = (v: any) => parseFloat(String(v).replace(/[$,\s]/g, ''))
+            const dataToInsert = claimsData.map((c: any) => {
+                const qty = cleanNum(c.quantityDelivered)
+                const price = cleanNum(c.unitPrice)
+                return {
+                    userId: session.user.id,
+                    participantName: String(c.participantName).trim(),
+                    participantNdisNumber: String(c.participantNdisNumber).trim(),
+                    supportItemNumber: String(c.supportItemNumber).trim(),
+                    supportDeliveredDate: new Date(c.supportDeliveredDate),
+                    quantityDelivered: qty,
+                    unitPrice: price,
+                    totalClaimAmount: qty * price,
+                    status: 'draft'
+                }
+            })
 
             await prisma.claim.createMany({ data: dataToInsert })
             return NextResponse.json({ success: true, count: dataToInsert.length })
@@ -77,11 +82,11 @@ export async function POST(req: Request) {
             const workbook = XLSX.read(buffer, { type: 'buffer' })
             const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
             // Use header: 1 to get raw arrays first to detect headers safely
-            const jsonRows: any[][] = XLSX.utils.sheet_to_json(firstSheet, { header: 1 })
+            const jsonRows: any[][] = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' })
             if (jsonRows.length > 0) {
-                headers = jsonRows[0].map(h => String(h).trim())
-                // Convert back to objects with headers
-                rawData = XLSX.utils.sheet_to_json(firstSheet)
+                headers = jsonRows[0].map(h => String(h).trim()).filter(h => h !== '')
+                // cellDates: true converts Excel serial numbers to JS Date objects automatically
+                rawData = XLSX.utils.sheet_to_json(firstSheet, { cellDates: true, defval: '' })
             }
         }
 
@@ -111,12 +116,19 @@ export async function POST(req: Request) {
         rawData.forEach((row, index) => {
             const entry: any = { _originalRow: index + 2, _errors: [] }
             
-            // Apply mapped values with Trimming
+            // Apply mapped values with Trimming + currency cleanup
             Object.keys(row).forEach(key => {
                 const mappedKey = findMappedKey(key) || mapping[key]
                 if (mappedKey) {
-                    const val = row[key]
-                    entry[mappedKey] = typeof val === 'string' ? val.trim() : val
+                    let val = row[key]
+                    if (typeof val === 'string') {
+                        val = val.trim()
+                        // Strip currency symbols and commas from numeric fields
+                        if (mappedKey === 'unitPrice' || mappedKey === 'quantityDelivered') {
+                            val = val.replace(/[$,\s]/g, '')
+                        }
+                    }
+                    entry[mappedKey] = val
                 }
             })
 
@@ -136,23 +148,35 @@ export async function POST(req: Request) {
             if (isNaN(qty)) entry._errors.push('Invalid Qty')
 
             // Date Processing
-            if (entry.supportDeliveredDate) {
-                let d = entry.supportDeliveredDate
-                // Excel dates can be numbers
-                if (typeof d === 'number') {
-                    const dateObj = XLSX.utils.format_cell({ v: d, t: 'd' })
-                    d = dateObj // This is a bit simplistic but XLSX usually handles it
-                }
-                
-                const dateStr = String(d)
-                let parsedDate = parseDate(dateStr, 'dd/MM/yyyy', new Date())
-                if (!isValid(parsedDate)) parsedDate = parseDate(dateStr, 'yyyy/MM/dd', new Date())
-                if (!isValid(parsedDate)) parsedDate = new Date(dateStr)
-
-                if (isValid(parsedDate)) {
-                    entry.supportDeliveredDate = parsedDate.toISOString()
+            const rawDate = entry.supportDeliveredDate
+            if (rawDate !== undefined && rawDate !== '' && rawDate !== null) {
+                // cellDates: true gives us a real JS Date for XLSX cells
+                if (rawDate instanceof Date) {
+                    if (isValid(rawDate)) {
+                        entry.supportDeliveredDate = rawDate.toISOString()
+                    } else {
+                        entry._errors.push('Invalid Date')
+                    }
+                } else if (typeof rawDate === 'number') {
+                    // Fallback: Excel serial number (days since 1900-01-01, with leap-year bug offset)
+                    const jsDate = new Date(Math.round((rawDate - 25569) * 86400 * 1000))
+                    if (isValid(jsDate)) {
+                        entry.supportDeliveredDate = jsDate.toISOString()
+                    } else {
+                        entry._errors.push('Invalid Date')
+                    }
                 } else {
-                    entry._errors.push('Invalid Date')
+                    // String date — try AU format DD/MM/YYYY first, then ISO, then native parse
+                    const dateStr = String(rawDate).trim()
+                    let parsedDate = parseDate(dateStr, 'dd/MM/yyyy', new Date())
+                    if (!isValid(parsedDate)) parsedDate = parseDate(dateStr, 'yyyy-MM-dd', new Date())
+                    if (!isValid(parsedDate)) parsedDate = parseDate(dateStr, 'MM/dd/yyyy', new Date())
+                    if (!isValid(parsedDate)) parsedDate = new Date(dateStr)
+                    if (isValid(parsedDate)) {
+                        entry.supportDeliveredDate = parsedDate.toISOString()
+                    } else {
+                        entry._errors.push('Invalid Date')
+                    }
                 }
             } else {
                 entry._errors.push('No Date')

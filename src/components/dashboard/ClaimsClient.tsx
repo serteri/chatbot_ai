@@ -163,8 +163,11 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
             if (!entry.participantName) entry._errors.push('No Name')
             if (!entry.participantNdisNumber) entry._errors.push('No NDIS ID')
             if (!entry.supportItemNumber) entry._errors.push('No Item')
-            
-            const price = parseFloat(entry.unitPrice)
+
+            // Strip currency symbols before parsing
+            const cleanNum = (v: any) => parseFloat(String(v ?? '').replace(/[$,\s]/g, ''))
+            const price = cleanNum(entry.unitPrice)
+            entry.unitPrice = isNaN(price) ? entry.unitPrice : price
             if (isNaN(price)) {
                 entry._errors.push('Invalid Price')
             } else if (price > 10000) {
@@ -172,9 +175,12 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
             }
 
             // Date Processing (Client-side mirror of server logic)
-            if (entry.supportDeliveredDate) {
-                const dateStr = String(entry.supportDeliveredDate)
+            const rawDateVal = entry.supportDeliveredDate
+            if (rawDateVal !== undefined && rawDateVal !== '' && rawDateVal !== null) {
+                const dateStr = String(rawDateVal).trim()
+                // Try AU format first, then ISO, then native
                 let parsedDate = parseDate(dateStr, 'dd/MM/yyyy', new Date())
+                if (!isValid(parsedDate)) parsedDate = parseDate(dateStr, 'yyyy-MM-dd', new Date())
                 if (!isValid(parsedDate)) parsedDate = new Date(dateStr)
                 if (isValid(parsedDate)) {
                     entry.supportDeliveredDate = parsedDate.toISOString()
@@ -252,7 +258,7 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                         type="file"
                         ref={fileInputRef}
                         onChange={handleFileUpload}
-                        accept=".csv"
+                        accept=".csv,.xlsx,.xls"
                         className="hidden"
                     />
                     
