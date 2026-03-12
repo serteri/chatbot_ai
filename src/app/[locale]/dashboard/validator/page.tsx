@@ -17,12 +17,24 @@ import {
     ScanSearch,
     BadgeCheck,
     UploadCloud,
+    FileOutput,
+    AlertCircle,
+    CheckSquare,
 } from 'lucide-react'
 import { logValidatorPageView, logDocumentUploadAttempt } from '@/app/[locale]/dashboard/validator/actions'
 import RemediationPlan from '@/components/dashboard/RemediationPlan'
 import { ErrorBoundary } from '@/components/dashboard/ErrorBoundary'
 import BulkValidator from '@/components/dashboard/BulkValidator'
 import { toast } from 'sonner'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from '@/components/ui/dialog'
+import type { ExtractedClaimData, ExtractedField } from '@/lib/ai/claimExtraction'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -120,10 +132,44 @@ function formatAnalysisToChat(data: AnalysisResult, fileName: string): string {
 // Component
 // ---------------------------------------------------------------------------
 
+// ── Claim field editor ────────────────────────────────────────────────────────
+
+interface ClaimFormValues {
+    participantName:       string
+    participantNdisNumber: string
+    supportItemNumber:     string
+    supportDeliveredDate:  string
+    quantityDelivered:     string
+    unitPrice:             string
+}
+
+function ConfidenceBadge({ confidence, requiresManualReview }: { confidence: number; requiresManualReview: boolean }) {
+    if (confidence >= 85) {
+        return (
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
+                <CheckSquare className="w-2.5 h-2.5" /> {confidence}%
+            </span>
+        )
+    }
+    if (requiresManualReview) {
+        return (
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full">
+                <AlertCircle className="w-2.5 h-2.5" /> Review · {confidence}%
+            </span>
+        )
+    }
+    return (
+        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded-full">
+            <AlertTriangle className="w-2.5 h-2.5" /> Low · {confidence}%
+        </span>
+    )
+}
+
 export default function ValidatorPage() {
     const [step, setStep] = useState<ValidatorStep>('waiting')
     const [fileName, setFileName] = useState<string | null>(null)
     const [fileSize, setFileSize] = useState<number>(0)
+    const [uploadedFile, setUploadedFile] = useState<File | null>(null)
     const [isDragging, setIsDragging] = useState(false)
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
     const [chatInput, setChatInput] = useState('')
@@ -133,6 +179,16 @@ export default function ValidatorPage() {
     const [isGeneratingRemediations, setIsGeneratingRemediations] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [mode, setMode] = useState<'single' | 'bulk'>('single')
+
+    // Claim extraction state
+    const [isExtractingClaim, setIsExtractingClaim] = useState(false)
+    const [extractedClaim, setExtractedClaim] = useState<ExtractedClaimData | null>(null)
+    const [showClaimDialog, setShowClaimDialog] = useState(false)
+    const [claimForm, setClaimForm] = useState<ClaimFormValues>({
+        participantName: '', participantNdisNumber: '', supportItemNumber: '',
+        supportDeliveredDate: '', quantityDelivered: '', unitPrice: '',
+    })
+    const [isSavingClaim, setIsSavingClaim] = useState(false)
 
     const chatEndRef = useRef<HTMLDivElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -166,6 +222,8 @@ export default function ValidatorPage() {
 
         setFileName(file.name)
         setFileSize(file.size)
+        setUploadedFile(file)
+        setExtractedClaim(null)
         setError(null)
         setStep('uploaded')
 
@@ -296,11 +354,102 @@ export default function ValidatorPage() {
         setStep('waiting')
         setFileName(null)
         setFileSize(0)
+        setUploadedFile(null)
         setChatMessages([])
         setChatInput('')
         setAnalysisData(null)
+        setExtractedClaim(null)
         setError(null)
     }, [])
+
+    // ── Claim Extraction ────────────────────────────────────────────────────
+
+    const handleExtractClaim = useCallback(async () => {
+        if (!uploadedFile) return
+        setIsExtractingClaim(true)
+        try {
+            const fd = new FormData()
+            fd.append('file', uploadedFile)
+            const res = await fetch('/api/validator/extract-claim', { method: 'POST', body: fd })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'Extraction failed.')
+            const ec: ExtractedClaimData = data.extractedClaim
+            setExtractedClaim(ec)
+
+            // Pre-fill the form with extracted values (or empty string for manual entry)
+            setClaimForm({
+                participantName:       ec.participantName.value       ?? '',
+                participantNdisNumber: ec.participantNdisNumber.value ?? '',
+                supportItemNumber:     ec.supportItemNumber.value     ?? '',
+                supportDeliveredDate:  ec.supportDeliveredDate.value  ?? '',
+                quantityDelivered:     ec.quantityDelivered.value != null ? String(ec.quantityDelivered.value) : '',
+                unitPrice:             ec.unitPrice.value != null        ? String(ec.unitPrice.value)        : '',
+            })
+            setShowClaimDialog(true)
+        } catch (err: any) {
+            toast.error(err.message || 'Failed to extract claim fields.')
+        } finally {
+            setIsExtractingClaim(false)
+        }
+    }, [uploadedFile])
+
+    const handleSaveClaim = useCallback(async () => {
+        const required: (keyof ClaimFormValues)[] = [
+            'participantName', 'participantNdisNumber', 'supportItemNumber',
+            'supportDeliveredDate', 'quantityDelivered', 'unitPrice',
+        ]
+        for (const key of required) {
+            if (!claimForm[key].trim()) {
+                toast.error(`"${key}" is required before saving.`)
+                return
+            }
+        }
+
+        const qty   = parseFloat(claimForm.quantityDelivered)
+        const price = parseFloat(claimForm.unitPrice.replace(/[$,]/g, ''))
+        if (isNaN(qty)   || qty   <= 0) { toast.error('Quantity must be a positive number.'); return }
+        if (isNaN(price) || price <= 0) { toast.error('Unit price must be a positive number.'); return }
+
+        // Validate date — accept DD/MM/YYYY or YYYY-MM-DD
+        let isoDate: string
+        const ddmm = claimForm.supportDeliveredDate.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
+        if (ddmm) {
+            isoDate = `${ddmm[3]}-${ddmm[2].padStart(2,'0')}-${ddmm[1].padStart(2,'0')}`
+        } else if (/^\d{4}-\d{2}-\d{2}/.test(claimForm.supportDeliveredDate)) {
+            isoDate = claimForm.supportDeliveredDate.slice(0, 10)
+        } else {
+            toast.error('Date must be DD/MM/YYYY or YYYY-MM-DD.')
+            return
+        }
+
+        setIsSavingClaim(true)
+        try {
+            const payload = [{
+                participantName:       claimForm.participantName.trim(),
+                participantNdisNumber: claimForm.participantNdisNumber.trim(),
+                supportItemNumber:     claimForm.supportItemNumber.trim(),
+                supportDeliveredDate:  new Date(isoDate).toISOString(),
+                quantityDelivered:     qty,
+                unitPrice:             price,
+            }]
+
+            const fd = new FormData()
+            fd.append('action', 'commit')
+            fd.append('data', JSON.stringify(payload))
+
+            const res = await fetch('/api/claims/bulk-import', { method: 'POST', body: fd })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'Save failed.')
+
+            toast.success(`Claim saved as draft for ${claimForm.participantName}.`)
+            setShowClaimDialog(false)
+            setExtractedClaim(null)
+        } catch (err: any) {
+            toast.error(err.message || 'Failed to save claim.')
+        } finally {
+            setIsSavingClaim(false)
+        }
+    }, [claimForm])
 
     // -----------------------------------------------------------------------
     // Status Tracker Config
@@ -484,7 +633,7 @@ export default function ValidatorPage() {
                                         <span className="text-teal-600 font-medium underline underline-offset-2">
                                             click to browse
                                         </span>{' '}
-                                        · <strong>PDF format only</strong>
+                                        · <strong>PDF or DOCX</strong>
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-5 mt-3 text-xs text-slate-400">
@@ -556,6 +705,29 @@ export default function ValidatorPage() {
                                     </div>
                                 </div>
                             )}
+                        </div>
+                    )}
+
+                    {/* ── Convert to Claim Button ── */}
+                    {step === 'audit-ready' && uploadedFile && !analysisData?.error && (
+                        <div className="flex justify-end mb-4">
+                            <button
+                                onClick={handleExtractClaim}
+                                disabled={isExtractingClaim}
+                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl shadow-sm transition-colors"
+                            >
+                                {isExtractingClaim ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        Extracting Claim Fields...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FileOutput className="h-4 w-4" />
+                                        Convert to Claim
+                                    </>
+                                )}
+                            </button>
                         </div>
                     )}
 
@@ -710,6 +882,109 @@ export default function ValidatorPage() {
                 </>
             )
             }
+            {/* ── Convert to Claim Dialog ── */}
+            <Dialog open={showClaimDialog} onOpenChange={(o) => !isSavingClaim && setShowClaimDialog(o)}>
+                <DialogContent className="max-w-2xl bg-white">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-xl">
+                            <FileOutput className="h-5 w-5 text-blue-600" />
+                            Review Extracted Claim
+                        </DialogTitle>
+                        <DialogDescription>
+                            Fields highlighted in <span className="text-amber-600 font-semibold">amber</span> require
+                            manual verification — the AI was not fully confident in these values.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {extractedClaim && (
+                        <div className="space-y-4 py-2">
+                            {/* Overall confidence banner */}
+                            {extractedClaim.overallConfidence < 85 && (
+                                <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-3">
+                                    <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                                    <p className="text-sm text-amber-800">
+                                        Overall confidence: <strong>{Math.round(extractedClaim.overallConfidence)}%</strong>.
+                                        Please review all fields below carefully before saving.
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Form fields */}
+                            {([
+                                { key: 'participantName',       label: 'Participant Name',    fieldKey: 'participantName' },
+                                { key: 'participantNdisNumber', label: 'NDIS Number',         fieldKey: 'participantNdisNumber' },
+                                { key: 'supportItemNumber',     label: 'Support Item Code',   fieldKey: 'supportItemNumber' },
+                                { key: 'supportDeliveredDate',  label: 'Service Date',        fieldKey: 'supportDeliveredDate' },
+                                { key: 'quantityDelivered',     label: 'Hours / Quantity',    fieldKey: 'quantityDelivered' },
+                                { key: 'unitPrice',             label: 'Unit Price (AUD)',    fieldKey: 'unitPrice' },
+                            ] as { key: keyof ExtractedClaimData; label: string; fieldKey: keyof ClaimFormValues }[]).map(({ key, label, fieldKey }) => {
+                                const field = extractedClaim[key] as ExtractedField<any>
+                                const needsReview = field?.requiresManualReview ?? false
+                                return (
+                                    <div key={fieldKey} className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-xs font-semibold text-slate-700 uppercase tracking-wide">
+                                                {label}
+                                            </label>
+                                            {field && (
+                                                <ConfidenceBadge
+                                                    confidence={field.confidence}
+                                                    requiresManualReview={field.requiresManualReview}
+                                                />
+                                            )}
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={claimForm[fieldKey]}
+                                            onChange={(e) => setClaimForm(prev => ({ ...prev, [fieldKey]: e.target.value }))}
+                                            placeholder={needsReview ? 'Requires manual entry' : `Enter ${label}`}
+                                            className={`w-full h-9 px-3 rounded-lg border text-sm transition-colors focus:outline-none focus:ring-2 ${
+                                                needsReview
+                                                    ? 'border-amber-300 bg-amber-50/50 focus:ring-amber-400/30'
+                                                    : 'border-slate-200 bg-white focus:ring-teal-400/30'
+                                            }`}
+                                        />
+                                        {field?.rawText && (
+                                            <p className="text-[11px] text-slate-400 pl-1">
+                                                Found: &ldquo;{field.rawText}&rdquo;
+                                            </p>
+                                        )}
+                                    </div>
+                                )
+                            })}
+
+                            {/* Service type (read-only context) */}
+                            {extractedClaim.serviceType.value && (
+                                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-0.5">Service Type</p>
+                                    <p className="text-sm text-slate-800">{extractedClaim.serviceType.value}</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <DialogFooter className="gap-2">
+                        <button
+                            onClick={() => setShowClaimDialog(false)}
+                            disabled={isSavingClaim}
+                            className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleSaveClaim}
+                            disabled={isSavingClaim}
+                            className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors"
+                        >
+                            {isSavingClaim ? (
+                                <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                            ) : (
+                                <><CheckCircle className="h-4 w-4" /> Save as Draft Claim</>
+                            )}
+                        </button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div >
     )
 }
