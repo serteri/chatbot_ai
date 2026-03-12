@@ -4,11 +4,19 @@ import { useState, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Download, FileWarning, AlertCircle, Upload, FileSpreadsheet } from 'lucide-react'
+import { Download, FileWarning, AlertCircle, Upload, FileSpreadsheet, Check, X, AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { format } from 'date-fns'
+import { format, isValid } from 'date-fns'
 import { Claim } from '@prisma/client'
 import { useRouter } from 'next/navigation'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogDescription
+} from '@/components/ui/dialog'
 
 interface ClaimsClientProps {
     claims: Claim[]
@@ -18,6 +26,9 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
     const [isExporting, setIsExporting] = useState(false)
     const [isUploading, setIsUploading] = useState(false)
+    const [isCommitting, setIsCommitting] = useState(false)
+    const [previewData, setPreviewData] = useState<any[] | null>(null)
+    const [importSummary, setImportSummary] = useState<any>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
 
@@ -59,16 +70,49 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                 throw new Error(result.error || 'Upload failed')
             }
 
-            toast.success(result.message || 'Claims imported successfully')
-            router.refresh() // Trigger server-side re-fetch
+            setPreviewData(result.data)
+            setImportSummary(result.summary)
+            toast.success('File parsed successfully. Please review the data.')
         } catch (error: any) {
             console.error('Upload Error:', error)
-            toast.error(error.message || 'Failed to import claims.')
+            toast.error(error.message || 'Failed to parse file.')
         } finally {
             setIsUploading(false)
             if (fileInputRef.current) {
                 fileInputRef.current.value = ''
             }
+        }
+    }
+
+    const handleCommit = async () => {
+        if (!previewData) return
+        
+        const validRows = previewData.filter(r => r._errors.length === 0)
+        if (validRows.length === 0) {
+            toast.error('No valid rows to import.')
+            return
+        }
+
+        setIsCommitting(true)
+        const formData = new FormData()
+        formData.append('action', 'commit')
+        formData.append('data', JSON.stringify(validRows))
+
+        try {
+            const response = await fetch('/api/claims/bulk-import', {
+                method: 'POST',
+                body: formData
+            })
+
+            if (!response.ok) throw new Error('Commit failed')
+
+            toast.success(`Successfully imported ${validRows.length} claims.`)
+            setPreviewData(null)
+            router.refresh()
+        } catch (error) {
+            toast.error('Failed to save claims.')
+        } finally {
+            setIsCommitting(false)
         }
     }
 
@@ -242,6 +286,92 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                     </div>
                 </CardContent>
             </Card>
+
+            {/* PREVIEW MODAL */}
+            <Dialog open={!!previewData} onOpenChange={(open) => !open && setPreviewData(null)}>
+                <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-white">
+                    <DialogHeader className="p-6 pb-2">
+                        <DialogTitle className="text-2xl flex items-center gap-2">
+                            <FileSpreadsheet className="w-6 h-6 text-blue-600" />
+                            Review Imported Data
+                        </DialogTitle>
+                        <DialogDescription>
+                            We've mapped your file headers. Please verify the data below before saving.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {importSummary && (
+                        <div className="px-6 py-2 flex gap-4 border-b bg-slate-50">
+                            <div className="flex items-center gap-1.5 text-sm font-medium text-slate-600">
+                                <Check className="w-4 h-4 text-green-600" />
+                                {importSummary.valid} Valid Rows
+                            </div>
+                            {importSummary.invalid > 0 && (
+                                <div className="flex items-center gap-1.5 text-sm font-medium text-amber-600">
+                                    <AlertTriangle className="w-4 h-4" />
+                                    {importSummary.invalid} Rows with errors (will be skipped)
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="flex-1 overflow-auto p-0">
+                        <table className="w-full text-xs text-left border-collapse">
+                            <thead className="sticky top-0 bg-slate-100 text-slate-700 uppercase font-bold border-b z-10 shadow-sm">
+                                <tr>
+                                    <th className="px-4 py-3 w-12 text-center">Row</th>
+                                    <th className="px-4 py-3">Participant</th>
+                                    <th className="px-4 py-3">NDIS ID</th>
+                                    <th className="px-4 py-3">Item Code</th>
+                                    <th className="px-4 py-3">Date</th>
+                                    <th className="px-4 py-3">Price</th>
+                                    <th className="px-4 py-3 text-red-600">Status/Errors</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                                {previewData?.map((row, i) => (
+                                    <tr key={i} className={`hover:bg-slate-50 ${row._errors.length > 0 ? 'bg-red-50/30' : ''}`}>
+                                        <td className="px-4 py-3 text-center text-slate-400">{row._originalRow}</td>
+                                        <td className="px-4 py-3 font-medium">{row.participantName || '-'}</td>
+                                        <td className="px-4 py-3">{row.participantNdisNumber || '-'}</td>
+                                        <td className="px-4 py-3 font-mono text-[10px]">{row.supportItemNumber || '-'}</td>
+                                        <td className="px-4 py-3">
+                                            {row.supportDeliveredDate ? format(new Date(row.supportDeliveredDate), 'dd/MM/yyyy') : '-'}
+                                        </td>
+                                        <td className="px-4 py-3 font-semibold">${parseFloat(row.unitPrice || 0).toFixed(2)}</td>
+                                        <td className="px-4 py-3">
+                                            {row._errors.length > 0 ? (
+                                                <div className="flex flex-wrap gap-1">
+                                                    {row._errors.map((err: string, ei: number) => (
+                                                        <span key={ei} className="px-1.5 py-0.5 bg-red-100 text-red-700 rounded text-[9px] font-bold">
+                                                            {err}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <Check className="w-4 h-4 text-green-500" />
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <DialogFooter className="p-6 border-t bg-slate-50 gap-3">
+                        <Button variant="outline" onClick={() => setPreviewData(null)} disabled={isCommitting}>
+                            Cancel
+                        </Button>
+                        <Button 
+                            onClick={handleCommit} 
+                            disabled={isCommitting || !importSummary || importSummary.valid === 0}
+                            className="bg-blue-600 hover:bg-blue-700 text-white min-w-[140px]"
+                        >
+                            {isCommitting ? 'Saving...' : `Confirm & Import ${importSummary?.valid || 0} Claims`}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
