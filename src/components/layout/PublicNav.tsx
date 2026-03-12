@@ -64,8 +64,8 @@ export function PublicNav() {
                             src="/images/logo-full.png"
                             alt="NDIS Shield Hub"
                             width={180}
-                            height={44}
-                            className="h-10 w-auto object-contain transition-opacity duration-200 group-hover:opacity-90"
+                            height={48}
+                            className="h-12 w-auto object-contain transition-opacity duration-200 group-hover:opacity-90"
                             priority
                         />
                     </Link>

@@ -86,8 +86,8 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                                 src="/images/logo-full.png"
                                 alt="NDIS Shield Hub"
                                 width={160}
-                                height={40}
-                                className="h-10 w-auto object-contain"
+                                height={48}
+                                className="h-12 w-auto object-contain"
                                 priority
                             />
                         </Link>

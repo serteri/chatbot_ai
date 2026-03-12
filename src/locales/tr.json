@@ -284,11 +284,11 @@
     },
     "branding": {
       "welcomeBack": "Zahmetsiz NDIS Talepleri ve Uyumluluk.",
-      "continueManaging": "NDIS işinizi kolaylaştırın. Karmaşık listeleri, zaman çizelgelerini ve ilerleme notlarını saniyeler içinde PRODA'ya hazır taleplere dönüştürün. Yönetime daha az, bakıma daha fazla zaman ayırın.",
+      "continueManaging": "Yapay Zeka Destekli Uyumluluk ile NDIS Sağlayıcılarını Güçlendiriyoruz.",
       "whatsNew": "Yenilikler",
-      "newFeature1": "✨ PRODA'ya hazır talep çıkarımı",
-      "newFeature2": "📊 Otomatik uyumluluk denetimi",
-      "newFeature3": "🎨 Özel hizmet sözleşmesi doğrulayıcı",
+      "newFeature1": "NDIS Fiyat Rehberi 2024-25 Senkronizasyonu",
+      "newFeature2": "Otomatik PRODA Talep Dışa Aktarımı",
+      "newFeature3": "Yapay Zeka Destekli Belge Kanıt Çıkarımı",
       "footer": "© 2025 NDIS Shield Hub. Tüm hakları saklıdır.",
       "registerTitle": "Zahmetsiz NDIS Talepleri ve Uyumluluk.",
       "registerSubtitle": "NDIS işinizi kolaylaştırın. Karmaşık listeleri, zaman çizelgelerini ve ilerleme notlarını saniyeler içinde PRODA'ya hazır taleplere dönüştürün. Yönetime daha az, bakıma daha fazla zaman ayırın.",
@@ -350,10 +350,10 @@
       }
     },
     "demo": {
-      "tryDemo": "Demo chatbot'ları deneyin",
-      "education": "🎓 Eğitim",
-      "ecommerce": "🛒 E-ticaret",
-      "realestate": "🏠 Emlak"
+      "tryDemo": "Demo kategorileri deneyin",
+      "education": "Plan Yönetimi",
+      "ecommerce": "Destek Koordinasyonu",
+      "realestate": "Doğrudan Hizmet Sağlayıcılar"
     }
   },
   "dashboard": {

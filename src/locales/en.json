@@ -283,11 +283,11 @@
     },
     "branding": {
       "welcomeBack": "Effortless NDIS Claims & Compliance.",
-      "continueManaging": "Streamline your NDIS business. Convert complex rosters, timesheets, and progress notes into PRODA-ready claims in seconds. Spend less time on admin, more time on care.",
+      "continueManaging": "Empowering NDIS Providers with AI-driven Compliance.",
       "whatsNew": "What's New",
-      "newFeature1": "✨ PRODA-ready claim extraction",
-      "newFeature2": "📊 Automated compliance auditing",
-      "newFeature3": "🎨 Custom service agreement validator",
+      "newFeature1": "NDIS Price Guide 2024-25 Sync",
+      "newFeature2": "Automated PRODA Claim Exports",
+      "newFeature3": "AI-Powered Docx Evidence Extraction",
       "footer": "© 2025 NDIS Shield Hub. All rights reserved.",
       "registerTitle": "Effortless NDIS Claims & Compliance.",
       "registerSubtitle": "Streamline your NDIS business. Convert complex rosters, timesheets, and progress notes into PRODA-ready claims in seconds. Spend less time on admin, more time on care.",
@@ -349,10 +349,10 @@
       }
     },
     "demo": {
-      "tryDemo": "Try demo chatbots",
-      "education": "🎓 Education",
-      "ecommerce": "🛒 E-commerce",
-      "realestate": "🏠 Real Estate"
+      "tryDemo": "Try demo categories",
+      "education": "Plan Management",
+      "ecommerce": "Support Coordination",
+      "realestate": "Direct Service Providers"
     }
   },
   "dashboard": {
