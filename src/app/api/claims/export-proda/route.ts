@@ -26,7 +26,7 @@ export async function POST(req: Request) {
             select: { ndisProviderNumber: true }
         })
 
-        const registrationNumber = dbUser?.ndisProviderNumber || 'MISSING_PROVIDER_ID'
+        const registrationNumber = dbUser?.ndisProviderNumber || 'SET_IN_SETTINGS'
 
         // 1. Fetch data from Prisma Database natively ensuring only their account claims are retrieved
         const rawClaims = await prisma.claim.findMany({
