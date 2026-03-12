@@ -65,6 +65,11 @@ export async function generateMetadata({
             template: `%s | NDIS Shield Hub`
         },
         description: SITE_DESCRIPTION,
+        icons: {
+            icon: '/images/logo-icon.png',
+            shortcut: '/images/logo-icon.png',
+            apple: '/images/logo-icon.png',
+        },
         verification: {
             google: 'gM8Zs6FrDD-L9UD1fLXaqR1fGhC_zLhiJ1yRvcARhNo',
         },

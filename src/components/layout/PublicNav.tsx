@@ -61,7 +61,7 @@ export function PublicNav() {
                     {/* Logo */}
                     <Link href={`/${locale}`} className="flex items-center group">
                         <Image
-                            src="/images/1.png"
+                            src="/images/logo-full.png"
                             alt="NDIS Shield Hub"
                             width={180}
                             height={44}

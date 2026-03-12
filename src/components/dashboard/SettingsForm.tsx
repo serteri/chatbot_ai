@@ -500,7 +500,7 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                                     <div className="p-6">
                                         <div className="flex items-center gap-4 pb-4 mb-4 border-b border-slate-100">
                                             <Image
-                                                src="/images/1.png"
+                                                src="/images/logo-full.png"
                                                 alt="NDIS Shield Hub"
                                                 width={140}
                                                 height={36}

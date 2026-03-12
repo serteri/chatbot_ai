@@ -83,11 +83,11 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                     <div className="flex items-center space-x-8">
                         <Link href={`/${currentLocale}/dashboard`} className="flex items-center">
                             <Image
-                                src="/images/1.png"
+                                src="/images/logo-full.png"
                                 alt="NDIS Shield Hub"
                                 width={160}
                                 height={40}
-                                className="h-9 w-auto object-contain"
+                                className="h-10 w-auto object-contain"
                                 priority
                             />
                         </Link>
