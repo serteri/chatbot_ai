@@ -2,29 +2,73 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 import * as XLSX from 'xlsx'
-import { parse as parseCsv } from 'papaparse'
 import { parse as parseDate, isValid } from 'date-fns'
 
-// Fuzzy Header Mapping Logic - Updated with more explicit variants
+// ─── Header aliases ────────────────────────────────────────────────────────────
 const HEADER_MAP: Record<string, string[]> = {
-    participantName: ['Participant Name', 'Participant', 'Name', 'Client Name', 'Full Name'],
-    participantNdisNumber: ['NDIS Number', 'NDIS No', 'ParticipantID', 'NDIS ID', 'NDIS #'],
-    supportItemNumber: ['Support Item', 'Support Item Number', 'Support Ite', 'Item Code', 'Support Item No'],
-    supportDeliveredDate: ['Date', 'Support Date', 'Service Date', 'Activity Date'],
-    quantityDelivered: ['Quantity', 'Hours', 'Qty', 'Units'],
-    unitPrice: ['UnitPrice', 'Price', 'Rate', 'Unit Price']
+    participantName:        ['participant name', 'participant', 'name', 'client name', 'full name'],
+    participantNdisNumber:  ['ndis number', 'ndis no', 'participantid', 'ndis id', 'ndis #', 'ndis'],
+    supportItemNumber:      ['support item', 'support item number', 'support item no', 'item code', 'support ite'],
+    supportDeliveredDate:   ['date', 'support date', 'service date', 'activity date'],
+    quantityDelivered:      ['quantity', 'hours', 'qty', 'units'],
+    unitPrice:              ['unitprice', 'unit price', 'price', 'rate'],
 }
 
-function findMappedKey(header: string): string | null {
-    const normalized = header.trim().toLowerCase()
-    for (const [key, aliases] of Object.entries(HEADER_MAP)) {
-        if (aliases.some(alias => normalized === alias.toLowerCase())) {
-            return key
-        }
+// Positional fallback: columns A-F when zero headers matched
+const INDEX_FALLBACK = [
+    'participantName',
+    'participantNdisNumber',
+    'supportItemNumber',
+    'supportDeliveredDate',
+    'quantityDelivered',
+    'unitPrice',
+]
+
+/**
+ * Aggressively normalise a raw cell header so BOM, non-breaking spaces,
+ * and random punctuation never cause a mismatch.
+ */
+function normaliseHeader(raw: any): string {
+    return String(raw)
+        .replace(/^\uFEFF/, '')          // strip BOM
+        .replace(/[\u00A0\u200B\u202F]/g, ' ')  // non-breaking / zero-width spaces → regular space
+        .replace(/[^a-zA-Z0-9 ]/g, ' ') // anything that is not alphanumeric or space → space
+        .replace(/\s+/g, ' ')           // collapse multiple spaces
+        .trim()
+        .toLowerCase()
+}
+
+function findMappedKey(normalisedHeader: string): string | null {
+    for (const [field, aliases] of Object.entries(HEADER_MAP)) {
+        if (aliases.includes(normalisedHeader)) return field
     }
     return null
 }
 
+function cleanNumber(v: any): number {
+    return parseFloat(String(v ?? '').replace(/[$,\s]/g, ''))
+}
+
+function parseAnyDate(v: any): string | null {
+    if (v instanceof Date) {
+        return isValid(v) ? v.toISOString() : null
+    }
+    if (typeof v === 'number') {
+        // Excel serial date
+        const d = new Date(Math.round((v - 25569) * 86400 * 1000))
+        return isValid(d) ? d.toISOString() : null
+    }
+    const s = String(v).trim()
+    const formats = ['dd/MM/yyyy', 'yyyy-MM-dd', 'MM/dd/yyyy', 'd/M/yyyy', 'dd-MM-yyyy']
+    for (const fmt of formats) {
+        const p = parseDate(s, fmt, new Date())
+        if (isValid(p)) return p.toISOString()
+    }
+    const fallback = new Date(s)
+    return isValid(fallback) ? fallback.toISOString() : null
+}
+
+// ─── POST ──────────────────────────────────────────────────────────────────────
 export async function POST(req: Request) {
     try {
         const session = await auth()
@@ -33,28 +77,28 @@ export async function POST(req: Request) {
         }
 
         const formData = await req.formData()
-        const action = formData.get('action') as string || 'parse' 
-        
+        const action = (formData.get('action') as string) || 'parse'
+
+        // ── COMMIT ────────────────────────────────────────────────────────────
         if (action === 'commit') {
             const claimsData = JSON.parse(formData.get('data') as string)
             if (!Array.isArray(claimsData) || claimsData.length === 0) {
                 return NextResponse.json({ error: 'No data to commit' }, { status: 400 })
             }
 
-            const cleanNum = (v: any) => parseFloat(String(v).replace(/[$,\s]/g, ''))
             const dataToInsert = claimsData.map((c: any) => {
-                const qty = cleanNum(c.quantityDelivered)
-                const price = cleanNum(c.unitPrice)
+                const qty   = cleanNumber(c.quantityDelivered)
+                const price = cleanNumber(c.unitPrice)
                 return {
-                    userId: session.user.id,
-                    participantName: String(c.participantName).trim(),
+                    userId:                session.user.id,
+                    participantName:       String(c.participantName).trim(),
                     participantNdisNumber: String(c.participantNdisNumber).trim(),
-                    supportItemNumber: String(c.supportItemNumber).trim(),
-                    supportDeliveredDate: new Date(c.supportDeliveredDate),
-                    quantityDelivered: qty,
-                    unitPrice: price,
-                    totalClaimAmount: qty * price,
-                    status: 'draft'
+                    supportItemNumber:     String(c.supportItemNumber).trim(),
+                    supportDeliveredDate:  new Date(c.supportDeliveredDate),
+                    quantityDelivered:     qty,
+                    unitPrice:             price,
+                    totalClaimAmount:      qty * price,
+                    status:                'draft',
                 }
             })
 
@@ -62,144 +106,163 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: true, count: dataToInsert.length })
         }
 
+        // ── PARSE ─────────────────────────────────────────────────────────────
         const file = formData.get('file') as File
         if (!file) {
             return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
         }
 
+        console.log(`[BULK IMPORT] File received: "${file.name}" (${file.size} bytes)`)
+
         const buffer = await file.arrayBuffer()
-        let rawData: any[] = []
-        let headers: string[] = []
 
-        console.log(`[BULK IMPORT] Processing file: ${file.name} (${file.size} bytes)`)
+        // Always use XLSX — it handles real CSV, UTF-16 CSV, XLS, and XLSX.
+        // Never use file.text() for binary formats from WPS/Excel.
+        const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: true })
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
 
-        if (file.name.endsWith('.csv')) {
-            const csvText = Buffer.from(buffer).toString('utf-8')
-            const result = parseCsv(csvText, { header: true, skipEmptyLines: true })
-            rawData = result.data as any[]
-            headers = result.meta.fields || []
-        } else {
-            const workbook = XLSX.read(buffer, { type: 'buffer' })
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
-            // Use header: 1 to get raw arrays first to detect headers safely
-            const jsonRows: any[][] = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' })
-            if (jsonRows.length > 0) {
-                headers = jsonRows[0].map(h => String(h).trim()).filter(h => h !== '')
-                // cellDates: true converts Excel serial numbers to JS Date objects automatically
-                rawData = XLSX.utils.sheet_to_json(firstSheet, { cellDates: true, defval: '' })
-            }
-        }
-
-        console.log(`[BULK IMPORT] Raw Headers Detected:`, headers)
-
-        if (rawData.length === 0) {
-            return NextResponse.json({ error: 'File is empty' }, { status: 400 })
-        }
-
-        // Header Mapping Analysis
-        const mapping: Record<string, string | null> = {}
-        headers.forEach(h => {
-            mapping[h] = findMappedKey(h)
+        // Step 1: read everything as raw arrays so we control key normalisation
+        const allRows: any[][] = XLSX.utils.sheet_to_json(firstSheet, {
+            header:   1,
+            defval:   '',
+            cellDates: true,
         })
 
-        console.log(`[BULK IMPORT] Fuzzy Mapping Result:`, mapping)
+        console.log(`[BULK IMPORT] Total rows in sheet (incl. header): ${allRows.length}`)
+        console.log('RAW HEADERS FOUND:', allRows[0])
 
-        // Index-based Fallback (Column A=Name, B=NDIS, C=Item, D=Date, E=Qty, F=Price)
-        const hasKeyMappings = mapping[headers[0]] || mapping[headers[1]]
-        if (!hasKeyMappings && headers.length >= 6) {
-            console.log(`[BULK IMPORT] Warning: No mapping found. Applying Index Fallback (A-F strategy)`)
-            // Only apply if the user didn't have ANY headers match (high confidence it's a raw dump)
-            // This is just for internal logic, UI will allow manual override
+        if (allRows.length < 2) {
+            return NextResponse.json({ error: 'File is empty or has no data rows' }, { status: 400 })
         }
 
-        const processedData: any[] = []
-        rawData.forEach((row, index) => {
+        // Step 2: normalise headers — this is the single source of truth for ALL key lookups
+        const rawHeaderRow: any[]  = allRows[0]
+        const headers: string[]    = rawHeaderRow
+            .map(normaliseHeader)
+            .filter(h => h !== '')
+
+        console.log(`[BULK IMPORT] Normalised headers:`, headers)
+
+        // Step 3: build rawData rows with the same normalised keys
+        // This guarantees row[header] lookups always succeed on the frontend too.
+        const rawData: any[] = allRows.slice(1).map(rowArr => {
+            const obj: any = {}
+            rawHeaderRow.forEach((origKey: any, i: number) => {
+                const normKey = normaliseHeader(String(origKey))
+                if (normKey) obj[normKey] = rowArr[i]
+            })
+            return obj
+        }).filter(row =>
+            // drop entirely empty rows
+            Object.values(row).some(v => v !== '' && v !== null && v !== undefined)
+        )
+
+        console.log(`[BULK IMPORT] Data rows after empty-row filter: ${rawData.length}`)
+
+        if (rawData.length === 0) {
+            return NextResponse.json({ error: 'File has no data rows' }, { status: 400 })
+        }
+
+        // Step 4: auto-map normalised headers to field keys
+        const autoMapping: Record<string, string> = {}  // field → normalisedHeader
+        headers.forEach(h => {
+            const field = findMappedKey(h)
+            if (field && !autoMapping[field]) autoMapping[field] = h
+        })
+
+        console.log(`[BULK IMPORT] Auto-mapping result:`, autoMapping)
+
+        // Step 5: decide whether to use index fallback
+        const mappedFieldCount = Object.keys(autoMapping).length
+        const useIndexFallback  = mappedFieldCount === 0 && headers.length >= 6
+        if (useIndexFallback) {
+            console.log(`[BULK IMPORT] No headers matched — applying A-F index fallback`)
+        }
+
+        // Step 6: build returnMapping (normalisedHeader → fieldKey) for consistent frontend init
+        const headerToField: Record<string, string> = {}
+        Object.entries(autoMapping).forEach(([field, header]) => {
+            headerToField[header] = field
+        })
+
+        // Step 7: process each row
+        const processedData: any[] = rawData.map((row, index) => {
             const entry: any = { _originalRow: index + 2, _errors: [] }
-            
-            // Apply mapped values with Trimming + currency cleanup
-            Object.keys(row).forEach(key => {
-                const mappedKey = findMappedKey(key) || mapping[key]
-                if (mappedKey) {
-                    let val = row[key]
+
+            if (useIndexFallback) {
+                // Positional mapping: column 0 = Name, 1 = NDIS, …, 5 = Price
+                const rowValues = Object.values(row)
+                INDEX_FALLBACK.forEach((field, i) => {
+                    if (i < rowValues.length) {
+                        let val: any = rowValues[i]
+                        if (typeof val === 'string') val = val.trim()
+                        if (field === 'unitPrice' || field === 'quantityDelivered') {
+                            if (typeof val === 'string') val = val.replace(/[$,\s]/g, '')
+                        }
+                        entry[field] = val
+                    }
+                })
+            } else {
+                Object.entries(autoMapping).forEach(([field, normHeader]) => {
+                    let val = row[normHeader]
                     if (typeof val === 'string') {
                         val = val.trim()
-                        // Strip currency symbols and commas from numeric fields
-                        if (mappedKey === 'unitPrice' || mappedKey === 'quantityDelivered') {
+                        if (field === 'unitPrice' || field === 'quantityDelivered') {
                             val = val.replace(/[$,\s]/g, '')
                         }
                     }
-                    entry[mappedKey] = val
-                }
-            })
+                    entry[field] = val
+                })
+            }
 
-            // Hard Validation
-            if (!entry.participantName) entry._errors.push('Missing Name')
+            // ── Validation ───────────────────────────────────────────────────
+            if (!entry.participantName)       entry._errors.push('Missing Name')
             if (!entry.participantNdisNumber) entry._errors.push('Missing NDIS ID')
-            if (!entry.supportItemNumber) entry._errors.push('Missing Item Code')
-            
-            const price = parseFloat(entry.unitPrice)
+            if (!entry.supportItemNumber)     entry._errors.push('Missing Item Code')
+
+            const price = cleanNumber(entry.unitPrice)
             if (isNaN(price)) {
                 entry._errors.push('Invalid Price')
             } else if (price > 10000) {
                 entry._errors.push(`Extreme Price: $${price.toLocaleString()}`)
             }
 
-            const qty = parseFloat(entry.quantityDelivered)
+            const qty = cleanNumber(entry.quantityDelivered)
             if (isNaN(qty)) entry._errors.push('Invalid Qty')
 
-            // Date Processing
-            const rawDate = entry.supportDeliveredDate
-            if (rawDate !== undefined && rawDate !== '' && rawDate !== null) {
-                // cellDates: true gives us a real JS Date for XLSX cells
-                if (rawDate instanceof Date) {
-                    if (isValid(rawDate)) {
-                        entry.supportDeliveredDate = rawDate.toISOString()
-                    } else {
-                        entry._errors.push('Invalid Date')
-                    }
-                } else if (typeof rawDate === 'number') {
-                    // Fallback: Excel serial number (days since 1900-01-01, with leap-year bug offset)
-                    const jsDate = new Date(Math.round((rawDate - 25569) * 86400 * 1000))
-                    if (isValid(jsDate)) {
-                        entry.supportDeliveredDate = jsDate.toISOString()
-                    } else {
-                        entry._errors.push('Invalid Date')
-                    }
-                } else {
-                    // String date — try AU format DD/MM/YYYY first, then ISO, then native parse
-                    const dateStr = String(rawDate).trim()
-                    let parsedDate = parseDate(dateStr, 'dd/MM/yyyy', new Date())
-                    if (!isValid(parsedDate)) parsedDate = parseDate(dateStr, 'yyyy-MM-dd', new Date())
-                    if (!isValid(parsedDate)) parsedDate = parseDate(dateStr, 'MM/dd/yyyy', new Date())
-                    if (!isValid(parsedDate)) parsedDate = new Date(dateStr)
-                    if (isValid(parsedDate)) {
-                        entry.supportDeliveredDate = parsedDate.toISOString()
-                    } else {
-                        entry._errors.push('Invalid Date')
-                    }
-                }
+            // ── Date ─────────────────────────────────────────────────────────
+            const iso = parseAnyDate(entry.supportDeliveredDate)
+            if (iso) {
+                entry.supportDeliveredDate = iso
+            } else if (entry.supportDeliveredDate !== undefined && entry.supportDeliveredDate !== '') {
+                entry._errors.push('Invalid Date')
             } else {
                 entry._errors.push('No Date')
             }
 
-            processedData.push(entry)
+            return entry
         })
 
-        return NextResponse.json({ 
-            success: true, 
-            action: 'parse',
-            headers: headers,
-            data: processedData,
-            rawRows: rawData, // Return raw data for manual mapping
-            summary: {
-                total: processedData.length,
-                valid: processedData.filter(r => r._errors.length === 0).length,
-                invalid: processedData.filter(r => r._errors.length > 0).length
-            }
+        const summary = {
+            total:   processedData.length,
+            valid:   processedData.filter(r => r._errors.length === 0).length,
+            invalid: processedData.filter(r => r._errors.length > 0).length,
+        }
+
+        console.log(`[BULK IMPORT] Summary:`, summary)
+
+        return NextResponse.json({
+            success: true,
+            action:  'parse',
+            headers,          // normalised — safe for dropdown display
+            autoMapping,      // field → normalisedHeader (for frontend initial selection)
+            data:     processedData,
+            rawRows:  rawData, // rows with normalised keys — safe for re-mapping on client
+            summary,
         })
 
     } catch (error) {
-        console.error('Bulk Import API Error:', error)
-        return NextResponse.json({ error: 'Internal File Processing Error' }, { status: 500 })
+        console.error('[BULK IMPORT] Fatal error:', error)
+        return NextResponse.json({ error: 'Internal file processing error' }, { status: 500 })
     }
 }

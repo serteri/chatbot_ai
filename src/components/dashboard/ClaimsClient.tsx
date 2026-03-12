@@ -74,15 +74,17 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
             }
 
             // Store raw results for manual mapping
-            setRawRows(result.rawRows) 
+            setRawRows(result.rawRows)
             setRawHeaders(result.headers)
-            
-            // Initial auto-mapping
-            const initialMapping: Record<string, string> = {}
-            if (result.headers) {
+
+            // Use server-side autoMapping (already normalised) — fall back to client-side if missing
+            const initialMapping: Record<string, string> = result.autoMapping
+                ? { ...result.autoMapping }
+                : {}
+            if (Object.keys(initialMapping).length === 0 && result.headers) {
                 result.headers.forEach((h: string) => {
                     const mapped = findAutoMapping(h)
-                    if (mapped) initialMapping[mapped] = h
+                    if (mapped && !initialMapping[mapped]) initialMapping[mapped] = h
                 })
             }
             setColumnMapping(initialMapping)
@@ -132,14 +134,24 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
         }
     }
 
+    // Mirror the server-side normaliseHeader so client lookups always match
+    const normaliseHeader = (raw: string) =>
+        raw
+            .replace(/^\uFEFF/, '')
+            .replace(/[\u00A0\u200B\u202F]/g, ' ')
+            .replace(/[^a-zA-Z0-9 ]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .toLowerCase()
+
     const findAutoMapping = (header: string) => {
-        const h = header.toLowerCase().trim()
+        const h = normaliseHeader(header)
         if (['participant name', 'participant', 'name', 'client name', 'full name'].includes(h)) return 'participantName'
-        if (['ndis number', 'ndis no', 'participantid', 'ndis id', 'ndis #'].includes(h)) return 'participantNdisNumber'
-        if (['support item', 'support item number', 'support ite', 'item code', 'support item no'].includes(h)) return 'supportItemNumber'
+        if (['ndis number', 'ndis no', 'participantid', 'ndis id', 'ndis #', 'ndis'].includes(h)) return 'participantNdisNumber'
+        if (['support item', 'support item number', 'support item no', 'item code', 'support ite'].includes(h)) return 'supportItemNumber'
         if (['date', 'support date', 'service date', 'activity date'].includes(h)) return 'supportDeliveredDate'
         if (['quantity', 'hours', 'qty', 'units'].includes(h)) return 'quantityDelivered'
-        if (['unitprice', 'price', 'rate', 'unit price'].includes(h)) return 'unitPrice'
+        if (['unitprice', 'unit price', 'price', 'rate'].includes(h)) return 'unitPrice'
         return null
     }
 
@@ -153,10 +165,16 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
         const newPreview = rawRows.map((row: any, index: number) => {
             const entry: any = { _originalRow: index + 2, _errors: [] }
             
-            // Apply new mapping from RAW row data
+            // Apply new mapping from RAW row data (keys are server-normalised)
             Object.entries(newMapping).forEach(([field, header]) => {
-                const val = row[header]
-                entry[field] = typeof val === 'string' ? val.trim() : val
+                let val = row[header]
+                if (typeof val === 'string') {
+                    val = val.trim()
+                    if (field === 'unitPrice' || field === 'quantityDelivered') {
+                        val = val.replace(/[$,\s]/g, '')
+                    }
+                }
+                entry[field] = val
             })
 
             // Basic validation re-run
@@ -174,15 +192,19 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                 entry._errors.push(`Extreme Price: $${price.toLocaleString()}`)
             }
 
-            // Date Processing (Client-side mirror of server logic)
+            // Date Processing (client mirror of server logic)
             const rawDateVal = entry.supportDeliveredDate
             if (rawDateVal !== undefined && rawDateVal !== '' && rawDateVal !== null) {
                 const dateStr = String(rawDateVal).trim()
-                // Try AU format first, then ISO, then native
-                let parsedDate = parseDate(dateStr, 'dd/MM/yyyy', new Date())
-                if (!isValid(parsedDate)) parsedDate = parseDate(dateStr, 'yyyy-MM-dd', new Date())
-                if (!isValid(parsedDate)) parsedDate = new Date(dateStr)
-                if (isValid(parsedDate)) {
+                // Try DD/MM/YYYY → ISO formats → full ISO string → native
+                const formats = ['dd/MM/yyyy', 'yyyy-MM-dd', 'd/M/yyyy', 'dd-MM-yyyy']
+                let parsedDate: Date | null = null
+                for (const fmt of formats) {
+                    const p = parseDate(dateStr, fmt, new Date())
+                    if (isValid(p)) { parsedDate = p; break }
+                }
+                if (!parsedDate) { const p = new Date(dateStr); if (isValid(p)) parsedDate = p }
+                if (parsedDate) {
                     entry.supportDeliveredDate = parsedDate.toISOString()
                 } else {
                     entry._errors.push('Bad Date')
