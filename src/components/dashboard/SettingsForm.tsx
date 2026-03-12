@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -474,6 +475,56 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                                     </Button>
                                 </div>
                             </CardFooter>
+                        </Card>
+
+                        {/* ── Email Signature Preview ── */}
+                        <Card className="border-slate-200 dark:border-slate-800 shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Mail className="h-5 w-5 text-[#0088CC]" />
+                                    Email Signature
+                                </CardTitle>
+                                <CardDescription>
+                                    This signature is automatically appended to outbound NDIS compliance notifications.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {/* Live preview rendered exactly as it appears in emails */}
+                                <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                                    <div className="bg-slate-50 px-4 py-2 border-b border-slate-200 flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-red-400" />
+                                        <div className="w-3 h-3 rounded-full bg-amber-400" />
+                                        <div className="w-3 h-3 rounded-full bg-green-400" />
+                                        <span className="ml-2 text-xs text-slate-400 font-mono">Email preview</span>
+                                    </div>
+                                    <div className="p-6">
+                                        <div className="flex items-center gap-4 pb-4 mb-4 border-b border-slate-100">
+                                            <Image
+                                                src="/images/1.png"
+                                                alt="NDIS Shield Hub"
+                                                width={140}
+                                                height={36}
+                                                className="h-9 w-auto object-contain"
+                                            />
+                                        </div>
+                                        <div className="space-y-1 text-sm">
+                                            <p className="font-semibold text-slate-900">{name || user.name || 'Your Name'}</p>
+                                            <p className="text-slate-500">{user.email}</p>
+                                            {ndisProviderNumber && (
+                                                <p className="text-slate-500">NDIS Provider: <span className="font-mono text-slate-700">{ndisProviderNumber}</span></p>
+                                            )}
+                                            {abn && (
+                                                <p className="text-slate-500">ABN: <span className="font-mono text-slate-700">{abn}</span></p>
+                                            )}
+                                        </div>
+                                        <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2">
+                                            <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Secured by</span>
+                                            <span className="text-[10px] font-bold text-[#0088CC]">NDIS Shield Hub</span>
+                                            <span className="text-[10px] text-slate-400">· Data in Sydney (ap-southeast-2)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
                         </Card>
                     </div>
                 )}

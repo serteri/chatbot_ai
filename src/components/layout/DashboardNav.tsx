@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl' // useLocale eklendi
 import { useRouter, usePathname } from 'next/navigation'
@@ -80,9 +81,15 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                 <div className="flex items-center justify-between h-16">
                     {/* SOL TARA: Logo ve Menüler */}
                     <div className="flex items-center space-x-8">
-                        <Link href={`/${currentLocale}/dashboard`} className="text-xl font-bold text-blue-600 flex items-center gap-2">
-                            <Shield className="h-6 w-6" />
-                            <span>NDIS Shield Hub</span>
+                        <Link href={`/${currentLocale}/dashboard`} className="flex items-center">
+                            <Image
+                                src="/images/1.png"
+                                alt="NDIS Shield Hub"
+                                width={160}
+                                height={40}
+                                className="h-9 w-auto object-contain"
+                                priority
+                            />
                         </Link>
 
                         <div className="hidden md:flex items-center space-x-1">

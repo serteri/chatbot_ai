@@ -1,12 +1,12 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 import { useState } from 'react'
 import {
     Menu,
     X,
-    Shield,
     ClipboardCheck,
     Server,
     DollarSign,
@@ -59,18 +59,15 @@ export function PublicNav() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
-                    <Link href={`/${locale}`} className="flex items-center space-x-2.5 group">
-                        <div className="w-9 h-9 bg-gradient-to-br from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center shadow-md shadow-teal-500/20 group-hover:shadow-lg group-hover:shadow-teal-500/30 transition-all duration-300">
-                            <Shield className="h-5 w-5 text-white" />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-lg font-bold text-slate-900 leading-tight tracking-tight">
-                                NDIS Shield Hub
-                            </span>
-                            <span className="text-[10px] font-medium text-teal-700 uppercase tracking-widest leading-none">
-                                NDIS Compliance
-                            </span>
-                        </div>
+                    <Link href={`/${locale}`} className="flex items-center group">
+                        <Image
+                            src="/images/1.png"
+                            alt="NDIS Shield Hub"
+                            width={180}
+                            height={44}
+                            className="h-10 w-auto object-contain transition-opacity duration-200 group-hover:opacity-90"
+                            priority
+                        />
                     </Link>
 
                     {/* Desktop Navigation */}
