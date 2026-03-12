@@ -2420,9 +2420,11 @@
     "expires": "Expiry date"
   },
   "usage": {
-    "title": "Usage Overview",
+    "title": "NDIS Usage Overview",
     "chatbots": "Chatbots",
+    "activeClaims": "Active Claims",
     "conversations": "Conversations",
+    "claimValidations": "Claim Validations",
     "documents": "Documents",
     "unlimited": "Unlimited",
     "warningTitle": "Approaching Limit",

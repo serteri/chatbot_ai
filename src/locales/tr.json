@@ -2413,9 +2413,11 @@
     "expires": "Son kullanma tarihi"
   },
   "usage": {
-    "title": "Kullanım Özeti",
+    "title": "NDIS Kullanım Özeti",
     "chatbots": "Chatbotlar",
+    "activeClaims": "Aktif Talepler",
     "conversations": "Konuşmalar",
+    "claimValidations": "Talep Doğrulamaları",
     "documents": "Dokümanlar",
     "unlimited": "Sınırsız",
     "warningTitle": "Limite Yaklaşıyorsunuz",

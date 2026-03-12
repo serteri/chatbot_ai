@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Bot, MessageSquare, FileText, AlertTriangle, Zap, Calendar } from 'lucide-react'
+import { FileSpreadsheet, ShieldCheck, FileText, AlertTriangle, Zap, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 
@@ -110,12 +110,12 @@ export function UsageIndicator({ locale, subscription, currentUsage }: UsageIndi
                     </div>
                 )}
 
-                {/* Chatbots */}
+                {/* Active Claims */}
                 <div className="space-y-1.5">
                     <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2">
-                            <Bot className="h-4 w-4 text-muted-foreground" />
-                            <span>{t('chatbots')}</span>
+                            <FileSpreadsheet className="h-4 w-4 text-muted-foreground" />
+                            <span>{t('activeClaims')}</span>
                         </div>
                         <span className="font-medium">
                             {isUnlimited(subscription.maxChatbots, 'chatbot')
@@ -135,12 +135,12 @@ export function UsageIndicator({ locale, subscription, currentUsage }: UsageIndi
                     )}
                 </div>
 
-                {/* Conversations */}
+                {/* Claim Validations */}
                 <div className="space-y-1.5">
                     <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2">
-                            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                            <span>{t('conversations')}</span>
+                            <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                            <span>{t('claimValidations')}</span>
                         </div>
                         <span className="font-medium">
                             {isUnlimited(subscription.maxConversations, 'conversation')

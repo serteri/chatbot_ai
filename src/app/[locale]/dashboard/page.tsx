@@ -3,14 +3,12 @@ import { redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { prisma } from '@/lib/db/prisma'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import {
-    Bot,
-    MessageSquare,
-    FileText,
+    FileSpreadsheet,
     ShieldCheck,
     ArrowRight,
-    Activity
+    Activity,
+    FolderLock,
 } from 'lucide-react'
 import Link from 'next/link'
 import { UsageIndicator } from '@/components/dashboard/UsageIndicator'
@@ -52,23 +50,26 @@ export default async function DashboardPage({
         }
     }
 
-    // Fetch chatbot counts (Core NDIS AI engines)
-    const chatbots = await prisma.chatbot.findMany({
-        where: { userId: session.user.id },
-        include: {
-            _count: {
-                select: {
-                    documents: true,
-                    conversations: true,
-                }
-            }
-        }
+    // ── NDIS-specific data ────────────────────────────────────────────────────
+
+    // Total claims created by this provider
+    const totalClaims = await prisma.claim.count({
+        where: { userId: session.user.id }
     })
 
-    const totalDocuments = chatbots.reduce((sum, bot) => sum + bot._count.documents, 0)
-    const totalConversations = chatbots.reduce((sum, bot) => sum + bot._count.conversations, 0)
+    // Documents validated through the Service Agreement Validator
+    const totalValidations = await prisma.auditLog.count({
+        where: { actorId: session.user.id, action: 'DOCUMENT_ANALYZED' }
+    })
 
-    // Fetch recent audit logs
+    // Digital Evidence Vault — total documents indexed across all chatbot knowledge bases
+    const chatbots = await prisma.chatbot.findMany({
+        where: { userId: session.user.id },
+        include: { _count: { select: { documents: true } } }
+    })
+    const totalVaultDocuments = chatbots.reduce((sum, bot) => sum + bot._count.documents, 0)
+
+    // Recent audit trail
     const recentAudits = await prisma.auditLog.findMany({
         where: { actorId: session.user.id },
         orderBy: { createdAt: 'desc' },
@@ -108,19 +109,19 @@ export default async function DashboardPage({
                             </Card>
                         </Link>
 
-                        {/* AI Agents Manager */}
-                        <Link href={`/${locale}/dashboard/chatbots`}>
+                        {/* Claims Management */}
+                        <Link href={`/${locale}/dashboard/claims`}>
                             <Card className="bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 transition-all cursor-pointer group h-full">
                                 <CardContent className="p-6">
                                     <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mb-4">
-                                        <Bot className="h-6 w-6 text-teal-600" />
+                                        <FileSpreadsheet className="h-6 w-6 text-teal-600" />
                                     </div>
-                                    <h3 className="text-xl font-semibold mb-2 text-white">Active AI Agents</h3>
+                                    <h3 className="text-xl font-semibold mb-2 text-white">Claims Management</h3>
                                     <p className="text-teal-100 text-sm mb-4">
-                                        Manage your compliance and support agents. Retrain models with new pricing guides or frameworks.
+                                        Upload bulk claims, map headers instantly, and generate PRODA-ready CSV exports with zero errors.
                                     </p>
                                     <div className="flex items-center text-sm font-medium text-white group-hover:text-teal-200">
-                                        <span>Manage Engines</span>
+                                        <span>Go to Claims</span>
                                         <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                     </div>
                                 </CardContent>
@@ -145,37 +146,40 @@ export default async function DashboardPage({
                                 currentPeriodEnd: subscription.currentPeriodEnd
                             }}
                             currentUsage={{
-                                chatbots: chatbots.length,
-                                documents: totalDocuments,
-                                conversations: totalConversations
+                                chatbots: totalClaims,
+                                documents: totalVaultDocuments,
+                                conversations: totalValidations
                             }}
                         />
                     </div>
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {/* Audit Readiness */}
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Compliance Chats</CardTitle>
-                            <MessageSquare className="h-4 w-4 text-slate-400" />
+                            <CardTitle className="text-sm font-medium">Audit Readiness</CardTitle>
+                            <ShieldCheck className="h-4 w-4 text-slate-400" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{totalConversations}</div>
-                            <p className="text-xs text-slate-500 mt-1">Total queries handled</p>
+                            <div className="text-2xl font-bold">{totalValidations}</div>
+                            <p className="text-xs text-slate-500 mt-1">Service agreements validated</p>
                         </CardContent>
                     </Card>
 
+                    {/* Digital Evidence Vault */}
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Auditable Documents</CardTitle>
-                            <FileText className="h-4 w-4 text-slate-400" />
+                            <CardTitle className="text-sm font-medium">Digital Evidence Vault</CardTitle>
+                            <FolderLock className="h-4 w-4 text-slate-400" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{totalDocuments}</div>
-                            <p className="text-xs text-slate-500 mt-1">Indexed in the knowledge base</p>
+                            <div className="text-2xl font-bold">{totalVaultDocuments}</div>
+                            <p className="text-xs text-slate-500 mt-1">Documents secured in vault</p>
                         </CardContent>
                     </Card>
 
+                    {/* Audit Trail Activity */}
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Audit Trail Activity</CardTitle>
