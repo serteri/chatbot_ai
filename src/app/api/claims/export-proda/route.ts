@@ -4,39 +4,7 @@ import { prisma } from '@/lib/db/prisma'
 import { InternalClaim } from '@/types/proda'
 import { transformClaimsToCsvData, generateProdaCsvString } from '@/lib/proda-utils'
 
-// Mock Data Source - In a real system, this would be fetched via Prisma 'prisma.claim.findMany({ where: { id: { in: claimIds } } })'
-const MOCK_CLAIMS_DATABASE: InternalClaim[] = [
-    {
-        id: 'clm_001A9F',
-        agencyRegistrationNumber: '4050012345',
-        participantNdisNumber: '431009876',
-        supportItemNumber: '01_011_0107_1_1',
-        supportDeliveredDate: new Date('2025-10-15T09:00:00.000Z'),
-        quantityDelivered: 4.5,
-        unitPrice: 65.47,
-        totalClaimAmount: 294.615
-    },
-    {
-        id: 'clm_002B8E',
-        agencyRegistrationNumber: '4050012345',
-        participantNdisNumber: '431009876',
-        supportItemNumber: '04_104_0125_6_1',
-        supportDeliveredDate: new Date('2025-10-16T14:30:00.000Z'),
-        quantityDelivered: 2,
-        unitPrice: 21.50,
-        totalClaimAmount: 43.00
-    },
-    {
-        id: 'clm_003C7D',
-        agencyRegistrationNumber: '4050012345',
-        participantNdisNumber: '431001111',
-        supportItemNumber: '15_056_0128_1_3',
-        supportDeliveredDate: new Date('2025-10-18T10:00:00.000Z'),
-        quantityDelivered: 1,
-        unitPrice: 193.99,
-        totalClaimAmount: 193.99
-    }
-]
+// No longer relying on mocks, querying live Prisma database
 
 export async function POST(req: Request) {
     try {
@@ -60,8 +28,13 @@ export async function POST(req: Request) {
 
         const registrationNumber = dbUser?.ndisProviderNumber || 'MISSING_PROVIDER_ID'
 
-        // 1. Fetch data from Mock DB (Substitute for Prisma later)
-        const rawClaims = MOCK_CLAIMS_DATABASE.filter(claim => claimIds.includes(claim.id))
+        // 1. Fetch data from Prisma Database natively ensuring only their account claims are retrieved
+        const rawClaims = await prisma.claim.findMany({
+            where: {
+                id: { in: claimIds },
+                userId: session.user.id
+            }
+        })
 
         if (rawClaims.length === 0) {
             return NextResponse.json({ error: 'No matching claims found' }, { status: 404 })

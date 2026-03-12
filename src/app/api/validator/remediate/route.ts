@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
         const openai = getAzureOpenAIClient()
 
         const response = await openai.chat.completions.create({
-            model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'pylonchat-v1',
+            model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'ndis-shield-hub-v1',
             messages: [
                 { role: 'system', content: SYSTEM_PROMPT },
                 {

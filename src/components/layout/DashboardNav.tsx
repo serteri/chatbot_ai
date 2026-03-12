@@ -96,10 +96,18 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                             </Link>
 
                             <Link
-                                href={`/${currentLocale}/dashboard/validator`}
+                                href={`/${currentLocale}/dashboard/claims`}
                                 className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
                             >
                                 <FileText className="h-4 w-4" />
+                                {t('nav.claims', { fallback: 'Claims (PRODA)' })}
+                            </Link>
+
+                            <Link
+                                href={`/${currentLocale}/dashboard/validator`}
+                                className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
+                            >
+                                <ShieldCheck className="h-4 w-4" />
                                 {t('nav.validator', { fallback: 'Validator' })}
                             </Link>
 
@@ -107,31 +115,16 @@ export default function DashboardNav({ user, planType = 'free' }: DashboardNavPr
                                 href={`/${currentLocale}/dashboard/vault`}
                                 className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
                             >
-                                <ShieldCheck className="h-4 w-4" />
-                                Document Vault
+                                <Shield className="h-4 w-4" />
+                                {t('nav.vault', { fallback: 'Document Vault' })}
                             </Link>
 
                             <Link
-                                href={`/${currentLocale}/dashboard/chatbots`}
+                                href={`/${currentLocale}/dashboard/settings`}
                                 className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
                             >
-                                <Shield className="h-4 w-4" />
-                                {t('nav.aiAgents', { fallback: 'AI Agents' })}
-                            </Link>
-
-                            <Link
-                                href={`/${currentLocale}/dashboard/conversations`}
-                                className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition flex items-center gap-2"
-                            >
-                                <Shield className="h-4 w-4" />
-                                {t('nav.conversations')}
-                            </Link>
-
-                            <Link
-                                href={`/${currentLocale}/dashboard/pricing`}
-                                className="text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-md transition"
-                            >
-                                {t('nav.pricing')}
+                                <Settings className="h-4 w-4" />
+                                {t('nav.settings')}
                             </Link>
                         </div>
                     </div>

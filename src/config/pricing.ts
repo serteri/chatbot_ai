@@ -7,81 +7,69 @@ import { SubscriptionPlan, PlanConfig } from '@/types'
 export const PRICING_PLANS: Record<SubscriptionPlan, PlanConfig> = {
   free: {
     id: 'free',
-    name: 'Free',
+    name: 'Starter',
     price: {
       monthly: 0,
       yearly: 0,
     },
     limits: {
-      maxChatbots: 1,
-      maxDocuments: 5,
-      maxConversations: 50, // per month
-      storageLimit: 50, // MB
+      maxChatbots: 0,
+      maxDocuments: 10,
+      maxConversations: 0,
+      storageLimit: 100, // MB
     },
     features: [
-      '1 chatbot',
-      '5 belge yükleme',
-      '50 konuşma/ay',
-      '50 MB depolama',
-      'Temel özelleştirme',
-      'Email destek',
-      'ChatbotAI branding',
+      '5 NDIS Claims / month',
+      'NDIS Price Guide Sync (Basic)',
+      'Audit Evidence Vault (100MB)',
+      'Email Support',
+      'NDIS Shield Hub branding',
     ],
   },
 
   starter: {
     id: 'starter',
-    name: 'Starter',
+    name: 'Professional',
     price: {
-      monthly: 49,
-      yearly: 490, // ~%17 indirim
+      monthly: 99,
+      yearly: 990,
     },
     limits: {
-      maxChatbots: 3,
-      maxDocuments: 50,
-      maxConversations: 1000,
-      storageLimit: 500, // MB
+      maxChatbots: 0,
+      maxDocuments: 100,
+      maxConversations: 0,
+      storageLimit: 1000, // MB
     },
     features: [
-      '3 chatbot',
-      '50 belge yükleme',
-      '1,000 konuşma/ay',
-      '500 MB depolama',
-      'Tam özelleştirme',
-      'Canlı destek entegrasyonu',
-      'Temel analytics',
-      'Email destek',
-      'Branding kaldırma seçeneği',
+      'Unlimited NDIS Claims',
+      'PRODA Bulk Export',
+      'NDIS Price Guide Sync (Full)',
+      'Audit Evidence Vault (1GB)',
+      'Priority Email Support',
+      'No Branding',
     ],
   },
 
   professional: {
     id: 'professional',
-    name: 'Professional',
+    name: 'Business',
     price: {
-      monthly: 149,
-      yearly: 1490, // ~%17 indirim
+      monthly: 249,
+      yearly: 2490,
     },
     limits: {
-      maxChatbots: 10,
-      maxDocuments: 200,
-      maxConversations: 5000,
-      storageLimit: 2000, // MB (2GB)
+      maxChatbots: 0,
+      maxDocuments: -1,
+      maxConversations: 0,
+      storageLimit: 5000, // MB
     },
     features: [
-      '10 chatbot',
-      '200 belge yükleme',
-      '5,000 konuşma/ay',
-      '2 GB depolama',
-      'Gelişmiş özelleştirme',
-      'Tüm AI modelleri (GPT-4, Claude)',
-      'Canlı destek entegrasyonu',
-      'Gelişmiş analytics & raporlar',
-      'API erişimi',
-      'Takım işbirliği',
-      'Öncelikli destek',
-      'White-label (branding yok)',
-      'Custom domain',
+      'Everything in Professional',
+      'Multiple PRODA Accounts',
+      'Advanced Audit Readiness Reports',
+      'Dedicated Account Manager',
+      'Audit Evidence Vault (5GB)',
+      'API Access for CRM Sync',
     ],
   },
 
@@ -89,30 +77,20 @@ export const PRICING_PLANS: Record<SubscriptionPlan, PlanConfig> = {
     id: 'enterprise',
     name: 'Enterprise',
     price: {
-      monthly: 99,
-      yearly: 990, // ~%17 indirim
+      monthly: 499,
+      yearly: 4990,
     },
     limits: {
-      maxChatbots: -1, // Unlimited
+      maxChatbots: -1,
       maxDocuments: -1,
       maxConversations: -1,
       storageLimit: -1,
     },
     features: [
-      'Sınırsız chatbot',
-      'Sınırsız belge',
-      'Sınırsız konuşma',
-      'Sınırsız depolama',
-      'Professional tüm özellikleri',
-      'Özel AI model training',
-      'On-premise deployment',
-      'Dedicated infrastructure',
-      'SLA garantisi (99.9%)',
-      'Dedicated account manager',
-      '24/7 öncelikli destek',
-      'Custom integrations',
-      'Advanced security & compliance',
-      'Multi-region deployment',
+      'Custom Solutions',
+      'Unlimited Everything',
+      'SLA Guarantee',
+      'Whitelabel Portal',
     ],
   },
 }

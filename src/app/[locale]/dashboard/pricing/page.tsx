@@ -44,82 +44,68 @@ export default async function PricingPage({
                         <thead>
                             <tr className="border-b">
                                 <th className="text-left p-4">{t('pricing.feature')}</th>
-                                <th className="text-center p-4">{t('pricing.plans.free.name')}</th>
-                                <th className="text-center p-4">{t('pricing.plans.pro.name')}</th>
-                                <th className="text-center p-4">{t('pricing.plans.business.name')}</th>
-                                <th className="text-center p-4">{t('pricing.plans.enterprise.name')}</th>
+                                <th className="text-center p-4">Starter</th>
+                                <th className="text-center p-4">Professional</th>
+                                <th className="text-center p-4">Business</th>
+                                <th className="text-center p-4">Enterprise</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr className="border-b">
-                                <td className="p-4">{t('pricing.chatbotCount')}</td>
-                                <td className="text-center p-4">1</td>
+                                <td className="p-4">NDIS Claims / Month</td>
                                 <td className="text-center p-4">5</td>
-                                <td className="text-center p-4">10</td>
-                                <td className="text-center p-4">{t('pricing.unlimited')}</td>
+                                <td className="text-center p-4">Unlimited</td>
+                                <td className="text-center p-4">Unlimited</td>
+                                <td className="text-center p-4">Unlimited</td>
                             </tr>
                             <tr className="border-b">
-                                <td className="p-4">{t('pricing.documentCount')}</td>
-                                <td className="text-center p-4">3</td>
-                                <td className="text-center p-4">50</td>
-                                <td className="text-center p-4">100</td>
-                                <td className="text-center p-4">{t('pricing.unlimited')}</td>
-                            </tr>
-                            <tr className="border-b">
-                                <td className="p-4">{t('pricing.monthlyConversations')}</td>
-                                <td className="text-center p-4">50</td>
-                                <td className="text-center p-4">1,000</td>
-                                <td className="text-center p-4">5,000</td>
-                                <td className="text-center p-4">{t('pricing.unlimited')}</td>
-                            </tr>
-                            <tr className="border-b">
-                                <td className="p-4">{t('pricing.analytics')}</td>
+                                <td className="p-4">PRODA Bulk Export</td>
                                 <td className="text-center p-4">❌</td>
                                 <td className="text-center p-4">✅</td>
                                 <td className="text-center p-4">✅</td>
                                 <td className="text-center p-4">✅</td>
                             </tr>
                             <tr className="border-b">
-                                <td className="p-4">{t('pricing.customBranding')}</td>
-                                <td className="text-center p-4">❌</td>
+                                <td className="p-4">NDIS Price Guide Sync</td>
+                                <td className="text-center p-4">Basic</td>
+                                <td className="text-center p-4">Full</td>
+                                <td className="text-center p-4">Full</td>
+                                <td className="text-center p-4">Custom</td>
+                            </tr>
+                            <tr className="border-b">
+                                <td className="p-4">Audit Evidence Vault</td>
+                                <td className="text-center p-4">100MB</td>
+                                <td className="text-center p-4">1GB</td>
+                                <td className="text-center p-4">5GB</td>
+                                <td className="text-center p-4">Unlimited</td>
+                            </tr>
+                            <tr className="border-b">
+                                <td className="p-4">Compliance Validator</td>
+                                <td className="text-center p-4">✅</td>
                                 <td className="text-center p-4">✅</td>
                                 <td className="text-center p-4">✅</td>
                                 <td className="text-center p-4">✅</td>
                             </tr>
                             <tr className="border-b">
-                                <td className="p-4">{t('pricing.teamCollaboration')}</td>
+                                <td className="p-4">Multiple PRODA Accounts</td>
                                 <td className="text-center p-4">❌</td>
                                 <td className="text-center p-4">❌</td>
                                 <td className="text-center p-4">✅</td>
                                 <td className="text-center p-4">✅</td>
                             </tr>
                             <tr className="border-b">
-                                <td className="p-4">{t('pricing.apiAccess')}</td>
-                                <td className="text-center p-4">❌</td>
+                                <td className="p-4">API Access / CRM Sync</td>
                                 <td className="text-center p-4">❌</td>
                                 <td className="text-center p-4">❌</td>
                                 <td className="text-center p-4">✅</td>
+                                <td className="text-center p-4">✅</td>
                             </tr>
                             <tr className="border-b">
-                                <td className="p-4">{t('pricing.aiValuation')}</td>
-                                <td className="text-center p-4">5/{t('pricing.perMonth').replace('/', '')}</td>
-                                <td className="text-center p-4">50/{t('pricing.perMonth').replace('/', '')}</td>
-                                <td className="text-center p-4">200/{t('pricing.perMonth').replace('/', '')}</td>
-                                <td className="text-center p-4">{t('pricing.unlimited')}</td>
-                            </tr>
-                            <tr className="border-b">
-                                <td className="p-4">{t('pricing.demoChat')}</td>
-                                <td className="text-center p-4">5/{t('pricing.perMonth').replace('/', '')}</td>
-                                <td className="text-center p-4">50/{t('pricing.perMonth').replace('/', '')}</td>
-                                <td className="text-center p-4">200/{t('pricing.perMonth').replace('/', '')}</td>
-                                <td className="text-center p-4">{t('pricing.unlimited')}</td>
-                            </tr>
-                            <tr className="border-b">
-                                <td className="p-4">{t('pricing.support')}</td>
-                                <td className="text-center p-4">{t('pricing.emailSupport')}</td>
-                                <td className="text-center p-4">{t('pricing.prioritySupport')}</td>
-                                <td className="text-center p-4">{t('pricing.prioritySupport')}</td>
-                                <td className="text-center p-4">{t('pricing.support247')}</td>
+                                <td className="p-4">Priority Support</td>
+                                <td className="text-center p-4">Email</td>
+                                <td className="text-center p-4">Priority</td>
+                                <td className="text-center p-4">24/7 Dedicated</td>
+                                <td className="text-center p-4">White-Glove</td>
                             </tr>
                         </tbody>
                     </table>

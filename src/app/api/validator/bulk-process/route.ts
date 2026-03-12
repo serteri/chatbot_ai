@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
             // 3. Call Azure OpenAI (Sydney)
             const azureClient = getAzureOpenAIClient()
             const completion = await azureClient.chat.completions.create({
-                model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'pylonchat-v1',
+                model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'ndis-shield-hub-v1',
                 temperature: 0,
                 response_format: { type: 'json_object' },
                 messages: [
