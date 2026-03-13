@@ -197,7 +197,8 @@ export async function POST(request: NextRequest) {
         }
 
         // ── Plan Gating for Shift Reports ──
-        const isBusinessPlan = userSubscription?.planType === 'professional'
+        const planType = userSubscription?.planType?.toLowerCase()
+        const isBusinessPlan = planType === 'professional' || planType === 'business'
         if (rawAnalysis.documentType === 'shift_report' && !isBusinessPlan) {
             return NextResponse.json(
                 { 
