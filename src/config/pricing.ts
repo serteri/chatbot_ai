@@ -206,16 +206,18 @@ export const FEATURE_COMPARISON = [
 ]
 
 /**
- * Stripe Price IDs (Production'da gerçek ID'lerle değiştirilecek)
+ * Stripe Price IDs — AUD (Live)
+ * Source of truth for price ID selection in checkout logic.
+ * Keep in sync with NEXT_PUBLIC_STRIPE_*_PRICE_ID env vars.
  */
 export const STRIPE_PRICE_IDS = {
-  starter: {
-    monthly: 'price_starter_monthly',
-    yearly: 'price_starter_yearly',
-  },
   professional: {
-    monthly: 'price_professional_monthly',
-    yearly: 'price_professional_yearly',
+    monthly: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? '',
+    yearly: process.env.NEXT_PUBLIC_STRIPE_PRO_Year_PRICE_ID ?? '',
+  },
+  business: {
+    monthly: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_PRICE_ID ?? '',
+    yearly: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_Year_PRICE_ID ?? '',
   },
 }
 

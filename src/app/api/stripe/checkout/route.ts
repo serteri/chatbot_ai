@@ -14,11 +14,11 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        const { priceId, planType } = await req.json()
+        const { priceId, planType, billingPeriod } = await req.json()
 
         if (!priceId || !planType) {
             return NextResponse.json(
-                { error: 'priceId ve planType gerekli' },
+                { error: 'priceId and planType are required' },
                 { status: 400 }
             )
         }
@@ -66,7 +66,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ url: portalSession.url })
         }
 
-        // Checkout session oluştur
+        // Create checkout session — currency is AUD (set on each Stripe Price object).
+        // Explicitly recorded in metadata to prevent any USD confusion in webhooks.
         const checkoutSession = await stripe.checkout.sessions.create({
             customer: customerId,
             mode: 'subscription',
@@ -81,7 +82,9 @@ export async function POST(req: NextRequest) {
             cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?canceled=true`,
             metadata: {
                 userId: user.id,
-                planType
+                planType,
+                billingPeriod: billingPeriod ?? 'monthly',
+                currency: 'aud',
             }
         })
 
