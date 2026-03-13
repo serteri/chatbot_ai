@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { createAuditLog } from '@/lib/services/audit'
-import OpenAI from 'openai'
+import { AzureOpenAI } from 'openai'
 
 // ---------------------------------------------------------------------------
 // NDIS Service Agreement Remediation — Azure OpenAI Sydney
@@ -24,7 +24,7 @@ Return ONLY a valid JSON object where:
 - The keys are the exact warning text strings provided in the input array.
 - The values are the suggested remediation text (the formal Service Agreement Addendum clause), formatted as beautifully structured Markdown.`
 
-function getAzureOpenAIClient(): OpenAI {
+function getAzureOpenAIClient(): AzureOpenAI {
     const apiKey = process.env.AZURE_OPENAI_API_KEY
     const endpoint = process.env.AZURE_OPENAI_ENDPOINT
     const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME
@@ -36,13 +36,11 @@ function getAzureOpenAIClient(): OpenAI {
         )
     }
 
-    const cleanEndpoint = endpoint.replace(/\/+$/, '')
-
-    return new OpenAI({
+    return new AzureOpenAI({
         apiKey,
-        baseURL: `${cleanEndpoint}/openai/deployments/${deploymentName}`,
-        defaultQuery: { 'api-version': process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview' },
-        defaultHeaders: { 'api-key': apiKey },
+        endpoint,
+        deployment: deploymentName,
+        apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview',
     })
 }
 

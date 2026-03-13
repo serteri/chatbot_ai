@@ -392,6 +392,28 @@ export default function SettingsForm({ user }: SettingsFormProps) {
                                 </div>
                             </CardContent>
                         </Card>
+
+                        <Card className="border-slate-200 dark:border-slate-800 shadow-sm border-t-4 border-t-blue-500">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Smartphone className="h-5 w-5 text-blue-600" />
+                                    Multi-Factor Authentication (MFA)
+                                </CardTitle>
+                                <CardDescription>Secure your account with an extra layer of protection.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50/50 flex flex-col items-center text-center py-8">
+                                    <Shield className="h-10 w-10 text-slate-300 mb-3" />
+                                    <h4 className="font-bold text-slate-900">Secure your account with 2FA</h4>
+                                    <p className="text-sm text-slate-500 max-w-xs mt-1">
+                                        Two-factor authentication adds an additional layer of security to your account by requiring more than just a password to log in.
+                                    </p>
+                                    <Badge variant="secondary" className="mt-4 bg-slate-200 text-slate-600 border-none">
+                                        Coming Soon in next update
+                                    </Badge>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 )}
 

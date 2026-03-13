@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
-import OpenAI from 'openai'
+import { AzureOpenAI } from 'openai'
 import { checkRateLimit, rateLimitExceededResponse, getRateLimitHeaders, type PlanType } from '@/lib/rate-limit'
 
-// OpenAI İstemcisi
-const apiKey = process.env.OPENAI_API_KEY;
-const openai = apiKey ? new OpenAI({ apiKey }) : null;
+// Azure OpenAI İstemcisi
+const azureApiKey = process.env.AZURE_OPENAI_API_KEY;
+const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
+const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT_NAME;
+
+const openai = (azureApiKey && azureEndpoint && azureDeployment) ? new AzureOpenAI({
+    apiKey: azureApiKey,
+    endpoint: azureEndpoint,
+    deployment: azureDeployment,
+    apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview',
+}) : null;
 
 // Prisma Client uyumluluğu için Node.js runtime kullanıyoruz
 export const runtime = 'nodejs';
@@ -328,7 +336,7 @@ ${ragContext || "Şu an için ilgili bir doküman parçası bulunamadı."}
         systemPrompt += `\n\nLANGUAGE:\n${languageInstruction}`;
 
         const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-4o-mini',
             stream: false,
             messages: [
                 { role: 'system', content: systemPrompt },

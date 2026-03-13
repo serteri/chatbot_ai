@@ -1,7 +1,14 @@
-import OpenAI from 'openai'
+import { AzureOpenAI } from 'openai'
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
+const azureApiKey = process.env.AZURE_OPENAI_API_KEY
+const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT
+const azureDeployment = process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME || 'text-embedding-3-small'
+
+const openai = new AzureOpenAI({
+    apiKey: azureApiKey,
+    endpoint: azureEndpoint,
+    deployment: azureDeployment,
+    apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview',
 })
 
 /**

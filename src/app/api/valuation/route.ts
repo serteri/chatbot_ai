@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
-import OpenAI from 'openai'
+import { AzureOpenAI } from 'openai'
 import {
     getValuationUsageStatus,
     canPerformValuation,
@@ -77,7 +77,7 @@ async function checkAndResetMonthlyCounter(
 
 // Use OpenAI to get current market prices for the SPECIFIC property configuration
 async function fetchPropertyValuation(
-    openai: OpenAI,
+    openai: AzureOpenAI,
     suburb: string,
     propertyType: string,
     bedrooms: number,
@@ -85,7 +85,7 @@ async function fetchPropertyValuation(
 ): Promise<{ min: number; max: number; median: number; source: string; confidence: string } | null> {
     try {
         const completion = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-4o-mini',
             messages: [
                 {
                     role: 'system',
@@ -139,7 +139,7 @@ Guidelines:
             confidence: data.confidence || 'medium'
         }
     } catch (error) {
-        console.error('OpenAI valuation error:', error)
+        console.error('Azure OpenAI valuation error:', error)
         return null
     }
 }
@@ -195,10 +195,18 @@ export async function POST(request: NextRequest) {
             }, { status: 400 })
         }
 
-        const openaiApiKey = process.env.OPENAI_API_KEY
-        const openai = openaiApiKey ? new OpenAI({ apiKey: openaiApiKey }) : null
+        const azureApiKey = process.env.AZURE_OPENAI_API_KEY
+        const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT
+        const azureDeployment = process.env.AZURE_OPENAI_DEPLOYMENT_NAME
 
-        // Get valuation directly from OpenAI for the specific property configuration
+        const openai = (azureApiKey && azureEndpoint && azureDeployment) ? new AzureOpenAI({
+            apiKey: azureApiKey,
+            endpoint: azureEndpoint,
+            deployment: azureDeployment,
+            apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview',
+        }) : null
+
+        // Get valuation result
         let valuationResult: { min: number; max: number; median: number; source: string; confidence: string } | null = null
 
         if (openai) {
@@ -236,7 +244,7 @@ export async function POST(request: NextRequest) {
         if (openai) {
             try {
                 const completion = await openai.chat.completions.create({
-                    model: 'gpt-4o-mini',
+                    model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-4o-mini',
                     messages: [
                         {
                             role: 'system',

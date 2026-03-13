@@ -286,6 +286,12 @@ model AuditLog {
 // FINANCIALS & PRODA INTEGRATION
 // -----------------------------------------------------------------------------
 
+enum ClaimStatus {
+  DRAFT
+  VERIFIED
+  EXPORTED
+}
+
 model Claim {
   id                       String   @id @default(cuid())
   userId                   String
@@ -296,7 +302,8 @@ model Claim {
   quantityDelivered        Float
   unitPrice                Float
   totalClaimAmount         Float
-  status                   String   @default("draft") // draft, exported, paid
+  status                   ClaimStatus @default(DRAFT)
+  updatedBy                String?     // Staff member who verified/modified the claim
   cancellationReason       String?
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt

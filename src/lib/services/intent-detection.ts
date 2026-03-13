@@ -1,7 +1,10 @@
-import OpenAI from 'openai'
+import { AzureOpenAI } from 'openai'
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY!,
+const openai = new AzureOpenAI({
+    apiKey: process.env.AZURE_OPENAI_API_KEY,
+    endpoint: process.env.AZURE_OPENAI_ENDPOINT,
+    deployment: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-4o-mini',
+    apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview',
 })
 
 export type IntentType =

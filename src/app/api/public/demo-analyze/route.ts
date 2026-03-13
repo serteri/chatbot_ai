@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { AzureOpenAI } from 'openai'
 
 // ---------------------------------------------------------------------------
 // PUBLIC DEMO API — Limited Extraction (Returns 1 Gap)
@@ -45,11 +45,11 @@ export async function POST(request: NextRequest) {
 
         if (!apiKey || !endpoint || !deploymentName) throw new Error('Azure Settings Missing')
 
-        const azureClient = new OpenAI({
+        const azureClient = new AzureOpenAI({
             apiKey,
-            baseURL: `${endpoint.replace(/\/+$/, '')}/openai/deployments/${deploymentName}`,
-            defaultQuery: { 'api-version': process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview' },
-            defaultHeaders: { 'api-key': apiKey },
+            endpoint,
+            deployment: deploymentName,
+            apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview',
         })
 
         const completion = await azureClient.chat.completions.create({

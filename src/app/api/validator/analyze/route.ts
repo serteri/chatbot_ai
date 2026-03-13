@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { createAuditLog } from '@/lib/services/audit'
-import OpenAI from 'openai'
+import { AzureOpenAI } from 'openai'
 import { NDIS_SYSTEM_PROMPT } from '@/lib/ai/analyze'
 
 // ---------------------------------------------------------------------------
@@ -17,7 +17,7 @@ export { NDIS_SYSTEM_PROMPT as SYSTEM_PROMPT }
 // Azure OpenAI Client (Sydney — ap-southeast-2)
 // ---------------------------------------------------------------------------
 
-export function getAzureOpenAIClient(): OpenAI {
+export function getAzureOpenAIClient(): AzureOpenAI {
     const apiKey = process.env.AZURE_OPENAI_API_KEY
     const endpoint = process.env.AZURE_OPENAI_ENDPOINT
     const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME
@@ -29,14 +29,13 @@ export function getAzureOpenAIClient(): OpenAI {
         )
     }
 
-    // Remove trailing slash from endpoint if present
-    const cleanEndpoint = endpoint.replace(/\/+$/, '')
+    console.log("✅ Secure AI initialized in Sydney Region (ap-southeast-2)")
 
-    return new OpenAI({
+    return new AzureOpenAI({
         apiKey,
-        baseURL: `${cleanEndpoint}/openai/deployments/${deploymentName}`,
-        defaultQuery: { 'api-version': process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview' },
-        defaultHeaders: { 'api-key': apiKey },
+        endpoint,
+        deployment: deploymentName,
+        apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview',
     })
 }
 

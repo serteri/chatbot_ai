@@ -8,7 +8,12 @@ import { createOpenAI } from '@ai-sdk/openai'
 import { createAnthropic } from '@ai-sdk/anthropic'
 
 // Lazy initialize to avoid build-time env checks
-const getOpenAI = () => createOpenAI({ apiKey: process.env.OPENAI_API_KEY! })
+const getOpenAI = () => createOpenAI({
+  apiKey: process.env.AZURE_OPENAI_API_KEY,
+  baseURL: `${process.env.AZURE_OPENAI_ENDPOINT?.replace(/\/+$/, '')}/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}`,
+  defaultQuery: { 'api-version': process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview' },
+  headers: { 'api-key': process.env.AZURE_OPENAI_API_KEY || '' },
+})
 const getAnthropic = () => createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
 export async function POST(req: NextRequest) {

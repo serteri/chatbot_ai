@@ -4,11 +4,14 @@ import { checkRateLimit, rateLimitExceededResponse } from '@/lib/rate-limit';
 import { searchProperties } from '@/lib/chat/actions';
 
 // OpenAI kütüphanesini kullanmak isterseniz: npm install openai
-import OpenAI from 'openai';
+import { AzureOpenAI } from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || 'dummy-key',
-  dangerouslyAllowBrowser: true // Sadece server-side çalıştığı için sorun yok ama Next.js bazen uyarı verir
+const openai = new AzureOpenAI({
+  apiKey: process.env.AZURE_OPENAI_API_KEY || 'dummy-key',
+  endpoint: process.env.AZURE_OPENAI_ENDPOINT || 'https://dummy.openai.azure.com',
+  deployment: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-35-turbo',
+  apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview',
+  dangerouslyAllowBrowser: true 
 });
 
 const LANGUAGE_NAME_MAP: Record<string, string> = {
@@ -106,10 +109,10 @@ export async function POST(req: NextRequest) {
     // Eğer API Key varsa OpenAI'dan cevap al, yoksa "demo" cevabı dön.
     let aiResponse = "";
 
-    if (process.env.OPENAI_API_KEY) {
+    if (process.env.AZURE_OPENAI_API_KEY) {
       try {
         // Construct messages array
-        const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+        const messages: any[] = [
           {
             role: "system",
             content: `You are a helpful real estate assistant for ${chatbot.name || 'our agency'}. 
@@ -132,7 +135,7 @@ export async function POST(req: NextRequest) {
         // First Call: Check if tool is needed
         const runner = await openai.chat.completions.create({
           messages,
-          model: "gpt-3.5-turbo",
+          model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || "gpt-3.5-turbo",
           tools: tools,
           tool_choice: "auto",
         });
@@ -165,7 +168,7 @@ export async function POST(req: NextRequest) {
           // Second Call: Get final text response using tool outputs
           const finalResponse = await openai.chat.completions.create({
             messages,
-            model: "gpt-3.5-turbo",
+            model: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || "gpt-3.5-turbo",
           });
 
           aiResponse = finalResponse.choices[0].message.content || "Bir hata oluştu.";

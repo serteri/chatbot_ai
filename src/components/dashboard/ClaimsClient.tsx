@@ -4,7 +4,23 @@ import { useState, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Download, FileWarning, AlertCircle, Upload, FileSpreadsheet, Check, X, AlertTriangle } from 'lucide-react'
+import { Download, FileWarning, AlertCircle, Upload, FileSpreadsheet, Check, X, AlertTriangle, Edit, Trash2, MoreVertical, Eye } from 'lucide-react'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
 import { format, isValid } from 'date-fns'
 import { Claim } from '@prisma/client'
@@ -32,6 +48,10 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
     const [rawHeaders, setRawHeaders] = useState<string[] | null>(null)
     const [columnMapping, setColumnMapping] = useState<Record<string, string>>({})
     const [importSummary, setImportSummary] = useState<any>(null)
+    const [editingClaim, setEditingClaim] = useState<Claim | null>(null)
+    const [deletingClaim, setDeletingClaim] = useState<Claim | null>(null)
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [isVerifying, setIsVerifying] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
 
@@ -224,46 +244,45 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
         })
     }
 
-    const handleExport = async () => {
-        if (selectedIds.size === 0) return
+    const handleDelete = async () => {
+        if (!deletingClaim) return
 
-        setIsExporting(true)
+        setIsDeleting(true)
         try {
-            const response = await fetch('/api/claims/export-proda', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ claimIds: Array.from(selectedIds) })
+            const response = await fetch(`/api/claims/${deletingClaim.id}`, {
+                method: 'DELETE'
             })
 
-            if (!response.ok) {
-                throw new Error('Export generation failed')
-            }
+            if (!response.ok) throw new Error('Delete failed')
 
-            // Create a Blob file URL natively in browser memory
-            const blob = await response.blob()
-            const url = window.URL.createObjectURL(blob)
-
-            // Generate invisible anchor and force a native click to download
-            const a = document.createElement('a')
-            a.style.display = 'none'
-            a.href = url
-            a.download = 'proda_claims.csv' // Name matching API Header Content-Disposition
-
-            document.body.appendChild(a)
-            a.click()
-
-            // Clean up browser RAM
-            window.URL.revokeObjectURL(url)
-            document.body.removeChild(a)
-
-            toast.success('PRODA CSV Export successful')
+            toast.success('Claim removed successfully')
+            setDeletingClaim(null)
+            router.refresh()
         } catch (error) {
-            console.error('Export Error:', error)
-            toast.error('Failed to generate PRODA Export. Please try again.')
+            toast.error('Failed to delete claim')
         } finally {
-            setIsExporting(false)
+            setIsDeleting(false)
+        }
+    }
+
+    const handleVerify = async (id: string) => {
+        setIsVerifying(true)
+        try {
+            const response = await fetch(`/api/claims/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'VERIFIED' })
+            })
+
+            if (!response.ok) throw new Error('Verification failed')
+
+            toast.success('Claim verified successfully')
+            setEditingClaim(null)
+            router.refresh()
+        } catch (error) {
+            toast.error('Failed to verify claim')
+        } finally {
+            setIsVerifying(false)
         }
     }
 
@@ -347,6 +366,7 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                                     <th className="px-6 py-3 font-semibold">Date</th>
                                     <th className="px-6 py-3 font-semibold">Total Amount</th>
                                     <th className="px-6 py-3 font-semibold">Status</th>
+                                    <th className="px-6 py-3 font-semibold text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -376,9 +396,36 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                                             ${claim.totalClaimAmount.toFixed(2)}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                                                {claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}
+                                            <span className={cn(
+                                                "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
+                                                claim.status === 'VERIFIED' ? "bg-green-100 text-green-800" :
+                                                claim.status === 'EXPORTED' ? "bg-blue-100 text-blue-800" :
+                                                "bg-amber-100 text-amber-800"
+                                            )}>
+                                                {claim.status.charAt(0).toUpperCase() + claim.status.slice(1).toLowerCase()}
                                             </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" className="h-8 w-8 p-0">
+                                                        <MoreVertical className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem onClick={() => setEditingClaim(claim)}>
+                                                        <Edit className="mr-2 h-4 w-4" />
+                                                        Verify/Edit
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem 
+                                                        className="text-red-600 focus:text-red-600"
+                                                        onClick={() => setDeletingClaim(claim)}
+                                                    >
+                                                        <Trash2 className="mr-2 h-4 w-4" />
+                                                        Delete
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </td>
                                     </tr>
                                 ))}
@@ -503,6 +550,77 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                         >
                             {isCommitting ? 'Saving...' : `Confirm & Import ${importSummary?.valid || 0} Claims`}
                         </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            {/* DELETE CONFIRMATION MODAL */}
+            <AlertDialog open={!!deletingClaim} onOpenChange={(open) => !open && setDeletingClaim(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure you want to remove this claim?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the claim for <strong>{deletingClaim?.participantName}</strong>.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction 
+                            onClick={handleDelete}
+                            className="bg-red-600 hover:bg-red-700"
+                            disabled={isDeleting}
+                        >
+                            {isDeleting ? 'Deleting...' : 'Delete Claim'}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* EDIT/VERIFY MODAL */}
+            <Dialog open={!!editingClaim} onOpenChange={(open) => !open && setEditingClaim(null)}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Claim Details</DialogTitle>
+                        <DialogDescription>
+                            Review the claim details for {editingClaim?.participantName}.
+                        </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="space-y-4 py-4">
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p className="text-slate-500 font-medium">NDIS ID</p>
+                                <p className="font-semibold">{editingClaim?.participantNdisNumber}</p>
+                            </div>
+                            <div>
+                                <p className="text-slate-500 font-medium">Item Code</p>
+                                <p className="font-mono">{editingClaim?.supportItemNumber}</p>
+                            </div>
+                            <div>
+                                <p className="text-slate-500 font-medium">Amount</p>
+                                <p className="text-lg font-bold">${editingClaim?.totalClaimAmount.toFixed(2)}</p>
+                            </div>
+                            <div>
+                                <p className="text-slate-500 font-medium">Status</p>
+                                <Badge variant={editingClaim?.status === 'VERIFIED' ? 'default' : 'secondary'}>
+                                    {editingClaim?.status}
+                                </Badge>
+                            </div>
+                        </div>
+                    </div>
+
+                    <DialogFooter className="gap-2">
+                        <Button variant="outline" onClick={() => setEditingClaim(null)}>
+                            Close
+                        </Button>
+                        {editingClaim?.status !== 'VERIFIED' && (
+                            <Button 
+                                className="bg-green-600 hover:bg-green-700 text-white"
+                                onClick={() => editingClaim && handleVerify(editingClaim.id)}
+                                disabled={isVerifying}
+                            >
+                                {isVerifying ? 'Verifying...' : 'Verify Claim'}
+                            </Button>
+                        )}
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
