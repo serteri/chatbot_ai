@@ -510,7 +510,7 @@ export default function BulkValidator() {
                         </div>
                         <h3 className="text-xl font-semibold text-slate-700 mb-2">Drop NDIS PDFs here</h3>
                         <p className="text-slate-500 text-sm max-w-sm text-center">
-                            Securely enqueue multiple Service Agreements for automated compliance auditing.
+                            Securely enqueue multiple NDIS documents for automated compliance auditing and extraction.
                         </p>
                     </div>
                 ) : (

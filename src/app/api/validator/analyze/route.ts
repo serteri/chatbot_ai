@@ -80,7 +80,7 @@ export async function extractText(file: File, buffer: Buffer): Promise<string> {
 
 export async function POST(request: NextRequest) {
     try {
-        // ── Auth ──
+        // ── Auth & Plan Check ──
         const session = await auth()
         if (!session?.user?.id) {
             return NextResponse.json(
@@ -88,6 +88,12 @@ export async function POST(request: NextRequest) {
                 { status: 401 }
             )
         }
+
+        // Fetch user subscription for plan gating
+        const userSubscription = await (await import('@/lib/db/prisma')).prisma.subscription.findUnique({
+            where: { userId: session.user.id },
+            select: { planType: true }
+        })
 
         // ── Parse FormData ──
         const formData = await request.formData()
@@ -190,13 +196,27 @@ export async function POST(request: NextRequest) {
             )
         }
 
+        // ── Plan Gating for Shift Reports ──
+        const isBusinessPlan = userSubscription?.planType === 'professional'
+        if (rawAnalysis.documentType === 'shift_report' && !isBusinessPlan) {
+            return NextResponse.json(
+                { 
+                    error: 'Shift Report detection is only available on the Business Plan.',
+                    requiresUpgrade: true 
+                },
+                { status: 403 }
+            )
+        }
+
         // ── Sanitize / Map Fields for Claim Extraction ──
         const analysis = {
             ...rawAnalysis,
+            documentType: rawAnalysis.documentType || 'unknown',
             participantName: rawAnalysis.participantName || rawAnalysis.name || 'Missing',
             ndisId: rawAnalysis.ndisId || rawAnalysis.id || 'Missing',
             date: rawAnalysis.date || 'Missing',
             totalHours: rawAnalysis.totalHours || rawAnalysis.hours || 'Missing',
+            complianceScore: rawAnalysis.complianceScore ?? (rawAnalysis.documentType === 'shift_report' ? 100 : 0),
         }
 
         // ── Audit Log ──

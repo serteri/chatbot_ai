@@ -23,7 +23,9 @@ export interface WarningDetail {
 }
 
 export interface AnalysisResult {
+    documentType: 'service_agreement' | 'shift_report' | 'unknown'
     participantName: string | null
+    ndisId?: string | null
     totalFunding: number
     startDate: string
     endDate: string
@@ -32,43 +34,49 @@ export interface AnalysisResult {
     warnings: string[]
     warningDetails: WarningDetail[]
     summary: string
+    totalHours?: number | null
+    date?: string | null
     error?: string
 }
 
 // ── System prompt ─────────────────────────────────────────────────────────────
 
-export const NDIS_SYSTEM_PROMPT = `You are a Senior NDIS Compliance Officer. Analyze the provided Service Agreement strictly against the NDIS Practice Standards 2021 (updated 2025/26) and the NDIS Price Guide 2025/26.
+export const NDIS_SYSTEM_PROMPT = `You are a Senior NDIS Compliance Officer. Analyze the provided NDIS document.
+
+We support two primary document types:
+1. **NDIS Service Agreement**: A formal contract between a participant and provider.
+2. **Progress Note / Shift Report**: A daily/weekly record of supports delivered during a specific shift.
+
+### TASK:
+Determine the document type and extract relevant data.
 
 Return a strict JSON object containing:
-- "participantName": string or null (Extract the participant's full name from headers like 'About the Participant', 'Name', or 'Participant Details'. Do not use provider names.)
+- "documentType": "service_agreement", "shift_report", or "unknown"
+- "participantName": string or null (Extract full name. For Shift Reports, this is the participant receiving the service.)
+- "ndisId": string or null (Extract NDIS Number/ID if present)
+
+**IF Document is a SERVICE AGREEMENT:**
 - "totalFunding": number (total plan funding in AUD)
-- "startDate": string (plan start date, e.g. "2025-07-01". Look explicitly for 'Start Date' or 'Commencement')
-- "endDate": string (plan end date, e.g. "2026-06-30". Look explicitly for 'End Date', 'Expiry', or 'Review Date')
-- "lineItems": array of objects, each with:
-  - "code": string (NDIS line item code, e.g. "04_590_0125_6_1")
-  - "description": string (what the line item covers)
-  - "budget": number (allocated budget in AUD)
-- "complianceScore": number between 0 and 100 (based on required clauses present and strict NDIS Practice Standards adherence)
-- "warnings": array of strings (backward-compat plain text summaries of each gap — one string per gap)
-- "warningDetails": array of objects, one per compliance gap, each containing:
-  - "text": string (clear, actionable description of the gap)
-  - "confidenceScore": number 0-100 (your confidence that this gap genuinely exists in this document; use 90-100 when the clause is completely absent, 70-89 when present but inadequate, below 70 only for ambiguous cases)
-  - "requiresManualReview": boolean (true if confidenceScore < 90)
-  - "sourceCitation": string (the specific NDIS document, section, and clause — e.g. "NDIS Practice Standards 2021, Outcome 1.1 — Rights and Responsibilities" or "NDIS Price Guide 2025/26, Section 5.3 — Cancellation Policy")
-- "summary": string (2-3 sentence overview of the agreement)
+- "startDate": string (plan start date, YYYY-MM-DD. Look for 'Start Date' or 'Commencement')
+- "endDate": string (plan end date, YYYY-MM-DD. Look for 'End Date' or 'Review Date')
+- "lineItems": array of objects { "code", "description", "budget" }
+- "complianceScore": number 0-100 (based on NDIS Practice Standards 2021)
+- "warnings": array of strings (summaries of gaps)
+- "warningDetails": array of objects { "text", "confidenceScore", "requiresManualReview", "sourceCitation" }
+- "summary": 2-3 sentence overview
 
-Check for these critical NDIS compliance issues:
-- Missing or non-compliant cancellation policy (NDIS Price Guide 2025/26, Section 5.3)
-- Missing incident management and reporting procedures (NDIS Practice Standards 2021, Outcome 2.4)
-- Missing explicit consent clauses for data collection and sharing (NDIS Practice Standards 2021, Outcome 1.2)
-- Pricing exceeding NDIS Price Guide 2025/26 maximum limits (NDIS Price Guide 2025/26, Support Catalogue)
-- Missing ABN or NDIS provider registration number (NDIS Act 2013, s.73B)
-- Missing explicit participant goals or outcomes (NDIS Practice Standards 2021, Outcome 1.4)
-- Missing nominated representative or plan nominee details (NDIS Act 2013, s.86)
+**IF Document is a PROGRESS NOTE / SHIFT REPORT:**
+- "date": string (The date service was delivered, YYYY-MM-DD)
+- "totalHours": number (The total duration of the shift/service in hours)
+- "summary": 1-2 sentence description of what was achieved/documented.
+- "complianceScore": 100 (Default for shift reports unless critical safety issues are noted)
 
-The "warnings" array must contain the same items as "warningDetails[].text" so that both fields remain in sync.
+**IF Document is UNKNOWN:**
+- "documentType": "unknown"
+- "summary": "Unrecognized NDIS document type."
+- "complianceScore": 0
 
-If the document is NOT an NDIS Service Agreement, return:
-{ "error": "This document does not appear to be an NDIS Service Agreement.", "complianceScore": 0 }
+### COMPLIANCE RULES (Agreements Only):
+Check for missing cancellation policies, incident management, consent clauses, and pricing limit adherence (NDIS Price Guide 2025/26).
 
 Be extremely thorough and precise. Australian NDIS providers rely on your rigorous analysis for official government audit readiness.`

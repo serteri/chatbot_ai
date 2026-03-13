@@ -84,46 +84,62 @@ function formatAnalysisToChat(data: AnalysisResult, fileName: string): string {
     }
 
     const lines: string[] = []
-    lines.push(`✅ **Analysis Complete.** NDIS Price Guide 2025/26 applied.`)
-    lines.push('')
-    if (data.summary) lines.push(data.summary)
-    lines.push('')
-
-    // Participant Overview
-    lines.push('**Participant Overview:**')
-    if (data.participantName) lines.push(`- Name: **${data.participantName}**`)
-    if (data.totalFunding) lines.push(`- Total Plan Funding: **$${data.totalFunding.toLocaleString()}**`)
-    if (data.startDate && data.endDate) lines.push(`- Plan Period: ${data.startDate} – ${data.endDate}`)
-    lines.push('')
-
-    // Line Items
-    if (data.lineItems && data.lineItems.length > 0) {
-        lines.push('**Key Line Items:**')
-        data.lineItems.forEach((item) => {
-            lines.push(`- \`${item.code}\` — ${item.description}: **$${item.budget.toLocaleString()}**`)
-        })
+    
+    if (data.documentType === 'shift_report') {
+        lines.push(`✅ **Shift Report Detected - Extracting Data for Claim...**`)
         lines.push('')
-    }
-
-    // Warnings
-    if (data.warnings && data.warnings.length > 0) {
-        lines.push('**⚠️ Compliance Warnings:**')
-        data.warnings.forEach((warning) => {
-            lines.push(`- 🟡 ${warning}`)
-        })
+        if (data.summary) lines.push(data.summary)
         lines.push('')
-    }
+        lines.push('**Extracted Details:**')
+        if (data.participantName) lines.push(`- Participant: **${data.participantName}**`)
+        if (data.ndisId) lines.push(`- NDIS ID: **${data.ndisId}**`)
+        if (data.date) lines.push(`- Service Date: **${data.date}**`)
+        if (data.totalHours) lines.push(`- Total Hours: **${data.totalHours}**`)
+        lines.push('')
+        lines.push('You can now use the **"Convert to Claim"** button to save this to your drafts.')
+    } else {
+        lines.push(`✅ **Analysis Complete.** NDIS Price Guide 2025/26 applied.`)
+        lines.push('')
+        if (data.summary) lines.push(data.summary)
+        lines.push('')
 
-    // Score
-    if (data.complianceScore !== undefined) {
-        const emoji = data.complianceScore >= 90 ? '🟢' : data.complianceScore >= 70 ? '🟡' : '🔴'
-        lines.push(`${emoji} **Overall Compliance Score: ${data.complianceScore}%**`)
+        // Participant Overview
+        lines.push('**Participant Overview:**')
+        if (data.participantName) lines.push(`- Name: **${data.participantName}**`)
+        if (data.totalFunding) lines.push(`- Total Plan Funding: **$${data.totalFunding.toLocaleString()}**`)
+        if (data.startDate && data.endDate) lines.push(`- Plan Period: ${data.startDate} – ${data.endDate}`)
+        lines.push('')
+
+        // Line Items
+        if (data.lineItems && data.lineItems.length > 0) {
+            lines.push('**Key Line Items:**')
+            data.lineItems.forEach((item: any) => {
+                lines.push(`- \`${item.code}\` — ${item.description}: **$${item.budget.toLocaleString()}**`)
+            })
+            lines.push('')
+        }
+
+        // Warnings
+        if (data.warnings && data.warnings.length > 0) {
+            lines.push('**⚠️ Compliance Warnings:**')
+            data.warnings.forEach((warning: string) => {
+                lines.push(`- 🟡 ${warning}`)
+            })
+            lines.push('')
+        }
+
+        // Score
+        if (data.complianceScore !== undefined) {
+            const emoji = data.complianceScore >= 90 ? '🟢' : data.complianceScore >= 70 ? '🟡' : '🔴'
+            lines.push(`${emoji} **Overall Compliance Score: ${data.complianceScore}%**`)
+        }
+        lines.push('')
+        lines.push('You can now ask me any question about this document.')
     }
 
     lines.push('')
     lines.push(`📎 Source: **${fileName}**`)
     lines.push('')
-    lines.push('You can now ask me any question about this Service Agreement.')
 
     return lines.join('\n')
 }
@@ -484,10 +500,10 @@ export default function ValidatorPage() {
                     </div>
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-                            Service Agreement Validator
+                            NDIS Document Validator
                         </h1>
                         <p className="text-sm text-slate-500">
-                            Upload an NDIS Service Agreement PDF to verify compliance instantly.
+                            Upload an NDIS Service Agreement or Shift Report to verify compliance instantly.
                         </p>
                     </div>
                 </div>
@@ -626,7 +642,7 @@ export default function ValidatorPage() {
                                 </div>
                                 <div>
                                     <p className="text-lg font-semibold text-slate-700">
-                                        {isDragging ? 'Drop your document here' : 'Drag & Drop your Service Agreement'}
+                                        {isDragging ? 'Drop your document here' : 'Drag & Drop your NDIS Document'}
                                     </p>
                                     <p className="text-sm text-slate-400 mt-1">
                                         or{' '}
@@ -744,7 +760,7 @@ export default function ValidatorPage() {
                                         Compliance Query Engine
                                     </p>
                                     <p className="text-xs text-slate-400">
-                                        Ask questions about the uploaded Service Agreement
+                                        Ask questions about this NDIS document
                                     </p>
                                 </div>
                                 <div className="ml-auto flex items-center gap-1.5">
