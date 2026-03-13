@@ -137,11 +137,16 @@ export async function POST(request: NextRequest) {
         }
 
         if (!extractedText || extractedText.trim().length < 50) {
+            console.warn('Extracted text too short or empty:', extractedText?.length)
             return NextResponse.json(
                 { error: 'The document appears to be empty or scanned-image only. Please upload a text-based PDF or DOCX.' },
                 { status: 422 }
             )
         }
+
+        console.log('--- DEBUG: EXTRACTED TEXT START ---')
+        console.log(extractedText)
+        console.log('--- DEBUG: EXTRACTED TEXT END ---')
 
         // ── Truncate for token limits ──
         const truncatedText = extractedText.slice(0, 60000)
@@ -163,6 +168,10 @@ export async function POST(request: NextRequest) {
         })
 
         const aiResponse = completion.choices[0]?.message?.content
+        console.log('--- DEBUG: AI RAW RESPONSE START ---')
+        console.log(aiResponse)
+        console.log('--- DEBUG: AI RAW RESPONSE END ---')
+
         if (!aiResponse) {
             return NextResponse.json(
                 { error: 'AI analysis failed to return a response.' },
@@ -171,14 +180,23 @@ export async function POST(request: NextRequest) {
         }
 
         // ── Parse AI JSON ──
-        let analysis: Record<string, unknown>
+        let rawAnalysis: any
         try {
-            analysis = JSON.parse(aiResponse)
+            rawAnalysis = JSON.parse(aiResponse)
         } catch {
             return NextResponse.json(
                 { error: 'AI returned malformed data. Please try again.' },
                 { status: 500 }
             )
+        }
+
+        // ── Sanitize / Map Fields for Claim Extraction ──
+        const analysis = {
+            ...rawAnalysis,
+            participantName: rawAnalysis.participantName || rawAnalysis.name || 'Missing',
+            ndisId: rawAnalysis.ndisId || rawAnalysis.id || 'Missing',
+            date: rawAnalysis.date || 'Missing',
+            totalHours: rawAnalysis.totalHours || rawAnalysis.hours || 'Missing',
         }
 
         // ── Audit Log ──
