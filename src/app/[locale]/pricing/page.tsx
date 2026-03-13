@@ -35,24 +35,27 @@ export default function PricingPage() {
     }
 
     // Monthly prices based on locale.
-    // Starter ($0) and Professional ($99) values are imported from the central
-    // pricing config so they stay consistent with the landing page preview.
+    // All values are imported from the central pricing config.
     const getMonthlyPrices = () => {
         const currency = getCurrency()
         const starterUSD = NDIS_COMPLIANCE_TIERS.starter.priceMonthlyUSD
         const proUSD = NDIS_COMPLIANCE_TIERS.professional.priceMonthlyUSD
         const proTRY = NDIS_COMPLIANCE_TIERS.professional.priceMonthlyTRY
+        const bizUSD = NDIS_COMPLIANCE_TIERS.business.priceMonthlyUSD
+        const bizTRY = NDIS_COMPLIANCE_TIERS.business.priceMonthlyTRY
 
         switch (locale) {
             case 'tr':
                 return {
                     free: { price: starterUSD, display: NDIS_COMPLIANCE_TIERS.starter.displayTRY },
                     pro: { price: proTRY, display: NDIS_COMPLIANCE_TIERS.professional.displayTRY },
+                    business: { price: bizTRY, display: NDIS_COMPLIANCE_TIERS.business.displayTRY },
                 }
             default: // USD/EUR
                 return {
                     free: { price: starterUSD, display: `${currency}${starterUSD}` },
                     pro: { price: proUSD, display: `${currency}${proUSD}` },
+                    business: { price: bizUSD, display: `${currency}${bizUSD}` },
                 }
         }
     }
@@ -103,8 +106,7 @@ export default function PricingPage() {
         return `${currency}${savings}`
     }
 
-    // Only 2 NDIS tiers — consistent with the landing page.
-    // Prices sourced from the central config via getMonthlyPrices().
+    // 3 NDIS tiers — sourced from the central pricing config.
     const plans = [
         {
             id: 'free',
@@ -115,19 +117,30 @@ export default function PricingPage() {
             gradient: 'from-slate-500 to-slate-600',
             borderColor: 'border-slate-200',
             priceColor: 'text-slate-700',
-            cta: t('pricing.getStarted')
+            cta: NDIS_COMPLIANCE_TIERS.starter.cta,
         },
         {
             id: 'pro',
             name: NDIS_COMPLIANCE_TIERS.professional.name,
             description: t('pricing.plans.pro.description'),
             features: NDIS_COMPLIANCE_TIERS.professional.features as unknown as string[],
-            popular: true,
+            popular: false,
             gradient: 'from-cyan-500 to-blue-600',
-            borderColor: 'border-cyan-400 ring-2 ring-cyan-100',
+            borderColor: 'border-cyan-300',
             priceColor: 'text-cyan-600',
-            cta: t('pricing.choosePlan')
-        }
+            cta: NDIS_COMPLIANCE_TIERS.professional.cta,
+        },
+        {
+            id: 'business',
+            name: NDIS_COMPLIANCE_TIERS.business.name,
+            description: t('pricing.plans.business.description'),
+            features: NDIS_COMPLIANCE_TIERS.business.features as unknown as string[],
+            popular: true,
+            gradient: 'from-teal-500 to-emerald-600',
+            borderColor: 'border-teal-400 ring-2 ring-teal-100',
+            priceColor: 'text-teal-600',
+            cta: NDIS_COMPLIANCE_TIERS.business.cta,
+        },
     ]
 
     const faqs = [
@@ -190,7 +203,7 @@ export default function PricingPage() {
                 {/* Pricing Plans */}
                 <div className="py-20">
                     <div className="container mx-auto px-4">
-                        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                             {plans.map((plan) => (
                                 <div
                                     key={plan.id}
@@ -198,7 +211,7 @@ export default function PricingPage() {
                                 >
                                     {plan.popular && (
                                         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                                            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center space-x-1 shadow-lg whitespace-nowrap">
+                                            <div className="bg-gradient-to-r from-teal-500 to-emerald-600 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center space-x-1 shadow-lg whitespace-nowrap">
                                                 <Star className="h-3 w-3" />
                                                 <span>{t('pricing.mostPopular')}</span>
                                             </div>

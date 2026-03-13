@@ -58,12 +58,12 @@ export function PricingPreview({ locale }: { locale: string }) {
                             ))}
                         </ul>
 
-                        <Link href={`/${locale}/dashboard/validator`} className="w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl transition-colors flex items-center justify-center">
+                        <Link href={`/${locale}/auth/register`} className="w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl transition-colors flex items-center justify-center">
                             {NDIS_COMPLIANCE_TIERS.starter.cta}
                         </Link>
                     </motion.div>
 
-                    {/* Pro Tier */}
+                    {/* Professional Tier */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -87,7 +87,7 @@ export function PricingPreview({ locale }: { locale: string }) {
                             ))}
                         </ul>
 
-                        <Link href={`/${locale}/dashboard/validator`} className="w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl transition-colors flex items-center justify-center">
+                        <Link href={`/${locale}/auth/register`} className="w-full py-3 px-4 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl transition-colors flex items-center justify-center">
                             {NDIS_COMPLIANCE_TIERS.professional.cta}
                         </Link>
                     </motion.div>
@@ -126,7 +126,7 @@ export function PricingPreview({ locale }: { locale: string }) {
                             ))}
                         </ul>
 
-                        <Link href={`/${locale}/dashboard/validator`} className="w-full py-3.5 px-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 group">
+                        <Link href={`/${locale}/auth/register`} className="w-full py-3.5 px-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 group">
                             {NDIS_COMPLIANCE_TIERS.business.cta}
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>

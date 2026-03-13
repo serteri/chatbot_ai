@@ -1,7 +1,7 @@
 import { SubscriptionPlan, PlanConfig } from '@/types'
 
 /**
- * Customer Support Chatbot - Subscription Plans
+ * NDIS Shield Hub - Subscription Plans
  */
 
 export const PRICING_PLANS: Record<SubscriptionPlan, PlanConfig> = {
@@ -252,12 +252,13 @@ export const NDIS_COMPLIANCE_TIERS = {
         priceMonthlyTRY: 0,
         displayUSD: '$0',
         displayTRY: '₺0',
+        isMostPopular: false,
         features: [
-            '5 NDIS Claims / month',
+            '5 NDIS Claims/month',
             'Basic Excel/CSV Imports',
             'NDIS Price Guide Sync',
         ],
-        cta: 'Get Started',
+        cta: 'Get Started Free',
     },
     professional: {
         id: 'professional' as const,
@@ -266,13 +267,13 @@ export const NDIS_COMPLIANCE_TIERS = {
         priceMonthlyTRY: 2999,
         displayUSD: '$99',
         displayTRY: '₺2.999',
+        isMostPopular: false,
         features: [
             'Unlimited NDIS Claims',
             'PRODA Bulk Export Sync',
-            'NDIS Price Guide Sync (Full)',
             'Priority Email Support',
         ],
-        cta: 'Upgrade to Pro',
+        cta: 'Start Professional',
     },
     business: {
         id: 'business' as const,
@@ -281,11 +282,12 @@ export const NDIS_COMPLIANCE_TIERS = {
         priceMonthlyTRY: 9499,
         displayUSD: '$299',
         displayTRY: '₺9.499',
+        isMostPopular: true,
         features: [
-            'Everything in Professional',
-            'AI-Powered Evidence Extraction',
-            'Advanced Accounting Suite',
+            'AI-Powered Docx & PDF Evidence Extraction',
+            'Advanced Accounting Integration Suite',
             'Priority Compliance Support',
+            'Audit-Ready Data Logs',
         ],
         cta: 'Go Enterprise',
     },
