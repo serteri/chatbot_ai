@@ -26,85 +26,34 @@ export default function PricingPage() {
     const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly')
     const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null)
 
-    // Currency based on locale
-    const getCurrency = () => {
-        switch (locale) {
-            case 'tr': return '₺'
-            case 'en': return '$'
-            default: return '€'
-        }
+    // All prices are in AUD — NDIS Shield Hub is an Australian product.
+    const MONTHLY_PRICES = {
+        free:     { price: NDIS_COMPLIANCE_TIERS.starter.priceMonthlyAUD,      display: NDIS_COMPLIANCE_TIERS.starter.displayAUD },
+        pro:      { price: NDIS_COMPLIANCE_TIERS.professional.priceMonthlyAUD, display: NDIS_COMPLIANCE_TIERS.professional.displayAUD },
+        business: { price: NDIS_COMPLIANCE_TIERS.business.priceMonthlyAUD,     display: NDIS_COMPLIANCE_TIERS.business.displayAUD },
     }
 
-    // Monthly prices based on locale.
-    // All values are imported from the central pricing config.
-    const getMonthlyPrices = () => {
-        const currency = getCurrency()
-        const starterUSD = NDIS_COMPLIANCE_TIERS.starter.priceMonthlyUSD
-        const proUSD = NDIS_COMPLIANCE_TIERS.professional.priceMonthlyUSD
-        const proTRY = NDIS_COMPLIANCE_TIERS.professional.priceMonthlyTRY
-        const bizUSD = NDIS_COMPLIANCE_TIERS.business.priceMonthlyUSD
-        const bizTRY = NDIS_COMPLIANCE_TIERS.business.priceMonthlyTRY
-
-        switch (locale) {
-            case 'tr':
-                return {
-                    free: { price: starterUSD, display: NDIS_COMPLIANCE_TIERS.starter.displayTRY },
-                    pro: { price: proTRY, display: NDIS_COMPLIANCE_TIERS.professional.displayTRY },
-                    business: { price: bizTRY, display: NDIS_COMPLIANCE_TIERS.business.displayTRY },
-                }
-            default: // USD/EUR
-                return {
-                    free: { price: starterUSD, display: `${currency}${starterUSD}` },
-                    pro: { price: proUSD, display: `${currency}${proUSD}` },
-                    business: { price: bizUSD, display: `${currency}${bizUSD}` },
-                }
-        }
-    }
-
-    const monthlyPrices = getMonthlyPrices()
-
-    // Calculate yearly price with 20% discount
+    // Price shown on card (respects monthly/yearly toggle). Always AUD.
     const getPrice = (planId: string) => {
-        const planPrices = monthlyPrices[planId as keyof typeof monthlyPrices]
-        if (!planPrices) return getCurrency() + '0'
-
-        if (planId === 'free') return planPrices.display
-
-        if (billingPeriod === 'yearly') {
-            const yearlyMonthly = Math.round(planPrices.price * 0.8) // 20% discount
-            const currency = getCurrency()
-            if (locale === 'tr') {
-                return `₺${yearlyMonthly.toLocaleString('tr-TR')}`
-            }
-            return `${currency}${yearlyMonthly}`
-        }
-        return planPrices.display
+        const p = MONTHLY_PRICES[planId as keyof typeof MONTHLY_PRICES]
+        if (!p) return '$0 AUD'
+        if (planId === 'free') return p.display
+        if (billingPeriod === 'yearly') return `$${Math.round(p.price * 0.8)} AUD`
+        return p.display
     }
 
-    // Calculate total yearly cost
+    // Full yearly charge (displayed as a secondary line when yearly is active)
     const getYearlyTotal = (planId: string) => {
-        const planPrices = monthlyPrices[planId as keyof typeof monthlyPrices]
-        if (!planPrices || planId === 'free') return ''
-
-        const yearlyTotal = Math.round(planPrices.price * 12 * 0.8) // 20% discount
-        const currency = getCurrency()
-        if (locale === 'tr') {
-            return `₺${yearlyTotal.toLocaleString('tr-TR')}`
-        }
-        return `${currency}${yearlyTotal}`
+        const p = MONTHLY_PRICES[planId as keyof typeof MONTHLY_PRICES]
+        if (!p || planId === 'free') return ''
+        return `$${Math.round(p.price * 12 * 0.8)} AUD`
     }
 
-    // Calculate yearly savings
+    // Dollar amount saved vs paying monthly for 12 months
     const getYearlySavings = (planId: string) => {
-        const planPrices = monthlyPrices[planId as keyof typeof monthlyPrices]
-        if (!planPrices || planId === 'free') return ''
-
-        const savings = Math.round(planPrices.price * 12 * 0.2)
-        const currency = getCurrency()
-        if (locale === 'tr') {
-            return `₺${savings.toLocaleString('tr-TR')}`
-        }
-        return `${currency}${savings}`
+        const p = MONTHLY_PRICES[planId as keyof typeof MONTHLY_PRICES]
+        if (!p || planId === 'free') return ''
+        return `$${Math.round(p.price * 12 * 0.2)} AUD`
     }
 
     // 3 NDIS tiers — sourced from the central pricing config.
@@ -223,19 +172,19 @@ export default function PricingPage() {
                                         <h3 className="text-2xl font-bold text-gray-900 mb-2">
                                             {plan.name}
                                         </h3>
-                                        <div className={`text-4xl font-bold ${plan.priceColor} mb-2`}>
+                                        <div className={`text-4xl font-bold ${plan.priceColor} mb-1`}>
                                             {getPrice(plan.id)}
-                                            {plan.id !== 'free' && (
-                                                <span className="text-lg text-gray-400 font-normal">{t('pricing.perMonth')}</span>
-                                            )}
                                         </div>
+                                        {plan.id !== 'free' && (
+                                            <div className="text-sm text-gray-400 mb-2">per month</div>
+                                        )}
                                         {billingPeriod === 'yearly' && plan.id !== 'free' && (
-                                            <div className="space-y-1">
+                                            <div className="space-y-1 mb-2">
                                                 <p className="text-base text-gray-600">
-                                                    {locale === 'tr' ? 'Yıllık Toplam:' : 'Yearly Total:'} <span className="font-semibold">{getYearlyTotal(plan.id)}</span>
+                                                    Yearly Total: <span className="font-semibold">{getYearlyTotal(plan.id)}</span>
                                                 </p>
                                                 <p className="text-sm text-green-600 font-medium">
-                                                    ✨ {locale === 'tr' ? 'Tasarruf:' : 'You save:'} {getYearlySavings(plan.id)}
+                                                    ✨ You save: {getYearlySavings(plan.id)}
                                                 </p>
                                             </div>
                                         )}
@@ -265,6 +214,9 @@ export default function PricingPage() {
                                 </div>
                             ))}
                         </div>
+                        <p className="text-center text-slate-400 text-xs mt-8">
+                            * All prices are in Australian Dollars (AUD) and inclusive of GST where applicable.
+                        </p>
                     </div>
                 </div>
 

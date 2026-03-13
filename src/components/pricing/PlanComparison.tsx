@@ -120,13 +120,13 @@ export function PlanComparison({ locale }: { locale: string }) {
                                     {/* Starter */}
                                     <th className="text-center px-5 py-4 bg-slate-50 w-44">
                                         <div className="font-bold text-slate-800 text-base">Starter</div>
-                                        <div className="text-slate-400 text-sm font-normal mt-0.5">$0 / mo</div>
+                                        <div className="text-slate-400 text-sm font-normal mt-0.5">$0 AUD / mo</div>
                                     </th>
 
                                     {/* Professional */}
                                     <th className="text-center px-5 py-4 bg-slate-50 w-44">
                                         <div className="font-bold text-slate-800 text-base">Professional</div>
-                                        <div className="text-slate-400 text-sm font-normal mt-0.5">$99 / mo</div>
+                                        <div className="text-slate-400 text-sm font-normal mt-0.5">$99 AUD / mo</div>
                                     </th>
 
                                     {/* Business — highlighted */}
@@ -135,7 +135,7 @@ export function PlanComparison({ locale }: { locale: string }) {
                                             Most Popular
                                         </span>
                                         <div className="font-bold text-white text-base">Business</div>
-                                        <div className="text-teal-200 text-sm font-normal mt-0.5">$299 / mo</div>
+                                        <div className="text-teal-200 text-sm font-normal mt-0.5">$299 AUD / mo</div>
                                     </th>
                                 </tr>
                             </thead>
@@ -187,6 +187,9 @@ export function PlanComparison({ locale }: { locale: string }) {
                         </table>
                     </div>
                 </div>
+                <p className="text-center text-slate-400 text-xs mt-6">
+                    * All prices are in Australian Dollars (AUD) and inclusive of GST where applicable.
+                </p>
             </div>
         </div>
     )

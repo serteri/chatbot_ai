@@ -23,6 +23,24 @@ export async function POST(req: NextRequest) {
             )
         }
 
+        // Server-side guard: only accept the 4 known AUD price IDs.
+        // For subscription mode the currency is set on the Stripe Price object itself
+        // (not overridable at the session level) — all 4 IDs are denominated in AUD.
+        const KNOWN_PRICE_IDS = [
+            process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
+            process.env.NEXT_PUBLIC_STRIPE_PRO_Year_PRICE_ID,
+            process.env.NEXT_PUBLIC_STRIPE_BUSINESS_PRICE_ID,
+            process.env.NEXT_PUBLIC_STRIPE_BUSINESS_Year_PRICE_ID,
+        ].filter(Boolean)
+
+        if (!KNOWN_PRICE_IDS.includes(priceId)) {
+            console.error(`Checkout rejected: unknown priceId=${priceId}`)
+            return NextResponse.json(
+                { error: 'Invalid price ID' },
+                { status: 400 }
+            )
+        }
+
         // Kullanıcıyı bul
         const user = await prisma.user.findUnique({
             where: { id: session.user.id },

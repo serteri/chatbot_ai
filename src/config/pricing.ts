@@ -242,18 +242,18 @@ export function calculateYearlySavings(planId: SubscriptionPlan): number {
 }
 
 // ─── NDIS Compliance Product Tiers ──────────────────────────────────────────
-// Single source of truth for the NDIS compliance product pricing.
+// Single source of truth for the NDIS compliance product pricing — AUD only.
 // Import from here in every component that displays a plan name, price, or
 // feature list. Never hardcode dollar amounts in individual components.
+// currency is always 'AUD' — NDIS Shield Hub is an Australian product.
 
 export const NDIS_COMPLIANCE_TIERS = {
     starter: {
         id: 'starter' as const,
         name: 'Starter',
-        priceMonthlyUSD: 0,
-        priceMonthlyTRY: 0,
-        displayUSD: '$0',
-        displayTRY: '₺0',
+        currency: 'AUD' as const,
+        priceMonthlyAUD: 0,
+        displayAUD: '$0 AUD',
         isMostPopular: false,
         features: [
             '5 NDIS Claims/month',
@@ -261,14 +261,15 @@ export const NDIS_COMPLIANCE_TIERS = {
             'NDIS Price Guide Sync',
         ],
         cta: 'Get Started Free',
+        stripeMonthlyPriceId: null as null,
+        stripeYearlyPriceId: null as null,
     },
     professional: {
         id: 'professional' as const,
         name: 'Professional',
-        priceMonthlyUSD: 99,
-        priceMonthlyTRY: 2999,
-        displayUSD: '$99',
-        displayTRY: '₺2.999',
+        currency: 'AUD' as const,
+        priceMonthlyAUD: 99,
+        displayAUD: '$99 AUD',
         isMostPopular: false,
         features: [
             'Unlimited NDIS Claims',
@@ -276,14 +277,15 @@ export const NDIS_COMPLIANCE_TIERS = {
             'Priority Email Support',
         ],
         cta: 'Start Professional',
+        stripeMonthlyPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? null,
+        stripeYearlyPriceId:  process.env.NEXT_PUBLIC_STRIPE_PRO_Year_PRICE_ID ?? null,
     },
     business: {
         id: 'business' as const,
         name: 'Business',
-        priceMonthlyUSD: 299,
-        priceMonthlyTRY: 9499,
-        displayUSD: '$299',
-        displayTRY: '₺9.499',
+        currency: 'AUD' as const,
+        priceMonthlyAUD: 299,
+        displayAUD: '$299 AUD',
         isMostPopular: true,
         features: [
             'AI-Powered Docx & PDF Evidence Extraction',
@@ -292,8 +294,10 @@ export const NDIS_COMPLIANCE_TIERS = {
             'Audit-Ready Data Logs',
         ],
         cta: 'Go Enterprise',
+        stripeMonthlyPriceId: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_PRICE_ID ?? null,
+        stripeYearlyPriceId:  process.env.NEXT_PUBLIC_STRIPE_BUSINESS_Year_PRICE_ID ?? null,
     },
-} as const
+}
 
 export type NdisComplianceTierKey = keyof typeof NDIS_COMPLIANCE_TIERS
 // ─────────────────────────────────────────────────────────────────────────────

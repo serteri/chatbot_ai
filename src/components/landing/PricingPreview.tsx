@@ -46,7 +46,7 @@ export function PricingPreview({ locale }: { locale: string }) {
                         <h3 className="text-xl font-bold text-slate-900 mb-2">{NDIS_COMPLIANCE_TIERS.starter.name}</h3>
                         <p className="text-slate-500 mb-6 pb-6 border-b border-slate-100 text-sm">{t('freeDesc')}</p>
                         <div className="text-4xl font-extrabold text-slate-900 mb-8">
-                            {NDIS_COMPLIANCE_TIERS.starter.displayUSD}
+                            {NDIS_COMPLIANCE_TIERS.starter.displayAUD}
                         </div>
 
                         <ul className="space-y-4 mb-8 flex-1">
@@ -73,10 +73,10 @@ export function PricingPreview({ locale }: { locale: string }) {
                     >
                         <h3 className="text-xl font-bold text-slate-900 mb-2">{NDIS_COMPLIANCE_TIERS.professional.name}</h3>
                         <p className="text-slate-500 mb-6 pb-6 border-b border-slate-100 text-sm">{t('proDesc')}</p>
-                        <div className="text-4xl font-extrabold text-slate-900 mb-8">
-                            {NDIS_COMPLIANCE_TIERS.professional.displayUSD}
-                            <span className="text-lg font-normal text-slate-400">/mo</span>
+                        <div className="text-4xl font-extrabold text-slate-900 mb-1">
+                            {NDIS_COMPLIANCE_TIERS.professional.displayAUD}
                         </div>
+                        <div className="text-sm text-slate-400 mb-8">per month</div>
 
                         <ul className="space-y-4 mb-8 flex-1">
                             {NDIS_COMPLIANCE_TIERS.professional.features.map((feature, i) => (
@@ -112,10 +112,10 @@ export function PricingPreview({ locale }: { locale: string }) {
 
                         <h3 className="text-xl font-bold text-white mb-2">{NDIS_COMPLIANCE_TIERS.business.name}</h3>
                         <p className="text-slate-400 mb-6 pb-6 border-b border-slate-800 text-sm">{t('bizDesc')}</p>
-                        <div className="text-4xl font-extrabold text-white mb-8">
-                            {NDIS_COMPLIANCE_TIERS.business.displayUSD}
-                            <span className="text-lg font-normal text-slate-400">/mo</span>
+                        <div className="text-4xl font-extrabold text-white mb-1">
+                            {NDIS_COMPLIANCE_TIERS.business.displayAUD}
                         </div>
+                        <div className="text-sm text-slate-400 mb-8">per month</div>
 
                         <ul className="space-y-4 mb-8 flex-1">
                             {NDIS_COMPLIANCE_TIERS.business.features.map((feature, i) => (
@@ -132,6 +132,10 @@ export function PricingPreview({ locale }: { locale: string }) {
                         </Link>
                     </motion.div>
                 </div>
+
+                <p className="text-center text-slate-400 text-xs mt-10">
+                    * All prices are in Australian Dollars (AUD) and inclusive of GST where applicable.
+                </p>
             </div>
         </section>
     )
