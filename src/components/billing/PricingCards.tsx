@@ -35,7 +35,8 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
             priceId: null,
             icon: Zap,
             popular: false,
-            color: 'gray'
+            color: 'gray',
+            cta: t('startFree')
         },
         {
             id: 'pro',
@@ -53,8 +54,9 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
             ],
             priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
             icon: Star,
-            popular: true,
-            color: 'blue'
+            popular: false,
+            color: 'blue',
+            cta: t('upgrade')
         },
         {
             id: 'business',
@@ -73,8 +75,10 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
             ],
             priceId: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_PRICE_ID,
             icon: Shield,
-            popular: false,
-            color: 'purple'
+            popular: true,
+            color: 'purple',
+            badge: t('bestValueForAgencies'),
+            cta: t('goEnterprise')
         },
         {
             id: 'enterprise',
@@ -94,7 +98,8 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
             priceId: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID,
             icon: Shield,
             popular: false,
-            color: 'emerald'
+            color: 'emerald',
+            cta: t('contact')
         }
     ]
 
@@ -185,8 +190,9 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                                     : 'border border-slate-200 hover:border-slate-300'
                             }`}>
                             {plan.popular && (
-                                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 text-sm font-semibold uppercase tracking-wide">
-                                    {t('mostPopular')}
+                                <Badge className={`absolute -top-3 left-1/2 -translate-x-1/2 text-white px-4 py-1 text-sm font-semibold uppercase tracking-wide ${plan.id === 'business' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-blue-600 hover:bg-blue-700'
+                                    }`}>
+                                    {plan.badge || t('mostPopular')}
                                 </Badge>
                             )}
 
@@ -276,7 +282,7 @@ export function PricingCards({ currentPlan, hasStripeSubscription = false }: Pla
                                         ) : (
                                             <Zap className="mr-2 h-4 w-4" />
                                         )}
-                                        {plan.id === 'free' ? t('startFree') : t('upgrade')}
+                                        {plan.cta || (plan.id === 'free' ? t('startFree') : t('upgrade'))}
                                     </Button>
                                 )}
                             </CardFooter>
