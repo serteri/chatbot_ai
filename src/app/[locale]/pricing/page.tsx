@@ -17,6 +17,7 @@ import {
     MessageSquare,
 } from 'lucide-react'
 import { NDIS_COMPLIANCE_TIERS } from '@/config/pricing'
+import { PlanComparison } from '@/components/pricing/PlanComparison'
 
 export default function PricingPage() {
     const t = useTranslations()
@@ -268,66 +269,7 @@ export default function PricingPage() {
                 </div>
 
                 {/* NDIS Feature Comparison Table */}
-                <div className="py-20 bg-white">
-                    <div className="container mx-auto px-4">
-                        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-                            Plan Comparison
-                        </h2>
-                        <div className="overflow-x-auto">
-                            <table className="w-full max-w-3xl mx-auto border-collapse bg-white rounded-xl shadow-lg">
-                                <thead>
-                                    <tr className="bg-gray-50 border-b">
-                                        <th className="text-left p-4 font-semibold text-gray-900">Feature</th>
-                                        <th className="text-center p-4 font-semibold text-gray-900">Starter — $0</th>
-                                        <th className="text-center p-4 font-semibold text-cyan-600">Professional — $99/mo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">Compliance Audits</td>
-                                        <td className="text-center p-4">3 / month</td>
-                                        <td className="text-center p-4 bg-cyan-50/50 font-semibold text-cyan-700">Unlimited</td>
-                                    </tr>
-                                    <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">PDF Reports</td>
-                                        <td className="text-center p-4">Watermarked</td>
-                                        <td className="text-center p-4 bg-cyan-50/50 font-semibold text-cyan-700">White-label (no watermark)</td>
-                                    </tr>
-                                    <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">File Formats</td>
-                                        <td className="text-center p-4">PDF &amp; DOCX</td>
-                                        <td className="text-center p-4 bg-cyan-50/50">PDF &amp; DOCX</td>
-                                    </tr>
-                                    <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">Bulk Processing</td>
-                                        <td className="text-center p-4">❌</td>
-                                        <td className="text-center p-4 bg-cyan-50/50">✅</td>
-                                    </tr>
-                                    <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">Custom Branding &amp; Logo</td>
-                                        <td className="text-center p-4">❌</td>
-                                        <td className="text-center p-4 bg-cyan-50/50">✅</td>
-                                    </tr>
-                                    <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">NDIS 2025/26 Clause Library</td>
-                                        <td className="text-center p-4">Basic</td>
-                                        <td className="text-center p-4 bg-cyan-50/50">Full</td>
-                                    </tr>
-                                    <tr className="border-b hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">Audit Vault &amp; History</td>
-                                        <td className="text-center p-4">❌</td>
-                                        <td className="text-center p-4 bg-cyan-50/50">✅</td>
-                                    </tr>
-                                    <tr className="hover:bg-gray-50">
-                                        <td className="p-4 text-gray-700">Support</td>
-                                        <td className="text-center p-4">Email</td>
-                                        <td className="text-center p-4 bg-cyan-50/50">Priority</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                <PlanComparison locale={locale} />
 
                 {/* Competitor Comparison */}
                 <div className="py-20 bg-slate-900 text-white">
