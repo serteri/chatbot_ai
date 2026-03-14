@@ -6,41 +6,40 @@ import { cookies } from 'next/headers'
 
 /**
  * GET /api/integrations/xero/auth
- * Initiates the Xero OAuth 2.0 flow.
- * Stores a CSRF state token in an httpOnly cookie then redirects to Xero.
- *
- * Cookie is set with domain=.ndisshield.com.au (leading dot) so it is sent
- * regardless of whether the user is on www or the apex domain — preventing
- * the "state_mismatch / Security check failed" error caused by www ↔ apex
- * redirects stripping the cookie.
+ * Always initiates a FRESH redirect to Xero — no token checks, no early exits.
  */
 export async function GET(req: NextRequest) {
+    // Session check — must be logged in to start the OAuth flow
     const session = await auth()
     if (!session?.user?.id) {
+        console.error('[XERO AUTH] No session — cannot initiate OAuth')
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // ── Debug logging — visible in Vercel function logs ────────────────────
-    console.log('SENDING SCOPES:', DEBUG_SCOPES.join(' '))
-    console.log('CLIENT ID:', process.env.XERO_CLIENT_ID?.substring(0, 5) + '...')
-    console.log('XERO_REDIRECT_URI:', process.env.XERO_REDIRECT_URI)
-    console.log('Request host:', req.headers.get('host'))
+    console.log('[XERO AUTH] Session OK for user:', session.user.id)
+    console.log('[XERO AUTH] SENDING SCOPES:', DEBUG_SCOPES.join(' '))
+    console.log('[XERO AUTH] CLIENT ID:', process.env.XERO_CLIENT_ID?.substring(0, 8) + '...')
+    console.log('[XERO AUTH] XERO_REDIRECT_URI:', process.env.XERO_REDIRECT_URI)
+    console.log('[XERO AUTH] Request host:', req.headers.get('host'))
 
-    // Generate a secure random state for CSRF protection
+    const cookieStore = await cookies()
+
+    // ── Clear any stale state cookie before creating a fresh one ──────────
+    // A leftover cookie from a previous interrupted flow causes state_mismatch.
+    cookieStore.delete('xero_oauth_state')
+
+    // Generate a fresh CSRF state
     const state = randomBytes(24).toString('hex')
 
-    // Derive cookie domain from the incoming hostname so it works on both
-    // www.ndisshield.com.au and ndisshield.com.au. In dev, no domain is set
-    // (undefined means the cookie scopes to localhost automatically).
+    // Cookie domain: leading dot covers both www and apex in production.
     const host = req.headers.get('host') ?? ''
     const isProduction = process.env.NODE_ENV === 'production'
     const cookieDomain = isProduction
-        ? '.' + host.replace(/^www\./, '') // .ndisshield.com.au — covers www + apex
+        ? '.' + host.replace(/^www\./, '')
         : undefined
 
-    console.log('STATE COOKIE DOMAIN:', cookieDomain ?? '(localhost — no domain set)')
+    console.log('[XERO AUTH] STATE COOKIE DOMAIN:', cookieDomain ?? '(localhost)')
 
-    const cookieStore = await cookies()
     cookieStore.set('xero_oauth_state', state, {
         httpOnly: true,
         secure:   isProduction,
@@ -50,7 +49,11 @@ export async function GET(req: NextRequest) {
         ...(cookieDomain ? { domain: cookieDomain } : {}),
     })
 
-    const authUrl = buildXeroAuthUrl(state)
-    console.log('XERO AUTH URL:', authUrl)
-    return NextResponse.redirect(authUrl)
+    // Build the Xero authorize URL and redirect — always, unconditionally
+    const xeroUrl = buildXeroAuthUrl(state)
+    console.log('INITIATING XERO REDIRECT TO:', xeroUrl)
+
+    // Use 307 (Temporary Redirect) to guarantee the browser follows the redirect
+    // as a GET to Xero without caching the response.
+    return NextResponse.redirect(xeroUrl, { status: 307 })
 }
