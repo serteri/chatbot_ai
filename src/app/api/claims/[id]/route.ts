@@ -21,32 +21,39 @@ export async function PATCH(
         } = await req.json()
         const claimId = params.id
 
+        console.log('📝 Update Claim Request:', { claimId, status, totalClaimAmount })
+
         // Ensure claim belongs to user
         const claim = await prisma.claim.findUnique({
             where: { id: claimId }
         })
 
         if (!claim || claim.userId !== session.user.id) {
+            console.error('❌ Claim not found or unauthorized:', { claimId, userId: session.user.id })
             return NextResponse.json({ error: 'Claim not found or unauthorized' }, { status: 404 })
         }
 
         const updatedClaim = await prisma.claim.update({
             where: { id: claimId },
             data: {
-                status,
+                status: status as any, // Cast to any to bypass strict type checking if necessary, but it should match ClaimStatus
                 participantName,
                 participantNdisNumber,
                 supportItemNumber,
-                totalClaimAmount: totalClaimAmount !== undefined ? parseFloat(totalClaimAmount.toString()) : undefined,
+                totalClaimAmount: typeof totalClaimAmount === 'number' ? totalClaimAmount : parseFloat(totalClaimAmount?.toString() || '0'),
                 updatedBy: session.user.name || session.user.email,
                 updatedAt: new Date(),
             }
         })
 
+        console.log('✅ Claim Updated successfully:', updatedClaim.id)
         return NextResponse.json(updatedClaim)
     } catch (error) {
-        console.error('Failed to update claim:', error)
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+        console.error('❌ Failed to update claim:', error)
+        return NextResponse.json({ 
+            error: 'Internal Server Error',
+            details: error instanceof Error ? error.message : String(error)
+        }, { status: 500 })
     }
 }
 

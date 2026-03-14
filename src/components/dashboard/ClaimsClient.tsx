@@ -308,6 +308,7 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
             setEditingClaim(null)
             router.refresh()
         } catch (error) {
+            console.error('Verification Error:', error)
             toast.error('Failed to update claim')
         } finally {
             setIsVerifying(false)
