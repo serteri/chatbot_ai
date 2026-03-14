@@ -27,6 +27,8 @@ import { Claim } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 import {
     Dialog,
     DialogContent,
@@ -639,53 +641,127 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                 </AlertDialogContent>
             </AlertDialog>
 
-            {/* EDIT/VERIFY MODAL */}
+            {/* EDIT/VERIFY MODAL - PREMIUM ENTERPRISE UPGRADE */}
             <Dialog open={!!editingClaim} onOpenChange={(open) => !open && setEditingClaim(null)}>
-                <DialogContent className="max-w-md">
-                    <DialogHeader>
-                        <DialogTitle>Claim Details</DialogTitle>
-                        <DialogDescription>
-                            Review the claim details for {editingClaim?.participantName}.
-                        </DialogDescription>
-                    </DialogHeader>
-                    
-                    <div className="space-y-4 py-4">
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <p className="text-slate-500 font-medium">NDIS ID</p>
-                                <p className="font-semibold">{editingClaim?.participantNdisNumber}</p>
+                <DialogContent 
+                    className={cn(
+                        "max-w-xl p-0 overflow-hidden border-none shadow-2xl rounded-2xl z-[100]",
+                        "dark:bg-[#0a0a0a] bg-white",
+                        "transition-all duration-300 ease-out scale-100"
+                    )}
+                    overlayClassName="z-[100] backdrop-blur-sm bg-black/60"
+                >
+                    <div className="p-8 space-y-8">
+                        <DialogHeader className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <DialogTitle className="text-2xl font-black tracking-tight dark:text-white text-slate-900 flex items-center gap-2">
+                                    <Edit className="w-6 h-6 text-blue-500" />
+                                    Edit Claim Details
+                                </DialogTitle>
                             </div>
-                            <div>
-                                <p className="text-slate-500 font-medium">Item Code</p>
-                                <p className="font-mono">{editingClaim?.supportItemNumber}</p>
+                            <DialogDescription className="text-slate-500 dark:text-slate-400 font-medium">
+                                Audit and verify information for <span className="text-blue-600 dark:text-blue-400 font-bold">{editingClaim?.participantName}</span>.
+                            </DialogDescription>
+                        </DialogHeader>
+                        
+                        <div className="space-y-6">
+                            {/* GROUP 1: PARTICIPANT INFO */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl bg-slate-50 dark:bg-white/5 border dark:border-white/10 border-slate-100 shadow-sm transition-all hover:shadow-md">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
+                                        Participant Name
+                                    </Label>
+                                    <Input 
+                                        defaultValue={editingClaim?.participantName} 
+                                        className="h-11 dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg focus:ring-blue-500/50 transition-all font-medium"
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
+                                        NDIS Number
+                                    </Label>
+                                    <Input 
+                                        defaultValue={editingClaim?.participantNdisNumber} 
+                                        className="h-11 dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg focus:ring-blue-500/50 transition-all font-mono"
+                                        readOnly
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-slate-500 font-medium">Amount</p>
-                                <p className="text-lg font-bold">${editingClaim?.totalClaimAmount.toFixed(2)}</p>
+
+                            {/* GROUP 2: SERVICE DETAILS */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl bg-slate-50 dark:bg-white/5 border dark:border-white/10 border-slate-100 shadow-sm transition-all hover:shadow-md">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
+                                        Support Item Code
+                                    </Label>
+                                    <Input 
+                                        defaultValue={editingClaim?.supportItemNumber} 
+                                        className="h-11 dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg focus:ring-blue-500/50 transition-all font-mono text-xs"
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
+                                        Total Claim Amount
+                                    </Label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                                        <Input 
+                                            defaultValue={editingClaim?.totalClaimAmount.toFixed(2)} 
+                                            className="h-11 pl-7 dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg focus:ring-blue-500/50 transition-all font-bold text-lg text-blue-600 dark:text-blue-400"
+                                            readOnly
+                                        />
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-slate-500 font-medium">Status</p>
-                                <Badge variant={editingClaim?.status === 'VERIFIED' ? 'default' : 'secondary'}>
+
+                            <div className="flex items-center justify-between px-2">
+                                <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                                    CLAIM STATUS
+                                </span>
+                                <Badge 
+                                    className={cn(
+                                        "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm",
+                                        editingClaim?.status === 'VERIFIED' 
+                                            ? "bg-green-500/10 text-green-500 border-green-500/20" 
+                                            : "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                    )}
+                                    variant="outline"
+                                >
                                     {editingClaim?.status}
                                 </Badge>
                             </div>
                         </div>
-                    </div>
 
-                    <DialogFooter className="gap-2">
-                        <Button variant="outline" onClick={() => setEditingClaim(null)}>
-                            Close
-                        </Button>
-                        {editingClaim?.status !== 'VERIFIED' && (
+                        <DialogFooter className="gap-3 pt-4">
                             <Button 
-                                className="bg-green-600 hover:bg-green-700 text-white"
-                                onClick={() => editingClaim && handleVerify(editingClaim.id)}
-                                disabled={isVerifying}
+                                variant="outline" 
+                                onClick={() => setEditingClaim(null)}
+                                className="h-12 px-8 rounded-xl border-slate-200 dark:border-white/10 dark:hover:bg-white/5 transition-all font-bold tracking-tight"
                             >
-                                {isVerifying ? 'Verifying...' : 'Verify Claim'}
+                                Close
                             </Button>
-                        )}
-                    </DialogFooter>
+                            {editingClaim?.status !== 'VERIFIED' && (
+                                <Button 
+                                    className="h-12 px-8 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 transition-all font-bold tracking-tight active:scale-95"
+                                    onClick={() => editingClaim && handleVerify(editingClaim.id)}
+                                    disabled={isVerifying}
+                                >
+                                    {isVerifying ? (
+                                        <span className="flex items-center gap-2 animate-pulse">
+                                            Applying Seal...
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center gap-2">
+                                            <Check className="w-5 h-5" />
+                                            Verify & Seal Claim
+                                        </span>
+                                    )}
+                                </Button>
+                            )}
+                        </DialogFooter>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>
