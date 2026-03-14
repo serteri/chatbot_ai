@@ -8,16 +8,18 @@ import { XeroClient } from 'xero-node'
 import { prisma } from '@/lib/db/prisma'
 
 // ---------------------------------------------------------------------------
-// Scopes — HARDCODED for debugging (bypasses all env var interference)
-// TODO: restore full scope list once "invalid_scope" is resolved
+// Scopes — offline_access is REQUIRED for Xero to create a tenant connection.
+// Without it, /connections returns [] and every callback fails with no_tenants.
 // ---------------------------------------------------------------------------
-
-/** Hardcoded minimal scopes to isolate the invalid_scope error. */
-export const DEBUG_SCOPES = ['openid', 'profile', 'email']
-
-export function getXeroScopes(): string {
-    return DEBUG_SCOPES.join(' ')
-}
+export const XERO_SCOPES = [
+    'openid',
+    'profile',
+    'email',
+    'offline_access',                    // mandatory — creates the tenant link
+    'accounting.transactions',
+    'accounting.contacts',
+    'accounting.settings',
+]
 
 // ---------------------------------------------------------------------------
 // Singleton xero-node client (accounting API calls only — not used for auth)
@@ -26,7 +28,7 @@ export const xero = new XeroClient({
     clientId:     process.env.XERO_CLIENT_ID!,
     clientSecret: process.env.XERO_CLIENT_SECRET!,
     redirectUris: [process.env.XERO_REDIRECT_URI!],
-    scopes:       DEBUG_SCOPES,
+    scopes:       XERO_SCOPES,
 })
 
 // ---------------------------------------------------------------------------
@@ -37,14 +39,16 @@ const XERO_TOKEN_URL   = 'https://identity.xero.com/connect/token'
 const XERO_TENANTS_URL = 'https://api.xero.com/connections'
 
 export function buildXeroAuthUrl(state: string): string {
-    // URLSearchParams encodes the scope value automatically (spaces → %20),
-    // which is exactly what Xero expects.
     const params = new URLSearchParams({
         response_type: 'code',
         client_id:     process.env.XERO_CLIENT_ID!,
         redirect_uri:  process.env.XERO_REDIRECT_URI!,
-        scope:         getXeroScopes(),
+        scope:         XERO_SCOPES.join(' '),
         state,
+        // Force Xero to show the organisation-selection screen every time,
+        // even if the user previously granted access. Required when debugging
+        // no_tenants because a prior incomplete consent may have no org linked.
+        prompt: 'select_account',
     })
     return `${XERO_AUTH_BASE}?${params.toString()}`
 }
@@ -109,8 +113,26 @@ export async function getXeroTenants(
     const res = await fetch(XERO_TENANTS_URL, {
         headers: { Authorization: `Bearer ${accessToken}` },
     })
-    if (!res.ok) throw new Error('Failed to fetch Xero tenants')
-    return res.json()
+
+    const rawText = await res.text()
+    console.log('[XERO TENANTS] HTTP status:', res.status)
+    console.log('[XERO TENANTS] Raw response body:', rawText)
+
+    if (!res.ok) {
+        throw new Error(`Failed to fetch Xero tenants — ${res.status}: ${rawText}`)
+    }
+
+    let parsed: any
+    try {
+        parsed = JSON.parse(rawText)
+    } catch {
+        throw new Error(`Xero /connections returned non-JSON: ${rawText}`)
+    }
+
+    console.log('[XERO TENANTS] Parsed count:', Array.isArray(parsed) ? parsed.length : 'not an array')
+    console.log('[XERO TENANTS] Parsed value:', JSON.stringify(parsed))
+
+    return parsed
 }
 
 // ---------------------------------------------------------------------------

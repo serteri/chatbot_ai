@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
-import { buildXeroAuthUrl, DEBUG_SCOPES } from '@/lib/xero/client'
+import { buildXeroAuthUrl, XERO_SCOPES } from '@/lib/xero/client'
 import { randomBytes } from 'crypto'
 import { cookies } from 'next/headers'
 
@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     }
 
     console.log('[XERO AUTH] Session OK for user:', session.user.id)
-    console.log('[XERO AUTH] SENDING SCOPES:', DEBUG_SCOPES.join(' '))
+    console.log('[XERO AUTH] SENDING SCOPES:', XERO_SCOPES.join(' '))
     console.log('[XERO AUTH] CLIENT ID:', process.env.XERO_CLIENT_ID?.substring(0, 8) + '...')
     console.log('[XERO AUTH] XERO_REDIRECT_URI:', process.env.XERO_REDIRECT_URI)
     console.log('[XERO AUTH] Request host:', req.headers.get('host'))
