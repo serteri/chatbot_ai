@@ -8,18 +8,15 @@ import { XeroClient } from 'xero-node'
 import { prisma } from '@/lib/db/prisma'
 
 // ---------------------------------------------------------------------------
-// Scopes — driven entirely by XERO_SCOPES env var; hard fallback if missing
+// Scopes — HARDCODED for debugging (bypasses all env var interference)
+// TODO: restore full scope list once "invalid_scope" is resolved
 // ---------------------------------------------------------------------------
-const SCOPE_FALLBACK =
-    'openid profile email accounting.transactions.read accounting.transactions.write accounting.contacts.read accounting.contacts.write offline_access'
 
-/**
- * Returns the resolved scope string.
- * Called at request time (not module load) so env vars are always available.
- */
+/** Hardcoded minimal scopes to isolate the invalid_scope error. */
+export const DEBUG_SCOPES = ['openid', 'profile', 'email']
+
 export function getXeroScopes(): string {
-    const fromEnv = (process.env.XERO_SCOPES ?? '').trim()
-    return fromEnv.length > 0 ? fromEnv : SCOPE_FALLBACK
+    return DEBUG_SCOPES.join(' ')
 }
 
 // ---------------------------------------------------------------------------
@@ -29,7 +26,7 @@ export const xero = new XeroClient({
     clientId:     process.env.XERO_CLIENT_ID!,
     clientSecret: process.env.XERO_CLIENT_SECRET!,
     redirectUris: [process.env.XERO_REDIRECT_URI!],
-    scopes:       SCOPE_FALLBACK.split(' '), // SDK init — uses fallback list
+    scopes:       DEBUG_SCOPES,
 })
 
 // ---------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
-import { buildXeroAuthUrl, getXeroScopes } from '@/lib/xero/client'
+import { buildXeroAuthUrl, DEBUG_SCOPES } from '@/lib/xero/client'
 import { randomBytes } from 'crypto'
 import { cookies } from 'next/headers'
 
@@ -15,9 +15,9 @@ export async function GET() {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // ── Scope diagnostics — visible in Vercel function logs ───────────────
-    console.log('SCOPES BEING SENT TO XERO:', process.env.XERO_SCOPES)
-    console.log('RESOLVED XERO SCOPES:', getXeroScopes())
+    // ── Debug logging — check Vercel function logs after clicking Connect ──
+    console.log('SENDING SCOPES:', DEBUG_SCOPES.join(' '))
+    console.log('CLIENT ID:', process.env.XERO_CLIENT_ID?.substring(0, 5) + '...')
 
     // Generate a secure random state for CSRF protection
     const state = randomBytes(24).toString('hex')
