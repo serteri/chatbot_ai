@@ -25,6 +25,8 @@ import { toast } from 'sonner'
 import { format, isValid } from 'date-fns'
 import { Claim } from '@prisma/client'
 import { useRouter } from 'next/navigation'
+import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import {
     Dialog,
     DialogContent,
