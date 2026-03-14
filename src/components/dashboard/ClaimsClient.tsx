@@ -71,6 +71,11 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
     const [dateTo, setDateTo] = useState('')
     const [minPrice, setMinPrice] = useState('')
     const [maxPrice, setMaxPrice] = useState('')
+    const [smartSuggestion, setSmartSuggestion] = useState<{
+        supportItemNumber: string
+        unitPrice: number
+        sourceClaimDate: string
+    } | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
 
@@ -95,7 +100,7 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
         })
     }, [claims, searchQuery, statusFilter, dateFrom, dateTo, minPrice, maxPrice])
 
-    // Sync formData when editingClaim changes
+    // Sync formData and fetch smart mapping suggestion when editingClaim changes
     useEffect(() => {
         if (editingClaim) {
             setFormData({
@@ -104,6 +109,23 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                 supportItemNumber: editingClaim.supportItemNumber,
             })
             setTotalClaimAmountStr(editingClaim.totalClaimAmount?.toString() || '')
+            setSmartSuggestion(null)
+
+            // Fetch historical suggestion for this participant
+            const ndis = editingClaim.participantNdisNumber
+            if (ndis) {
+                fetch(`/api/claims/smart-mapping?ndisNumber=${encodeURIComponent(ndis)}`)
+                    .then(r => r.json())
+                    .then(({ suggestion }) => {
+                        if (
+                            suggestion &&
+                            suggestion.supportItemNumber === editingClaim.supportItemNumber
+                        ) {
+                            setSmartSuggestion(suggestion)
+                        }
+                    })
+                    .catch(() => { /* non-critical — silently ignore */ })
+            }
         }
     }, [editingClaim])
 
@@ -864,15 +886,35 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                             {/* GROUP 2: SERVICE DETAILS */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl bg-slate-50 dark:bg-white/5 border dark:border-white/10 border-slate-100 shadow-sm transition-all hover:shadow-md">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
-                                        Support Item Code
-                                    </Label>
-                                    <Input 
+                                    <div className="flex items-center justify-between">
+                                        <Label className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
+                                            Support Item Code
+                                        </Label>
+                                        {smartSuggestion && (
+                                            <span className="text-[10px] font-semibold text-violet-500 dark:text-violet-400 flex items-center gap-1">
+                                                ✨ Based on previous history
+                                            </span>
+                                        )}
+                                    </div>
+                                    <Input
                                         name="supportItemNumber"
-                                        value={formData.supportItemNumber || ''} 
+                                        value={formData.supportItemNumber || ''}
                                         onChange={handleChange}
-                                        className="h-11 dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg focus:ring-blue-500/50 transition-all font-mono text-xs"
+                                        className={cn(
+                                            "h-11 dark:bg-black/40 rounded-lg focus:ring-blue-500/50 transition-all font-mono text-xs",
+                                            smartSuggestion
+                                                ? "border-violet-300 dark:border-violet-500/50 ring-1 ring-violet-200 dark:ring-violet-500/20"
+                                                : "border-slate-200 dark:border-white/10"
+                                        )}
                                     />
+                                    {smartSuggestion && (
+                                        <p className="text-[10px] text-violet-400 dark:text-violet-500">
+                                            Matched from verified claim on{' '}
+                                            {new Date(smartSuggestion.sourceClaimDate).toLocaleDateString('en-AU', {
+                                                day: 'numeric', month: 'short', year: 'numeric'
+                                            })}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">

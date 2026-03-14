@@ -332,4 +332,7 @@ model Claim {
   user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([participantNdisNumber])
+  @@index([status])
+  @@index([participantNdisNumber, status])  // compound — powers smart-mapping lookups
 }

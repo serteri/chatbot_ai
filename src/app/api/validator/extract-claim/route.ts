@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { getAzureOpenAIClient, extractText } from '@/app/api/validator/analyze/route'
 import { CLAIM_EXTRACTION_PROMPT, type ExtractedClaimData } from '@/lib/ai/claimExtraction'
+import { getSmartMappingSuggestion, type SmartMappingSuggestion } from '@/lib/claims/smart-mapping'
 
 // ---------------------------------------------------------------------------
 // POST /api/validator/extract-claim
@@ -107,10 +108,54 @@ export async function POST(request: NextRequest) {
             }
         }
 
+        // ── Smart Mapping — fill amber/missing fields from verified history ──
+        const appliedTo: string[] = []
+        let smartMapping: SmartMappingSuggestion | null = null
+
+        const ndisNumber = extractedClaim.participantNdisNumber?.value
+        if (ndisNumber) {
+            smartMapping = await getSmartMappingSuggestion(ndisNumber, session.user.id)
+
+            if (smartMapping) {
+                // Apply to supportItemNumber if null or confidence < 85
+                const itemField = extractedClaim.supportItemNumber
+                if (!itemField.value || itemField.confidence < 85) {
+                    extractedClaim.supportItemNumber = {
+                        value: smartMapping.supportItemNumber,
+                        confidence: 90,
+                        rawText: `✨ Suggested from verified claim ${smartMapping.sourceClaimId}`,
+                        requiresManualReview: false,
+                    }
+                    appliedTo.push('supportItemNumber')
+                }
+
+                // Apply to unitPrice if null or confidence < 85
+                const priceField = extractedClaim.unitPrice
+                if (!priceField.value || priceField.confidence < 85) {
+                    extractedClaim.unitPrice = {
+                        value: smartMapping.unitPrice,
+                        confidence: 90,
+                        rawText: `✨ Suggested from verified claim ${smartMapping.sourceClaimId}`,
+                        requiresManualReview: false,
+                    }
+                    appliedTo.push('unitPrice')
+                }
+            }
+        }
+
         return NextResponse.json({
             success: true,
             extractedClaim,
             fileName: file.name,
+            ...(appliedTo.length > 0 && {
+                smartMapping: {
+                    supportItemNumber: smartMapping!.supportItemNumber,
+                    unitPrice: smartMapping!.unitPrice,
+                    sourceClaimId: smartMapping!.sourceClaimId,
+                    sourceClaimDate: smartMapping!.sourceClaimDate,
+                    appliedTo,
+                },
+            }),
         })
 
     } catch (error) {
