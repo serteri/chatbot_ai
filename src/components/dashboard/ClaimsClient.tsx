@@ -74,10 +74,21 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
-        setFormData(prev => ({
-            ...prev,
-            [name]: name === 'totalClaimAmount' ? parseFloat(value) || 0 : value
-        }))
+        
+        if (name === 'totalClaimAmount') {
+            // Remove leading zeros and convert to float
+            // If the user clears the input, fallback to 0
+            const cleanedValue = value.replace(/^0+/, '') || '0'
+            setFormData(prev => ({
+                ...prev,
+                [name]: parseFloat(cleanedValue)
+            }))
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }))
+        }
     }
 
     const handleSelectAll = (checked: boolean) => {
@@ -302,14 +313,17 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                 })
             })
 
-            if (!response.ok) throw new Error('Verification failed')
+            if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.details || errorData.error || 'Verification failed')
+            }
 
             toast.success('Claim updated and verified successfully')
             setEditingClaim(null)
             router.refresh()
         } catch (error) {
             console.error('Verification Error:', error)
-            toast.error('Failed to update claim')
+            toast.error(error instanceof Error ? error.message : 'Failed to update claim')
         } finally {
             setIsVerifying(false)
         }
