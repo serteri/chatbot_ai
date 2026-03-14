@@ -76,8 +76,7 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
         const { name, value } = e.target
         
         if (name === 'totalClaimAmount') {
-            // Remove leading zeros and convert to float
-            // If the user clears the input, fallback to 0
+            // Remove leading zeros and handle empty input
             const cleanedValue = value.replace(/^0+/, '') || '0'
             setFormData(prev => ({
                 ...prev,
@@ -302,6 +301,11 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
     }
 
     const handleVerify = async (id: string) => {
+        if (!id) {
+            toast.error("Claim ID is missing!")
+            return
+        }
+        
         setIsVerifying(true)
         try {
             const response = await fetch(`/api/claims/${id}`, {

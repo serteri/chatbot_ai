@@ -4,9 +4,10 @@ import { prisma } from '@/lib/db/prisma'
 
 export async function PATCH(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await context.params
         const session = await auth()
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -19,7 +20,8 @@ export async function PATCH(
             supportItemNumber, 
             totalClaimAmount 
         } = await req.json()
-        const claimId = params.id
+        const claimId = id
+
 
         console.log('📝 Update Claim Request:', { claimId, status, totalClaimAmount })
 
@@ -60,20 +62,20 @@ export async function PATCH(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id: claimId } = await context.params
         const session = await auth()
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const claimId = params.id
-
         // Ensure claim belongs to user
         const claim = await prisma.claim.findUnique({
             where: { id: claimId }
         })
+
 
         if (!claim || claim.userId !== session.user.id) {
             return NextResponse.json({ error: 'Claim not found or unauthorized' }, { status: 404 })
