@@ -57,6 +57,7 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
     const [isDeleting, setIsDeleting] = useState(false)
     const [isVerifying, setIsVerifying] = useState(false)
     const [formData, setFormData] = useState<Partial<Claim>>({})
+    const [totalClaimAmountStr, setTotalClaimAmountStr] = useState<string>('')
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
 
@@ -67,21 +68,18 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                 participantName: editingClaim.participantName,
                 participantNdisNumber: editingClaim.participantNdisNumber,
                 supportItemNumber: editingClaim.supportItemNumber,
-                totalClaimAmount: editingClaim.totalClaimAmount,
             })
+            setTotalClaimAmountStr(editingClaim.totalClaimAmount?.toString() || '')
         }
     }, [editingClaim])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
-        
+
         if (name === 'totalClaimAmount') {
-            // Remove leading zeros and handle empty input
-            const cleanedValue = value.replace(/^0+/, '') || '0'
-            setFormData(prev => ({
-                ...prev,
-                [name]: parseFloat(cleanedValue)
-            }))
+            // If user clears the field, show empty; otherwise strip leading zeros
+            const cleaned = value === '' ? '' : value.replace(/^0+/, '') || value
+            setTotalClaimAmountStr(cleaned)
         } else {
             setFormData(prev => ({
                 ...prev,
@@ -311,9 +309,10 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
             const response = await fetch(`/api/claims/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     ...formData,
-                    status: 'VERIFIED' 
+                    totalClaimAmount: parseFloat(totalClaimAmountStr) || 0,
+                    status: 'VERIFIED'
                 })
             })
 
@@ -753,11 +752,12 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                                     </Label>
                                     <div className="relative">
                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
-                                        <Input 
+                                        <Input
                                             name="totalClaimAmount"
                                             type="number"
                                             step="0.01"
-                                            value={formData.totalClaimAmount || 0} 
+                                            value={totalClaimAmountStr}
+                                            placeholder="0.00"
                                             onChange={handleChange}
                                             className="h-11 pl-7 dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg focus:ring-blue-500/50 transition-all font-bold text-lg text-blue-600 dark:text-blue-400"
                                         />

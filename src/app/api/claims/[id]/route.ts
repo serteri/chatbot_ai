@@ -38,13 +38,12 @@ export async function PATCH(
         const updatedClaim = await prisma.claim.update({
             where: { id: claimId.toString() }, // Explicitly ensure string
             data: {
-                status: 'VERIFIED' as any, // Enforce exact Enum value
+                status: 'VERIFIED' as any,
                 participantName,
                 participantNdisNumber,
                 supportItemNumber,
-                totalAmount: typeof totalClaimAmount === 'number' ? totalClaimAmount : parseFloat(totalClaimAmount?.toString() || '0'), // Map to schema field if renamed, but usually totalClaimAmount
-                totalClaimAmount: typeof totalClaimAmount === 'number' ? totalClaimAmount : parseFloat(totalClaimAmount?.toString() || '0'), 
-                updatedBy: session.user.id || session.user.email, // Use unique ID for audit trail
+                totalClaimAmount: typeof totalClaimAmount === 'number' ? totalClaimAmount : parseFloat(totalClaimAmount?.toString() || '0'),
+                updatedBy: session.user.id || session.user.email,
                 updatedAt: new Date(),
             }
         })
