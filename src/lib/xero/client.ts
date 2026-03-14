@@ -8,16 +8,19 @@ import { XeroClient } from 'xero-node'
 import { prisma } from '@/lib/db/prisma'
 
 // ---------------------------------------------------------------------------
-// Scopes requested during OAuth consent
+// Scopes — driven entirely by XERO_SCOPES env var; hard fallback if missing
 // ---------------------------------------------------------------------------
-export const XERO_SCOPES = [
-    'openid',
-    'profile',
-    'email',
-    'accounting.transactions',
-    'accounting.contacts',
-    'offline_access',
-].join(' ')
+const SCOPE_FALLBACK =
+    'openid profile email accounting.transactions.read accounting.transactions.write accounting.contacts.read accounting.contacts.write offline_access'
+
+/**
+ * Returns the resolved scope string.
+ * Called at request time (not module load) so env vars are always available.
+ */
+export function getXeroScopes(): string {
+    const fromEnv = (process.env.XERO_SCOPES ?? '').trim()
+    return fromEnv.length > 0 ? fromEnv : SCOPE_FALLBACK
+}
 
 // ---------------------------------------------------------------------------
 // Singleton xero-node client (accounting API calls only — not used for auth)
@@ -26,22 +29,24 @@ export const xero = new XeroClient({
     clientId:     process.env.XERO_CLIENT_ID!,
     clientSecret: process.env.XERO_CLIENT_SECRET!,
     redirectUris: [process.env.XERO_REDIRECT_URI!],
-    scopes:       XERO_SCOPES.split(' '),
+    scopes:       SCOPE_FALLBACK.split(' '), // SDK init — uses fallback list
 })
 
 // ---------------------------------------------------------------------------
 // OAuth 2.0 — manual flow (serverless-safe, no SDK state needed)
 // ---------------------------------------------------------------------------
-const XERO_AUTH_BASE  = 'https://login.xero.com/identity/connect/authorize'
-const XERO_TOKEN_URL  = 'https://identity.xero.com/connect/token'
+const XERO_AUTH_BASE   = 'https://login.xero.com/identity/connect/authorize'
+const XERO_TOKEN_URL   = 'https://identity.xero.com/connect/token'
 const XERO_TENANTS_URL = 'https://api.xero.com/connections'
 
 export function buildXeroAuthUrl(state: string): string {
+    // URLSearchParams encodes the scope value automatically (spaces → %20),
+    // which is exactly what Xero expects.
     const params = new URLSearchParams({
         response_type: 'code',
         client_id:     process.env.XERO_CLIENT_ID!,
         redirect_uri:  process.env.XERO_REDIRECT_URI!,
-        scope:         XERO_SCOPES,
+        scope:         getXeroScopes(),
         state,
     })
     return `${XERO_AUTH_BASE}?${params.toString()}`
