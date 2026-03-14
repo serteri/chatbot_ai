@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Download, FileWarning, AlertCircle, Upload, FileSpreadsheet, Check, X, AlertTriangle, Edit, Trash2, MoreVertical, Eye, Search, SlidersHorizontal, CalendarDays } from 'lucide-react'
+import { Download, FileWarning, AlertCircle, Upload, FileSpreadsheet, Check, X, AlertTriangle, Edit, Trash2, MoreVertical, Eye, Search, SlidersHorizontal, CalendarDays, DollarSign } from 'lucide-react'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -69,11 +69,15 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
     const [statusFilter, setStatusFilter] = useState('ALL')
     const [dateFrom, setDateFrom] = useState('')
     const [dateTo, setDateTo] = useState('')
+    const [minPrice, setMinPrice] = useState('')
+    const [maxPrice, setMaxPrice] = useState('')
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
 
     const filteredClaims = useMemo(() => {
         const q = searchQuery.toLowerCase().trim()
+        const min = minPrice !== '' ? parseFloat(minPrice) : null
+        const max = maxPrice !== '' ? parseFloat(maxPrice) : null
         return claims.filter(c => {
             const matchesSearch =
                 !q ||
@@ -84,9 +88,12 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
             const claimDate = new Date(c.supportDeliveredDate)
             const matchesFrom = !dateFrom || claimDate >= new Date(dateFrom)
             const matchesTo = !dateTo || claimDate <= new Date(dateTo)
-            return matchesSearch && matchesStatus && matchesFrom && matchesTo
+            const amount = parseFloat(c.totalClaimAmount as unknown as string)
+            const matchesMin = min === null || amount >= min
+            const matchesMax = max === null || amount <= max
+            return matchesSearch && matchesStatus && matchesFrom && matchesTo && matchesMin && matchesMax
         })
-    }, [claims, searchQuery, statusFilter, dateFrom, dateTo])
+    }, [claims, searchQuery, statusFilter, dateFrom, dateTo, minPrice, maxPrice])
 
     // Sync formData when editingClaim changes
     useEffect(() => {
@@ -521,10 +528,40 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                     />
                 </div>
 
+                {/* Price Range */}
+                <div className="flex items-center gap-2 shrink-0">
+                    <DollarSign className="w-4 h-4 text-slate-400 hidden sm:block" />
+                    <div className="relative">
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={minPrice}
+                            onChange={e => setMinPrice(e.target.value)}
+                            placeholder="Min"
+                            className="w-24 h-9 pl-2 pr-10 text-sm border border-slate-200 rounded-md bg-white dark:bg-zinc-950 text-slate-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500/50 z-[100]"
+                        />
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 pointer-events-none">AUD</span>
+                    </div>
+                    <span className="text-slate-400 text-xs font-medium">–</span>
+                    <div className="relative">
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={maxPrice}
+                            onChange={e => setMaxPrice(e.target.value)}
+                            placeholder="Max"
+                            className="w-24 h-9 pl-2 pr-10 text-sm border border-slate-200 rounded-md bg-white dark:bg-zinc-950 text-slate-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-500/50 z-[100]"
+                        />
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 pointer-events-none">AUD</span>
+                    </div>
+                </div>
+
                 {/* Clear */}
-                {(searchQuery || statusFilter !== 'ALL' || dateFrom || dateTo) && (
+                {(searchQuery || statusFilter !== 'ALL' || dateFrom || dateTo || minPrice || maxPrice) && (
                     <button
-                        onClick={() => { setSearchQuery(''); setStatusFilter('ALL'); setDateFrom(''); setDateTo('') }}
+                        onClick={() => { setSearchQuery(''); setStatusFilter('ALL'); setDateFrom(''); setDateTo(''); setMinPrice(''); setMaxPrice('') }}
                         className="text-xs font-semibold text-slate-400 hover:text-slate-600 shrink-0 flex items-center gap-1 transition-colors"
                     >
                         <X className="w-3.5 h-3.5" /> Clear
