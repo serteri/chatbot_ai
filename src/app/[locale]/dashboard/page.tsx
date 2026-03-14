@@ -13,7 +13,9 @@ import {
     BarChart3,
 } from 'lucide-react'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import StatsCards from '@/components/dashboard/StatsCards'
+import XeroConnect from '@/components/dashboard/XeroConnect'
 
 export default async function DashboardPage({
     params,
@@ -238,6 +240,13 @@ export default async function DashboardPage({
                             <FileSpreadsheet className="w-4 h-4" />
                             Export to PRODA
                         </Link>
+                    </div>
+
+                    {/* Xero integration — sits directly below the action buttons */}
+                    <div className="mt-4 pt-4 border-t border-slate-100">
+                        <Suspense fallback={<div className="h-16 rounded-xl bg-slate-50 animate-pulse" />}>
+                            <XeroConnect />
+                        </Suspense>
                     </div>
                 </div>
 
