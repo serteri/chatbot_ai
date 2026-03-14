@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db/prisma'
 import { Suspense } from 'react'
 import SettingsForm from '@/components/dashboard/SettingsForm'
 import BrandingSettings from '@/components/dashboard/BrandingSettings'
+import XeroConnect from '@/components/dashboard/XeroConnect'
 
 // ---------------------------------------------------------------------------
 // Error-safe Branding wrapper — keeps the rest of Settings alive if branding
@@ -69,6 +70,19 @@ export default async function SettingsPage() {
                     initialAbn={dbUser?.abn ?? ''}
                 />
             </Suspense>
+
+            {/* Integrations */}
+            <div className="space-y-3">
+                <div>
+                    <h2 className="text-lg font-bold text-slate-900">Integrations</h2>
+                    <p className="text-sm text-slate-500">Connect third-party accounting and compliance tools.</p>
+                </div>
+                <Suspense fallback={
+                    <div className="h-16 rounded-xl border border-slate-200 bg-white animate-pulse" />
+                }>
+                    <XeroConnect />
+                </Suspense>
+            </div>
         </div>
     )
 }
