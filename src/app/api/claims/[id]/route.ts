@@ -12,7 +12,13 @@ export async function PATCH(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const { status } = await req.json()
+        const { 
+            status, 
+            participantName, 
+            participantNdisNumber, 
+            supportItemNumber, 
+            totalClaimAmount 
+        } = await req.json()
         const claimId = params.id
 
         // Ensure claim belongs to user
@@ -28,6 +34,10 @@ export async function PATCH(
             where: { id: claimId },
             data: {
                 status,
+                participantName,
+                participantNdisNumber,
+                supportItemNumber,
+                totalClaimAmount: totalClaimAmount !== undefined ? parseFloat(totalClaimAmount.toString()) : undefined,
                 updatedBy: session.user.name || session.user.email,
                 updatedAt: new Date(),
             }

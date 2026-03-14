@@ -56,8 +56,29 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
     const [deletingClaim, setDeletingClaim] = useState<Claim | null>(null)
     const [isDeleting, setIsDeleting] = useState(false)
     const [isVerifying, setIsVerifying] = useState(false)
+    const [formData, setFormData] = useState<Partial<Claim>>({})
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
+
+    // Sync formData when editingClaim changes
+    useEffect(() => {
+        if (editingClaim) {
+            setFormData({
+                participantName: editingClaim.participantName,
+                participantNdisNumber: editingClaim.participantNdisNumber,
+                supportItemNumber: editingClaim.supportItemNumber,
+                totalClaimAmount: editingClaim.totalClaimAmount,
+            })
+        }
+    }, [editingClaim])
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setFormData(prev => ({
+            ...prev,
+            [name]: name === 'totalClaimAmount' ? parseFloat(value) || 0 : value
+        }))
+    }
 
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
@@ -275,16 +296,19 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
             const response = await fetch(`/api/claims/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: 'VERIFIED' })
+                body: JSON.stringify({ 
+                    ...formData,
+                    status: 'VERIFIED' 
+                })
             })
 
             if (!response.ok) throw new Error('Verification failed')
 
-            toast.success('Claim verified successfully')
+            toast.success('Claim updated and verified successfully')
             setEditingClaim(null)
             router.refresh()
         } catch (error) {
-            toast.error('Failed to verify claim')
+            toast.error('Failed to update claim')
         } finally {
             setIsVerifying(false)
         }
@@ -672,9 +696,10 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                                         Participant Name
                                     </Label>
                                     <Input 
-                                        defaultValue={editingClaim?.participantName} 
+                                        name="participantName"
+                                        value={formData.participantName || ''} 
+                                        onChange={handleChange}
                                         className="h-11 dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg focus:ring-blue-500/50 transition-all font-medium"
-                                        readOnly
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -682,9 +707,10 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                                         NDIS Number
                                     </Label>
                                     <Input 
-                                        defaultValue={editingClaim?.participantNdisNumber} 
+                                        name="participantNdisNumber"
+                                        value={formData.participantNdisNumber || ''} 
+                                        onChange={handleChange}
                                         className="h-11 dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg focus:ring-blue-500/50 transition-all font-mono"
-                                        readOnly
                                     />
                                 </div>
                             </div>
@@ -696,9 +722,10 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                                         Support Item Code
                                     </Label>
                                     <Input 
-                                        defaultValue={editingClaim?.supportItemNumber} 
+                                        name="supportItemNumber"
+                                        value={formData.supportItemNumber || ''} 
+                                        onChange={handleChange}
                                         className="h-11 dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg focus:ring-blue-500/50 transition-all font-mono text-xs"
-                                        readOnly
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -708,9 +735,12 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                                     <div className="relative">
                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
                                         <Input 
-                                            defaultValue={editingClaim?.totalClaimAmount.toFixed(2)} 
+                                            name="totalClaimAmount"
+                                            type="number"
+                                            step="0.01"
+                                            value={formData.totalClaimAmount || 0} 
+                                            onChange={handleChange}
                                             className="h-11 pl-7 dark:bg-black/40 border-slate-200 dark:border-white/10 rounded-lg focus:ring-blue-500/50 transition-all font-bold text-lg text-blue-600 dark:text-blue-400"
-                                            readOnly
                                         />
                                     </div>
                                 </div>
