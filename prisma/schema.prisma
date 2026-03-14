@@ -299,6 +299,7 @@ model XeroToken {
   expiresAt    DateTime
   tenantId     String
   tenantName   String?
+  active       Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

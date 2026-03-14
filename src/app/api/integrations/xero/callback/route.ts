@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
-import { exchangeXeroCode, getXeroTenants } from '@/lib/xero'
+import { exchangeXeroCode, getXeroTenants } from '@/lib/xero/client'
 import { prisma } from '@/lib/db/prisma'
 import { cookies } from 'next/headers'
 
@@ -55,23 +55,19 @@ export async function GET(req: NextRequest) {
         // Use the first (primary) tenant
         const primaryTenant = tenants[0]
 
+        const tokenPayload = {
+            accessToken:  tokens.access_token,
+            refreshToken: tokens.refresh_token,
+            expiresAt:    new Date(Date.now() + tokens.expires_in * 1000),
+            tenantId:     primaryTenant.tenantId,
+            tenantName:   primaryTenant.tenantName ?? null,
+            active:       true,
+        }
+
         await prisma.xeroToken.upsert({
-            where: { userId: session.user.id },
-            create: {
-                userId: session.user.id,
-                accessToken: tokens.access_token,
-                refreshToken: tokens.refresh_token,
-                expiresAt: new Date(Date.now() + tokens.expires_in * 1000),
-                tenantId: primaryTenant.tenantId,
-                tenantName: primaryTenant.tenantName ?? null,
-            },
-            update: {
-                accessToken: tokens.access_token,
-                refreshToken: tokens.refresh_token,
-                expiresAt: new Date(Date.now() + tokens.expires_in * 1000),
-                tenantId: primaryTenant.tenantId,
-                tenantName: primaryTenant.tenantName ?? null,
-            },
+            where:  { userId: session.user.id },
+            create: { userId: session.user.id, ...tokenPayload },
+            update: tokenPayload,
         })
 
         console.log(`✅ Xero connected for user ${session.user.id} → org: ${primaryTenant.tenantName}`)

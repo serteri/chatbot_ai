@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
-import { buildXeroAuthUrl } from '@/lib/xero'
+import { buildXeroAuthUrl } from '@/lib/xero/client'
 import { randomBytes } from 'crypto'
 import { cookies } from 'next/headers'
 
