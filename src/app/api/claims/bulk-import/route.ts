@@ -87,8 +87,8 @@ export async function POST(req: Request) {
             }
 
             const dataToInsert = claimsData.map((c: any) => {
-                const qty   = cleanNumber(c.quantityDelivered)
-                const price = cleanNumber(c.unitPrice)
+                const qty   = parseFloat(String(cleanNumber(c.quantityDelivered))) || 0
+                const price = parseFloat(String(cleanNumber(c.unitPrice)))         || 0
                 return {
                     userId:                session.user.id,
                     participantName:       String(c.participantName).trim(),
@@ -97,8 +97,9 @@ export async function POST(req: Request) {
                     supportDeliveredDate:  new Date(c.supportDeliveredDate),
                     quantityDelivered:     qty,
                     unitPrice:             price,
-                    totalClaimAmount:      qty * price,
-                    status:                'draft',
+                    totalClaimAmount:      parseFloat((qty * price).toFixed(2)),
+                    updatedBy:             session.user.id,
+                    status:                'DRAFT' as const,  // matches ClaimStatus enum
                 }
             })
 
