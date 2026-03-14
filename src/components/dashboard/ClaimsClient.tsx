@@ -286,6 +286,68 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
         }
     }
 
+    const handleExport = () => {
+        // Filter claims based on selection and status (DRAFT or VERIFIED)
+        const claimsToExport = claims.filter(c => 
+            selectedIds.has(c.id) && 
+            (c.status === 'VERIFIED' || c.status === 'DRAFT')
+        )
+
+        if (claimsToExport.length === 0) {
+            toast.error("No claims available to export.")
+            return
+        }
+
+        setIsExporting(true)
+        try {
+            // PRODA compatible headers
+            const headers = [
+                'Participant Name', 
+                'NDIS Number', 
+                'Service Date', 
+                'Item Code', 
+                'Hours', 
+                'Unit Price', 
+                'Total'
+            ]
+            
+            // Map rows and escape data with quotes
+            const rows = claimsToExport.map(c => [
+                c.participantName,
+                c.participantNdisNumber,
+                format(new Date(c.supportDeliveredDate), 'dd/MM/yyyy'),
+                c.supportItemNumber,
+                c.quantityDelivered.toFixed(2),
+                c.unitPrice.toFixed(2),
+                c.totalClaimAmount.toFixed(2)
+            ].map(val => `"${val}"`).join(','))
+
+            const csvContent = [headers.join(','), ...rows].join('\n')
+            
+            // Create blob and trigger download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            
+            link.href = url
+            link.setAttribute('download', 'NDIS_Claims_Export.csv')
+            document.body.appendChild(link)
+            
+            link.click()
+            
+            // Cleanup
+            document.body.removeChild(link)
+            window.URL.revokeObjectURL(url)
+            
+            toast.success(`Exported ${claimsToExport.length} claims successfully.`)
+        } catch (error) {
+            console.error('Export Error:', error)
+            toast.error("An error occurred during export.")
+        } finally {
+            setIsExporting(false)
+        }
+    }
+
     return (
         <div className="container mx-auto px-4 py-8 max-w-6xl">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
