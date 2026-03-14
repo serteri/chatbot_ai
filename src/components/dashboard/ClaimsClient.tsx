@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Download, FileWarning, AlertCircle, Upload, FileSpreadsheet, Check, X, AlertTriangle, Edit, Trash2, MoreVertical, Eye } from 'lucide-react'
+import { Download, FileWarning, AlertCircle, Upload, FileSpreadsheet, Check, X, AlertTriangle, Edit, Trash2, MoreVertical, Eye, Search, SlidersHorizontal, CalendarDays } from 'lucide-react'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -37,6 +37,13 @@ import {
     DialogFooter,
     DialogDescription
 } from '@/components/ui/dialog'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
 
 interface ClaimsClientProps {
     claims: Claim[]
@@ -58,8 +65,28 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
     const [isVerifying, setIsVerifying] = useState(false)
     const [formData, setFormData] = useState<Partial<Claim>>({})
     const [totalClaimAmountStr, setTotalClaimAmountStr] = useState<string>('')
+    const [searchQuery, setSearchQuery] = useState('')
+    const [statusFilter, setStatusFilter] = useState('ALL')
+    const [dateFrom, setDateFrom] = useState('')
+    const [dateTo, setDateTo] = useState('')
     const fileInputRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
+
+    const filteredClaims = useMemo(() => {
+        const q = searchQuery.toLowerCase().trim()
+        return claims.filter(c => {
+            const matchesSearch =
+                !q ||
+                c.participantName.toLowerCase().includes(q) ||
+                c.participantNdisNumber.toLowerCase().includes(q)
+            const matchesStatus =
+                statusFilter === 'ALL' || c.status === statusFilter
+            const claimDate = new Date(c.supportDeliveredDate)
+            const matchesFrom = !dateFrom || claimDate >= new Date(dateFrom)
+            const matchesTo = !dateTo || claimDate <= new Date(dateTo)
+            return matchesSearch && matchesStatus && matchesFrom && matchesTo
+        })
+    }, [claims, searchQuery, statusFilter, dateFrom, dateTo])
 
     // Sync formData when editingClaim changes
     useEffect(() => {
@@ -90,7 +117,7 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
 
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
-            setSelectedIds(new Set(claims.map(c => c.id)))
+            setSelectedIds(new Set(filteredClaims.map(c => c.id)))
         } else {
             setSelectedIds(new Set())
         }
@@ -433,14 +460,76 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
             </div>
 
             <div className="mb-6 flex items-center justify-end">
-                <a 
-                    href="/templates/claims-import-template.csv" 
-                    download 
+                <a
+                    href="/templates/claims-import-template.csv"
+                    download
                     className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1.5 bg-teal-50 px-3 py-1.5 rounded-full border border-teal-100 transition-colors"
                 >
                     <FileSpreadsheet className="w-3.5 h-3.5" />
                     Download CSV Template for Bulk Upload
                 </a>
+            </div>
+
+            {/* FILTER & SEARCH BAR */}
+            <div className="mb-4 flex flex-col sm:flex-row gap-3 p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                <div className="flex items-center gap-2 text-slate-400 shrink-0">
+                    <SlidersHorizontal className="w-4 h-4" />
+                    <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Filter</span>
+                </div>
+
+                {/* Search */}
+                <div className="relative flex-1 min-w-[180px]">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <Input
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        placeholder="Search by name or NDIS ID…"
+                        className="pl-9 h-9 text-sm border-slate-200 focus:ring-teal-500/50"
+                    />
+                </div>
+
+                {/* Status */}
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="h-9 w-[150px] text-sm border-slate-200 shrink-0">
+                        <SelectValue placeholder="All Statuses" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="ALL">All Statuses</SelectItem>
+                        <SelectItem value="DRAFT">Draft</SelectItem>
+                        <SelectItem value="VERIFIED">Verified</SelectItem>
+                        <SelectItem value="EXPORTED">Exported</SelectItem>
+                    </SelectContent>
+                </Select>
+
+                {/* Date Range */}
+                <div className="flex items-center gap-2 shrink-0">
+                    <CalendarDays className="w-4 h-4 text-slate-400 hidden sm:block" />
+                    <input
+                        type="date"
+                        value={dateFrom}
+                        onChange={e => setDateFrom(e.target.value)}
+                        className="h-9 px-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                        title="From date"
+                    />
+                    <span className="text-slate-400 text-xs font-medium">to</span>
+                    <input
+                        type="date"
+                        value={dateTo}
+                        onChange={e => setDateTo(e.target.value)}
+                        className="h-9 px-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                        title="To date"
+                    />
+                </div>
+
+                {/* Clear */}
+                {(searchQuery || statusFilter !== 'ALL' || dateFrom || dateTo) && (
+                    <button
+                        onClick={() => { setSearchQuery(''); setStatusFilter('ALL'); setDateFrom(''); setDateTo('') }}
+                        className="text-xs font-semibold text-slate-400 hover:text-slate-600 shrink-0 flex items-center gap-1 transition-colors"
+                    >
+                        <X className="w-3.5 h-3.5" /> Clear
+                    </button>
+                )}
             </div>
 
             <Card className="border-slate-200 shadow-sm border-t-4 border-t-teal-500">
@@ -463,7 +552,7 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                                     <th scope="col" className="p-4 w-4">
                                         <div className="flex items-center">
                                             <Checkbox
-                                                checked={selectedIds.size === claims.length && claims.length > 0}
+                                                checked={filteredClaims.length > 0 && filteredClaims.every(c => selectedIds.has(c.id))}
                                                 onCheckedChange={handleSelectAll}
                                             />
                                         </div>
@@ -478,7 +567,7 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {claims.map((claim) => (
+                                {filteredClaims.map((claim) => (
                                     <tr key={claim.id} className="bg-white hover:bg-teal-50/50 transition-colors">
                                         <td className="p-4">
                                             <div className="flex items-center">
@@ -540,10 +629,12 @@ export default function ClaimsClient({ claims }: ClaimsClientProps) {
                             </tbody>
                         </table>
 
-                        {claims.length === 0 && (
+                        {filteredClaims.length === 0 && (
                             <div className="py-12 text-center flex flex-col items-center">
                                 <AlertCircle className="h-8 w-8 text-slate-400 mb-3" />
-                                <p className="text-slate-500 font-medium text-sm">No drafted claims available.</p>
+                                <p className="text-slate-500 font-medium text-sm">
+                                    {claims.length === 0 ? 'No drafted claims available.' : 'No claims match your filters.'}
+                                </p>
                             </div>
                         )}
                     </div>
