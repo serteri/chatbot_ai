@@ -8,17 +8,9 @@ import { XeroClient } from 'xero-node'
 import { prisma } from '@/lib/db/prisma'
 
 // ---------------------------------------------------------------------------
-// Scopes — hardcoded, no env var, no dynamic logic.
-// Web App type in Xero portal: use granular .read/.write variants.
+// Scopes — SUPER-MINIMAL for invalid_scope isolation test.
 // ---------------------------------------------------------------------------
-export const XERO_SCOPES = [
-    'openid',
-    'profile',
-    'email',
-    'accounting.transactions.read',
-    'accounting.transactions.write',
-    'offline_access',
-]
+export const XERO_SCOPES = ['openid', 'profile', 'email']
 
 // ---------------------------------------------------------------------------
 // Singleton xero-node client (accounting API calls only — not used for auth)
@@ -38,8 +30,7 @@ const XERO_TOKEN_URL   = 'https://identity.xero.com/connect/token'
 const XERO_TENANTS_URL = 'https://api.xero.com/connections'
 
 export function buildXeroAuthUrl(state: string): string {
-    // Build scope string with spaces, then manually encode spaces as %20.
-    // URLSearchParams uses + for spaces which some OAuth servers reject.
+    // Single space between each scope — no commas, no other separators.
     const scopeStr = XERO_SCOPES.join(' ')
 
     const params = new URLSearchParams({
@@ -51,13 +42,12 @@ export function buildXeroAuthUrl(state: string): string {
         prompt:        'select_account',
     })
 
-    // Replace + with %20 for RFC 3986-compliant space encoding
-    const url = `${XERO_AUTH_BASE}?${params.toString().replace(/\+/g, '%20')}`
+    // Spaces must be %20, not +
+    const xeroUrl = `${XERO_AUTH_BASE}?${params.toString().replace(/\+/g, '%20')}`
 
-    console.log('XERO_AUTH_URL:', url)
-    console.log('XERO_SCOPES_SENT:', scopeStr)
+    console.log('XERO_URL_LOG:', xeroUrl)
 
-    return url
+    return xeroUrl
 }
 
 function basicAuth(): string {
