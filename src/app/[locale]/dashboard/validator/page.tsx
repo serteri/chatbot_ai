@@ -969,6 +969,82 @@ export default function ValidatorPage() {
                                 )
                             })}
 
+                            {/* ── Math Panel: Estimated Total + Back-calc + Price Warning ── */}
+                            {(() => {
+                                const qty   = parseFloat(claimForm.quantityDelivered)
+                                const price = parseFloat(claimForm.unitPrice.replace(/[$,]/g, ''))
+                                const total = !isNaN(qty) && !isNaN(price) ? qty * price : null
+                                const priceIsHigh = !isNaN(price) && price > 250
+
+                                return (
+                                    <div className="space-y-3 border-t border-slate-100 pt-4">
+
+                                        {/* Estimated Total (live) */}
+                                        <div className={`flex items-center justify-between rounded-xl px-4 py-3 border transition-colors ${
+                                            total !== null
+                                                ? 'bg-blue-50 border-blue-200'
+                                                : 'bg-slate-50 border-slate-200'
+                                        }`}>
+                                            <span className="text-xs font-bold text-blue-700 uppercase tracking-wider">
+                                                Estimated Total
+                                            </span>
+                                            {total !== null ? (
+                                                <span className="text-base font-black text-blue-900 tabular-nums">
+                                                    ${total.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                    <span className="text-xs font-normal text-blue-500 ml-1.5">
+                                                        ({isNaN(qty) ? '?' : qty} hrs × ${isNaN(price) ? '?' : price.toFixed(2)})
+                                                    </span>
+                                                </span>
+                                            ) : (
+                                                <span className="text-xs text-slate-400">Enter hours and unit price above</span>
+                                            )}
+                                        </div>
+
+                                        {/* Total Override — back-calculates Unit Price */}
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
+                                                Total Override
+                                                <span className="text-[10px] font-normal normal-case text-slate-400">
+                                                    — type a total to auto-update Unit Price
+                                                </span>
+                                            </label>
+                                            <div className="relative">
+                                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">$</span>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    placeholder="e.g. 4000.00"
+                                                    className="w-full h-9 pl-6 pr-3 rounded-lg border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-400/30 focus:border-teal-400 transition-colors"
+                                                    onChange={(e) => {
+                                                        const totalVal = parseFloat(e.target.value)
+                                                        const qtyVal   = parseFloat(claimForm.quantityDelivered)
+                                                        if (!isNaN(totalVal) && !isNaN(qtyVal) && qtyVal > 0) {
+                                                            setClaimForm(prev => ({
+                                                                ...prev,
+                                                                unitPrice: (totalVal / qtyVal).toFixed(2),
+                                                            }))
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* ⚠️ NDIS Price Guide warning */}
+                                        {priceIsHigh && (
+                                            <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
+                                                <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                                                <p className="text-xs text-amber-800 leading-relaxed">
+                                                    <strong>⚠️ This price seems higher than standard NDIS rates.</strong>{' '}
+                                                    Most core support items are capped around $250/hr. Please verify against the current NDIS Price Guide before saving.
+                                                </p>
+                                            </div>
+                                        )}
+
+                                    </div>
+                                )
+                            })()}
+
                             {/* Service type (read-only context) */}
                             {extractedClaim.serviceType.value && (
                                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
