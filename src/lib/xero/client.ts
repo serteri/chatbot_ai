@@ -8,17 +8,16 @@ import { XeroClient } from 'xero-node'
 import { prisma } from '@/lib/db/prisma'
 
 // ---------------------------------------------------------------------------
-// Scopes — offline_access is REQUIRED for Xero to create a tenant connection.
-// Without it, /connections returns [] and every callback fails with no_tenants.
+// Scopes — hardcoded, no env var, no dynamic logic.
+// Web App type in Xero portal: use granular .read/.write variants.
 // ---------------------------------------------------------------------------
 export const XERO_SCOPES = [
     'openid',
     'profile',
     'email',
-    'offline_access',                    // mandatory — creates the tenant link
-    'accounting.transactions',
-    'accounting.contacts',
-    'accounting.settings',
+    'accounting.transactions.read',
+    'accounting.transactions.write',
+    'offline_access',
 ]
 
 // ---------------------------------------------------------------------------
@@ -28,7 +27,7 @@ export const xero = new XeroClient({
     clientId:     process.env.XERO_CLIENT_ID!,
     clientSecret: process.env.XERO_CLIENT_SECRET!,
     redirectUris: [process.env.XERO_REDIRECT_URI!],
-    scopes:       XERO_SCOPES,
+    scopes:       [...XERO_SCOPES],
 })
 
 // ---------------------------------------------------------------------------
@@ -39,18 +38,26 @@ const XERO_TOKEN_URL   = 'https://identity.xero.com/connect/token'
 const XERO_TENANTS_URL = 'https://api.xero.com/connections'
 
 export function buildXeroAuthUrl(state: string): string {
+    // Build scope string with spaces, then manually encode spaces as %20.
+    // URLSearchParams uses + for spaces which some OAuth servers reject.
+    const scopeStr = XERO_SCOPES.join(' ')
+
     const params = new URLSearchParams({
         response_type: 'code',
         client_id:     process.env.XERO_CLIENT_ID!,
         redirect_uri:  process.env.XERO_REDIRECT_URI!,
-        scope:         XERO_SCOPES.join(' '),
+        scope:         scopeStr,
         state,
-        // Force Xero to show the organisation-selection screen every time,
-        // even if the user previously granted access. Required when debugging
-        // no_tenants because a prior incomplete consent may have no org linked.
-        prompt: 'select_account',
+        prompt:        'select_account',
     })
-    return `${XERO_AUTH_BASE}?${params.toString()}`
+
+    // Replace + with %20 for RFC 3986-compliant space encoding
+    const url = `${XERO_AUTH_BASE}?${params.toString().replace(/\+/g, '%20')}`
+
+    console.log('XERO_AUTH_URL:', url)
+    console.log('XERO_SCOPES_SENT:', scopeStr)
+
+    return url
 }
 
 function basicAuth(): string {
