@@ -53,6 +53,7 @@ export async function GET(req: NextRequest) {
 
     // Build the Xero authorize URL and redirect — always, unconditionally
     const xeroUrl = buildXeroAuthUrl(state)
+    console.log('NEW_ID_TEST: REDIRECT_URI =', process.env.XERO_REDIRECT_URI)
     console.log('INITIATING XERO REDIRECT TO:', xeroUrl)
 
     // Use 307 (Temporary Redirect) to guarantee the browser follows the redirect

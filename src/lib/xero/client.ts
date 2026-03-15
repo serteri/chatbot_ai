@@ -17,7 +17,7 @@ export const XERO_SCOPES = ['openid', 'profile', 'email']
 // ---------------------------------------------------------------------------
 // Client ID — hardcoded directly, no env var.
 // ---------------------------------------------------------------------------
-const XERO_CLIENT_ID = 'B2D682C4EE0342BF8FAB724AC91ECBD0'
+const XERO_CLIENT_ID = '89327FFBCD374083BA0332B63C7939C7'
 
 // ---------------------------------------------------------------------------
 // Singleton xero-node client (accounting API calls only — not used for auth)
