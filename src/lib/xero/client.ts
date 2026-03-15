@@ -17,8 +17,6 @@ export const XERO_SCOPES = [
     'profile',
     'email',
     'accounting.transactions.read',
-    'accounting.transactions.write',
-    'offline_access',
 ]
 
 // ---------------------------------------------------------------------------
@@ -68,7 +66,7 @@ export function buildXeroAuthUrl(state: string): string {
     })
 
     const xeroUrl = `${XERO_AUTH_BASE}?${params.toString().replace(/\+/g, '%20')}`
-    console.log('XERO_URL_LOG:', xeroUrl)
+    console.log('URL_TEST:', xeroUrl)
 
     return xeroUrl
 }
