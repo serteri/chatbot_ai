@@ -8,9 +8,18 @@ import { XeroClient } from 'xero-node'
 import { prisma } from '@/lib/db/prisma'
 
 // ---------------------------------------------------------------------------
-// Scopes — SUPER-MINIMAL for invalid_scope isolation test.
+// Scopes — Xero Web App valid scope names.
+// NOTE: .write suffix does NOT exist in Xero's catalog.
+//       Use base scope (no suffix) for read+write access.
 // ---------------------------------------------------------------------------
-export const XERO_SCOPES = ['openid', 'profile', 'email']
+export const XERO_SCOPES = [
+    'openid',
+    'profile',
+    'email',
+    'offline_access',
+    'accounting.transactions',   // read + write (NOT .write — that's invalid)
+    'accounting.contacts',       // read + write (NOT .write — that's invalid)
+]
 
 // ---------------------------------------------------------------------------
 // Singleton xero-node client (accounting API calls only — not used for auth)
