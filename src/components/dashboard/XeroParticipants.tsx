@@ -175,17 +175,25 @@ function ParticipantDrawer({
             const res = await fetch('/api/integrations/xero/proda-export')
             if (!res.ok) {
                 const err = await res.json()
-                alert(err.error === 'no_matched_invoices'
-                    ? 'Dışa aktarılacak eşleşmiş fatura bulunamadı.'
-                    : 'PRODA dışa aktarımı başarısız.')
+                alert(
+                    err.error === 'no_pending_invoices'
+                        ? 'Tüm faturalar zaten claim edildi.'
+                        : err.error === 'missing_provider_number'
+                        ? 'Settings sayfasında NDIS Provider Number eksik.'
+                        : 'PRODA dışa aktarımı başarısız.'
+                )
                 return
             }
+            const cd   = res.headers.get('Content-Disposition') ?? ''
             const blob = await res.blob()
             const url  = URL.createObjectURL(blob)
             const a    = document.createElement('a')
             a.href     = url
-            a.download = `proda-claims-${new Date().toISOString().slice(0, 10)}.csv`
+            a.download = cd.match(/filename="([^"]+)"/)?.[1]
+                ?? `proda-${new Date().toISOString().slice(0, 10)}.csv`
+            document.body.appendChild(a)
             a.click()
+            document.body.removeChild(a)
             URL.revokeObjectURL(url)
         } finally {
             setExporting(false)
@@ -381,7 +389,8 @@ function ParticipantDrawer({
                 {/* ── PRODA Export footer ───────────────────────────────── */}
                 <div className="border-t border-slate-100 px-6 py-4 bg-slate-50/60">
                     <p className="text-[10px] text-slate-400 mb-2">
-                        Eşleşmiş ve bütçeden düşülmüş tüm faturaları NDIS PRODA formatında dışa aktar.
+                        Bütçeden düşülmüş, henüz claim edilmemiş faturaları PRODA formatında indir.
+                        Export sonrası faturalar <strong>Claimed</strong> olarak işaretlenir.
                     </p>
                     <button
                         onClick={handleExport}

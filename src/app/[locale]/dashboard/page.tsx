@@ -18,6 +18,7 @@ import StatsCards from '@/components/dashboard/StatsCards'
 import XeroConnect from '@/components/dashboard/XeroConnect'
 import XeroInvoices from '@/components/dashboard/XeroInvoices'
 import XeroParticipants from '@/components/dashboard/XeroParticipants'
+import PRODAExportButton from '@/components/dashboard/PRODAExportButton'
 
 export default async function DashboardPage({
     params,
@@ -240,8 +241,9 @@ export default async function DashboardPage({
                             className="inline-flex items-center gap-2 px-4 py-2.5 border border-violet-200 text-violet-700 hover:bg-violet-50 text-sm font-semibold rounded-xl transition-colors"
                         >
                             <FileSpreadsheet className="w-4 h-4" />
-                            Export to PRODA
+                            Claims
                         </Link>
+                        <PRODAExportButton />
                     </div>
 
                     {/* Xero integration — sits directly below the action buttons */}

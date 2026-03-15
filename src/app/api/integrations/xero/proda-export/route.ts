@@ -1,75 +1,142 @@
-import { NextResponse } from 'next/server'
+/**
+ * PRODA Export API
+ *
+ * GET  ?count=true  → { pending: number, alreadyClaimed: number }  (preview, no side effects)
+ * GET               → Downloads PRODA CSV + marks invoices as claimed
+ */
+import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { getValidXeroToken } from '@/lib/xero/client'
 import { prisma } from '@/lib/db/prisma'
+import { randomBytes } from 'crypto'
 
 const XERO_API_BASE = 'https://api.xero.com/api.xro/2.0'
 
-// NDIS PRODA Bulk Upload CSV column order
+// ---------------------------------------------------------------------------
+// NDIS PRODA Bulk Upload — column spec
+// Ref: https://www.ndis.gov.au/providers/working-provider/managing-your-payments
+// ---------------------------------------------------------------------------
 const CSV_HEADERS = [
-    'RegistrationNumber',
-    'NDISNumber',
-    'SupportItemNumber',
-    'ClaimReference',
-    'Quantity',
-    'Hours',
-    'UnitPrice',
-    'GSTCode',
-    'SupportDeliveredFrom',
-    'SupportDeliveredTo',
-    'CancellationReason',
-    'ABNofSupportProvider',
-    'ClaimType',
+    'RegistrationNumber',   // Provider registration number
+    'NDISNumber',           // Participant NDIS number (9 digits)
+    'SupportItemNumber',    // Support catalogue item code (e.g. 01_002_0107_1_1)
+    'ClaimReference',       // Your invoice/reference number
+    'Quantity',             // Units delivered
+    'Hours',                // Leave blank unless time-based
+    'UnitPrice',            // Price per unit
+    'GSTCode',              // NO GST (most NDIS supports are GST-free)
+    'SupportDeliveredFrom', // yyyy-mm-dd
+    'SupportDeliveredTo',   // yyyy-mm-dd
+    'CancellationReason',   // Leave blank unless cancellation
+    'ABNofSupportProvider', // Provider ABN
+    'ClaimType',            // NDIS (agency-managed) or PLAN (plan-managed)
 ]
 
-function csvRow(values: (string | number | null | undefined)[]) {
-    return values
-        .map(v => {
-            const s = v == null ? '' : String(v)
-            return s.includes(',') || s.includes('"') ? `"${s.replace(/"/g, '""')}"` : s
-        })
-        .join(',')
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+function csvEscape(v: string | number | null | undefined): string {
+    const s = v == null ? '' : String(v)
+    return s.includes(',') || s.includes('"') || s.includes('\n')
+        ? `"${s.replace(/"/g, '""')}"`
+        : s
 }
 
-function formatDate(d: Date | null): string {
+function csvRow(values: (string | number | null | undefined)[]): string {
+    return values.map(csvEscape).join(',')
+}
+
+function isoDate(d: Date | null | undefined): string {
     if (!d) return ''
-    return d.toLocaleDateString('en-AU', {
-        day: '2-digit', month: '2-digit', year: 'numeric',
-    }).split('/').reverse().join('-')  // ISO yyyy-mm-dd
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
 }
 
-export async function GET() {
+// ---------------------------------------------------------------------------
+// Fetch Xero line items for one invoice (returns [] on failure)
+// ---------------------------------------------------------------------------
+async function fetchLineItems(
+    xeroInvoiceId: string,
+    accessToken:   string,
+    tenantId:      string,
+) {
+    try {
+        const res = await fetch(`${XERO_API_BASE}/Invoices/${xeroInvoiceId}`, {
+            headers: {
+                Authorization:    `Bearer ${accessToken}`,
+                'Xero-Tenant-Id': tenantId,
+                Accept:           'application/json',
+            },
+        })
+        if (!res.ok) return []
+        const data = await res.json()
+        return (data.Invoices?.[0]?.LineItems ?? []) as Array<{
+            ItemCode:    string | null
+            Description: string | null
+            Quantity:    number
+            UnitAmount:  number
+        }>
+    } catch {
+        return []
+    }
+}
+
+// ---------------------------------------------------------------------------
+// GET handler
+// ---------------------------------------------------------------------------
+export async function GET(req: NextRequest) {
     const session = await auth()
     if (!session?.user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    const userId = session.user.id
+    const userId    = session.user.id
+    const isPreview = req.nextUrl.searchParams.get('count') === 'true'
 
-    // Provider info for RegistrationNumber + ABN
+    // ── Provider info from Settings ─────────────────────────────────────
     const user = await prisma.user.findUnique({
         where:  { id: userId },
-        select: { ndisProviderNumber: true, abn: true },
+        select: { ndisProviderNumber: true, abn: true, companyName: true },
     })
 
-    const token = await getValidXeroToken(userId)
-    if (!token) {
-        return NextResponse.json({ error: 'not_connected' }, { status: 400 })
+    const registrationNum = user?.ndisProviderNumber?.trim() ?? ''
+    const abn             = user?.abn?.trim() ?? ''
+
+    if (!registrationNum) {
+        return NextResponse.json(
+            { error: 'missing_provider_number',
+              message: 'NDIS Provider Registration Number is not set in Settings.' },
+            { status: 400 }
+        )
     }
 
-    // Fetch matched, budget-deducted invoices with participant data
+    // ── Count pending invoices (unclaimed, matched, budget-deducted) ────
+    const pendingWhere = {
+        userId,
+        budgetDeducted: true,
+        participantId:  { not: null as null },
+        claimedAt:      null,
+    }
+
+    if (isPreview) {
+        const pending      = await prisma.xeroInvoice.count({ where: pendingWhere })
+        const alreadyClaimed = await prisma.xeroInvoice.count({
+            where: { userId, budgetDeducted: true, claimedAt: { not: null } },
+        })
+        return NextResponse.json({ pending, alreadyClaimed })
+    }
+
+    // ── Fetch unclaimed invoices ─────────────────────────────────────────
     const dbInvoices = await prisma.xeroInvoice.findMany({
-        where: {
-            userId,
-            budgetDeducted: true,
-            participantId:  { not: null },
-        },
-        orderBy: { date: 'desc' },
+        where:   pendingWhere,
+        orderBy: { date: 'asc' },
         select: {
+            id:            true,
             xeroInvoiceId: true,
             invoiceNumber:  true,
             total:          true,
             date:           true,
-            status:         true,
             participant: {
                 select: { ndisNumber: true, fullName: true },
             },
@@ -77,56 +144,52 @@ export async function GET() {
     })
 
     if (dbInvoices.length === 0) {
-        return NextResponse.json({ error: 'no_matched_invoices' }, { status: 400 })
+        return NextResponse.json(
+            { error: 'no_pending_invoices',
+              message: 'No unclaimed invoices found. All matched invoices may already be claimed.' },
+            { status: 400 }
+        )
     }
 
-    // Fetch full line items from Xero for each invoice
-    const rows: string[] = [csvRow(CSV_HEADERS)]
+    // ── Xero token for line-item fetching ────────────────────────────────
+    const token = await getValidXeroToken(userId)
+    if (!token) {
+        return NextResponse.json({ error: 'not_connected' }, { status: 400 })
+    }
+
+    // ── Build CSV ────────────────────────────────────────────────────────
+    const batchId    = randomBytes(6).toString('hex').toUpperCase()
+    const exportedAt = new Date()
+    const claimedIds: string[] = []
+
+    // Metadata comment at top (not parsed by PRODA but useful for auditing)
+    const metaLines = [
+        `# NDIS PRODA Bulk Upload — Generated ${exportedAt.toISOString()}`,
+        `# Provider: ${user?.companyName ?? ''} | Reg: ${registrationNum} | ABN: ${abn}`,
+        `# Batch ID: ${batchId} | Invoices: ${dbInvoices.length}`,
+    ]
+
+    const dataRows: string[] = [csvRow(CSV_HEADERS)]
 
     for (const inv of dbInvoices) {
-        // Try to get line items (Support Item Number lives here)
-        let lineItems: Array<{
-            ItemCode:    string | null
-            Description: string | null
-            Quantity:    number
-            UnitAmount:  number
-        }> = []
+        const ndisNumber    = inv.participant?.ndisNumber?.trim() ?? ''
+        const deliveredFrom = isoDate(inv.date)
+        const deliveredTo   = isoDate(inv.date)  // single-day default; adjust if multi-day
 
-        try {
-            const xRes = await fetch(
-                `${XERO_API_BASE}/Invoices/${inv.xeroInvoiceId}`,
-                {
-                    headers: {
-                        Authorization:    `Bearer ${token.accessToken}`,
-                        'Xero-Tenant-Id': token.tenantId,
-                        Accept:           'application/json',
-                    },
-                }
-            )
-            if (xRes.ok) {
-                const xData = await xRes.json()
-                lineItems = xData.Invoices?.[0]?.LineItems ?? []
-            }
-        } catch (e) {
-            console.warn('[PRODA] Failed to fetch line items for', inv.invoiceNumber, e)
-        }
-
-        const ndisNumber        = inv.participant?.ndisNumber ?? ''
-        const registrationNum   = user?.ndisProviderNumber ?? ''
-        const abn               = user?.abn ?? ''
-        const deliveredFrom     = formatDate(inv.date)
-        const deliveredTo       = formatDate(inv.date)   // same-day default
+        // Fetch line items from Xero (Support Item Number)
+        const lineItems = await fetchLineItems(
+            inv.xeroInvoiceId, token.accessToken, token.tenantId
+        )
 
         if (lineItems.length > 0) {
-            // One PRODA row per line item
             for (const li of lineItems) {
-                rows.push(csvRow([
+                dataRows.push(csvRow([
                     registrationNum,
                     ndisNumber,
                     li.ItemCode ?? '',           // Support Item Number
                     inv.invoiceNumber ?? '',     // Claim Reference
                     li.Quantity,
-                    '',                          // Hours (leave blank — quantity covers it)
+                    '',                          // Hours — blank (units used for quantity)
                     li.UnitAmount,
                     'NO GST',
                     deliveredFrom,
@@ -137,11 +200,11 @@ export async function GET() {
                 ]))
             }
         } else {
-            // Fallback: one row with the invoice total, no item code
-            rows.push(csvRow([
+            // Fallback: single row, no item code
+            dataRows.push(csvRow([
                 registrationNum,
                 ndisNumber,
-                '',                             // No item code available
+                '',                             // No item code — flag for manual review
                 inv.invoiceNumber ?? '',
                 1,
                 '',
@@ -154,16 +217,27 @@ export async function GET() {
                 'NDIS',
             ]))
         }
+
+        claimedIds.push(inv.id)
     }
 
-    const csv = rows.join('\n')
-    console.log(`[PRODA EXPORT] Generated ${rows.length - 1} claim rows from ${dbInvoices.length} invoices`)
+    // ── Mark invoices as claimed (atomic batch update) ───────────────────
+    await prisma.xeroInvoice.updateMany({
+        where: { id: { in: claimedIds } },
+        data:  { claimedAt: exportedAt, claimBatchId: batchId },
+    })
+
+    console.log(
+        `[PRODA EXPORT] Batch ${batchId} — ${claimedIds.length} invoices claimed, ${dataRows.length - 1} CSV rows`
+    )
+
+    const csv = [...metaLines, ...dataRows].join('\n')
 
     return new NextResponse(csv, {
         status: 200,
         headers: {
             'Content-Type':        'text/csv; charset=utf-8',
-            'Content-Disposition': `attachment; filename="proda-claims-${new Date().toISOString().slice(0, 10)}.csv"`,
+            'Content-Disposition': `attachment; filename="proda-${batchId}-${isoDate(exportedAt)}.csv"`,
         },
     })
 }

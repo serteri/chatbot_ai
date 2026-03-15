@@ -355,6 +355,8 @@ model XeroInvoice {
   participantId  String?      // null = unmatched
   matchMethod    String?      // 'ndis_number' | 'name' | 'manual' | null
   budgetDeducted Boolean      @default(false)  // Guards against double-deduction on re-sync
+  claimedAt      DateTime?                    // null = unclaimed; set on PRODA export
+  claimBatchId   String?                      // Groups invoices from the same export run
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
