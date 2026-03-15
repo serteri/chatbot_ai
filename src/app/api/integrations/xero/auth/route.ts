@@ -21,6 +21,8 @@ export async function GET(req: NextRequest) {
     console.log('[XERO AUTH] CLIENT ID:', process.env.XERO_CLIENT_ID?.substring(0, 8) + '...')
     console.log('[XERO AUTH] XERO_REDIRECT_URI:', process.env.XERO_REDIRECT_URI)
     console.log('[XERO AUTH] Request host:', req.headers.get('host'))
+    console.log('[DEBUG] Secret length:', process.env.XERO_CLIENT_SECRET?.length)
+    console.log('[DEBUG] Secret defined:', process.env.XERO_CLIENT_SECRET !== undefined)
 
     const cookieStore = await cookies()
 
