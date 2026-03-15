@@ -52,16 +52,21 @@ async function findParticipantMatch(
 }
 
 // ---------------------------------------------------------------------------
-// Deduct invoice total from participant's remainingBudget (idempotent).
-// Uses a transaction to ensure atomic read-check-write.
+// Idempotent budget deduction + BudgetTransaction log.
+// Returns { deducted: true } only when a NEW deduction was applied.
 // ---------------------------------------------------------------------------
-async function deductBudget(
-    xeroInvoiceDbId: string,
-    participantId: string,
-    amount: number,
-): Promise<{ deducted: boolean; remainingBudget: number }> {
+async function deductBudget(opts: {
+    xeroInvoiceDbId: string
+    participantId:   string
+    userId:          string
+    amount:          number
+    invoiceNumber:   string | null
+    invoiceDate:     Date | null
+}): Promise<{ deducted: boolean; remainingBudget: number }> {
+    const { xeroInvoiceDbId, participantId, userId, amount, invoiceNumber, invoiceDate } = opts
+
     return prisma.$transaction(async (tx) => {
-        // Re-check inside tx — guard against concurrent requests
+        // Re-read inside tx — prevent double-deduction under concurrency
         const inv = await tx.xeroInvoice.findUnique({
             where:  { id: xeroInvoiceDbId },
             select: { budgetDeducted: true },
@@ -74,20 +79,37 @@ async function deductBudget(
             return { deducted: false, remainingBudget: p?.remainingBudget ?? 0 }
         }
 
+        // Decrement budget
         const updated = await tx.participant.update({
-            where: { id: participantId },
-            data:  { remainingBudget: { decrement: amount } },
+            where:  { id: participantId },
+            data:   { remainingBudget: { decrement: amount } },
             select: { remainingBudget: true },
         })
 
+        // Mark invoice as deducted
         await tx.xeroInvoice.update({
             where: { id: xeroInvoiceDbId },
             data:  { budgetDeducted: true },
         })
 
+        // Write transaction log
+        await tx.budgetTransaction.create({
+            data: {
+                userId,
+                participantId,
+                invoiceId:     xeroInvoiceDbId,
+                invoiceNumber: invoiceNumber ?? null,
+                amount,
+                type:          'XERO_SYNC',
+                note:          `Auto-deducted via Xero sync`,
+                date:          invoiceDate ?? new Date(),
+            },
+        })
+
         console.log(
-            `[BUDGET] Deducted $${amount.toFixed(2)} → participant ${participantId} | remaining: $${updated.remainingBudget.toFixed(2)}`
+            `[BUDGET] -$${amount.toFixed(2)} | inv: ${invoiceNumber ?? xeroInvoiceDbId} | remaining: $${updated.remainingBudget.toFixed(2)}`
         )
+
         return { deducted: true, remainingBudget: updated.remainingBudget }
     })
 }
@@ -136,7 +158,9 @@ export async function POST() {
     const rawInvoices: XeroInvoiceRaw[] = data.Invoices ?? []
     console.log(`[XERO SYNC] Fetched ${rawInvoices.length} invoices from Xero`)
 
-    const results = { total: rawInvoices.length, matched: 0, unmatched: 0, budgetDeducted: 0 }
+    let newDeductions = 0
+    let matched       = 0
+    let unmatched     = 0
 
     for (const inv of rawInvoices) {
         const contactName   = inv.Contact?.Name ?? ''
@@ -148,23 +172,23 @@ export async function POST() {
             userId, contactNumber, contactName,
         )
 
-        if (participantId) { results.matched++ } else { results.unmatched++ }
+        if (participantId) { matched++ } else { unmatched++ }
 
-        // Upsert invoice record — preserve existing budgetDeducted if already set
+        // Upsert invoice
         const saved = await prisma.xeroInvoice.upsert({
             where:  { userId_xeroInvoiceId: { userId, xeroInvoiceId: inv.InvoiceID } },
             create: {
                 userId,
-                xeroInvoiceId: inv.InvoiceID,
-                invoiceNumber: inv.InvoiceNumber ?? null,
+                xeroInvoiceId:  inv.InvoiceID,
+                invoiceNumber:  inv.InvoiceNumber ?? null,
                 contactName,
                 contactNumber,
-                total:         amount,
-                amountDue:     inv.AmountDue ?? 0,
-                status:        inv.Status,
-                type:          inv.Type ?? null,
-                date:          parsedDate,
-                tenantId:      token.tenantId,
+                total:          amount,
+                amountDue:      inv.AmountDue ?? 0,
+                status:         inv.Status,
+                type:           inv.Type ?? null,
+                date:           parsedDate,
+                tenantId:       token.tenantId,
                 participantId,
                 matchMethod,
                 budgetDeducted: false,
@@ -178,55 +202,86 @@ export async function POST() {
                 status:        inv.Status,
                 type:          inv.Type ?? null,
                 date:          parsedDate,
-                // Only update match fields if currently unmatched (preserve manual overrides)
+                // Preserve manual overrides — only set if currently unmatched
                 ...(participantId && { participantId, matchMethod }),
             },
-            select: { id: true, budgetDeducted: true, participantId: true },
+            select: {
+                id:             true,
+                budgetDeducted: true,
+                participantId:  true,
+                invoiceNumber:  true,
+                date:           true,
+            },
         })
 
-        // Deduct budget if matched and not yet deducted
+        // Deduct if matched and not yet deducted
         if (saved.participantId && !saved.budgetDeducted && amount > 0) {
-            const { deducted } = await deductBudget(saved.id, saved.participantId, amount)
-            if (deducted) results.budgetDeducted++
+            const { deducted } = await deductBudget({
+                xeroInvoiceDbId: saved.id,
+                participantId:   saved.participantId,
+                userId,
+                amount,
+                invoiceNumber:   saved.invoiceNumber,
+                invoiceDate:     saved.date,
+            })
+            if (deducted) newDeductions++
         }
     }
 
+    // ── Bug fix: cumulative total from DB (correct even across multiple syncs) ──
+    const totalBudgetDeducted = await prisma.xeroInvoice.count({
+        where: { userId, budgetDeducted: true },
+    })
+
     console.log(
-        `[XERO SYNC] Done — matched: ${results.matched}, unmatched: ${results.unmatched}, budgetDeductions: ${results.budgetDeducted}`
+        `[XERO SYNC] Done — matched: ${matched}, unmatched: ${unmatched}, new deductions: ${newDeductions}, total deducted: ${totalBudgetDeducted}`
     )
-    return NextResponse.json({ success: true, ...results })
+
+    return NextResponse.json({
+        success:            true,
+        total:              rawInvoices.length,
+        matched,
+        unmatched,
+        newDeductions,          // Deducted in THIS sync run
+        budgetDeducted:         totalBudgetDeducted,  // Cumulative total (fixes the 0 bug)
+    })
 }
 
 // ---------------------------------------------------------------------------
 // PATCH /api/integrations/xero/sync — manual participant assignment
-// Body: { xeroInvoiceId: string, participantId: string }
 // ---------------------------------------------------------------------------
 export async function PATCH(req: Request) {
     const session = await auth()
     if (!session?.user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+    const userId = session.user.id
 
     const { xeroInvoiceId, participantId } = await req.json()
     if (!xeroInvoiceId || !participantId) {
         return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
     }
 
-    // Find the invoice to get the amount
     const inv = await prisma.xeroInvoice.findFirst({
-        where:  { userId: session.user.id, xeroInvoiceId },
-        select: { id: true, total: true, budgetDeducted: true },
+        where:  { userId, xeroInvoiceId },
+        select: { id: true, total: true, invoiceNumber: true, date: true },
     })
     if (!inv) return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
 
     await prisma.xeroInvoice.updateMany({
-        where: { userId: session.user.id, xeroInvoiceId },
+        where: { userId, xeroInvoiceId },
         data:  { participantId, matchMethod: 'manual', budgetDeducted: false },
     })
 
-    // Trigger deduction for the new participant
     if (inv.total > 0) {
-        await deductBudget(inv.id, participantId, inv.total)
+        await deductBudget({
+            xeroInvoiceDbId: inv.id,
+            participantId,
+            userId,
+            amount:        inv.total,
+            invoiceNumber: inv.invoiceNumber,
+            invoiceDate:   inv.date,
+        })
     }
 
     return NextResponse.json({ success: true })

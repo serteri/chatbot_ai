@@ -47,6 +47,7 @@ model User {
   claims             Claim[]
   participants       Participant[]
   xeroInvoices       XeroInvoice[]
+  budgetTransactions BudgetTransaction[]
   xeroToken          XeroToken?
 
   @@index([email])
@@ -309,12 +310,33 @@ model Participant {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  invoices    XeroInvoice[]
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices          XeroInvoice[]
+  budgetTransactions BudgetTransaction[]
 
   @@index([userId])
   @@index([ndisNumber])
   @@index([userId, ndisNumber])
+}
+
+model BudgetTransaction {
+  id            String      @id @default(cuid())
+  userId        String
+  participantId String
+  invoiceId     String?     // XeroInvoice.id (nullable — allows manual adjustments)
+  invoiceNumber String?
+  amount        Float
+  type          String      // 'XERO_SYNC' | 'MANUAL' | 'ADJUSTMENT'
+  note          String?
+  date          DateTime    @default(now())
+  createdAt     DateTime    @default(now())
+
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  participant   Participant @relation(fields: [participantId], references: [id])
+
+  @@index([userId])
+  @@index([participantId])
+  @@index([invoiceId])
 }
 
 model XeroInvoice {
