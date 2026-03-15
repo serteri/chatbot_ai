@@ -16,9 +16,10 @@ export const XERO_SCOPES = [
     'openid',
     'profile',
     'email',
-    'accounting.transactions.read',
-    'accounting.settings.read',
     'offline_access',
+    'accounting.invoices.read',
+    'accounting.contacts.read',
+    'accounting.settings.read',
 ]
 
 // ---------------------------------------------------------------------------
@@ -27,12 +28,17 @@ export const XERO_SCOPES = [
 const XERO_CLIENT_ID = '89327FFBCD374083BA0332B63C7939C7'
 
 // ---------------------------------------------------------------------------
+// Redirect URI — hardcoded (www prefix required by Xero 2026 rules).
+// ---------------------------------------------------------------------------
+const XERO_REDIRECT_URI = 'https://www.ndisshield.com.au/api/integrations/xero/callback'
+
+// ---------------------------------------------------------------------------
 // Singleton xero-node client (accounting API calls only — not used for auth)
 // ---------------------------------------------------------------------------
 export const xero = new XeroClient({
     clientId:     XERO_CLIENT_ID,
     clientSecret: process.env.XERO_CLIENT_SECRET!,
-    redirectUris: [process.env.XERO_REDIRECT_URI!],
+    redirectUris: [XERO_REDIRECT_URI],
     scopes:       [...XERO_SCOPES],
 })
 
@@ -45,14 +51,13 @@ const XERO_TENANTS_URL = 'https://api.xero.com/connections'
 
 export function buildXeroAuthUrl(state: string): string {
     const scopeStr    = XERO_SCOPES.join(' ')
-    const redirectUri = process.env.XERO_REDIRECT_URI ?? 'MISSING'
+    const redirectUri = XERO_REDIRECT_URI
 
     // ── Full diagnostic dump — visible in Vercel logs ──────────────────────
     console.log('=== XERO AUTH BUILD ===')
     console.log('CLIENT_ID         :', XERO_CLIENT_ID)
     console.log('CLIENT_ID length  :', XERO_CLIENT_ID.length)
     console.log('REDIRECT_URI      :', redirectUri)
-    console.log('REDIRECT_URI chars:', [...redirectUri].map(c => c.charCodeAt(0)))
     console.log('SCOPES            :', scopeStr)
     console.log('response_type     :', 'code')
     console.log('grant_type (later):', 'authorization_code')
@@ -89,7 +94,7 @@ export async function exchangeXeroCode(code: string) {
         body: new URLSearchParams({
             grant_type:   'authorization_code',
             code,
-            redirect_uri: process.env.XERO_REDIRECT_URI!,
+            redirect_uri: XERO_REDIRECT_URI,
         }),
     })
     if (!res.ok) {
