@@ -73,7 +73,7 @@ function BudgetBar({ total, remaining }: { total: number; remaining: number }) {
     if (total <= 0) return null
     const pct      = budgetPct(total, remaining)
     const isLow    = pct < 15
-    const barColor = pct > 50 ? 'bg-emerald-400' : pct > 20 ? 'bg-amber-400' : 'bg-red-400'
+    const barColor = pct >= 15 ? 'bg-emerald-400' : pct >= 5 ? 'bg-amber-400' : 'bg-red-500'
 
     return (
         <div className="mt-2">
@@ -102,7 +102,10 @@ function BudgetBar({ total, remaining }: { total: number; remaining: number }) {
             </div>
             {isLow && (
                 <p className="text-[10px] text-red-500 mt-0.5 font-medium">
-                    Bütçenin %{pct.toFixed(1)}&apos;i kaldı — katılımcı planını gözden geçir.
+                    {pct < 5
+                        ? `⚠️ Kritik Seviye — yalnızca %${pct.toFixed(1)} kaldı!`
+                        : `Düşük bütçe — %${pct.toFixed(1)} kaldı`
+                    }
                 </p>
             )}
         </div>

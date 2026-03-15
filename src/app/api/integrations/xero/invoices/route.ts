@@ -1,8 +1,13 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 
-export async function GET() {
+/**
+ * GET /api/integrations/xero/invoices
+ * Optional query params:
+ *   ?participantId=xxx  — filter invoices to a single participant (used by drawer)
+ */
+export async function GET(req: NextRequest) {
     const session = await auth()
     if (!session?.user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -16,10 +21,15 @@ export async function GET() {
         return NextResponse.json({ error: 'not_connected' }, { status: 400 })
     }
 
+    const participantId = req.nextUrl.searchParams.get('participantId')
+
     const invoices = await prisma.xeroInvoice.findMany({
-        where:   { userId: session.user.id },
+        where: {
+            userId: session.user.id,
+            ...(participantId ? { participantId } : {}),
+        },
         orderBy: { date: 'desc' },
-        take:    20,
+        take:    participantId ? 100 : 20,   // full history for drawer, recent for dashboard
         select: {
             id:             true,
             xeroInvoiceId:  true,
