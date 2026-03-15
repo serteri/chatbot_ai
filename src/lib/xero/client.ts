@@ -45,21 +45,30 @@ const XERO_TOKEN_URL   = 'https://identity.xero.com/connect/token'
 const XERO_TENANTS_URL = 'https://api.xero.com/connections'
 
 export function buildXeroAuthUrl(state: string): string {
-    // Single space between each scope — no commas, no other separators.
-    const scopeStr = XERO_SCOPES.join(' ')
+    const scopeStr    = XERO_SCOPES.join(' ')
+    const redirectUri = process.env.XERO_REDIRECT_URI ?? 'MISSING'
+
+    // ── Full diagnostic dump — visible in Vercel logs ──────────────────────
+    console.log('=== XERO AUTH BUILD ===')
+    console.log('CLIENT_ID         :', XERO_CLIENT_ID)
+    console.log('CLIENT_ID length  :', XERO_CLIENT_ID.length)
+    console.log('REDIRECT_URI      :', redirectUri)
+    console.log('REDIRECT_URI chars:', [...redirectUri].map(c => c.charCodeAt(0)))
+    console.log('SCOPES            :', scopeStr)
+    console.log('response_type     :', 'code')
+    console.log('grant_type (later):', 'authorization_code')
+    console.log('=======================')
 
     const params = new URLSearchParams({
         response_type: 'code',
         client_id:     XERO_CLIENT_ID,
-        redirect_uri:  process.env.XERO_REDIRECT_URI!,
+        redirect_uri:  redirectUri,
         scope:         scopeStr,
         state,
         prompt:        'select_account',
     })
 
-    // Spaces must be %20, not +
     const xeroUrl = `${XERO_AUTH_BASE}?${params.toString().replace(/\+/g, '%20')}`
-
     console.log('XERO_URL_LOG:', xeroUrl)
 
     return xeroUrl
