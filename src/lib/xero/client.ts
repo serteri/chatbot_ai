@@ -22,10 +22,9 @@ export const XERO_SCOPES = [
 ]
 
 // ---------------------------------------------------------------------------
-// Client ID — hardcoded to bypass Vercel env var mismatch (B2D682C... was wrong).
-// TODO: once Vercel XERO_CLIENT_ID is corrected, revert to process.env.XERO_CLIENT_ID
+// Client ID — hardcoded directly, no env var.
 // ---------------------------------------------------------------------------
-const XERO_CLIENT_ID = '1690069B51E14F44A009C76882AF927E'
+const XERO_CLIENT_ID = 'B2D682C4EE0342BF8FAB724AC91ECBD0'
 
 // ---------------------------------------------------------------------------
 // Singleton xero-node client (accounting API calls only — not used for auth)
