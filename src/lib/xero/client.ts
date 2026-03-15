@@ -12,7 +12,14 @@ import { prisma } from '@/lib/db/prisma'
 // offline_access is mandatory for /connections to return tenants.
 // accounting.transactions.write does NOT exist in Xero — using base scope.
 // ---------------------------------------------------------------------------
-export const XERO_SCOPES = ['openid', 'profile', 'email']
+export const XERO_SCOPES = [
+    'openid',
+    'profile',
+    'email',
+    'accounting.transactions.read',
+    'accounting.settings.read',
+    'offline_access',
+]
 
 // ---------------------------------------------------------------------------
 // Client ID — hardcoded directly, no env var.
