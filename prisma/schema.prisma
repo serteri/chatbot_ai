@@ -45,6 +45,8 @@ model User {
   analysisTasks      AnalysisTask[]
   auditLogsActed     AuditLog[]      // Actions performed BY this user
   claims             Claim[]
+  participants       Participant[]
+  xeroInvoices       XeroInvoice[]
   xeroToken          XeroToken?
 
   @@index([email])
@@ -293,6 +295,50 @@ model AuditLog {
 // -----------------------------------------------------------------------------
 // XERO INTEGRATION
 // -----------------------------------------------------------------------------
+
+model Participant {
+  id          String        @id @default(cuid())
+  userId      String
+  fullName    String
+  ndisNumber  String?
+  email       String?
+  phone       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices    XeroInvoice[]
+
+  @@index([userId])
+  @@index([ndisNumber])
+  @@index([userId, ndisNumber])
+}
+
+model XeroInvoice {
+  id             String       @id @default(cuid())
+  userId         String
+  xeroInvoiceId  String
+  invoiceNumber  String?
+  contactName    String?
+  contactNumber  String?      // Xero ContactNumber (mapped to NDIS number)
+  total          Float        @default(0)
+  amountDue      Float        @default(0)
+  status         String
+  date           DateTime?
+  type           String?
+  tenantId       String
+  participantId  String?      // null = unmatched
+  matchMethod    String?      // 'ndis_number' | 'name' | 'manual' | null
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  participant    Participant? @relation(fields: [participantId], references: [id])
+
+  @@unique([userId, xeroInvoiceId])
+  @@index([userId])
+  @@index([participantId])
+}
 
 model XeroToken {
   id           String   @id @default(cuid())

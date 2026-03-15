@@ -1,53 +1,47 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
-import { getValidXeroToken } from '@/lib/xero/client'
+import { prisma } from '@/lib/db/prisma'
 
-const XERO_API_BASE = 'https://api.xero.com/api.xro/2.0'
-
+/**
+ * GET /api/integrations/xero/invoices
+ * Returns the last 20 synced Xero invoices for the authenticated user,
+ * including participant match info.
+ */
 export async function GET() {
     const session = await auth()
     if (!session?.user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const token = await getValidXeroToken(session.user.id)
+    // Check if Xero is connected at all
+    const token = await prisma.xeroToken.findUnique({
+        where:  { userId: session.user.id },
+        select: { tenantName: true },
+    })
     if (!token) {
         return NextResponse.json({ error: 'not_connected' }, { status: 400 })
     }
 
-    const res = await fetch(`${XERO_API_BASE}/Invoices?pageSize=10&order=Date+DESC`, {
-        headers: {
-            Authorization:   `Bearer ${token.accessToken}`,
-            'Xero-Tenant-Id': token.tenantId,
-            Accept:          'application/json',
+    const invoices = await prisma.xeroInvoice.findMany({
+        where:   { userId: session.user.id },
+        orderBy: { date: 'desc' },
+        take:    20,
+        select: {
+            id:            true,
+            xeroInvoiceId: true,
+            invoiceNumber: true,
+            contactName:   true,
+            contactNumber: true,
+            total:         true,
+            amountDue:     true,
+            status:        true,
+            date:          true,
+            matchMethod:   true,
+            participant: {
+                select: { id: true, fullName: true, ndisNumber: true },
+            },
         },
     })
 
-    if (!res.ok) {
-        const body = await res.text()
-        if (res.status === 403) {
-            console.error('[XERO INVOICES] 403 Forbidden — missing scope: accounting.invoices.read')
-            console.error('[XERO INVOICES] Xero response body:', body)
-            return NextResponse.json(
-                { error: 'forbidden', missing_scope: 'accounting.invoices.read' },
-                { status: 403 }
-            )
-        }
-        console.error('[XERO INVOICES] API error:', res.status, body)
-        return NextResponse.json({ error: 'xero_api_error', detail: res.status }, { status: 502 })
-    }
-
-    const data = await res.json()
-    const invoices = (data.Invoices ?? []).map((inv: any) => ({
-        id:       inv.InvoiceID,
-        number:   inv.InvoiceNumber ?? '',
-        contact:  inv.Contact?.Name ?? 'Unknown',
-        total:    inv.Total ?? 0,
-        status:   inv.Status ?? '',
-        date:     inv.DateString ?? '',
-        type:     inv.Type ?? '',
-    }))
-
-    console.log('[XERO INVOICES] Fetched', invoices.length, 'invoices — tenant:', token.tenantId)
     return NextResponse.json({ invoices, tenantName: token.tenantName })
 }
