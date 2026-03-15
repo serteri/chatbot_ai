@@ -34,30 +34,29 @@ export default async function SettingsPage() {
     const dbUser = await prisma.user.findUnique({
         where: { id: session.user.id },
         select: {
-            name: true,
-            email: true,
-            image: true,
-            companyName: true,
-            logoUrl: true,
-            abn: true,
+            name:               true,
+            email:              true,
+            image:              true,
+            companyName:        true,
+            logoUrl:            true,
+            abn:                true,
             ndisProviderNumber: true,
-            businessAddress: true,
-            contactPhone: true,
+            businessAddress:    true,
+            contactPhone:       true,
+            emailNotifications: true,   // now a real DB column
         }
     })
 
-    // Provide safe defaults for SettingsForm — emailNotifications & marketingEmails
-    // are UI-only toggles stored in customSettings (not DB columns yet)
     const userData = {
-        name: dbUser?.name ?? null,
-        email: dbUser?.email ?? null,
-        image: dbUser?.image ?? null,
-        abn: dbUser?.abn ?? null,
+        name:               dbUser?.name               ?? null,
+        email:              dbUser?.email              ?? null,
+        image:              dbUser?.image              ?? null,
+        abn:                dbUser?.abn                ?? null,
         ndisProviderNumber: dbUser?.ndisProviderNumber ?? null,
-        businessAddress: dbUser?.businessAddress ?? null,
-        contactPhone: dbUser?.contactPhone ?? null,
-        emailNotifications: true,
-        marketingEmails: false,
+        businessAddress:    dbUser?.businessAddress    ?? null,
+        contactPhone:       dbUser?.contactPhone       ?? null,
+        emailNotifications: dbUser?.emailNotifications ?? true,
+        marketingEmails:    false,   // UI-only preference, not persisted
     }
 
     return (

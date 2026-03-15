@@ -1,64 +1,107 @@
-import { auth } from '@/lib/auth/auth';
-import { prisma } from '@/lib/db/prisma';
-import { NextResponse } from 'next/server';
+import { auth } from '@/lib/auth/auth'
+import { prisma } from '@/lib/db/prisma'
+import { NextResponse } from 'next/server'
 
 export async function PATCH(req: Request) {
     try {
-        // 1. Oturum Kontrolü
-        const session = await auth();
-
+        // ── 1. Auth ───────────────────────────────────────────────────────
+        const session = await auth()
         if (!session?.user?.id) {
-            return new NextResponse(JSON.stringify({ error: 'Oturum açmanız gerekiyor' }), { status: 401 });
+            console.warn('[SETTINGS PATCH] 401 — no session')
+            return NextResponse.json({ error: 'Oturum açmanız gerekiyor' }, { status: 401 })
+        }
+        const userId = session.user.id
+
+        // ── 2. Parse body ─────────────────────────────────────────────────
+        let body: Record<string, unknown>
+        try {
+            body = await req.json()
+        } catch (parseErr) {
+            console.error('[SETTINGS PATCH] Failed to parse request body:', parseErr)
+            return NextResponse.json({ error: 'Geçersiz istek gövdesi.' }, { status: 400 })
         }
 
-        // 2. Gelen Veriyi Al
-        const body = await req.json();
-        const { emailNotifications, marketingEmails, name, abn, ndisProviderNumber, businessAddress, contactPhone } = body;
+        const {
+            name,
+            abn,
+            ndisProviderNumber,
+            businessAddress,
+            contactPhone,
+            emailNotifications,
+            // marketingEmails is not in the DB schema — stored client-side only for now
+        } = body
 
-        // 3. Güncellenecek Veriyi Hazırla
-        const updateData: any = {};
+        // ── 3. Build update payload — only fields that exist in schema ────
+        const updateData: Record<string, unknown> = {}
 
-        // İsim değişikliği varsa ekle
-        if (name !== undefined) updateData.name = name;
-        if (abn !== undefined) updateData.abn = abn;
-        if (ndisProviderNumber !== undefined) updateData.ndisProviderNumber = ndisProviderNumber;
-        if (businessAddress !== undefined) updateData.businessAddress = businessAddress;
-        if (contactPhone !== undefined) updateData.contactPhone = contactPhone;
-
-        // Email Bildirimleri (Veritabanında doğrudan sütun var)
+        if (name              !== undefined) updateData.name              = name
+        if (abn               !== undefined) updateData.abn               = abn
+        if (ndisProviderNumber !== undefined) updateData.ndisProviderNumber = ndisProviderNumber
+        if (businessAddress   !== undefined) updateData.businessAddress   = businessAddress
+        if (contactPhone      !== undefined) updateData.contactPhone      = contactPhone
         if (typeof emailNotifications === 'boolean') {
-            updateData.emailNotifications = emailNotifications;
+            updateData.emailNotifications = emailNotifications
         }
 
-        // Pazarlama Bildirimleri (Şemaya eklediğimiz JSON 'customSettings' alanı)
-        if (typeof marketingEmails === 'boolean') {
-            // Önce mevcut customSettings verisini çekmemiz lazım ki eski ayarlar silinmesin
-            const currentUser = await prisma.user.findUnique({
-                where: { id: session.user.id },
-                select: { customSettings: true }
-            });
-
-            const currentSettings = (currentUser?.customSettings as any) || {};
-
-            // Mevcut ayarların üzerine yenisini (marketingEmails) ekle
-            updateData.customSettings = {
-                ...currentSettings,
-                marketingEmails: marketingEmails
-            };
+        if (Object.keys(updateData).length === 0) {
+            return NextResponse.json({ success: true, message: 'Değişiklik yok.' })
         }
 
-        // 4. Veritabanını Güncelle
-        const updatedUser = await prisma.user.update({
-            where: { id: session.user.id },
-            data: updateData,
-        });
+        console.log('[SETTINGS PATCH] Updating user', userId, '| fields:', Object.keys(updateData).join(', '))
 
-        // Başarılı yanıt (Hata mesajı yok, temiz JSON)
-        return NextResponse.json({ success: true, message: 'Ayarlar güncellendi' });
+        // ── 4. DB update ──────────────────────────────────────────────────
+        await prisma.user.update({
+            where: { id: userId },
+            data:  updateData,
+        })
+
+        console.log('[SETTINGS PATCH] Success for user', userId)
+        return NextResponse.json({ success: true, message: 'Ayarlar güncellendi' })
+
+    } catch (error: unknown) {
+        // Detailed log — visible in Vercel Functions logs
+        console.error('[SETTINGS PATCH] Unhandled error:', error)
+
+        if (error instanceof Error) {
+            console.error('[SETTINGS PATCH] name   :', error.name)
+            console.error('[SETTINGS PATCH] message:', error.message)
+            console.error('[SETTINGS PATCH] stack  :', error.stack)
+        }
+
+        return NextResponse.json(
+            { error: 'Sunucu tarafında bir hata oluştu.', detail: error instanceof Error ? error.message : String(error) },
+            { status: 500 }
+        )
+    }
+}
+
+// ── GET — read current settings (used by Settings page on load) ──────────────
+export async function GET() {
+    try {
+        const session = await auth()
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
+        const user = await prisma.user.findUnique({
+            where:  { id: session.user.id },
+            select: {
+                name:               true,
+                email:              true,
+                image:              true,
+                abn:                true,
+                ndisProviderNumber: true,
+                businessAddress:    true,
+                contactPhone:       true,
+                emailNotifications: true,
+                companyName:        true,
+            },
+        })
+
+        return NextResponse.json({ user })
 
     } catch (error) {
-        console.error('Ayarlar API Hatası:', error);
-        // Kullanıcıya teknik detay yerine düzgün bir mesaj göster
-        return new NextResponse(JSON.stringify({ error: 'Sunucu tarafında bir hata oluştu.' }), { status: 500 });
+        console.error('[SETTINGS GET] Error:', error)
+        return NextResponse.json({ error: 'Server error' }, { status: 500 })
     }
 }
