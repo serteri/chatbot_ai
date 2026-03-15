@@ -17,7 +17,7 @@ export const XERO_SCOPES = [
     'profile',
     'email',
     'accounting.transactions.read',
-    'accounting.transactions',    // write access — .write suffix is invalid in Xero
+    'accounting.transactions.write',
     'offline_access',
 ]
 
