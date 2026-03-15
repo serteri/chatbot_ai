@@ -104,24 +104,27 @@ model Subscription {
 // -----------------------------------------------------------------------------
 
 model Chatbot {
-  id              String         @id @default(cuid())
-  userId          String
-  name            String         // E.g., "NDIS Support Bot"
-  identifier      String         @unique // Public URL slug
-  primaryColor    String         @default("#0f766e")
-  botName         String         @default("AI Assistant")
-  welcomeMessage  String         @default("Welcome. How can we assist with your NDIS plan today?")
-  fallbackMessage String         @default("I cannot process that request. Let me connect you with a coordinator.")
-  language        String         @default("en") // Default
-  aiModel         String         @default("gpt-4-turbo-preview") // Better accuracy for audits
-  isActive        Boolean        @default(true)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id                 String         @id @default(cuid())
+  userId             String
+  name               String         // E.g., "NDIS Support Bot"
+  identifier         String         @unique // Public URL slug
+  customDomain       String?        @unique // e.g. chat.company.com
+  primaryColor       String         @default("#0f766e")
+  widgetPrimaryColor String         @default("#0f766e")
+  widgetButtonColor  String         @default("#0f766e")
+  botName            String         @default("AI Assistant")
+  welcomeMessage     String         @default("Welcome. How can we assist with your NDIS plan today?")
+  fallbackMessage    String         @default("I cannot process that request. Let me connect you with a coordinator.")
+  language           String         @default("en") // Default
+  aiModel            String         @default("gpt-4-turbo-preview") // Better accuracy for audits
+  isActive           Boolean        @default(true)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
 
-  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  conversations   Conversation[]
-  documents       Document[]
-  leads           Lead[]
+  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversations      Conversation[]
+  documents          Document[]
+  leads              Lead[]
 
   @@index([userId])
 }
