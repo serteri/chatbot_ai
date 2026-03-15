@@ -12,12 +12,7 @@ import { prisma } from '@/lib/db/prisma'
 // offline_access is mandatory for /connections to return tenants.
 // accounting.transactions.write does NOT exist in Xero — using base scope.
 // ---------------------------------------------------------------------------
-export const XERO_SCOPES = [
-    'openid',
-    'profile',
-    'email',
-    'accounting.transactions.read',
-]
+export const XERO_SCOPES = ['openid', 'profile', 'email']
 
 // ---------------------------------------------------------------------------
 // Client ID — hardcoded directly, no env var.
@@ -66,7 +61,7 @@ export function buildXeroAuthUrl(state: string): string {
     })
 
     const xeroUrl = `${XERO_AUTH_BASE}?${params.toString().replace(/\+/g, '%20')}`
-    console.log('URL_TEST:', xeroUrl)
+    console.log('URL_CHECK:', xeroUrl)
 
     return xeroUrl
 }
