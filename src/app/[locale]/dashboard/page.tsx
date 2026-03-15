@@ -17,6 +17,7 @@ import { Suspense } from 'react'
 import StatsCards from '@/components/dashboard/StatsCards'
 import XeroConnect from '@/components/dashboard/XeroConnect'
 import XeroInvoices from '@/components/dashboard/XeroInvoices'
+import XeroParticipants from '@/components/dashboard/XeroParticipants'
 
 export default async function DashboardPage({
     params,
@@ -248,6 +249,7 @@ export default async function DashboardPage({
                         <Suspense fallback={<div className="h-16 rounded-xl bg-slate-50 animate-pulse" />}>
                             <XeroConnect />
                         </Suspense>
+                        <XeroParticipants />
                         <XeroInvoices />
                     </div>
                 </div>

@@ -72,7 +72,7 @@ function budgetPct(total: number, remaining: number) {
 function BudgetBar({ total, remaining }: { total: number; remaining: number }) {
     if (total <= 0) return null
     const pct      = budgetPct(total, remaining)
-    const isLow    = pct < 10
+    const isLow    = pct < 15
     const barColor = pct > 50 ? 'bg-emerald-400' : pct > 20 ? 'bg-amber-400' : 'bg-red-400'
 
     return (
@@ -117,7 +117,7 @@ function LowBudgetBanner({ invoices }: { invoices: Invoice[] }) {
         .filter(inv =>
             inv.participant &&
             inv.participant.totalBudget > 0 &&
-            budgetPct(inv.participant.totalBudget, inv.participant.remainingBudget) < 10
+            budgetPct(inv.participant.totalBudget, inv.participant.remainingBudget) < 15
         )
         .map(inv => inv.participant!)
         // Deduplicate by participant id
