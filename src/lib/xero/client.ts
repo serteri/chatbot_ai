@@ -8,24 +8,30 @@ import { XeroClient } from 'xero-node'
 import { prisma } from '@/lib/db/prisma'
 
 // ---------------------------------------------------------------------------
-// Scopes — Xero Web App valid scope names.
-// NOTE: .write suffix does NOT exist in Xero's catalog.
-//       Use base scope (no suffix) for read+write access.
+// Scopes — hardcoded, no env var dependency.
+// offline_access is mandatory for /connections to return tenants.
+// accounting.transactions.write does NOT exist in Xero — using base scope.
 // ---------------------------------------------------------------------------
 export const XERO_SCOPES = [
     'openid',
     'profile',
     'email',
+    'accounting.transactions.read',
+    'accounting.transactions',    // write access — .write suffix is invalid in Xero
     'offline_access',
-    'accounting.transactions',   // read + write (NOT .write — that's invalid)
-    'accounting.contacts',       // read + write (NOT .write — that's invalid)
 ]
+
+// ---------------------------------------------------------------------------
+// Client ID — hardcoded to bypass Vercel env var mismatch (B2D682C... was wrong).
+// TODO: once Vercel XERO_CLIENT_ID is corrected, revert to process.env.XERO_CLIENT_ID
+// ---------------------------------------------------------------------------
+const XERO_CLIENT_ID = '1690069B51E14F44A009C76882AF927E'
 
 // ---------------------------------------------------------------------------
 // Singleton xero-node client (accounting API calls only — not used for auth)
 // ---------------------------------------------------------------------------
 export const xero = new XeroClient({
-    clientId:     process.env.XERO_CLIENT_ID!,
+    clientId:     XERO_CLIENT_ID,
     clientSecret: process.env.XERO_CLIENT_SECRET!,
     redirectUris: [process.env.XERO_REDIRECT_URI!],
     scopes:       [...XERO_SCOPES],
@@ -44,7 +50,7 @@ export function buildXeroAuthUrl(state: string): string {
 
     const params = new URLSearchParams({
         response_type: 'code',
-        client_id:     process.env.XERO_CLIENT_ID!,
+        client_id:     XERO_CLIENT_ID,
         redirect_uri:  process.env.XERO_REDIRECT_URI!,
         scope:         scopeStr,
         state,
@@ -61,7 +67,7 @@ export function buildXeroAuthUrl(state: string): string {
 
 function basicAuth(): string {
     return Buffer.from(
-        `${process.env.XERO_CLIENT_ID}:${process.env.XERO_CLIENT_SECRET}`
+        `${XERO_CLIENT_ID}:${process.env.XERO_CLIENT_SECRET}`
     ).toString('base64')
 }
 
