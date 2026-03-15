@@ -62,10 +62,19 @@ export async function GET(req: NextRequest) {
         console.log('[XERO CALLBACK] Token exchange OK, expires_in:', tokens.expires_in)
 
         const tenants = await getXeroTenants(tokens.access_token)
-        if (!tenants?.length) return fail('no_tenants')
+
+        console.log('XERO_CONNECTIONS_RESPONSE:', JSON.stringify(tenants, null, 2))
+        console.log('[XERO CALLBACK] Tenant count:', Array.isArray(tenants) ? tenants.length : 'not an array')
+
+        if (!tenants?.length) {
+            console.error('NO TENANTS FOUND IN RESPONSE')
+            console.error('[XERO CALLBACK] Token used (first 20 chars):', tokens.access_token?.substring(0, 20))
+            console.error('[XERO CALLBACK] Scopes in token response — check if offline_access was granted')
+            return fail('no_tenants')
+        }
 
         const primaryTenant = tenants[0]
-        console.log('[XERO CALLBACK] Tenant:', primaryTenant.tenantName)
+        console.log('[XERO CALLBACK] Tenant:', primaryTenant.tenantName, '| ID:', primaryTenant.tenantId)
 
         const tokenPayload = {
             accessToken:  tokens.access_token,
