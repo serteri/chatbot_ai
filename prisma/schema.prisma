@@ -297,15 +297,17 @@ model AuditLog {
 // -----------------------------------------------------------------------------
 
 model Participant {
-  id          String        @id @default(cuid())
-  userId      String
-  fullName    String
-  ndisNumber  String?
-  email       String?
-  phone       String?
-  status      String        @default("ACTIVE")
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id               String        @id @default(cuid())
+  userId           String
+  fullName         String
+  ndisNumber       String?
+  email            String?
+  phone            String?
+  status           String        @default("ACTIVE")
+  totalBudget      Float         @default(0)   // Total NDIS funding allocated
+  remainingBudget  Float         @default(0)   // Decrements on each matched invoice
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   invoices    XeroInvoice[]
@@ -330,6 +332,7 @@ model XeroInvoice {
   tenantId       String
   participantId  String?      // null = unmatched
   matchMethod    String?      // 'ndis_number' | 'name' | 'manual' | null
+  budgetDeducted Boolean      @default(false)  // Guards against double-deduction on re-sync
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 

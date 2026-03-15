@@ -11,7 +11,7 @@ const XERO_API_BASE = 'https://api.xero.com/api.xro/2.0'
 interface XeroContact {
     ContactID:     string
     Name:          string
-    ContactNumber: string | null  // Often maps to NDIS number
+    ContactNumber: string | null
 }
 interface XeroInvoiceRaw {
     InvoiceID:     string
@@ -27,37 +27,69 @@ interface XeroInvoiceRaw {
 type MatchMethod = 'ndis_number' | 'name' | null
 
 // ---------------------------------------------------------------------------
-// Auto-match logic: ContactNumber → ndisNumber, then Name → fullName (ci)
+// Auto-match: ContactNumber → ndisNumber (exact), then Name → fullName (ci)
 // ---------------------------------------------------------------------------
 async function findParticipantMatch(
     userId: string,
     contactNumber: string | null,
     contactName: string,
 ): Promise<{ participantId: string | null; matchMethod: MatchMethod }> {
-    // Priority 1 — exact NDIS number match
     if (contactNumber?.trim()) {
-        const byNdis = await prisma.participant.findFirst({
-            where: { userId, ndisNumber: contactNumber.trim() },
+        const hit = await prisma.participant.findFirst({
+            where:  { userId, ndisNumber: contactNumber.trim() },
             select: { id: true },
         })
-        if (byNdis) {
-            return { participantId: byNdis.id, matchMethod: 'ndis_number' }
-        }
+        if (hit) return { participantId: hit.id, matchMethod: 'ndis_number' }
     }
 
-    // Priority 2 — case-insensitive full name match
-    const byName = await prisma.participant.findFirst({
-        where: {
-            userId,
-            fullName: { equals: contactName.trim(), mode: 'insensitive' },
-        },
+    const hit = await prisma.participant.findFirst({
+        where:  { userId, fullName: { equals: contactName.trim(), mode: 'insensitive' } },
         select: { id: true },
     })
-    if (byName) {
-        return { participantId: byName.id, matchMethod: 'name' }
-    }
+    if (hit) return { participantId: hit.id, matchMethod: 'name' }
 
     return { participantId: null, matchMethod: null }
+}
+
+// ---------------------------------------------------------------------------
+// Deduct invoice total from participant's remainingBudget (idempotent).
+// Uses a transaction to ensure atomic read-check-write.
+// ---------------------------------------------------------------------------
+async function deductBudget(
+    xeroInvoiceDbId: string,
+    participantId: string,
+    amount: number,
+): Promise<{ deducted: boolean; remainingBudget: number }> {
+    return prisma.$transaction(async (tx) => {
+        // Re-check inside tx — guard against concurrent requests
+        const inv = await tx.xeroInvoice.findUnique({
+            where:  { id: xeroInvoiceDbId },
+            select: { budgetDeducted: true },
+        })
+        if (!inv || inv.budgetDeducted) {
+            const p = await tx.participant.findUnique({
+                where:  { id: participantId },
+                select: { remainingBudget: true },
+            })
+            return { deducted: false, remainingBudget: p?.remainingBudget ?? 0 }
+        }
+
+        const updated = await tx.participant.update({
+            where: { id: participantId },
+            data:  { remainingBudget: { decrement: amount } },
+            select: { remainingBudget: true },
+        })
+
+        await tx.xeroInvoice.update({
+            where: { id: xeroInvoiceDbId },
+            data:  { budgetDeducted: true },
+        })
+
+        console.log(
+            `[BUDGET] Deducted $${amount.toFixed(2)} → participant ${participantId} | remaining: $${updated.remainingBudget.toFixed(2)}`
+        )
+        return { deducted: true, remainingBudget: updated.remainingBudget }
+    })
 }
 
 // ---------------------------------------------------------------------------
@@ -75,7 +107,6 @@ export async function POST() {
         return NextResponse.json({ error: 'not_connected' }, { status: 400 })
     }
 
-    // Fetch invoices with full Contact fields (ContactNumber needed for matching)
     const res = await fetch(
         `${XERO_API_BASE}/Invoices?pageSize=100&order=Date+DESC&where=Type%3D%3D%22ACCREC%22`,
         {
@@ -105,24 +136,22 @@ export async function POST() {
     const rawInvoices: XeroInvoiceRaw[] = data.Invoices ?? []
     console.log(`[XERO SYNC] Fetched ${rawInvoices.length} invoices from Xero`)
 
-    // Process each invoice: match then upsert
-    const results = { matched: 0, unmatched: 0, total: rawInvoices.length }
+    const results = { total: rawInvoices.length, matched: 0, unmatched: 0, budgetDeducted: 0 }
 
     for (const inv of rawInvoices) {
         const contactName   = inv.Contact?.Name ?? ''
         const contactNumber = inv.Contact?.ContactNumber ?? null
+        const amount        = inv.Total ?? 0
+        const parsedDate    = inv.DateString ? new Date(inv.DateString) : null
 
         const { participantId, matchMethod } = await findParticipantMatch(
-            userId,
-            contactNumber,
-            contactName,
+            userId, contactNumber, contactName,
         )
 
         if (participantId) { results.matched++ } else { results.unmatched++ }
 
-        const parsedDate = inv.DateString ? new Date(inv.DateString) : null
-
-        await prisma.xeroInvoice.upsert({
+        // Upsert invoice record — preserve existing budgetDeducted if already set
+        const saved = await prisma.xeroInvoice.upsert({
             where:  { userId_xeroInvoiceId: { userId, xeroInvoiceId: inv.InvoiceID } },
             create: {
                 userId,
@@ -130,7 +159,7 @@ export async function POST() {
                 invoiceNumber: inv.InvoiceNumber ?? null,
                 contactName,
                 contactNumber,
-                total:         inv.Total ?? 0,
+                total:         amount,
                 amountDue:     inv.AmountDue ?? 0,
                 status:        inv.Status,
                 type:          inv.Type ?? null,
@@ -138,28 +167,38 @@ export async function POST() {
                 tenantId:      token.tenantId,
                 participantId,
                 matchMethod,
+                budgetDeducted: false,
             },
             update: {
                 invoiceNumber: inv.InvoiceNumber ?? null,
                 contactName,
                 contactNumber,
-                total:         inv.Total ?? 0,
+                total:         amount,
                 amountDue:     inv.AmountDue ?? 0,
                 status:        inv.Status,
                 type:          inv.Type ?? null,
                 date:          parsedDate,
-                // Preserve manual matches — only auto-update if currently unmatched
-                ...(participantId ? { participantId, matchMethod } : {}),
+                // Only update match fields if currently unmatched (preserve manual overrides)
+                ...(participantId && { participantId, matchMethod }),
             },
+            select: { id: true, budgetDeducted: true, participantId: true },
         })
+
+        // Deduct budget if matched and not yet deducted
+        if (saved.participantId && !saved.budgetDeducted && amount > 0) {
+            const { deducted } = await deductBudget(saved.id, saved.participantId, amount)
+            if (deducted) results.budgetDeducted++
+        }
     }
 
-    console.log(`[XERO SYNC] Done — matched: ${results.matched}, unmatched: ${results.unmatched}`)
+    console.log(
+        `[XERO SYNC] Done — matched: ${results.matched}, unmatched: ${results.unmatched}, budgetDeductions: ${results.budgetDeducted}`
+    )
     return NextResponse.json({ success: true, ...results })
 }
 
 // ---------------------------------------------------------------------------
-// PATCH /api/integrations/xero/sync  — manual match override
+// PATCH /api/integrations/xero/sync — manual participant assignment
 // Body: { xeroInvoiceId: string, participantId: string }
 // ---------------------------------------------------------------------------
 export async function PATCH(req: Request) {
@@ -173,10 +212,22 @@ export async function PATCH(req: Request) {
         return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
     }
 
-    const updated = await prisma.xeroInvoice.updateMany({
+    // Find the invoice to get the amount
+    const inv = await prisma.xeroInvoice.findFirst({
         where:  { userId: session.user.id, xeroInvoiceId },
-        data:   { participantId, matchMethod: 'manual' },
+        select: { id: true, total: true, budgetDeducted: true },
+    })
+    if (!inv) return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
+
+    await prisma.xeroInvoice.updateMany({
+        where: { userId: session.user.id, xeroInvoiceId },
+        data:  { participantId, matchMethod: 'manual', budgetDeducted: false },
     })
 
-    return NextResponse.json({ success: true, updated: updated.count })
+    // Trigger deduction for the new participant
+    if (inv.total > 0) {
+        await deductBudget(inv.id, participantId, inv.total)
+    }
+
+    return NextResponse.json({ success: true })
 }

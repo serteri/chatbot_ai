@@ -2,18 +2,12 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/auth'
 import { prisma } from '@/lib/db/prisma'
 
-/**
- * GET /api/integrations/xero/invoices
- * Returns the last 20 synced Xero invoices for the authenticated user,
- * including participant match info.
- */
 export async function GET() {
     const session = await auth()
     if (!session?.user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if Xero is connected at all
     const token = await prisma.xeroToken.findUnique({
         where:  { userId: session.user.id },
         select: { tenantName: true },
@@ -27,18 +21,25 @@ export async function GET() {
         orderBy: { date: 'desc' },
         take:    20,
         select: {
-            id:            true,
-            xeroInvoiceId: true,
-            invoiceNumber: true,
-            contactName:   true,
-            contactNumber: true,
-            total:         true,
-            amountDue:     true,
-            status:        true,
-            date:          true,
-            matchMethod:   true,
+            id:             true,
+            xeroInvoiceId:  true,
+            invoiceNumber:  true,
+            contactName:    true,
+            contactNumber:  true,
+            total:          true,
+            amountDue:      true,
+            status:         true,
+            date:           true,
+            matchMethod:    true,
+            budgetDeducted: true,
             participant: {
-                select: { id: true, fullName: true, ndisNumber: true },
+                select: {
+                    id:              true,
+                    fullName:        true,
+                    ndisNumber:      true,
+                    totalBudget:     true,
+                    remainingBudget: true,
+                },
             },
         },
     })
